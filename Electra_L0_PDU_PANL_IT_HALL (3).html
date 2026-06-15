@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electra CX - L0 System</title>
+    <style>
+        :root {
+            --slate-900: #0f172a; --slate-800: #1e293b; --electra-blue: #00458e; --gold: #d4af37;
+            --bg: #f8fafc; --border: #e2e8f0; --passed: #10b981; --failed: #ef4444; --na: #94a3b8;
+        }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 16px; color: var(--slate-900); -webkit-font-smoothing: antialiased; }
+        .app-frame { max-width: 600px; margin: 0 auto; }
+        .premium-header { background: linear-gradient(135deg, var(--slate-900), var(--slate-800)); color: white; padding: 25px 20px; border-radius: 16px; text-align: center; box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15); margin-bottom: 20px; border-bottom: 3px solid var(--gold); }
+        .brand-title { font-size: 1.8rem; font-weight: 900; margin: 0; } .brand-title span { color: var(--gold); }
+        .brand-subtitle { margin: 6px 0 0; font-size: 0.95rem; font-weight: 700; color: #e2e8f0; }
+        
+        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); border: 1px solid var(--border); }
+        .card h2 { margin: 0 0 16px 0; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .card h2::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--gold); border-radius: 2px; }
+        
+        .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .field label { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .field input, .quick-note, .issue-input, textarea, .inline-date-picker { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.95rem; background: #f8fafc; outline: none; width: 100%; box-sizing: border-box; }
+        .inline-date-picker { font-family: inherit; margin-top: 4px; border: 1px solid #cbd5e1; background: #fff; max-width: 200px; display: block; cursor: pointer; }
+        .quick-note { height: 40px; resize: none; margin-bottom: 8px; }
+        .issue-input { font-size: 0.85rem; padding: 8px; margin-bottom: 6px; }
+        
+        .global-status-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; margin-bottom: 10px; }
+        .g-btn { padding: 10px; border: 1px solid var(--border); background: #f1f5f9; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 0.85rem; color: var(--slate-800); }
+        .g-btn.active { color: white; }
+        .g-btn.not-started.active { background: #64748b; border-color: #64748b; }
+        .g-btn.in-progress.active { background: #f59e0b; border-color: #f59e0b; }
+        .g-btn.completed.active { background: #10b981; border-color: #10b981; }
+
+        .banner { background: #f1f5f9; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; margin: 20px 0 10px; border-right: 4px solid var(--slate-900); }
+        .item { background: white; border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .item-header-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 12px; width: 100%; box-sizing: border-box; }
+        .item-text { font-size: 0.95rem; font-weight: 600; line-height: 1.4; color: var(--slate-800); flex-grow: 1; }
+        
+        .issue-trigger-btn { background: #f1f5f9; color: var(--slate-800); border: 1px solid var(--border); padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; cursor: pointer; flex-shrink: 0; letter-spacing: 0.5px; transition: all 0.2s; }
+        .issue-trigger-btn.has-issue { background: #fecaca; color: #dc2626; border-color: #f87171; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.08); }
+        
+        .btn-gp { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .btn-s { padding: 10px; border: 1px solid var(--border); background: white; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; color: #64748b; text-align: center; }
+        .btn-s.p.active { background: #ecfdf5; color: var(--passed); border-color: var(--passed); }
+        .btn-s.f.active { background: #fef2f2; color: var(--failed); border-color: var(--failed); }
+        .btn-s.n.active { background: #e2e8f0; color: var(--slate-800); border-color: var(--na); }
+        
+        .issue-sliding-panel { display: none; background: #fffbfb; border: 1px dashed #fca5a5; border-radius: 12px; padding: 14px; margin-top: 10px; }
+        .btn-a { background: var(--slate-800); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .btn-a.mail { background: #2563eb; width: 100%; margin-bottom: 8px; margin-top: 6px; }
+        .btn-a.mail:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; border: 1px solid #e2e8f0; }
+        .btn-a.del { background: #fee2e2; color: var(--failed); margin-top: 8px; }
+        .can-wrap { position: relative; margin-top: 10px; background: #f1f5f9; border-radius: 12px; display: inline-block; max-width: 100%; overflow: hidden; border: 1px solid var(--border); }
+        canvas { display: block; max-width: 100%; background: white; }
+        .sig-box { border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; margin-top: 6px; height: 110px; }
+        .sub-bar { background: linear-gradient(135deg, var(--slate-900), var(--slate-800)); color: white; width: 100%; border: none; padding: 18px; font-size: 1.15rem; font-weight: 800; border-radius: 14px; cursor: pointer; margin: 30px 0; border-bottom: 3px solid var(--gold); box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15); }
+        .summary-list { font-size: 0.85rem; padding-right: 20px; color: var(--failed); font-weight: bold; }
+        .summary-list li { margin-bottom: 4px; cursor: pointer; text-decoration: underline; }
+    </style>
+<script id="__saved_data__">window.__ELECTRA_SAVED__ = {"panelName":"PDU PANL IT HALL","inspectorName":"","globalStatus":"not-started","items":{"1":{"status":"","note":"","desc":"","person":"","email":"","date":""},"2":{"status":"","note":"","desc":"","person":"","email":"","date":""},"3":{"status":"","note":"","desc":"","person":"","email":"","date":""},"4":{"status":"","note":"","desc":"","person":"","email":"","date":""},"5":{"status":"","note":"","desc":"","person":"","email":"","date":""},"6":{"status":"","note":"","desc":"","person":"","email":"","date":""},"7":{"status":"","note":"","desc":"","person":"","email":"","date":""},"8":{"status":"","note":"","desc":"","person":"","email":"","date":""},"9":{"status":"","note":"","desc":"","person":"","email":"","date":""},"10":{"status":"","note":"","desc":"","person":"","email":"","date":""},"11":{"status":"","note":"","desc":"","person":"","email":"","date":""},"12":{"status":"","note":"","desc":"","person":"","email":"","date":""},"13":{"status":"","note":"","desc":"","person":"","email":"","date":""},"14":{"status":"","note":"","desc":"","person":"","email":"","date":""},"15":{"status":"","note":"","desc":"","person":"","email":"","date":""},"16":{"status":"","note":"","desc":"","person":"","email":"","date":""},"17":{"status":"","note":"","desc":"","person":"","email":"","date":""},"18":{"status":"","note":"","desc":"","person":"","email":"","date":""},"19":{"status":"","note":"","desc":"","person":"","email":"","date":""},"20":{"status":"","note":"","desc":"","person":"","email":"","date":""},"21":{"status":"","note":"","desc":"","person":"","email":"","date":""},"22":{"status":"","note":"","desc":"","person":"","email":"","date":""},"23":{"status":"","note":"","desc":"","person":"","email":"","date":""},"24":{"status":"","note":"","desc":"","person":"","email":"","date":""},"25":{"status":"","note":"","desc":"","person":"","email":"","date":""},"26":{"status":"","note":"","desc":"","person":"","email":"","date":""},"27":{"status":"","note":"","desc":"","person":"","email":"","date":""},"28":{"status":"","note":"","desc":"","person":"","email":"","date":""},"29":{"status":"","note":"","desc":"","person":"","email":"","date":""},"30":{"status":"","note":"","desc":"","person":"","email":"","date":""},"31":{"status":"","note":"","desc":"","person":"","email":"","date":""}}};window.__ELECTRA_PHOTOS__ = {};</script></head>
+<body>
+<div class="app-frame">
+    <div class="premium-header">
+        <div class="brand-title">ELECTRA <span>CX</span></div>
+        <div class="brand-subtitle">צ'קליסט לבדיקת לוחות - שלב L0</div>
+    </div>
+
+    <div class="card">
+        <h2>סטטוס הצ'קליסט הכללי</h2>
+        <div class="global-status-selector">
+            <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
+            <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
+            <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
+        </div>
+    </div>
+
+    <div class="card" id="summary-card" style="display:none;">
+        <h2 style="color:var(--failed);">🔍 ריכוז ליקויים פתוחים (קיצור דרך)</h2>
+        <ul id="summary-box" class="summary-list"></ul>
+    </div>
+
+    <div class="card">
+        <h2>פרטי המערכת והציוד</h2>
+        <div class="field"><label>שם הלוח / Name Panel</label><input type="text" id="global-panel-name"></div>
+        <div class="field"><label>מספר לוח / No Panel</label><input type="text"></div>
+        <div class="field"><label>פרויקט / Project</label><input type="text"></div>
+        <div class="field"><label>בודק / Inspector</label><input type="text" id="global-inspector-name"></div>
+    </div>
+    <div id="list"><div class="banner">חלק 2: בדיקות חזותיות</div><div class="item" id="scroll-target-1">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-1"><span style="color:var(--na); font-size:0.85rem;">[1]</span> רישום שם הלוח והתאמתו הפיזית</div>
+                <button class="issue-trigger-btn" id="trig-1" onclick="toggleIssuePanel(1)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-1" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(1)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-1" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-1" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-1" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 1</div>
+                    <div id="photo-thumbs-1" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 1)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-1">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 1:</div>
+                <input type="text" id="person-1" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-1" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-1" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(1)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-1" onclick="sendIssueMail(1)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-1" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(1)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-2">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-2"><span style="color:var(--na); font-size:0.85rem;">[2]</span> רישום תאריך הבדיקה בפועל</div>
+                <button class="issue-trigger-btn" id="trig-2" onclick="toggleIssuePanel(2)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--slate-800); min-width:85px;">בחירת תאריך:</label>
+                    <input type="date" id="note-2" class="inline-date-picker" onchange="autoSaveToStorage()">
+                </div>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(2)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-2" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-2" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-2" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 2</div>
+                    <div id="photo-thumbs-2" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 2)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-2">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 2:</div>
+                <input type="text" id="person-2" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-2" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-2" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(2)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-2" onclick="sendIssueMail(2)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-2" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(2)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-3">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-3"><span style="color:var(--na); font-size:0.85rem;">[3]</span> ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן</div>
+                <button class="issue-trigger-btn" id="trig-3" onclick="toggleIssuePanel(3)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-3" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(3)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-3" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-3" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-3" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 3</div>
+                    <div id="photo-thumbs-3" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 3)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-3">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 3:</div>
+                <input type="text" id="person-3" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-3" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-3" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(3)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-3" onclick="sendIssueMail(3)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-3" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(3)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-4">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-4"><span style="color:var(--na); font-size:0.85rem;">[4]</span> ודא התאמת מספר סידורי של הפריט לטופס הבדיקה במפעל</div>
+                <button class="issue-trigger-btn" id="trig-4" onclick="toggleIssuePanel(4)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-4" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(4)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-4" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-4" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-4" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 4</div>
+                    <div id="photo-thumbs-4" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 4)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-4">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 4:</div>
+                <input type="text" id="person-4" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-4" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-4" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(4)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-4" onclick="sendIssueMail(4)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-4" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(4)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-5">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-5"><span style="color:var(--na); font-size:0.85rem;">[5]</span> צלם תווית הציוד כולל דגם ומספר סידורי</div>
+                <button class="issue-trigger-btn" id="trig-5" onclick="toggleIssuePanel(5)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-5" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(5)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-5" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-5" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-5" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 5</div>
+                    <div id="photo-thumbs-5" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 5)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-5">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 5:</div>
+                <input type="text" id="person-5" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-5" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-5" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(5)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-5" onclick="sendIssueMail(5)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-5" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(5)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-6">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-6"><span style="color:var(--na); font-size:0.85rem;">[6]</span> ודא קבלת טופס בדיקות קלט/פלט (I/O) למערכת בקרת מבנה (BMS)</div>
+                <button class="issue-trigger-btn" id="trig-6" onclick="toggleIssuePanel(6)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-6" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(6)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-6" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-6" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-6" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 6</div>
+                    <div id="photo-thumbs-6" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 6)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-6">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 6:</div>
+                <input type="text" id="person-6" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-6" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-6" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(6)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-6" onclick="sendIssueMail(6)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-6" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(6)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-7">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-7"><span style="color:var(--na); font-size:0.85rem;">[7]</span> ודא יישום לקחים והערות מבדיקות קודמות</div>
+                <button class="issue-trigger-btn" id="trig-7" onclick="toggleIssuePanel(7)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-7" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(7)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-7" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-7" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-7" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 7</div>
+                    <div id="photo-thumbs-7" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 7)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-7">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 7:</div>
+                <input type="text" id="person-7" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-7" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-7" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(7)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-7" onclick="sendIssueMail(7)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-7" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(7)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-8">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-8"><span style="color:var(--na); font-size:0.85rem;">[8]</span> רשום גרסת תוכנית מודפסת לפיה נבדק הלוח וודא שהיא העדכנית ביותר</div>
+                <button class="issue-trigger-btn" id="trig-8" onclick="toggleIssuePanel(8)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-8" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(8)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-8" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-8" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-8" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 8</div>
+                    <div id="photo-thumbs-8" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 8)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-8">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 8:</div>
+                <input type="text" id="person-8" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-8" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-8" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(8)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-8" onclick="sendIssueMail(8)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-8" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(8)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-9">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-9"><span style="color:var(--na); font-size:0.85rem;">[9]</span> ודא התאמת מראה הלוח לתוכנית (שילוט, כמות ומיקום מפסקים, מימיקה ואביזרי קצה בדלתות)</div>
+                <button class="issue-trigger-btn" id="trig-9" onclick="toggleIssuePanel(9)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-9" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(9)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-9" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-9" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-9" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 9</div>
+                    <div id="photo-thumbs-9" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 9)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-9">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 9:</div>
+                <input type="text" id="person-9" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-9" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-9" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(9)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-9" onclick="sendIssueMail(9)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-9" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(9)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-10">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-10"><span style="color:var(--na); font-size:0.85rem;">[10]</span> ודא התאמת ערכי זרם המפסקים לתוכנית, כניסות כבילה, חיזוק גידים, קיום חוצצים והפרדות</div>
+                <button class="issue-trigger-btn" id="trig-10" onclick="toggleIssuePanel(10)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-10" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(10)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-10" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-10" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-10" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 10</div>
+                    <div id="photo-thumbs-10" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 10)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-10">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 10:</div>
+                <input type="text" id="person-10" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-10" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-10" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(10)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-10" onclick="sendIssueMail(10)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-10" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(10)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-11">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-11"><span style="color:var(--na); font-size:0.85rem;">[11]</span> בדוק התאמה בין הכבילה בתוכנית לכמות החיבורים בפסי הצבירה (שטח חתך, כמות גידים - בדגש על מפסקי אוויר)</div>
+                <button class="issue-trigger-btn" id="trig-11" onclick="toggleIssuePanel(11)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-11" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(11)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-11" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-11" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-11" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 11</div>
+                    <div id="photo-thumbs-11" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 11)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-11">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 11:</div>
+                <input type="text" id="person-11" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-11" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-11" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(11)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-11" onclick="sendIssueMail(11)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-11" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(11)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-12">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-12"><span style="color:var(--na); font-size:0.85rem;">[12]</span> ודא התאמת מספר הקטבים (3/4 קטבים) במערכות ההחלפה ממקורות שונים תואם לתכנון</div>
+                <button class="issue-trigger-btn" id="trig-12" onclick="toggleIssuePanel(12)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-12" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(12)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-12" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-12" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-12" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 12</div>
+                    <div id="photo-thumbs-12" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 12)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-12">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 12:</div>
+                <input type="text" id="person-12" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-12" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-12" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(12)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-12" onclick="sendIssueMail(12)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-12" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(12)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-13">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-13"><span style="color:var(--na); font-size:0.85rem;">[13]</span> וידוא קיום ותאימות נורות סימון לכלל מקורות ההזנה ללוח בהתאם לתוכנית ולסימון הנדרש</div>
+                <button class="issue-trigger-btn" id="trig-13" onclick="toggleIssuePanel(13)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-13" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(13)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-13" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-13" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-13" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 13</div>
+                    <div id="photo-thumbs-13" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 13)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-13">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 13:</div>
+                <input type="text" id="person-13" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-13" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-13" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(13)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-13" onclick="sendIssueMail(13)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-13" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(13)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="banner">חלק 3: בדיקות פונקציונאליות</div><div class="item" id="scroll-target-14">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-14"><span style="color:var(--na); font-size:0.85rem;">[14]</span> בדוק תפעול מפסקים מהכפתורים במפסק וכן מהכפתורים החיצוניים (ככל שקיימים)</div>
+                <button class="issue-trigger-btn" id="trig-14" onclick="toggleIssuePanel(14)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-14" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(14)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-14" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-14" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-14" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 14</div>
+                    <div id="photo-thumbs-14" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 14)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-14">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 14:</div>
+                <input type="text" id="person-14" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-14" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-14" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(14)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-14" onclick="sendIssueMail(14)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-14" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(14)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-15">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-15"><span style="color:var(--na); font-size:0.85rem;">[15]</span> בדוק פעולת מפסק למצב "טריפ" ע"י לחצן "טריפ" מכני במפסק</div>
+                <button class="issue-trigger-btn" id="trig-15" onclick="toggleIssuePanel(15)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-15" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(15)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-15" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-15" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-15" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 15</div>
+                    <div id="photo-thumbs-15" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 15)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-15">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 15:</div>
+                <input type="text" id="person-15" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-15" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-15" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(15)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-15" onclick="sendIssueMail(15)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-15" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(15)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-16">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-16"><span style="color:var(--na); font-size:0.85rem;">[16]</span> בדוק פעולת מפסקים למצב "טריפ" ע"י פקודות חיצוניות (גילוי אש, לחצני חירום EPO)</div>
+                <button class="issue-trigger-btn" id="trig-16" onclick="toggleIssuePanel(16)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-16" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(16)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-16" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-16" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-16" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 16</div>
+                    <div id="photo-thumbs-16" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 16)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-16">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 16:</div>
+                <input type="text" id="person-16" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-16" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-16" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(16)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-16" onclick="sendIssueMail(16)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-16" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(16)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-17">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-17"><span style="color:var(--na); font-size:0.85rem;">[17]</span> בדוק נקודות קלט/פלט נוספות שאינן קשורות לבקרת מבנה (כגון מגעים יבשים ממערכות UPS)</div>
+                <button class="issue-trigger-btn" id="trig-17" onclick="toggleIssuePanel(17)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-17" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(17)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-17" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-17" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-17" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 17</div>
+                    <div id="photo-thumbs-17" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 17)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-17">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 17:</div>
+                <input type="text" id="person-17" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-17" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-17" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(17)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-17" onclick="sendIssueMail(17)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-17" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(17)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-18">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-18"><span style="color:var(--na); font-size:0.85rem;">[18]</span> בדוק תפקוד תקין של מפסקי פחת, ושלול לחלוטין הצלבה בין פסי אפס (נוטרל)</div>
+                <button class="issue-trigger-btn" id="trig-18" onclick="toggleIssuePanel(18)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-18" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(18)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-18" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-18" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-18" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 18</div>
+                    <div id="photo-thumbs-18" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 18)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-18">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 18:</div>
+                <input type="text" id="person-18" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-18" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-18" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(18)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-18" onclick="sendIssueMail(18)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-18" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(18)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-19">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-19"><span style="color:var(--na); font-size:0.85rem;">[19]</span> בדוק תפקוד ותאימות נורות סימון ומכשירי מדידה (הדלקה, צבע ושיוך למעגלים בהתאם לתוכנית)</div>
+                <button class="issue-trigger-btn" id="trig-19" onclick="toggleIssuePanel(19)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-19" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(19)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-19" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-19" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-19" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 19</div>
+                    <div id="photo-thumbs-19" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 19)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-19">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 19:</div>
+                <input type="text" id="person-19" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-19" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-19" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(19)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-19" onclick="sendIssueMail(19)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-19" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(19)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-20">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-20"><span style="color:var(--na); font-size:0.85rem;">[20]</span> בדוק אי-יכולת ביצוע העברת מקורות כאשר מערכת האל-פסק (UPS) אינה במצב עוקף (Manual Bypass)</div>
+                <button class="issue-trigger-btn" id="trig-20" onclick="toggleIssuePanel(20)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-20" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(20)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-20" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-20" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-20" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 20</div>
+                    <div id="photo-thumbs-20" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 20)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-20">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 20:</div>
+                <input type="text" id="person-20" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-20" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-20" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(20)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-20" onclick="sendIssueMail(20)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-20" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(20)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-21">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-21"><span style="color:var(--na); font-size:0.85rem;">[21]</span> בדוק העברה תקינה בין מקורות ההזנה כאשר מערכת האל-פסק במצב עוקף חיצוני</div>
+                <button class="issue-trigger-btn" id="trig-21" onclick="toggleIssuePanel(21)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-21" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(21)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-21" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-21" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-21" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 21</div>
+                    <div id="photo-thumbs-21" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 21)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-21">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 21:</div>
+                <input type="text" id="person-21" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-21" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-21" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(21)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-21" onclick="sendIssueMail(21)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-21" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(21)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-22">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-22"><span style="color:var(--na); font-size:0.85rem;">[22]</span> בדוק מצב ביניים בו שני מפסקים סגורים, שחרר מפתח החלפה שקטה וודא שמפסק חח"י נפתח לפי לוגיקת ההגנה</div>
+                <button class="issue-trigger-btn" id="trig-22" onclick="toggleIssuePanel(22)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-22" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(22)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-22" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-22" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-22" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 22</div>
+                    <div id="photo-thumbs-22" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 22)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-22">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 22:</div>
+                <input type="text" id="person-22" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-22" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-22" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(22)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-22" onclick="sendIssueMail(22)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-22" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(22)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="banner">חלק 4: הזנות כפולות ופיקוד</div><div class="item" id="scroll-target-23">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-23"><span style="color:var(--na); font-size:0.85rem;">[23]</span> בריבוי הזנות: בדוק תקינות הזנת רכיבי פיקוד, בקרים (I/O), ומכשירי מדידה תחת כל אחד ממקורות ההזנה</div>
+                <button class="issue-trigger-btn" id="trig-23" onclick="toggleIssuePanel(23)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-23" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(23)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-23" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-23" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-23" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 23</div>
+                    <div id="photo-thumbs-23" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 23)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-23">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 23:</div>
+                <input type="text" id="person-23" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-23" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-23" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(23)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-23" onclick="sendIssueMail(23)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-23" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(23)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-24">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-24"><span style="color:var(--na); font-size:0.85rem;">[24]</span> בשתי הזנות ראשיות: בדוק תקינות הלוח כאשר הוא מוזן משני מקורות במקביל</div>
+                <button class="issue-trigger-btn" id="trig-24" onclick="toggleIssuePanel(24)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-24" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(24)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-24" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-24" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-24" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 24</div>
+                    <div id="photo-thumbs-24" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 24)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-24">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 24:</div>
+                <input type="text" id="person-24" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-24" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-24" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(24)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-24" onclick="sendIssueMail(24)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-24" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(24)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-25">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-25"><span style="color:var(--na); font-size:0.85rem;">[25]</span> נתק מקור ראשי וודא מעבר אוטומטי למקור משני</div>
+                <button class="issue-trigger-btn" id="trig-25" onclick="toggleIssuePanel(25)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-25" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(25)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-25" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-25" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-25" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 25</div>
+                    <div id="photo-thumbs-25" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 25)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-25">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 25:</div>
+                <input type="text" id="person-25" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-25" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-25" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(25)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-25" onclick="sendIssueMail(25)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-25" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(25)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-26">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-26"><span style="color:var(--na); font-size:0.85rem;">[26]</span> חבר חזרה מקור ראשי וודא חזרה למקור הראשי (Auto-Return)</div>
+                <button class="issue-trigger-btn" id="trig-26" onclick="toggleIssuePanel(26)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-26" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(26)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-26" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-26" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-26" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 26</div>
+                    <div id="photo-thumbs-26" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 26)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-26">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 26:</div>
+                <input type="text" id="person-26" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-26" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-26" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(26)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-26" onclick="sendIssueMail(26)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-26" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(26)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-27">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-27"><span style="color:var(--na); font-size:0.85rem;">[27]</span> נתק שני מקורות בו-זמנית -&gt; החזר מקור משני וודא חזרת מתח -&gt; החזר מקור ראשי וודא החלפה לראשי</div>
+                <button class="issue-trigger-btn" id="trig-27" onclick="toggleIssuePanel(27)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-27" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(27)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-27" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-27" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-27" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 27</div>
+                    <div id="photo-thumbs-27" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 27)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-27">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 27:</div>
+                <input type="text" id="person-27" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-27" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-27" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(27)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-27" onclick="sendIssueMail(27)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-27" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(27)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-28">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-28"><span style="color:var(--na); font-size:0.85rem;">[28]</span> ודא רציפות תפקוד הלוח בהיעדר הזנות פיקוד – בדיקת כל הזנה בנפרד</div>
+                <button class="issue-trigger-btn" id="trig-28" onclick="toggleIssuePanel(28)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-28" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(28)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-28" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-28" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-28" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 28</div>
+                    <div id="photo-thumbs-28" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 28)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-28">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 28:</div>
+                <input type="text" id="person-28" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-28" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-28" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(28)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-28" onclick="sendIssueMail(28)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-28" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(28)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-29">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-29"><span style="color:var(--na); font-size:0.85rem;">[29]</span> ודא רציפות תפקוד הלוח בהיעדר שתי הזנות הפיקוד – עבודה תקינה על גבי מצברים</div>
+                <button class="issue-trigger-btn" id="trig-29" onclick="toggleIssuePanel(29)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-29" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(29)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-29" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-29" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-29" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 29</div>
+                    <div id="photo-thumbs-29" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 29)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-29">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 29:</div>
+                <input type="text" id="person-29" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-29" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-29" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(29)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-29" onclick="sendIssueMail(29)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-29" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(29)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-30">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-30"><span style="color:var(--na); font-size:0.85rem;">[30]</span> בצע "טריפ" במפסק הזנה לשנאי/לוח – ודא פקודת הקפצת מפסק בלוח המתח הנמוך המתאים</div>
+                <button class="issue-trigger-btn" id="trig-30" onclick="toggleIssuePanel(30)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-30" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(30)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-30" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-30" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-30" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 30</div>
+                    <div id="photo-thumbs-30" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 30)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-30">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 30:</div>
+                <input type="text" id="person-30" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-30" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-30" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(30)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-30" onclick="sendIssueMail(30)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-30" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(30)">🗑 מחק אירוע</button>
+            </div>
+        </div><div class="item" id="scroll-target-31">
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-31"><span style="color:var(--na); font-size:0.85rem;">[31]</span> ודא כי אין נושאים פתוחים (Punch List) המשפיעים על השלבים הבאים</div>
+                <button class="issue-trigger-btn" id="trig-31" onclick="toggleIssuePanel(31)">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            <textarea id="note-31" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(31)" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-31" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span id="photo-badge-31" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-31" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף 31</div>
+                    <div id="photo-thumbs-31" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple="" style="display:none;" onchange="addPhotos(this, 31)">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-31">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף 31:</div>
+                <input type="text" id="person-31" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-31" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-31" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(31)"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-31" onclick="sendIssueMail(31)" disabled="">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-31" style="font-size: 0.75rem; color: var(--na); margin-bottom: 8px; font-weight: bold; display: block;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(31)">🗑 מחק אירוע</button>
+            </div>
+        </div></div>
+<script>
+    const items = [
+        {c:2, id:1, t:"רישום שם הלוח והתאמתו הפיזית"}, {c:2, id:2, t:"רישום תאריך הבדיקה בפועל", isDate: true},
+        {c:2, id:3, t:"ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן"}, {c:2, id:4, t:"ודא התאמת מספר סידורי של הפריט לטופס הבדיקה במפעל"},
+        {c:2, id:5, t:"צלם תווית הציוד כולל דגם ומספר סידורי"}, {c:2, id:6, t:"ודא קבלת טופס בדיקות קלט/פלט (I/O) למערכת בקרת מבנה (BMS)"},
+        {c:2, id:7, t:"ודא יישום לקחים והערות מבדיקות קודמות"}, {c:2, id:8, t:"רשום גרסת תוכנית מודפסת לפיה נבדק הלוח וודא שהיא העדכנית ביותר"},
+        {c:2, id:9, t:"ודא התאמת מראה הלוח לתוכנית (שילוט, כמות ומיקום מפסקים, מימיקה ואביזרי קצה בדלתות)"},
+        {c:2, id:10, t:"ודא התאמת ערכי זרם המפסקים לתוכנית, כניסות כבילה, חיזוק גידים, קיום חוצצים והפרדות"},
+        {c:2, id:11, t:"בדוק התאמה בין הכבילה בתוכנית לכמות החיבורים בפסי הצבירה (שטח חתך, כמות גידים - בדגש על מפסקי אוויר)"},
+        {c:2, id:12, t:"ודא התאמת מספר הקטבים (3/4 קטבים) במערכות ההחלפה ממקורות שונים תואם לתכנון"},
+        {c:2, id:13, t:"וידוא קיום ותאימות נורות סימון לכלל מקורות ההזנה ללוח בהתאם לתוכנית ולסימון הנדרש"},
+        {c:3, id:14, t:"בדוק תפעול מפסקים מהכפתורים במפסק וכן מהכפתורים החיצוניים (ככל שקיימים)"},
+        {c:3, id:15, t:"בדוק פעולת מפסק למצב \"טריפ\" ע\"י לחצן \"טריפ\" מכני במפסק"},
+        {c:3, id:16, t:"בדוק פעולת מפסקים למצב \"טריפ\" ע\"י פקודות חיצוניות (גילוי אש, לחצני חירום EPO)"},
+        {c:3, id:17, t:"בדוק נקודות קלט/פלט נוספות שאינן קשורות לבקרת מבנה (כגון מגעים יבשים ממערכות UPS)"},
+        {c:3, id:18, t:"בדוק תפקוד תקין של מפסקי פחת, ושלול לחלוטין הצלבה בין פסי אפס (נוטרל)"},
+        {c:3, id:19, t:"בדוק תפקוד ותאימות נורות סימון ומכשירי מדידה (הדלקה, צבע ושיוך למעגלים בהתאם לתוכנית)"},
+        {c:3, id:20, t:"בדוק אי-יכולת ביצוע העברת מקורות כאשר מערכת האל-פסק (UPS) אינה במצב עוקף (Manual Bypass)"},
+        {c:3, id:21, t:"בדוק העברה תקינה בין מקורות ההזנה כאשר מערכת האל-פסק במצב עוקף חיצוני"},
+        {c:3, id:22, t:"בדוק מצב ביניים בו שני מפסקים סגורים, שחרר מפתח החלפה שקטה וודא שמפסק חח\"י נפתח לפי לוגיקת ההגנה"},
+        {c:4, id:23, t:"בריבוי הזנות: בדוק תקינות הזנת רכיבי פיקוד, בקרים (I/O), ומכשירי מדידה תחת כל אחד ממקורות ההזנה"},
+        {c:4, id:24, t:"בשתי הזנות ראשיות: בדוק תקינות הלוח כאשר הוא מוזן משני מקורות במקביל"},
+        {c:4, id:25, t:"נתק מקור ראשי וודא מעבר אוטומטי למקור משני"}, {c:4, id:26, t:"חבר חזרה מקור ראשי וודא חזרה למקור הראשי (Auto-Return)"},
+        {c:4, id:27, t:"נתק שני מקורות בו-זמנית -> החזר מקור משני וודא חזרת מתח -> החזר מקור ראשי וודא החלפה לראשי"},
+        {c:4, id:28, t:"ודא רציפות תפקוד הלוח בהיעדר הזנות פיקוד – בדיקת כל הזנה בנפרד"},
+        {c:4, id:29, t:"ודא רציפות תפקוד הלוח בהיעדר שתי הזנות הפיקוד – עבודה תקינה על גבי מצברים"},
+        {c:4, id:30, t:"בצע \"טריפ\" במפסק הזנה לשנאי/לוח – ודא פקודת הקפצת מפסק בלוח המתח הנמוך המתאים"},
+        {c:4, id:31, t:"ודא כי אין נושאים פתוחים (Punch List) המשפיעים על השלבים הבאים"}
+    ];
+
+    const names = { 2: "חלק 2: בדיקות חזותיות", 3: "חלק 3: בדיקות פונקציונאליות", 4: "חלק 4: הזנות כפולות ופיקוד" };
+    const container = document.getElementById('list');
+    let lastC = 0;
+
+    items.forEach(item => {
+        if (item.c !== lastC) {
+            lastC = item.c;
+            const b = document.createElement('div'); b.className = 'banner'; b.innerText = names[item.c];
+            container.appendChild(b);
+        }
+        
+        let customInputHTML = `<textarea id="note-${item.id}" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>`;
+        if (item.isDate) {
+            customInputHTML = `
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--slate-800); min-width:85px;">בחירת תאריך:</label>
+                    <input type="date" id="note-${item.id}" class="inline-date-picker" onchange="autoSaveToStorage()">
+                </div>`;
+        }
+
+        const d = document.createElement('div'); d.className = 'item'; d.id = `scroll-target-${item.id}`;
+        d.innerHTML = `
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-${item.id}"><span style="color:var(--na); font-size:0.85rem;">[${item.id}]</span> ${item.t}</div>
+                <button class="issue-trigger-btn" id="trig-${item.id}" onclick="toggleIssuePanel(${item.id})">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            ${customInputHTML}
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(${item.id})" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-${item.id}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span id="photo-badge-${item.id}" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-${item.id}" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף ${item.id}</div>
+                    <div id="photo-thumbs-${item.id}" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple style="display:none;" onchange="addPhotos(this, ${item.id})">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-${item.id}">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:8px; color:var(--failed);">📝 ניהול אירוע / Issue חריג לסעיף ${item.id}:</div>
+                <input type="text" id="person-${item.id}" class="issue-input global-save-person" placeholder="שם האחראי לתיקון..." oninput="syncContacts(this, 'person')">
+                <input type="email" id="email-${item.id}" class="issue-input global-save-email" placeholder="כתובת מייל של האחראי..." oninput="syncContacts(this, 'email')">
+                <textarea id="desc-${item.id}" placeholder="פרט את הליקוי למבצע..." oninput="checkTextAndStyle(${item.id})"></textarea>
+                
+                <button class="btn-a mail" id="mail-btn-${item.id}" disabled onclick="sendIssueMail(${item.id})">📧 שלח ליקוי במייל למבצע</button>
+                <div id="status-alert-${item.id}" style="font-size:0.75rem; color:var(--na); margin-bottom:8px; font-weight:bold;">⚠️ שליחה זמינה רק כאשר הסטטוס הכללי "בתהליך" או "הושלם"</div>
+                
+                <button class="btn-a del" onclick="clearIssue(${item.id})">🗑 מחק אירוע</button>
+            </div>
+        `;
+        container.appendChild(d);
+    });
+
+    function setSt(btn) { 
+        if (btn.classList.contains('active')) { btn.classList.remove('active'); } 
+        else { btn.parentElement.querySelectorAll('.btn-s').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        autoSaveToStorage();
+    }
+
+    // מערך גלובלי לשמירת תמונות (base64) לכל סעיף
+    const itemPhotos = {};
+
+    function togglePhotoPanel(id) {
+        const panel = document.getElementById(`photo-panel-${id}`);
+        const btn = document.getElementById(`photo-trig-${id}`);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    function addPhotos(input, id) {
+        if (!input.files || !input.files.length) return;
+        if (!itemPhotos[id]) itemPhotos[id] = [];
+        const thumbsContainer = document.getElementById(`photo-thumbs-${id}`);
+
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const idx = itemPhotos[id].length;
+                itemPhotos[id].push(base64);
+
+                // יצירת תמונה ממוזערת עם כפתור מחיקה
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = 'position:relative; display:inline-block;';
+                wrapper.id = `thumb-wrap-${id}-${idx}`;
+
+                const img = document.createElement('img');
+                img.src = base64;
+                img.style.cssText = 'width:80px; height:80px; object-fit:cover; border-radius:8px; border:2px solid #7dd3fc; cursor:pointer;';
+                img.onclick = () => openPhotoViewer(base64);
+
+                const delBtn = document.createElement('button');
+                delBtn.innerText = '✕';
+                delBtn.style.cssText = 'position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:0.7rem; font-weight:bold; cursor:pointer; line-height:1;';
+                delBtn.onclick = () => { removePhoto(id, idx); wrapper.remove(); };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(delBtn);
+                thumbsContainer.appendChild(wrapper);
+
+                // עדכון כפתור הפנל
+                updatePhotoBtn(id);
+                autoSaveToStorage();
+            };
+            reader.readAsDataURL(file);
+        });
+        input.value = ""; // איפוס input לאפשר העלאה חוזרת
+    }
+
+    function removePhoto(id, idx) {
+        if (itemPhotos[id]) {
+            itemPhotos[id][idx] = null; // מסמן כמחוק מבלי לשבש אינדקסים
+            updatePhotoBtn(id);
+            autoSaveToStorage();
+        }
+    }
+
+    function updatePhotoBtn(id) {
+        const icon = document.getElementById(`photo-trig-${id}`);
+        const badge = document.getElementById(`photo-badge-${id}`);
+        if (!icon || !badge) return;
+        const count = (itemPhotos[id] || []).filter(p => p !== null).length;
+        if (count > 0) {
+            icon.setAttribute('stroke', '#0369a1');
+            badge.style.display = 'block';
+            badge.textContent = count;
+        } else {
+            icon.setAttribute('stroke', '#94a3b8');
+            badge.style.display = 'none';
+        }
+    }
+
+    function openPhotoViewer(src) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center;';
+        overlay.onclick = () => overlay.remove();
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'max-width:95vw; max-height:90vh; border-radius:12px; box-shadow:0 0 40px rgba(0,0,0,0.5);';
+        img.onclick = e => e.stopPropagation();
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+
+    // שמירה אוטומטית ב-localStorage בכל שינוי
+    function autoSaveToStorage() {
+        try {
+            const data = {
+                panelName: (document.getElementById('global-panel-name') || {}).value || "",
+                inspectorName: (document.getElementById('global-inspector-name') || {}).value || "",
+                globalStatus: currentGlobalStatus,
+                items: {}
+            };
+            for (let i = 1; i <= 31; i++) {
+                const itemEl = document.getElementById(`scroll-target-${i}`);
+                if (!itemEl) continue;
+                let status = "";
+                if (itemEl.querySelector('.btn-s.p.active')) status = "P";
+                if (itemEl.querySelector('.btn-s.f.active')) status = "F";
+                if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+                const dateEl = itemEl.querySelector('input[type="date"]');
+                data.items[i] = {
+                    status,
+                    note: (document.getElementById(`note-${i}`) || {}).value || "",
+                    desc: (document.getElementById(`desc-${i}`) || {}).value || "",
+                    person: (document.getElementById(`person-${i}`) || {}).value || "",
+                    email: (document.getElementById(`email-${i}`) || {}).value || "",
+                    date: dateEl ? dateEl.value : ""
+                };
+            }
+            localStorage.setItem('electra_l0_autosave', JSON.stringify(data));
+            // שמירת שמות נציגים
+            const sigNames = [];
+            for (let i = 0; i < 5; i++) { const el = document.getElementById(`sig-name-${i}`); sigNames.push(el ? el.value : ""); }
+            localStorage.setItem('electra_l0_signames', JSON.stringify(sigNames));
+            // שמירת תמונות בנפרד (כי הן גדולות)
+            try { localStorage.setItem('electra_l0_photos', JSON.stringify(itemPhotos)); } catch(e) {}
+        } catch(e) {}
+    }
+</script>
+<!-- חלק 5 -->
+<div class="banner">חלק 5: השלמת הרשימה ואישורי נציגים</div>
+
+<div class="card">
+    <h2 style="margin-bottom:20px;">אישורי נציגים - שלב L0</h2>
+    <div id="sig-section-target"><div class="field" style="margin-bottom: 12px;"><label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">ממלא הטופס</label><input type="text" id="sig-name-0" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;"></div><div class="field" style="margin-bottom: 12px;"><label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">נציג CX ELECTRA</label><input type="text" id="sig-name-1" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;"></div><div class="field" style="margin-bottom: 12px;"><label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">נציג ההסמכה</label><input type="text" id="sig-name-2" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;"></div><div class="field" style="margin-bottom: 12px;"><label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">נציג היצרן</label><input type="text" id="sig-name-3" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;"></div><div class="field" style="margin-bottom: 12px;"><label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">נציג המזמין</label><input type="text" id="sig-name-4" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;"></div></div>
+</div>
+
+<!-- מערכת שינוי סטטוס שלישית - ממוקמת באופן יוקרתי מיד לאחר פרק 5 -->
+<div class="card">
+    <h2>סטטוס הצ'קליסט הכללי (עדכון סופי בתחתית)</h2>
+    <div class="global-status-selector">
+        <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
+        <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
+        <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
+    </div>
+</div>
+
+<button class="sub-bar" onclick="saveAsHTMLFile()" style="margin-bottom:10px;">💾 שמור קובץ HTML (פתח שוב עם כל הנתונים)</button>
+<button class="sub-bar" onclick="saveChecklistAndExport()" style="background:linear-gradient(135deg,#065f46,#047857); margin-top:0;">📊 הורד דוח CSV לאקסל</button>
+</div>
+
+<script>
+    let currentGlobalStatus = "not-started";
+
+    // סנכרון משולש של כל מערכות הסטטוסים בדף (עליון, אמצעי ותחתון) וחסימת המיילים
+    function syncGlobalStatus(status) {
+        currentGlobalStatus = status;
+        autoSaveToStorage();
+        document.querySelectorAll('.global-status-selector').forEach(container => {
+            container.querySelectorAll('.g-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.getAttribute('data-status') === status) { btn.classList.add('active'); }
+            });
+        });
+
+        // עדכון כפתורי המייל בכל הסעיפים בהתאם לסטטוס הצ'קליסט
+        for(let i = 1; i <= 31; i++) {
+            const mailBtn = document.getElementById(`mail-btn-${i}`);
+            const alertText = document.getElementById(`status-alert-${i}`);
+            if(mailBtn) {
+                if(status === 'in-progress' || status === 'completed') {
+                    mailBtn.disabled = false;
+                    if(alertText) alertText.style.display = "none";
+                } else {
+                    mailBtn.disabled = true;
+                    if(alertText) alertText.style.display = "block";
+                }
+            }
+        }
+    }
+
+    // סנכרון אנשי קשר אוטומטי בין כל הסעיפים
+    function syncContacts(input, type) {
+        const val = input.value;
+        const className = type === 'person' ? '.global-save-person' : '.global-save-email';
+        document.querySelectorAll(className).forEach(el => { el.value = val; });
+    }
+
+    // פונקציית פתיחה וסגירה חלקה של ה-Issue ישירות מתחת לסעיף
+    function toggleIssuePanel(id) {
+        const panel = document.getElementById(`panel-${id}`);
+        const btn = document.getElementById(`trig-${id}`);
+        
+        if(panel.style.display === "block") {
+            panel.style.display = "none";
+            checkTextAndStyle(id); // בודק אם להשאיר אדום קבוע בסגירה
+        } else {
+            panel.style.display = "block";
+            btn.classList.add('has-issue'); // צובע באדום בזמן פתיחה ועריכה
+            updateSummary();
+        }
+    }
+
+    // בדיקה אם קיים טקסט בתיאור הליקוי כדי לקבוע את הצבע האדום הקבוע שלו
+    function checkTextAndStyle(id) {
+        const btn = document.getElementById(`trig-${id}`);
+        const desc = document.getElementById(`desc-${id}`).value;
+        if (desc.trim() !== "") {
+            btn.classList.add('has-issue');
+        } else {
+            btn.classList.remove('has-issue');
+        }
+        updateSummary();
+        autoSaveToStorage();
+    }
+
+    function clearIssue(id) {
+        document.getElementById(`panel-${id}`).style.display = "none";
+        document.getElementById(`trig-${id}`).classList.remove('has-issue');
+        document.getElementById(`person-${id}`).value = "";
+        document.getElementById(`email-${id}`).value = "";
+        document.getElementById(`desc-${id}`).value = "";
+        updateSummary();
+        autoSaveToStorage();
+    }
+
+    // טבלת ריכוז ליקויים עליונה (קיצור דרך)
+    function updateSummary() {
+        const box = document.getElementById('summary-box');
+        const card = document.getElementById('summary-card');
+        if (!box) return;
+        box.innerHTML = ""; let count = 0;
+        
+        for(let i=1; i<=31; i++) {
+            const descEl = document.getElementById(`desc-${i}`);
+            const desc = descEl ? descEl.value : "";
+            if(desc && desc.trim() !== "") {
+                count++; const li = document.createElement('li');
+                li.innerText = `סעיף ${i}: ${desc.substring(0,25)}...`;
+                li.onclick = function() { document.getElementById('scroll-target-' + i).scrollIntoView({ behavior: 'smooth' }); };
+                box.appendChild(li);
+            }
+        }
+        if (card) card.style.display = count > 0 ? "block" : "none";
+    }
+
+    // שליחת הליקוי במייל למבצע
+    function sendIssueMail(itemId) {
+        const person = document.getElementById(`person-${itemId}`).value || "איש קשר";
+        const email = document.getElementById(`email-${itemId}`).value;
+        const description = document.getElementById(`desc-${itemId}`).value || "לא הוזן פירוט";
+        const sectionText = document.getElementById(`text-sec-${itemId}`).innerText;
+        const panelName = document.getElementById('global-panel-name').value || "לא צוין";
+        const inspector = document.getElementById('global-inspector-name').value || "בודק אלקטרה";
+        if (!email) { alert("אנא הזן כתובת מייל תקינה!"); return; }
+        const subject = encodeURIComponent(`Electra CX L0 - ליקוי בסעיף ${itemId}`);
+        let bodyText = `שלום ${person},\n\nהתגלה ליקוי בלוח: ${panelName}\nסעיף: ${itemId} - ${sectionText}\nפירוט הממצא: ${description}\n\nדווח ע"י: ${inspector}`;
+        window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+    }
+
+    // מנוע העלאת תמונה
+    function loadImg(input, id) {
+        if (!input.files || !input.files) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const wp = document.getElementById(`wp-${id}`); const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
+                wp.style.display = 'block'; const w = window.innerWidth - 64; const s = w / img.width;
+                cv.width = w; cv.height = img.height * s; cx.drawImage(img, 0, 0, cv.width, cv.height);
+                cv.dataset.bg = e.target.result; bindDr(cv, cx);
+            }
+            img.src = e.target.result;
+        }
+        reader.readAsDataURL(input.files);
+    }
+
+    // מנוע ציור באצבע (מגע ומסך)
+    function bindDr(cv, cx) {
+        let d = false; cx.strokeStyle = "#ef4444"; cx.lineWidth = 3; cx.lineCap = "round";
+        function getP(e) { const r = cv.getBoundingClientRect(); const x = e.touches ? e.touches.clientX : e.clientX; const y = e.touches ? e.touches.clientY : e.clientY; return { x: x - r.left, y: y - r.top }; }
+        function s(e) { d = true; cx.beginPath(); const p = getP(e); cx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); }
+        function m(e) { if (!d) return; const p = getP(e); cx.lineTo(p.x, p.y); cx.stroke(); if(e.touches) e.preventDefault(); }
+        cv.addEventListener('mousedown', s); cv.addEventListener('mousemove', m); window.addEventListener('mouseup', () => d = false);
+        cv.addEventListener('touchstart', s, {passive:false}); cv.addEventListener('touchmove', m, {passive:false}); cv.addEventListener('touchend', () => d = false);
+    }
+
+    function clearDr(id) { const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d'); const img = new Image(); img.onload = () => cx.drawImage(img, 0, 0, cv.width, cv.height); img.src = cv.dataset.bg; }
+    function addTx(id) {
+        const t = prompt("הערה על התמונה:"); if (!t) return; const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
+        cx.font = "bold 16px sans-serif"; cx.fillStyle = "yellow"; cx.strokeStyle = "black"; cx.lineWidth = 3; cx.strokeText(t, 20, 35); cx.fillText(t, 20, 35);
+    }
+
+    // שמירה לתוך קובץ HTML עם כל הנתונים מוטמעים
+    function saveAsHTMLFile() {
+        const data = {
+            panelName: document.getElementById('global-panel-name').value,
+            inspectorName: document.getElementById('global-inspector-name').value,
+            globalStatus: currentGlobalStatus,
+            items: {}
+        };
+        for (let i = 1; i <= 31; i++) {
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            if (!itemEl) continue;
+            let status = "";
+            if (itemEl.querySelector('.btn-s.p.active')) status = "P";
+            if (itemEl.querySelector('.btn-s.f.active')) status = "F";
+            if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+            const dateEl = itemEl.querySelector('input[type="date"]');
+            data.items[i] = {
+                status: status,
+                note: (document.getElementById(`note-${i}`) || {}).value || "",
+                desc: (document.getElementById(`desc-${i}`) || {}).value || "",
+                person: (document.getElementById(`person-${i}`) || {}).value || "",
+                email: (document.getElementById(`email-${i}`) || {}).value || "",
+                date: dateEl ? dateEl.value : ""
+            };
+        }
+        try { localStorage.setItem('electra_l0_data', JSON.stringify(data)); } catch(e) {}
+        const currentHTML = document.documentElement.outerHTML;
+        const dataScript = `
+
+
+</body></html>
