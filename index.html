@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electra CX - L0 System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // EmailJS — שליחת מיילים אוטומטית
+        // להפעלה: צור חשבון ב-emailjs.com, עדכן את הפרטים כאן
+        const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+        const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+        const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+        let emailjsReady = false;
+        try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); emailjsReady = EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'; } catch(e) {}
+    </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script>
@@ -310,20 +320,6 @@
         <div class="field"><label>מספר לוח / No Panel</label><input type="text" id="global-panel-number" oninput="autoSaveToStorage()"></div>
         <div class="field"><label>פרויקט / Project</label><input type="text" id="global-project" oninput="autoSaveToStorage()"></div>
         <div class="field"><label>בודק / Inspector</label><input type="text" id="global-inspector-name" oninput="autoSaveToStorage()"></div>
-    </div>
-
-    <!-- הגדרות אנשי קשר -->
-    <div class="card" id="contacts-card">
-        <h2 style="cursor:pointer;" onclick="toggleContactsSettings()">
-            👥 אנשי קשר לליקויים
-            <span id="contacts-toggle-icon" style="font-size:0.75rem; color:var(--text-muted); margin-right:auto;">▼ הגדר</span>
-        </h2>
-        <div id="contacts-settings" style="display:none;">
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">הגדר עד 8 אנשי קשר שיופיעו ברשימה בעת פתיחת Issue</div>
-            <div id="contacts-list"></div>
-            <button onclick="addContactRow()" style="background:var(--blue-light); color:var(--blue); border:1px dashed var(--blue); padding:8px 14px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer; width:100%; margin-top:6px; font-family:inherit;">+ הוסף איש קשר</button>
-        </div>
-        <div id="contacts-summary" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;"></div>
     </div>
 
     <div id="list"></div>
@@ -1127,42 +1123,55 @@
         const panelName = document.getElementById('global-panel-name').value || "לא צוין";
         const inspector = document.getElementById('global-inspector-name').value || "בודק";
 
-        if (!desc.trim()) { alert("אנא מלא פירוט ליקוי לפני יצירת Issue!"); return; }
-        if (!email) { alert("אנא בחר אחראי עם כתובת מייל!"); return; }
+        if (!desc.trim()) { alert("אנא מלא פירוט ליקוי!"); return; }
+        if (!email) { alert("אנא בחר אחראי עם מייל!"); return; }
 
-        // שלח מייל
-        const subject = encodeURIComponent(`Electra CX L0 — ליקוי בסעיף ${itemId} | ${panelName}`);
-        const body = encodeURIComponent(`שלום ${person},\n\nנוצר Issue חדש בלוח: ${panelName}\nסעיף ${itemId}: ${sectionText}\n\nפירוט הליקוי:\n${desc}\n\nדווח ע"י: ${inspector}\nתאריך: ${new Date().toLocaleDateString('he-IL')}`);
-        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        const subject = `Electra CX L0 — ליקוי סעיף ${itemId} | ${panelName}`;
+        const bodyText = `שלום ${person},\n\nנוצר Issue חדש:\nלוח: ${panelName}\nסעיף ${itemId}: ${sectionText}\n\nפירוט:\n${desc}\n\nדווח ע"י: ${inspector}\nתאריך: ${new Date().toLocaleDateString('he-IL')}`;
 
-        // נעל את ה-Issue — הסתר שדות עריכה, הצג תצוגת "נשלח"
-        const block = document.getElementById(`issue-block-${itemId}-${issueIdx}`);
-        if (block) {
-            // שמור נתונים לפני נעילה
-            const sentData = { person, email, desc, sent: true, sentDate: new Date().toLocaleDateString('he-IL') };
-            
-            block.style.background = '#f0fdf4';
-            block.style.borderColor = '#86efac';
+        const btn = document.querySelector(`#issue-block-${itemId}-${issueIdx} .btn-a.mail`);
 
-            // בנה תמונות ממוזערות אם קיימות
-            const photos = (issuePhotos[itemId] && issuePhotos[itemId][issueIdx]) ? issuePhotos[itemId][issueIdx].filter(p=>p) : [];
-            const photosHTML = photos.length > 0 ? `
-                <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:6px;">
-                    ${photos.map((p,pi) => `<img src="${p.url}" onclick="openPhotoViewer('${p.url}')" style="width:50px; height:50px; object-fit:cover; border-radius:7px; border:1.5px solid #86efac; cursor:pointer;">`).join('')}
-                </div>` : '';
-
-            block.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:0.78rem; font-weight:800; color:#059669;">✅ Issue #${issueIdx} — נשלח</span>
-                    <button onclick="unlockIssueBlock(${itemId}, ${issueIdx})" style="background:none; border:1px solid #cbd5e1; border-radius:6px; padding:3px 8px; font-size:0.7rem; color:#64748b; cursor:pointer;">✏️ ערוך</button>
-                </div>
-                <div style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;"><strong>אחראי:</strong> ${person} (${email})</div>
-                <div style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;"><strong>ליקוי:</strong> ${desc}</div>
-                ${photosHTML}
-                <div style="font-size:0.72rem; color:#64748b; margin-top:4px;">נשלח: ${sentData.sentDate}</div>
-            `;
-            block.dataset.savedData = JSON.stringify(sentData);
+        if (emailjsReady) {
+            // שליחה אוטומטית דרך EmailJS
+            if (btn) { btn.textContent = '⏳ שולח...'; btn.disabled = true; }
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                to_email: email, to_name: person,
+                subject, message: bodyText,
+                from_name: 'Electra CX System'
+            }).then(() => {
+                lockIssueBlock(itemId, issueIdx, person, email, desc);
+                if (btn) { btn.textContent = '✅ נשלח'; }
+            }).catch(() => {
+                if (btn) { btn.textContent = 'צור Issue'; btn.disabled = false; }
+                alert('שגיאה בשליחה — בדוק הגדרות EmailJS');
+            });
+        } else {
+            // fallback — פתח מייל
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+            setTimeout(() => lockIssueBlock(itemId, issueIdx, person, email, desc), 1000);
         }
+    }
+
+    function lockIssueBlock(itemId, issueIdx, person, email, desc) {
+        const block = document.getElementById(`issue-block-${itemId}-${issueIdx}`);
+        if (!block) return;
+        const photos = (issuePhotos[itemId] && issuePhotos[itemId][issueIdx]) ? issuePhotos[itemId][issueIdx].filter(p=>p) : [];
+        const photosHTML = photos.map(p => `<img src="${p.url}" onclick="openPhotoViewer('${p.url}')" style="width:48px;height:48px;object-fit:cover;border-radius:7px;border:1.5px solid #fca5a5;cursor:pointer;">`).join('');
+        block.style.cssText = 'border:1.5px solid #fca5a5; background:rgba(255,255,255,0.7); border-radius:12px; padding:12px; margin-bottom:10px;';
+        block.dataset.savedData = JSON.stringify({ person, email, desc, photos });
+        block.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:0.75rem; font-weight:700; color:#64748b;">Issue #${issueIdx}</span>
+                <div style="display:flex; gap:5px;">
+                    <button id="approve-btn-${itemId}-${issueIdx}" onclick="toggleIssueApprove(${itemId}, ${issueIdx})" style="background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; border-radius:6px; padding:3px 8px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit;">אשר</button>
+                    <button onclick="unlockIssueBlock(${itemId}, ${issueIdx})" style="background:none; border:1px solid #e2e8f0; border-radius:6px; padding:3px 8px; font-size:0.68rem; color:#94a3b8; cursor:pointer;">✏️</button>
+                </div>
+            </div>
+            <div style="font-size:0.78rem; color:#334155;"><strong>${person}</strong> · ${email}</div>
+            <div style="font-size:0.78rem; color:#475569; margin-top:4px;">${desc}</div>
+            ${photosHTML ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">${photosHTML}</div>` : ''}
+            <div style="font-size:0.68rem; color:#94a3b8; margin-top:6px;">📧 נשלח · ${new Date().toLocaleDateString('he-IL')}</div>
+        `;
         autoSaveToStorage();
     }
 
@@ -1395,6 +1404,8 @@
     let currentChecklistId = null;
 
     function goHome() {
+        // שמור לפני יציאה
+        if (currentChecklistId) _doSave();
         document.getElementById('checklist-screen').style.display = 'none';
         document.getElementById('home-screen').style.display = 'block';
         currentChecklistId = null;
