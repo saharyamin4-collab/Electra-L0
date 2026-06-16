@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electra CX - L0 System</title>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw",
+            authDomain: "electra-10.firebaseapp.com",
+            databaseURL: "https://electra-10-default-rtdb.firebaseio.com",
+            projectId: "electra-10",
+            storageBucket: "electra-10.firebasestorage.app",
+            messagingSenderId: "751223433308",
+            appId: "1:751223433308:web:c07da01b36d20e7b3cde99",
+            measurementId: "G-81LF1PSTNB"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        :root {
+            --navy: #0a2540; --blue: #1a56db; --blue-light: #e8f0fe; --gold: #d4af37;
+            --bg: #f0f4f8; --white: #ffffff; --border: #dce3ed; 
+            --passed: #059669; --failed: #dc2626; --na: #64748b;
+            --text: #0f172a; --text-muted: #475569;
+            --shadow-sm: 0 1px 3px rgba(10,37,64,0.08), 0 1px 2px rgba(10,37,64,0.04);
+            --shadow-md: 0 4px 16px rgba(10,37,64,0.10), 0 2px 6px rgba(10,37,64,0.06);
+            --shadow-lg: 0 20px 40px rgba(10,37,64,0.13);
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 12px; color: var(--text); -webkit-font-smoothing: antialiased; }
+        .app-frame { max-width: 600px; margin: 0 auto; }
+
+        /* HEADER */
+        .premium-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #0f3460 100%);
+            color: white; padding: 28px 24px 22px; border-radius: 20px;
+            text-align: center; box-shadow: var(--shadow-lg); margin-bottom: 16px;
+            position: relative; overflow: hidden;
+        }
+        .premium-header::before {
+            content: ''; position: absolute; top: -30px; right: -30px;
+            width: 120px; height: 120px; background: rgba(212,175,55,0.12);
+            border-radius: 50%;
+        }
+        .premium-header::after {
+            content: ''; position: absolute; bottom: -40px; left: -20px;
+            width: 100px; height: 100px; background: rgba(26,86,219,0.15);
+            border-radius: 50%;
+        }
+        .brand-logo { font-size: 0.7rem; font-weight: 700; letter-spacing: 4px; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; }
+        .brand-title { font-size: 2rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .brand-title span { color: var(--gold); }
+        .brand-subtitle { margin: 6px 0 0; font-size: 0.85rem; font-weight: 500; color: #94a3b8; letter-spacing: 0.5px; }
+        .header-badge { display: inline-block; background: rgba(212,175,55,0.2); border: 1px solid rgba(212,175,55,0.4); color: var(--gold); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-top: 10px; letter-spacing: 1px; }
+
+        /* CARDS */
+        .card { background: var(--white); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .card h2 { margin: 0 0 14px; font-size: 0.95rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .card h2::before { content: ''; display: inline-block; width: 3px; height: 14px; background: linear-gradient(180deg, var(--blue), var(--gold)); border-radius: 2px; }
+
+        /* FIELDS */
+        .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+        .field label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .field input, .quick-note, .issue-input, textarea, .inline-date-picker { 
+            padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; 
+            font-size: 0.9rem; background: #f8fafc; outline: none; width: 100%; 
+            font-family: inherit; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,86,219,0.08); background: white; }
+        .inline-date-picker { max-width: 190px; display: block; cursor: pointer; margin-top: 4px; }
+        .quick-note { height: 38px; resize: none; margin-bottom: 6px; font-size: 0.85rem; }
+        .issue-input { font-size: 0.85rem; padding: 9px 12px; margin-bottom: 6px; }
+
+        /* STATUS BUTTONS */
+        .global-status-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .g-btn { padding: 10px 6px; border: 1.5px solid var(--border); background: #f8fafc; border-radius: 10px; font-weight: 700; cursor: pointer; text-align: center; font-size: 0.8rem; color: var(--text-muted); transition: all 0.2s; }
+        .g-btn:hover { border-color: var(--blue); }
+        .g-btn.active { color: white; box-shadow: var(--shadow-sm); }
+        .g-btn.not-started.active { background: var(--text-muted); border-color: var(--text-muted); }
+        .g-btn.in-progress.active { background: #d97706; border-color: #d97706; }
+        .g-btn.completed.active { background: var(--passed); border-color: var(--passed); }
+
+        /* BANNER */
+        .banner { 
+            background: linear-gradient(135deg, var(--navy), #0f3460); 
+            color: white; padding: 12px 16px; font-weight: 700; font-size: 0.85rem; 
+            border-radius: 12px; margin: 16px 0 10px; letter-spacing: 0.3px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .banner::before { content: '◆'; color: var(--gold); font-size: 0.6rem; }
+
+        /* ITEMS */
+        .item { 
+            background: var(--white); border-radius: var(--radius); padding: 14px 16px; 
+            margin-bottom: 10px; border: 1.5px solid var(--border); 
+            box-shadow: var(--shadow-sm); transition: box-shadow 0.2s;
+        }
+        .item:hover { box-shadow: var(--shadow-md); }
+        .item-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+        .item-text { font-size: 0.88rem; font-weight: 600; line-height: 1.45; color: var(--text); flex-grow: 1; }
+        .item-num { font-size: 0.72rem; font-weight: 700; color: var(--blue); background: var(--blue-light); padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+
+        /* ISSUE BUTTON */
+        .issue-trigger-btn { 
+            background: #f1f5f9; color: var(--text-muted); border: 1.5px solid var(--border); 
+            padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; 
+            cursor: pointer; flex-shrink: 0; letter-spacing: 0.8px; transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        .issue-trigger-btn:hover { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+        .issue-trigger-btn.has-issue { background: #fff1f2; color: var(--failed); border-color: #fca5a5; font-weight: 900; }
+
+        /* P/F/N BUTTONS */
+        .btn-gp { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-bottom: 8px; }
+        .btn-s { 
+            padding: 9px 6px; border: 1.5px solid var(--border); background: #f8fafc; 
+            border-radius: 9px; font-weight: 700; font-size: 0.78rem; cursor: pointer; 
+            color: var(--text-muted); text-align: center; transition: all 0.18s; font-family: inherit;
+        }
+        .btn-s:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .btn-s.p.active { background: #ecfdf5; color: var(--passed); border-color: var(--passed); box-shadow: 0 2px 8px rgba(5,150,105,0.15); }
+        .btn-s.f.active { background: #fff1f2; color: var(--failed); border-color: var(--failed); box-shadow: 0 2px 8px rgba(220,38,38,0.15); }
+        .btn-s.n.active { background: #f1f5f9; color: var(--navy); border-color: var(--na); }
+
+        /* ISSUE PANEL */
+        .issue-sliding-panel { display: none; background: #fff8f8; border: 1.5px solid #fecaca; border-radius: 12px; padding: 14px; margin-top: 10px; }
+        .issue-block { background: white; border: 1px solid #fecaca; border-radius: 10px; padding: 12px; margin-bottom: 10px; position: relative; }
+        .issue-block-header { font-size: 0.78rem; font-weight: 800; color: var(--failed); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .add-issue-btn { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; font-family: inherit; transition: background 0.2s; }
+        .add-issue-btn:hover { background: #1344b0; }
+        .del-issue-btn { background: #fee2e2; color: var(--failed); border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer; }
+
+        /* ACTION BUTTONS */
+        .btn-a { background: var(--navy); color: white; border: none; padding: 9px 14px; border-radius: 9px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .btn-a:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-a.mail { background: var(--blue); width: 100%; margin-bottom: 8px; margin-top: 6px; }
+        .btn-a.mail:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; }
+        .btn-a.del { background: #fee2e2; color: var(--failed); margin-top: 4px; }
+
+        /* SAVE BUTTONS */
+        .sub-bar { 
+            background: linear-gradient(135deg, var(--navy), #0f3460); color: white; 
+            width: 100%; border: none; padding: 16px; font-size: 1rem; font-weight: 800; 
+            border-radius: 14px; cursor: pointer; margin: 8px 0; 
+            border-bottom: 3px solid var(--gold); box-shadow: var(--shadow-md);
+            font-family: inherit; letter-spacing: 0.3px; transition: all 0.2s;
+        }
+        .sub-bar:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+        /* SUMMARY */
+        .summary-list { font-size: 0.83rem; padding-right: 18px; color: var(--failed); font-weight: 600; }
+        .summary-list li { margin-bottom: 4px; cursor: pointer; }
+        .summary-list li:hover { text-decoration: underline; }
+
+        /* SIG */
+        .sig-box { border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc; margin-top: 6px; height: 110px; }
+        canvas { display: block; max-width: 100%; background: white; }
+        .can-wrap { position: relative; margin-top: 10px; background: #f1f5f9; border-radius: 12px; display: inline-block; max-width: 100%; overflow: hidden; border: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+<div class="app-frame">
+    <div class="premium-header">
+        <div class="brand-logo">Electra CX · Quality Control</div>
+        <div class="brand-title">ELECTRA <span>CX</span></div>
+        <div class="brand-subtitle">צ'קליסט בדיקת לוחות חשמל</div>
+        <div class="header-badge">שלב L0 — בדיקת עדות</div>
+    </div>
+
+    <div class="card">
+        <h2>סטטוס הצ'קליסט הכללי</h2>
+        <div class="global-status-selector">
+            <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
+            <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
+            <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
+        </div>
+    </div>
+
+    <div class="card" id="summary-card" style="display:none;">
+        <h2 style="color:var(--failed);">🔍 ריכוז ליקויים פתוחים (קיצור דרך)</h2>
+        <ul id="summary-box" class="summary-list"></ul>
+    </div>
+
+    <div class="card">
+        <h2>פרטי המערכת והציוד</h2>
+        <div class="field"><label>שם הלוח / Name Panel</label><input type="text" id="global-panel-name"></div>
+        <div class="field"><label>מספר לוח / No Panel</label><input type="text"></div>
+        <div class="field"><label>פרויקט / Project</label><input type="text"></div>
+        <div class="field"><label>בודק / Inspector</label><input type="text" id="global-inspector-name"></div>
+    </div>
+    <div id="list"></div>
+<script>
+    const items = [
+        {c:2, id:1, t:"רישום שם הלוח והתאמתו הפיזית"}, {c:2, id:2, t:"רישום תאריך הבדיקה בפועל", isDate: true},
+        {c:2, id:3, t:"ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן"}, {c:2, id:4, t:"ודא התאמת מספר סידורי של הפריט לטופס הבדיקה במפעל"},
+        {c:2, id:5, t:"צלם תווית הציוד כולל דגם ומספר סידורי"}, {c:2, id:6, t:"ודא קבלת טופס בדיקות קלט/פלט (I/O) למערכת בקרת מבנה (BMS)"},
+        {c:2, id:7, t:"ודא יישום לקחים והערות מבדיקות קודמות"}, {c:2, id:8, t:"רשום גרסת תוכנית מודפסת לפיה נבדק הלוח וודא שהיא העדכנית ביותר"},
+        {c:2, id:9, t:"ודא התאמת מראה הלוח לתוכנית (שילוט, כמות ומיקום מפסקים, מימיקה ואביזרי קצה בדלתות)"},
+        {c:2, id:10, t:"ודא התאמת ערכי זרם המפסקים לתוכנית, כניסות כבילה, חיזוק גידים, קיום חוצצים והפרדות"},
+        {c:2, id:11, t:"בדוק התאמה בין הכבילה בתוכנית לכמות החיבורים בפסי הצבירה (שטח חתך, כמות גידים - בדגש על מפסקי אוויר)"},
+        {c:2, id:12, t:"ודא התאמת מספר הקטבים (3/4 קטבים) במערכות ההחלפה ממקורות שונים תואם לתכנון"},
+        {c:2, id:13, t:"וידוא קיום ותאימות נורות סימון לכלל מקורות ההזנה ללוח בהתאם לתוכנית ולסימון הנדרש"},
+        {c:3, id:14, t:"בדוק תפעול מפסקים מהכפתורים במפסק וכן מהכפתורים החיצוניים (ככל שקיימים)"},
+        {c:3, id:15, t:"בדוק פעולת מפסק למצב \"טריפ\" ע\"י לחצן \"טריפ\" מכני במפסק"},
+        {c:3, id:16, t:"בדוק פעולת מפסקים למצב \"טריפ\" ע\"י פקודות חיצוניות (גילוי אש, לחצני חירום EPO)"},
+        {c:3, id:17, t:"בדוק נקודות קלט/פלט נוספות שאינן קשורות לבקרת מבנה (כגון מגעים יבשים ממערכות UPS)"},
+        {c:3, id:18, t:"בדוק תפקוד תקין של מפסקי פחת, ושלול לחלוטין הצלבה בין פסי אפס (נוטרל)"},
+        {c:3, id:19, t:"בדוק תפקוד ותאימות נורות סימון ומכשירי מדידה (הדלקה, צבע ושיוך למעגלים בהתאם לתוכנית)"},
+        {c:3, id:20, t:"בדוק אי-יכולת ביצוע העברת מקורות כאשר מערכת האל-פסק (UPS) אינה במצב עוקף (Manual Bypass)"},
+        {c:3, id:21, t:"בדוק העברה תקינה בין מקורות ההזנה כאשר מערכת האל-פסק במצב עוקף חיצוני"},
+        {c:3, id:22, t:"בדוק מצב ביניים בו שני מפסקים סגורים, שחרר מפתח החלפה שקטה וודא שמפסק חח\"י נפתח לפי לוגיקת ההגנה"},
+        {c:4, id:23, t:"בריבוי הזנות: בדוק תקינות הזנת רכיבי פיקוד, בקרים (I/O), ומכשירי מדידה תחת כל אחד ממקורות ההזנה"},
+        {c:4, id:24, t:"בשתי הזנות ראשיות: בדוק תקינות הלוח כאשר הוא מוזן משני מקורות במקביל"},
+        {c:4, id:25, t:"נתק מקור ראשי וודא מעבר אוטומטי למקור משני"}, {c:4, id:26, t:"חבר חזרה מקור ראשי וודא חזרה למקור הראשי (Auto-Return)"},
+        {c:4, id:27, t:"נתק שני מקורות בו-זמנית -> החזר מקור משני וודא חזרת מתח -> החזר מקור ראשי וודא החלפה לראשי"},
+        {c:4, id:28, t:"ודא רציפות תפקוד הלוח בהיעדר הזנות פיקוד – בדיקת כל הזנה בנפרד"},
+        {c:4, id:29, t:"ודא רציפות תפקוד הלוח בהיעדר שתי הזנות הפיקוד – עבודה תקינה על גבי מצברים"},
+        {c:4, id:30, t:"בצע \"טריפ\" במפסק הזנה לשנאי/לוח – ודא פקודת הקפצת מפסק בלוח המתח הנמוך המתאים"},
+        {c:4, id:31, t:"ודא כי אין נושאים פתוחים (Punch List) המשפיעים על השלבים הבאים"}
+    ];
+
+    const names = { 2: "חלק 2: בדיקות חזותיות", 3: "חלק 3: בדיקות פונקציונאליות", 4: "חלק 4: הזנות כפולות ופיקוד" };
+    const container = document.getElementById('list');
+    let lastC = 0;
+
+    items.forEach(item => {
+        if (item.c !== lastC) {
+            lastC = item.c;
+            const b = document.createElement('div'); b.className = 'banner'; b.innerText = names[item.c];
+            container.appendChild(b);
+        }
+        
+        let customInputHTML = `<textarea id="note-${item.id}" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>`;
+        if (item.isDate) {
+            customInputHTML = `
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--slate-800); min-width:85px;">בחירת תאריך:</label>
+                    <input type="date" id="note-${item.id}" class="inline-date-picker" onchange="autoSaveToStorage()">
+                </div>`;
+        }
+
+        const d = document.createElement('div'); d.className = 'item'; d.id = `scroll-target-${item.id}`;
+        d.innerHTML = `
+            <div class="item-header-row">
+                <div class="item-text" id="text-sec-${item.id}"><span style="color:var(--na); font-size:0.85rem;">[${item.id}]</span> ${item.t}</div>
+                <button class="issue-trigger-btn" id="trig-${item.id}" onclick="toggleIssuePanel(${item.id})">ISSUE</button>
+            </div>
+            <div class="btn-gp">
+                <button class="btn-s p" onclick="setSt(this)">✔ Passed</button>
+                <button class="btn-s f" onclick="setSt(this)">✘ Failed</button>
+                <button class="btn-s n" onclick="setSt(this)">N/A</button>
+            </div>
+            ${customInputHTML}
+
+            <!-- אזור תמונות עצמאי לכל סעיף -->
+            <div style="margin-top:6px; display:inline-block; position:relative;">
+                <button onclick="togglePhotoPanel(${item.id})" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                    <svg id="photo-trig-${item.id}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span id="photo-badge-${item.id}" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
+                </button>
+                <div id="photo-panel-${item.id}" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף ${item.id}</div>
+                    <div id="photo-thumbs-${item.id}" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                        + בחר תמונה
+                        <input type="file" accept="image/*" multiple style="display:none;" onchange="addPhotos(this, ${item.id})">
+                    </label>
+                </div>
+            </div>
+            
+            <div class="issue-sliding-panel" id="panel-${item.id}">
+                <div id="issues-container-${item.id}"></div>
+                <button class="add-issue-btn" onclick="addIssueBlock(${item.id})">+ הוסף Issue נוסף</button>
+            </div>
+        `;
+        container.appendChild(d);
+    });
+
+    function setSt(btn) { 
+        if (btn.classList.contains('active')) { btn.classList.remove('active'); } 
+        else { btn.parentElement.querySelectorAll('.btn-s').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        autoSaveToStorage();
+    }
+
+    // מערך גלובלי לשמירת תמונות (base64) לכל סעיף
+    const itemPhotos = {};
+
+    function togglePhotoPanel(id) {
+        const panel = document.getElementById(`photo-panel-${id}`);
+        const btn = document.getElementById(`photo-trig-${id}`);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    function addPhotos(input, id) {
+        if (!input.files || !input.files.length) return;
+        if (!itemPhotos[id]) itemPhotos[id] = [];
+        const thumbsContainer = document.getElementById(`photo-thumbs-${id}`);
+
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const idx = itemPhotos[id].length;
+                itemPhotos[id].push(base64);
+
+                // יצירת תמונה ממוזערת עם כפתור מחיקה
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = 'position:relative; display:inline-block;';
+                wrapper.id = `thumb-wrap-${id}-${idx}`;
+
+                const img = document.createElement('img');
+                img.src = base64;
+                img.style.cssText = 'width:80px; height:80px; object-fit:cover; border-radius:8px; border:2px solid #7dd3fc; cursor:pointer;';
+                img.onclick = () => openPhotoViewer(base64);
+
+                const delBtn = document.createElement('button');
+                delBtn.innerText = '✕';
+                delBtn.style.cssText = 'position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:0.7rem; font-weight:bold; cursor:pointer; line-height:1;';
+                delBtn.onclick = () => { removePhoto(id, idx); wrapper.remove(); };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(delBtn);
+                thumbsContainer.appendChild(wrapper);
+
+                // עדכון כפתור הפנל
+                updatePhotoBtn(id);
+                autoSaveToStorage();
+            };
+            reader.readAsDataURL(file);
+        });
+        input.value = ""; // איפוס input לאפשר העלאה חוזרת
+    }
+
+    function removePhoto(id, idx) {
+        if (itemPhotos[id]) {
+            itemPhotos[id][idx] = null; // מסמן כמחוק מבלי לשבש אינדקסים
+            updatePhotoBtn(id);
+            autoSaveToStorage();
+        }
+    }
+
+    function updatePhotoBtn(id) {
+        const icon = document.getElementById(`photo-trig-${id}`);
+        const badge = document.getElementById(`photo-badge-${id}`);
+        if (!icon || !badge) return;
+        const count = (itemPhotos[id] || []).filter(p => p !== null).length;
+        if (count > 0) {
+            icon.setAttribute('stroke', '#0369a1');
+            badge.style.display = 'block';
+            badge.textContent = count;
+        } else {
+            icon.setAttribute('stroke', '#94a3b8');
+            badge.style.display = 'none';
+        }
+    }
+
+    function openPhotoViewer(src) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center;';
+        overlay.onclick = () => overlay.remove();
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'max-width:95vw; max-height:90vh; border-radius:12px; box-shadow:0 0 40px rgba(0,0,0,0.5);';
+        img.onclick = e => e.stopPropagation();
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+
+    // שמירה אוטומטית ב-localStorage בכל שינוי
+    function autoSaveToStorage() {
+        try {
+            const data = collectData();
+            localStorage.setItem('electra_l0_autosave', JSON.stringify(data));
+            // שמירה ב-Firebase
+            db.ref('checklist').set(data).catch(e => console.log('Firebase:', e));
+        } catch(e) {}
+    }
+
+    function collectData() {
+        const data = {
+            panelName: (document.getElementById('global-panel-name') || {}).value || "",
+            inspectorName: (document.getElementById('global-inspector-name') || {}).value || "",
+            globalStatus: currentGlobalStatus,
+            items: {},
+            sigNames: [],
+            timestamp: Date.now()
+        };
+        for (let i = 1; i <= 31; i++) {
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            if (!itemEl) continue;
+            let status = "";
+            if (itemEl.querySelector('.btn-s.p.active')) status = "P";
+            if (itemEl.querySelector('.btn-s.f.active')) status = "F";
+            if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+            data.items[i] = {
+                status,
+                note: (document.getElementById(`note-${i}`) || {}).value || "",
+                desc: (document.getElementById(`desc-${i}`) || {}).value || "",
+                person: (document.getElementById(`person-${i}`) || {}).value || "",
+                email: (document.getElementById(`email-${i}`) || {}).value || ""
+            };
+        }
+        for (let i = 0; i < 5; i++) {
+            const el = document.getElementById(`sig-name-${i}`);
+            data.sigNames.push(el ? el.value : "");
+        }
+        return data;
+    }
+
+    // טעינה מ-Firebase בפתיחה
+    function loadFromFirebase() {
+        db.ref('checklist').once('value').then(snapshot => {
+            const data = snapshot.val();
+            if (data) applyData(data);
+        }).catch(e => {
+            // אם Firebase נכשל, טען מ-localStorage
+            try {
+                const s = localStorage.getItem('electra_l0_autosave');
+                if (s) applyData(JSON.parse(s));
+            } catch(e2) {}
+        });
+    }
+
+    function applyData(data) {
+        if (data.panelName) document.getElementById('global-panel-name').value = data.panelName;
+        if (data.inspectorName) document.getElementById('global-inspector-name').value = data.inspectorName;
+        syncGlobalStatus(data.globalStatus || "not-started");
+        for (let i = 1; i <= 31; i++) {
+            if (!data.items || !data.items[i]) continue;
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            if (!itemEl) continue;
+            if (data.items[i].status === "P") { const b = itemEl.querySelector('.btn-s.p'); if(b) b.classList.add('active'); }
+            if (data.items[i].status === "F") { const b = itemEl.querySelector('.btn-s.f'); if(b) b.classList.add('active'); }
+            if (data.items[i].status === "N") { const b = itemEl.querySelector('.btn-s.n'); if(b) b.classList.add('active'); }
+            if (document.getElementById(`note-${i}`)) document.getElementById(`note-${i}`).value = data.items[i].note || "";
+            if (document.getElementById(`desc-${i}`)) document.getElementById(`desc-${i}`).value = data.items[i].desc || "";
+            if (document.getElementById(`person-${i}`)) document.getElementById(`person-${i}`).value = data.items[i].person || "";
+            if (document.getElementById(`email-${i}`)) document.getElementById(`email-${i}`).value = data.items[i].email || "";
+            if (data.items[i].desc && data.items[i].desc.trim() !== "") {
+                const trig = document.getElementById(`trig-${i}`); if(trig) trig.classList.add('has-issue');
+            }
+        }
+        if (data.sigNames) {
+            data.sigNames.forEach((name, i) => { const el = document.getElementById(`sig-name-${i}`); if(el) el.value = name; });
+        }
+        updateSummary();
+    }
+</script>
+<!-- חלק 5 -->
+<div class="banner">חלק 5: השלמת הרשימה ואישורי נציגים</div>
+
+<div class="card">
+    <h2 style="margin-bottom:20px;">אישורי נציגים - שלב L0</h2>
+    <div id="sig-section-target"></div>
+</div>
+
+<!-- מערכת שינוי סטטוס שלישית - ממוקמת באופן יוקרתי מיד לאחר פרק 5 -->
+<div class="card">
+    <h2>סטטוס הצ'קליסט הכללי (עדכון סופי בתחתית)</h2>
+    <div class="global-status-selector">
+        <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
+        <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
+        <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
+    </div>
+</div>
+
+<button class="sub-bar" onclick="saveAsHTMLFile()" style="margin-bottom:10px;">💾 שמור קובץ HTML (פתח שוב עם כל הנתונים)</button>
+<button class="sub-bar" onclick="saveChecklistAndExport()" style="background:linear-gradient(135deg,#065f46,#047857); margin-top:0;">📊 הורד דוח CSV לאקסל</button>
+</div>
+
+<script>
+    let currentGlobalStatus = "not-started";
+
+    // סנכרון משולש של כל מערכות הסטטוסים בדף (עליון, אמצעי ותחתון) וחסימת המיילים
+    function syncGlobalStatus(status) {
+        currentGlobalStatus = status;
+        autoSaveToStorage();
+        document.querySelectorAll('.global-status-selector').forEach(container => {
+            container.querySelectorAll('.g-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.getAttribute('data-status') === status) { btn.classList.add('active'); }
+            });
+        });
+
+        // עדכון כפתורי המייל בכל הסעיפים בהתאם לסטטוס הצ'קליסט
+        for(let i = 1; i <= 31; i++) {
+            const mailBtn = document.getElementById(`mail-btn-${i}`);
+            const alertText = document.getElementById(`status-alert-${i}`);
+            if(mailBtn) {
+                if(status === 'in-progress' || status === 'completed') {
+                    mailBtn.disabled = false;
+                    if(alertText) alertText.style.display = "none";
+                } else {
+                    mailBtn.disabled = true;
+                    if(alertText) alertText.style.display = "block";
+                }
+            }
+        }
+    }
+
+    // סנכרון אנשי קשר אוטומטי בין כל הסעיפים
+    function syncContacts(input, type) {
+        const val = input.value;
+        const className = type === 'person' ? '.global-save-person' : '.global-save-email';
+        document.querySelectorAll(className).forEach(el => { el.value = val; });
+    }
+
+    // פונקציית פתיחה וסגירה חלקה של ה-Issue ישירות מתחת לסעיף
+    const issueCounters = {};
+
+    function addIssueBlock(itemId, data = {}) {
+        if (!issueCounters[itemId]) issueCounters[itemId] = 0;
+        const idx = ++issueCounters[itemId];
+        const container = document.getElementById(`issues-container-${itemId}`);
+        const block = document.createElement('div');
+        block.className = 'issue-block';
+        block.id = `issue-block-${itemId}-${idx}`;
+        block.innerHTML = `
+            <div class="issue-block-header">
+                <span>📋 Issue #${idx}</span>
+                <button class="del-issue-btn" onclick="removeIssueBlock(${itemId}, ${idx})">✕ הסר</button>
+            </div>
+            <input type="text" class="issue-input" id="person-${itemId}-${idx}" placeholder="שם האחראי לתיקון..." oninput="autoSaveToStorage()" value="${(data.person||'').replace(/"/g,'&quot;')}">
+            <input type="email" class="issue-input" id="email-${itemId}-${idx}" placeholder="כתובת מייל..." oninput="autoSaveToStorage()" value="${(data.email||'').replace(/"/g,'&quot;')}">
+            <textarea id="desc-${itemId}-${idx}" class="issue-input" placeholder="פרט את הליקוי..." oninput="updateIssueStyle(${itemId}); autoSaveToStorage();" style="height:70px; resize:none; margin-top:4px;">${data.desc||''}</textarea>
+        `;
+        container.appendChild(block);
+        const trig = document.getElementById(`trig-${itemId}`);
+        if (trig) trig.classList.add('has-issue');
+        autoSaveToStorage();
+        return idx;
+    }
+
+    function removeIssueBlock(itemId, idx) {
+        const block = document.getElementById(`issue-block-${itemId}-${idx}`);
+        if (block) block.remove();
+        updateIssueStyle(itemId);
+        autoSaveToStorage();
+    }
+
+    function updateIssueStyle(id) {
+        const container = document.getElementById(`issues-container-${id}`);
+        const trig = document.getElementById(`trig-${id}`);
+        if (!container || !trig) return;
+        // בדוק אם יש תוכן באחד מה-issues
+        const hasContent = Array.from(container.querySelectorAll('textarea')).some(t => t.value.trim() !== '');
+        const hasBlocks = container.children.length > 0;
+        if (hasContent || hasBlocks) trig.classList.add('has-issue');
+        else trig.classList.remove('has-issue');
+        updateSummary();
+    }
+
+    function toggleIssuePanel(id) {
+        const panel = document.getElementById(`panel-${id}`);
+        const isOpen = panel.style.display === 'block';
+        panel.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) {
+            const container = document.getElementById(`issues-container-${id}`);
+            if (container && container.children.length === 0) addIssueBlock(id);
+            updateSummary();
+        }
+    }
+
+    function checkTextAndStyle(id) { updateIssueStyle(id); }
+
+    function clearIssue(id) {
+        const container = document.getElementById(`issues-container-${id}`);
+        if (container) container.innerHTML = '';
+        issueCounters[id] = 0;
+        document.getElementById(`panel-${id}`).style.display = "none";
+        const trig = document.getElementById(`trig-${id}`);
+        if (trig) trig.classList.remove('has-issue');
+        updateSummary();
+        autoSaveToStorage();
+    }
+
+    // טבלת ריכוז ליקויים עליונה (קיצור דרך)
+    function updateSummary() {
+        const box = document.getElementById('summary-box');
+        const card = document.getElementById('summary-card');
+        if (!box) return;
+        box.innerHTML = ""; let count = 0;
+        
+        for(let i=1; i<=31; i++) {
+            const descEl = document.getElementById(`desc-${i}`);
+            const desc = descEl ? descEl.value : "";
+            if(desc && desc.trim() !== "") {
+                count++; const li = document.createElement('li');
+                li.innerText = `סעיף ${i}: ${desc.substring(0,25)}...`;
+                li.onclick = function() { document.getElementById('scroll-target-' + i).scrollIntoView({ behavior: 'smooth' }); };
+                box.appendChild(li);
+            }
+        }
+        if (card) card.style.display = count > 0 ? "block" : "none";
+    }
+
+    // שליחת הליקוי במייל למבצע
+    function sendIssueMail(itemId) {
+        const person = document.getElementById(`person-${itemId}`).value || "איש קשר";
+        const email = document.getElementById(`email-${itemId}`).value;
+        const description = document.getElementById(`desc-${itemId}`).value || "לא הוזן פירוט";
+        const sectionText = document.getElementById(`text-sec-${itemId}`).innerText;
+        const panelName = document.getElementById('global-panel-name').value || "לא צוין";
+        const inspector = document.getElementById('global-inspector-name').value || "בודק אלקטרה";
+        if (!email) { alert("אנא הזן כתובת מייל תקינה!"); return; }
+        const subject = encodeURIComponent(`Electra CX L0 - ליקוי בסעיף ${itemId}`);
+        let bodyText = `שלום ${person},\n\nהתגלה ליקוי בלוח: ${panelName}\nסעיף: ${itemId} - ${sectionText}\nפירוט הממצא: ${description}\n\nדווח ע"י: ${inspector}`;
+        window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+    }
+
+    // מנוע העלאת תמונה
+    function loadImg(input, id) {
+        if (!input.files || !input.files) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const wp = document.getElementById(`wp-${id}`); const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
+                wp.style.display = 'block'; const w = window.innerWidth - 64; const s = w / img.width;
+                cv.width = w; cv.height = img.height * s; cx.drawImage(img, 0, 0, cv.width, cv.height);
+                cv.dataset.bg = e.target.result; bindDr(cv, cx);
+            }
+            img.src = e.target.result;
+        }
+        reader.readAsDataURL(input.files);
+    }
+
+    // מנוע ציור באצבע (מגע ומסך)
+    function bindDr(cv, cx) {
+        let d = false; cx.strokeStyle = "#ef4444"; cx.lineWidth = 3; cx.lineCap = "round";
+        function getP(e) { const r = cv.getBoundingClientRect(); const x = e.touches ? e.touches.clientX : e.clientX; const y = e.touches ? e.touches.clientY : e.clientY; return { x: x - r.left, y: y - r.top }; }
+        function s(e) { d = true; cx.beginPath(); const p = getP(e); cx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); }
+        function m(e) { if (!d) return; const p = getP(e); cx.lineTo(p.x, p.y); cx.stroke(); if(e.touches) e.preventDefault(); }
+        cv.addEventListener('mousedown', s); cv.addEventListener('mousemove', m); window.addEventListener('mouseup', () => d = false);
+        cv.addEventListener('touchstart', s, {passive:false}); cv.addEventListener('touchmove', m, {passive:false}); cv.addEventListener('touchend', () => d = false);
+    }
+
+    function clearDr(id) { const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d'); const img = new Image(); img.onload = () => cx.drawImage(img, 0, 0, cv.width, cv.height); img.src = cv.dataset.bg; }
+    function addTx(id) {
+        const t = prompt("הערה על התמונה:"); if (!t) return; const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
+        cx.font = "bold 16px sans-serif"; cx.fillStyle = "yellow"; cx.strokeStyle = "black"; cx.lineWidth = 3; cx.strokeText(t, 20, 35); cx.fillText(t, 20, 35);
+    }
+
+    // שמירה לתוך קובץ HTML עם כל הנתונים מוטמעים
+    function saveAsHTMLFile() {
+        const data = {
+            panelName: document.getElementById('global-panel-name').value,
+            inspectorName: document.getElementById('global-inspector-name').value,
+            globalStatus: currentGlobalStatus,
+            items: {}
+        };
+        for (let i = 1; i <= 31; i++) {
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            if (!itemEl) continue;
+            let status = "";
+            if (itemEl.querySelector('.btn-s.p.active')) status = "P";
+            if (itemEl.querySelector('.btn-s.f.active')) status = "F";
+            if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+            const dateEl = itemEl.querySelector('input[type="date"]');
+            data.items[i] = {
+                status: status,
+                note: (document.getElementById(`note-${i}`) || {}).value || "",
+                desc: (document.getElementById(`desc-${i}`) || {}).value || "",
+                person: (document.getElementById(`person-${i}`) || {}).value || "",
+                email: (document.getElementById(`email-${i}`) || {}).value || "",
+                date: dateEl ? dateEl.value : ""
+            };
+        }
+        try { localStorage.setItem('electra_l0_data', JSON.stringify(data)); } catch(e) {}
+        const currentHTML = document.documentElement.outerHTML;
+        const dataScript = `<script id="__saved_data__">window.__ELECTRA_SAVED__ = ${JSON.stringify(data)};window.__ELECTRA_PHOTOS__ = ${JSON.stringify(itemPhotos)};<\/script>`;
+        const cleanHTML = currentHTML.replace(/<script id="__saved_data__">[\s\S]*?<\/script>/g, '');
+        const finalHTML = cleanHTML.replace('</head>', dataScript + '</head>');
+        const blob = new Blob(['<!DOCTYPE html>\n' + finalHTML], { type: 'text/html;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        const panelName = data.panelName ? data.panelName.replace(/ /g, "_") : "Checklist";
+        link.download = `Electra_L0_${panelName}.html`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        alert('✅ הקובץ נשמר! פתח את הקובץ שהורד כדי להמשיך עם כל הנתונים.');
+    }
+
+    // שמירה ל-CSV
+    function saveChecklistAndExport() {
+        const panelName = document.getElementById('global-panel-name').value || "Unknown_Panel";
+        const inspector = document.getElementById('global-inspector-name').value || "Unknown_Inspector";
+        let csvContent = "\uFEFF";
+        csvContent += `דוח בדיקת עדות ללוחות חשמל - שלב L0\nשם הלוח,${panelName}\nבודק,${inspector}\nסטטוס כללי,${currentGlobalStatus}\n\n`;
+        csvContent += `מספר סעיף,תיאור סעיף,סטטוס בדיקה,הערה מהירה,פירוט ליקוי,אחראי לתיקון\n`;
+        for (let i = 1; i <= 31; i++) {
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            const text = (document.getElementById(`text-sec-${i}`) || {}).innerText || "";
+            let status = "לא סומן";
+            if (itemEl && itemEl.querySelector('.btn-s.p.active')) status = "Passed";
+            if (itemEl && itemEl.querySelector('.btn-s.f.active')) status = "Failed";
+            if (itemEl && itemEl.querySelector('.btn-s.n.active')) status = "N/A";
+            const note = ((document.getElementById(`note-${i}`) || {}).value || "").replace(/,/g," ");
+            const desc = ((document.getElementById(`desc-${i}`) || {}).value || "").replace(/,/g," ");
+            const person = ((document.getElementById(`person-${i}`) || {}).value || "").replace(/,/g," ");
+            csvContent += `${i},${text.replace(/,/g," ")},${status},${note},${desc},${person}\n`;
+        }
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `Electra_L0_Report_${panelName.replace(/ /g,"_")}.csv`;
+        link.click();
+    }
+
+    // טעינת נתונים מוטמעים בקובץ (אם נשמר קודם)
+    function loadFromEmbeddedData() {
+        loadFromFirebase();
+    }
+
+    // האזנה לשינויים בשדות הפרטים הראשיים
+    document.getElementById('global-panel-name').addEventListener('input', autoSaveToStorage);
+    document.getElementById('global-inspector-name').addEventListener('input', autoSaveToStorage);
+
+    // יצירת שדות שמות נציגים (ללא חתימות)
+    const roles = ["ממלא הטופס", "נציג CX ELECTRA", "נציג ההסמכה", "נציג היצרן", "נציג המזמין"];
+    const targetBox = document.getElementById('sig-section-target');
+    roles.forEach((r, i) => {
+        const f = document.createElement('div'); f.className = 'field'; f.style.marginBottom = "12px";
+        f.innerHTML = `<label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">${r}</label><input type="text" id="sig-name-${i}" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;">`;
+        targetBox.appendChild(f);
+    });
+
+    // טעינת נתונים מוטמעים בקובץ (אם נשמר קודם)
+    setTimeout(loadFromEmbeddedData, 600);
+</script>
+</body>
+</html>
