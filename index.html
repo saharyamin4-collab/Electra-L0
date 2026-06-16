@@ -246,11 +246,26 @@
 
     <div class="card">
         <h2>פרטי המערכת והציוד</h2>
-        <div class="field"><label>שם הלוח / Name Panel</label><input type="text" id="global-panel-name"></div>
-        <div class="field"><label>מספר לוח / No Panel</label><input type="text"></div>
-        <div class="field"><label>פרויקט / Project</label><input type="text"></div>
-        <div class="field"><label>בודק / Inspector</label><input type="text" id="global-inspector-name"></div>
+        <div class="field"><label>שם הלוח / Name Panel</label><input type="text" id="global-panel-name" oninput="autoSaveToStorage()"></div>
+        <div class="field"><label>מספר לוח / No Panel</label><input type="text" id="global-panel-number" oninput="autoSaveToStorage()"></div>
+        <div class="field"><label>פרויקט / Project</label><input type="text" id="global-project" oninput="autoSaveToStorage()"></div>
+        <div class="field"><label>בודק / Inspector</label><input type="text" id="global-inspector-name" oninput="autoSaveToStorage()"></div>
     </div>
+
+    <!-- הגדרות אנשי קשר -->
+    <div class="card" id="contacts-card">
+        <h2 style="cursor:pointer;" onclick="toggleContactsSettings()">
+            👥 אנשי קשר לליקויים
+            <span id="contacts-toggle-icon" style="font-size:0.75rem; color:var(--text-muted); margin-right:auto;">▼ הגדר</span>
+        </h2>
+        <div id="contacts-settings" style="display:none;">
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">הגדר עד 8 אנשי קשר שיופיעו ברשימה בעת פתיחת Issue</div>
+            <div id="contacts-list"></div>
+            <button onclick="addContactRow()" style="background:var(--blue-light); color:var(--blue); border:1px dashed var(--blue); padding:8px 14px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer; width:100%; margin-top:6px; font-family:inherit;">+ הוסף איש קשר</button>
+        </div>
+        <div id="contacts-summary" style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;"></div>
+    </div>
+
     <div id="list"></div>
 <script>
     const items = [
@@ -293,10 +308,10 @@
             container.appendChild(b);
         }
         
-        let customInputHTML = `<textarea id="note-${item.id}" class="quick-note" placeholder="✍️ הערה מהירה לסעיף (אופציונלי)..." oninput="autoSaveToStorage()"></textarea>`;
+        let customInputHTML = ``;
         if (item.isDate) {
             customInputHTML = `
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
                     <label style="font-size:0.8rem; font-weight:bold; color:var(--slate-800); min-width:85px;">בחירת תאריך:</label>
                     <input type="date" id="note-${item.id}" class="inline-date-picker" onchange="autoSaveToStorage()">
                 </div>`;
@@ -315,23 +330,44 @@
             </div>
             ${customInputHTML}
 
-            <!-- אזור תמונות עצמאי לכל סעיף -->
-            <div style="margin-top:6px; display:inline-block; position:relative;">
-                <button onclick="togglePhotoPanel(${item.id})" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
-                    <svg id="photo-trig-${item.id}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                    </svg>
-                    <span id="photo-badge-${item.id}" style="display:none; position:absolute; top:-6px; left:-6px; background:#0369a1; color:white; font-size:0.6rem; font-weight:900; border-radius:50%; width:16px; height:16px; line-height:16px; text-align:center;"></span>
-                </button>
-                <div id="photo-panel-${item.id}" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
-                    <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף ${item.id}</div>
-                    <div id="photo-thumbs-${item.id}" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
-                    <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
-                        + בחר תמונה
-                        <input type="file" accept="image/*" multiple style="display:none;" onchange="addPhotos(this, ${item.id})">
-                    </label>
+            <!-- אייקוני פעולה: הערה + תמונה -->
+            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+
+                <!-- אייקון עיפרון להערה -->
+                <div style="position:relative; display:inline-block;">
+                    <button onclick="toggleNotePanel(${item.id})" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                        <svg id="note-icon-${item.id}" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        <span id="note-badge-${item.id}" style="display:none; position:absolute; top:-5px; left:-5px; background:#f59e0b; color:white; font-size:0.55rem; font-weight:900; border-radius:50%; width:13px; height:13px; line-height:13px; text-align:center;">✓</span>
+                    </button>
                 </div>
+
+                <!-- אייקון מצלמה לתמונות -->
+                <div style="position:relative; display:inline-block;">
+                    <button onclick="togglePhotoPanel(${item.id})" style="background:none; border:none; cursor:pointer; padding:2px; position:relative; display:inline-flex; align-items:center; justify-content:center;">
+                        <svg id="photo-trig-${item.id}" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <span id="photo-badge-${item.id}" style="display:none; position:absolute; top:-5px; left:-5px; background:#0369a1; color:white; font-size:0.55rem; font-weight:900; border-radius:50%; width:13px; height:13px; line-height:13px; text-align:center;"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- פנל הערה מתקפל -->
+            <div id="note-panel-${item.id}" style="display:none; margin-top:6px;">
+                <textarea id="note-${item.id}" class="quick-note" placeholder="✍️ הערה לסעיף..." oninput="onNoteInput(${item.id})" style="height:60px;"></textarea>
+            </div>
+
+            <!-- פנל תמונות -->
+            <div id="photo-panel-${item.id}" style="display:none; margin-top:8px; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:12px; padding:12px;">
+                <div style="font-weight:800; font-size:0.8rem; color:#0369a1; margin-bottom:8px;">📷 תמונות לסעיף ${item.id}</div>
+                <div id="photo-thumbs-${item.id}" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
+                <label style="display:inline-block; background:#0369a1; color:white; padding:7px 12px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer;">
+                    + בחר תמונה
+                    <input type="file" accept="image/*" multiple style="display:none;" onchange="addPhotos(this, ${item.id})">
+                </label>
             </div>
             
             <div class="issue-sliding-panel" id="panel-${item.id}">
@@ -341,6 +377,29 @@
         `;
         container.appendChild(d);
     });
+
+    function toggleNotePanel(id) {
+        const panel = document.getElementById(`note-panel-${id}`);
+        const icon = document.getElementById(`note-icon-${id}`);
+        const isOpen = panel.style.display === 'block';
+        panel.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) {
+            icon.setAttribute('stroke', '#f59e0b');
+            document.getElementById(`note-${id}`)?.focus();
+        } else {
+            const hasNote = document.getElementById(`note-${id}`)?.value?.trim();
+            if (!hasNote) icon.setAttribute('stroke', '#94a3b8');
+        }
+    }
+
+    function onNoteInput(id) {
+        const val = document.getElementById(`note-${id}`)?.value || '';
+        const badge = document.getElementById(`note-badge-${id}`);
+        const icon = document.getElementById(`note-icon-${id}`);
+        if (badge) badge.style.display = val.trim() ? 'block' : 'none';
+        if (icon) icon.setAttribute('stroke', val.trim() ? '#f59e0b' : '#94a3b8');
+        autoSaveToStorage();
+    }
 
     function setSt(btn) { 
         if (btn.classList.contains('active')) { btn.classList.remove('active'); } 
@@ -453,116 +512,156 @@
         document.body.appendChild(overlay);
     }
 
-    function autoSaveToStorage() {
-        try {
-            const data = collectData();
-            localStorage.setItem('electra_l0_autosave', JSON.stringify(data));
-            const ind = document.getElementById('save-indicator');
-            if (ind) ind.textContent = '⏳ שומר...';
-            db.ref('checklist').set(data).then(() => {
-                if (ind) { ind.textContent = '✓ נשמר בענן'; setTimeout(() => { if(ind) ind.textContent = ''; }, 2000); }
-            }).catch(() => {
-                if (ind) { ind.textContent = '⚠️ נשמר מקומית בלבד'; setTimeout(() => { if(ind) ind.textContent = ''; }, 3000); }
-            });
-        } catch(e) {}
-    }
-
     function collectData() {
         const data = {
+            v: 2, // גרסה
             panelName: (document.getElementById('global-panel-name') || {}).value || "",
+            panelNumber: (document.getElementById('global-panel-number') || {}).value || "",
+            project: (document.getElementById('global-project') || {}).value || "",
             inspectorName: (document.getElementById('global-inspector-name') || {}).value || "",
-            globalStatus: currentGlobalStatus,
+            globalStatus: currentGlobalStatus || "not-started",
             items: {},
             sigNames: [],
-            timestamp: Date.now()
+            ts: Date.now()
         };
         for (let i = 1; i <= 31; i++) {
             const itemEl = document.getElementById(`scroll-target-${i}`);
             if (!itemEl) continue;
-            let status = "";
+            let status = "X";
             if (itemEl.querySelector('.btn-s.p.active')) status = "P";
-            if (itemEl.querySelector('.btn-s.f.active')) status = "F";
-            if (itemEl.querySelector('.btn-s.n.active')) status = "N";
-            // איסוף issues מרובים
+            else if (itemEl.querySelector('.btn-s.f.active')) status = "F";
+            else if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+            const noteEl = document.getElementById(`note-${i}`);
             const issuesData = [];
             const container = document.getElementById(`issues-container-${i}`);
             if (container) {
                 container.querySelectorAll('.issue-block').forEach((block, bidx) => {
-                    const bnum = bidx + 1;
+                    const n = bidx + 1;
                     issuesData.push({
-                        person: (document.getElementById(`person-${i}-${bnum}`) || {}).value || "",
-                        email: (document.getElementById(`email-${i}-${bnum}`) || {}).value || "",
-                        desc: (document.getElementById(`desc-${i}-${bnum}`) || {}).value || ""
+                        person: (document.getElementById(`person-${i}-${n}`) || {}).value || "",
+                        email: (document.getElementById(`email-${i}-${n}`) || {}).value || "",
+                        desc: (document.getElementById(`desc-${i}-${n}`) || {}).value || ""
                     });
                 });
             }
-            data.items[i] = {
-                status,
-                note: (document.getElementById(`note-${i}`) || {}).value || "",
-                issues: issuesData
+            data.items[`i${i}`] = {
+                s: status,
+                n: noteEl ? noteEl.value : "",
+                issues: issuesData.length > 0 ? issuesData.map((iss, bidx) => ({
+                    ...iss,
+                    photos: (issuePhotos[i] && issuePhotos[i][bidx+1]) ? issuePhotos[i][bidx+1].filter(p=>p) : []
+                })) : []
             };
         }
         for (let i = 0; i < 5; i++) {
             const el = document.getElementById(`sig-name-${i}`);
-            data.sigNames.push(el ? el.value : "");
+            data.sigNames.push(el ? (el.value || "") : "");
         }
         return data;
     }
 
-    // טעינה מ-Firebase בפתיחה
+    // שמירה ב-Firebase + localStorage
+    function autoSaveToStorage() {
+        try {
+            const data = collectData();
+            // שמור תמיד ב-localStorage כגיבוי
+            localStorage.setItem('electra_l0_v2', JSON.stringify(data));
+            // שמור ב-Firebase
+            const ind = document.getElementById('save-indicator');
+            if (ind) ind.textContent = '⏳ שומר...';
+            db.ref('checklist').set(data).then(() => {
+                if (ind) { ind.textContent = '✓ נשמר'; setTimeout(() => { if(ind) ind.textContent = ''; }, 2000); }
+            }).catch(() => {
+                if (ind) { ind.textContent = '💾 נשמר מקומית'; setTimeout(() => { if(ind) ind.textContent = ''; }, 2000); }
+            });
+        } catch(e) { console.log('Save error:', e); }
+    }
+
+    // טעינה מ-Firebase עם fallback ל-localStorage
     function loadFromFirebase() {
         db.ref('checklist').once('value').then(snapshot => {
             const data = snapshot.val();
-            if (data) applyData(data);
-        }).catch(e => {
-            // אם Firebase נכשל, טען מ-localStorage
-            try {
-                const s = localStorage.getItem('electra_l0_autosave');
-                if (s) applyData(JSON.parse(s));
-            } catch(e2) {}
-        });
+            if (data && data.v) {
+                applyData(data);
+            } else {
+                // נסה localStorage
+                loadFromLocal();
+            }
+        }).catch(() => loadFromLocal());
+    }
+
+    function loadFromLocal() {
+        try {
+            const s = localStorage.getItem('electra_l0_v2') || localStorage.getItem('electra_l0_autosave');
+            if (s) applyData(JSON.parse(s));
+        } catch(e) {}
     }
 
     function applyData(data) {
-        if (data.panelName) document.getElementById('global-panel-name').value = data.panelName;
-        if (data.inspectorName) document.getElementById('global-inspector-name').value = data.inspectorName;
-        syncGlobalStatus(data.globalStatus || "not-started");
-        for (let i = 1; i <= 31; i++) {
-            if (!data.items || !data.items[i]) continue;
-            const itemEl = document.getElementById(`scroll-target-${i}`);
-            if (!itemEl) continue;
-            if (data.items[i].status === "P") { const b = itemEl.querySelector('.btn-s.p'); if(b) b.classList.add('active'); }
-            if (data.items[i].status === "F") { const b = itemEl.querySelector('.btn-s.f'); if(b) b.classList.add('active'); }
-            if (data.items[i].status === "N") { const b = itemEl.querySelector('.btn-s.n'); if(b) b.classList.add('active'); }
-            if (document.getElementById(`note-${i}`)) document.getElementById(`note-${i}`).value = data.items[i].note || "";
-            // שחזר issues מרובים
-            if (data.items[i].issues && data.items[i].issues.length > 0) {
-                data.items[i].issues.forEach(issueData => addIssueBlock(i, issueData));
-                const trig = document.getElementById(`trig-${i}`);
-                if (trig) trig.classList.add('has-issue');
-            }
-        }
-        if (data.sigNames) {
-            data.sigNames.forEach((name, i) => { const el = document.getElementById(`sig-name-${i}`); if(el) el.value = name; });
-        }
-        updateSummary();
+        try {
+            if (data.panelName) document.getElementById('global-panel-name').value = data.panelName;
+            if (data.panelNumber) document.getElementById('global-panel-number').value = data.panelNumber;
+            if (data.project) document.getElementById('global-project').value = data.project;
+            if (data.inspectorName) document.getElementById('global-inspector-name').value = data.inspectorName;
+            syncGlobalStatus(data.globalStatus || "not-started");
 
-        // טעינת תמונות מ-Firebase
-        for (let i = 1; i <= 31; i++) {
-            db.ref(`photos/item${i}`).once('value').then(snap => {
-                const photos = snap.val();
-                if (!photos || !photos.length) return;
-                itemPhotos[i] = photos;
-                const thumbsContainer = document.getElementById(`photo-thumbs-${i}`);
-                if (!thumbsContainer) return;
-                photos.forEach((photo, idx) => {
-                    if (!photo || !photo.url) return;
-                    const wrapper = createThumb(photo.url, i, idx, false);
-                    thumbsContainer.appendChild(wrapper);
+            for (let i = 1; i <= 31; i++) {
+                // תמיכה בשני פורמטים (ישן וחדש)
+                const item = (data.items || {})[`i${i}`] || (data.items || {})[i];
+                if (!item) continue;
+                const itemEl = document.getElementById(`scroll-target-${i}`);
+                if (!itemEl) continue;
+
+                const status = item.s || item.status || "X";
+                if (status === "P") { const b = itemEl.querySelector('.btn-s.p'); if(b) b.classList.add('active'); }
+                else if (status === "F") { const b = itemEl.querySelector('.btn-s.f'); if(b) b.classList.add('active'); }
+                else if (status === "N") { const b = itemEl.querySelector('.btn-s.n'); if(b) b.classList.add('active'); }
+
+                const noteVal = item.n || item.note || "";
+                const noteEl = document.getElementById(`note-${i}`);
+                if (noteEl) noteEl.value = noteVal;
+                // עדכן אייקון הערה
+                if (noteVal.trim()) {
+                    const icon = document.getElementById(`note-icon-${i}`);
+                    const badge = document.getElementById(`note-badge-${i}`);
+                    if (icon) icon.setAttribute('stroke', '#f59e0b');
+                    if (badge) badge.style.display = 'block';
+                }
+
+                const issues = item.issues || [];
+                if (issues.length > 0) {
+                    issues.forEach(issueData => { if(issueData) addIssueBlock(i, issueData); });
+                    const trig = document.getElementById(`trig-${i}`);
+                    if (trig) trig.classList.add('has-issue');
+                }
+            }
+
+            if (data.sigNames) {
+                data.sigNames.forEach((name, i) => {
+                    const el = document.getElementById(`sig-name-${i}`);
+                    if (el && name) el.value = name;
                 });
-                updatePhotoBtn(i);
-            }).catch(() => {});
-        }
+            }
+            updateSummary();
+
+            // טעינת תמונות
+            for (let i = 1; i <= 31; i++) {
+                db.ref(`photos/item${i}`).once('value').then(snap => {
+                    const photos = snap.val();
+                    if (!photos) return;
+                    const arr = Array.isArray(photos) ? photos : Object.values(photos);
+                    if (!arr.length) return;
+                    itemPhotos[i] = arr;
+                    const thumbsContainer = document.getElementById(`photo-thumbs-${i}`);
+                    if (!thumbsContainer) return;
+                    arr.forEach((photo, idx) => {
+                        if (!photo || !photo.url) return;
+                        thumbsContainer.appendChild(createThumb(photo.url, i, idx, false));
+                    });
+                    updatePhotoBtn(i);
+                }).catch(() => {});
+            }
+        } catch(e) { console.log('Apply error:', e); }
     }
 </script>
 <!-- חלק 5 -->
@@ -624,30 +723,455 @@
         document.querySelectorAll(className).forEach(el => { el.value = val; });
     }
 
-    // פונקציית פתיחה וסגירה חלקה של ה-Issue ישירות מתחת לסעיף
+    // ═══ ניהול אנשי קשר ═══
+    let contacts = []; // [{name, email}]
+
+    function loadContacts() {
+        try {
+            const s = localStorage.getItem('electra_contacts');
+            if (s) contacts = JSON.parse(s);
+        } catch(e) {}
+        db.ref('contacts').once('value').then(snap => {
+            if (snap.val()) { contacts = snap.val(); saveContactsLocal(); }
+            renderContactsSettings();
+            updateContactsSummary();
+        }).catch(() => { renderContactsSettings(); updateContactsSummary(); });
+    }
+
+    function saveContactsToStorage() {
+        saveContactsLocal();
+        db.ref('contacts').set(contacts).catch(() => {});
+        updateContactsSummary();
+    }
+
+    function saveContactsLocal() {
+        try { localStorage.setItem('electra_contacts', JSON.stringify(contacts)); } catch(e) {}
+    }
+
+    function toggleContactsSettings() {
+        const el = document.getElementById('contacts-settings');
+        const icon = document.getElementById('contacts-toggle-icon');
+        const open = el.style.display === 'block';
+        el.style.display = open ? 'none' : 'block';
+        icon.textContent = open ? '▼ הגדר' : '▲ סגור';
+        if (!open) renderContactsSettings();
+    }
+
+    function renderContactsSettings() {
+        const list = document.getElementById('contacts-list');
+        if (!list) return;
+        list.innerHTML = '';
+        contacts.forEach((c, i) => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex; gap:6px; margin-bottom:6px; align-items:center;';
+            row.innerHTML = `
+                <input type="text" value="${c.name||''}" placeholder="שם..." oninput="contacts[${i}].name=this.value; saveContactsToStorage();"
+                    style="flex:1; padding:8px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:inherit;">
+                <input type="email" value="${c.email||''}" placeholder="מייל..." oninput="contacts[${i}].email=this.value; saveContactsToStorage();"
+                    style="flex:1.5; padding:8px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:inherit;">
+                <button onclick="contacts.splice(${i},1); saveContactsToStorage(); renderContactsSettings();"
+                    style="background:#fee2e2; color:#dc2626; border:none; border-radius:7px; padding:6px 10px; cursor:pointer; font-weight:800; font-size:0.8rem;">✕</button>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    function addContactRow() {
+        if (contacts.length >= 8) return alert('מקסימום 8 אנשי קשר');
+        contacts.push({ name: '', email: '' });
+        saveContactsToStorage();
+        renderContactsSettings();
+    }
+
+    function updateContactsSummary() {
+        const el = document.getElementById('contacts-summary');
+        if (!el) return;
+        const active = contacts.filter(c => c.name).length;
+        el.textContent = active > 0 ? `${active} אנשי קשר מוגדרים` : 'אין אנשי קשר מוגדרים עדיין';
+    }
+
+    function buildContactPicker(itemId, issueIdx) {
+        if (contacts.length === 0) return '';
+        const opts = contacts.map((c,i) => `<button onclick="selectContact(${itemId},${issueIdx},${i})" style="background:#f0f4f8; border:1px solid var(--border); border-radius:7px; padding:5px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; font-family:inherit; margin:2px; transition:all 0.15s;" class="contact-btn-${itemId}-${issueIdx}">${c.name}</button>`).join('');
+        return `<div style="margin-bottom:8px;"><div style="font-size:0.7rem; font-weight:700; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px;">👤 בחר אחראי</div><div>${opts}</div></div>`;
+    }
+
+    function selectContact(itemId, issueIdx, contactIdx) {
+        const c = contacts[contactIdx];
+        if (!c) return;
+        const personEl = document.getElementById(`person-${itemId}-${issueIdx}`);
+        const emailEl = document.getElementById(`email-${itemId}-${issueIdx}`);
+        if (personEl) personEl.value = c.name;
+        if (emailEl) emailEl.value = c.email;
+        // הדגש כפתור נבחר
+        document.querySelectorAll(`.contact-btn-${itemId}-${issueIdx}`).forEach(b => b.style.background = '#f0f4f8');
+        event.target.style.background = '#dbeafe';
+        event.target.style.borderColor = 'var(--blue)';
+        autoSaveToStorage();
+    }
+
+    // ═══ פונקציות Issue ═══
     const issueCounters = {};
 
     function addIssueBlock(itemId, data = {}) {
         if (!issueCounters[itemId]) issueCounters[itemId] = 0;
         const idx = ++issueCounters[itemId];
+        const approved = data.approved || false;
         const container = document.getElementById(`issues-container-${itemId}`);
         const block = document.createElement('div');
         block.className = 'issue-block';
         block.id = `issue-block-${itemId}-${idx}`;
+        block.style.cssText = `border:1.5px solid ${approved ? '#86efac' : '#fca5a5'}; background:${approved ? 'rgba(240,253,244,0.5)' : 'rgba(255,255,255,0.8)'};`;
         block.innerHTML = `
             <div class="issue-block-header">
-                <span>📋 Issue #${idx}</span>
-                <button class="del-issue-btn" onclick="removeIssueBlock(${itemId}, ${idx})">✕ הסר</button>
+                <span style="font-size:0.78rem; font-weight:700; color:#64748b;">Issue #${idx}</span>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <button id="approve-btn-${itemId}-${idx}" onclick="toggleIssueApprove(${itemId}, ${idx})" 
+                        style="background:${approved?'#dcfce7':'#f1f5f9'}; color:${approved?'#059669':'#64748b'}; border:1px solid ${approved?'#86efac':'#e2e8f0'}; border-radius:6px; padding:3px 8px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit;">
+                        ${approved ? '✓ מאושר' : 'אשר'}
+                    </button>
+                    <button class="del-issue-btn" onclick="removeIssueBlock(${itemId}, ${idx})">✕</button>
+                </div>
             </div>
+            ${buildContactPicker(itemId, idx)}
             <input type="text" class="issue-input" id="person-${itemId}-${idx}" placeholder="שם האחראי לתיקון..." oninput="autoSaveToStorage()" value="${(data.person||'').replace(/"/g,'&quot;')}">
             <input type="email" class="issue-input" id="email-${itemId}-${idx}" placeholder="כתובת מייל..." oninput="autoSaveToStorage()" value="${(data.email||'').replace(/"/g,'&quot;')}">
             <textarea id="desc-${itemId}-${idx}" class="issue-input" placeholder="פרט את הליקוי..." oninput="updateIssueStyle(${itemId}); autoSaveToStorage();" style="height:70px; resize:none; margin-top:4px;">${data.desc||''}</textarea>
+            
+            <!-- תמונות ל-Issue: מצלמה + גלריה -->
+            <div style="margin-top:8px;">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;" id="issue-photos-${itemId}-${idx}"></div>
+                <div style="display:flex; gap:6px;">
+                    <label style="display:inline-flex; align-items:center; gap:4px; background:#f0f4f8; border:1px dashed #94a3b8; padding:6px 10px; border-radius:8px; font-size:0.72rem; font-weight:600; cursor:pointer; color:var(--text-muted);">
+                        📷 מצלמה
+                        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addIssuePhotos(this, ${itemId}, ${idx})">
+                    </label>
+                    <label style="display:inline-flex; align-items:center; gap:4px; background:#f0f4f8; border:1px dashed #94a3b8; padding:6px 10px; border-radius:8px; font-size:0.72rem; font-weight:600; cursor:pointer; color:var(--text-muted);">
+                        🖼️ גלריה
+                        <input type="file" accept="image/*" multiple style="display:none;" onchange="addIssuePhotos(this, ${itemId}, ${idx})">
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-a mail" style="margin-top:8px;" onclick="sendIssueMailFromBlock(${itemId}, ${idx})">צור Issue</button>
         `;
         container.appendChild(block);
+
+        // שחזר תמונות אם קיימות
+        if (data.photos && data.photos.length) {
+            data.photos.forEach((p, pi) => {
+                if (!p || !p.url) return;
+                const thumbsEl = document.getElementById(`issue-photos-${itemId}-${idx}`);
+                if (thumbsEl) thumbsEl.appendChild(createIssueThumb(p.url, itemId, idx, pi));
+            });
+        }
+
         const trig = document.getElementById(`trig-${itemId}`);
         if (trig) trig.classList.add('has-issue');
         autoSaveToStorage();
         return idx;
+    }
+
+    function toggleIssueApprove(itemId, idx) {
+        const block = document.getElementById(`issue-block-${itemId}-${idx}`);
+        const btn = document.getElementById(`approve-btn-${itemId}-${idx}`);
+        if (!block || !btn) return;
+        const isApproved = btn.textContent.includes('מאושר');
+        if (isApproved) {
+            // בטל אישור
+            block.style.border = '1.5px solid #fca5a5';
+            block.style.background = 'rgba(255,255,255,0.8)';
+            btn.textContent = 'אשר';
+            btn.style.background = '#f1f5f9'; btn.style.color = '#64748b'; btn.style.borderColor = '#e2e8f0';
+        } else {
+            // אשר
+            block.style.border = '1.5px solid #86efac';
+            block.style.background = 'rgba(240,253,244,0.5)';
+            btn.textContent = '✓ מאושר';
+            btn.style.background = '#dcfce7'; btn.style.color = '#059669'; btn.style.borderColor = '#86efac';
+        }
+        autoSaveToStorage();
+    }
+
+    // תמונות ל-Issue
+    const issuePhotos = {}; // issuePhotos[itemId][issueIdx] = [{url}]
+
+    function addIssuePhotos(input, itemId, issueIdx) {
+        if (!input.files || !input.files.length) return;
+        if (!issuePhotos[itemId]) issuePhotos[itemId] = {};
+        if (!issuePhotos[itemId][issueIdx]) issuePhotos[itemId][issueIdx] = [];
+        const thumbsEl = document.getElementById(`issue-photos-${itemId}-${issueIdx}`);
+
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxW = 600;
+                    const scale = img.width > maxW ? maxW / img.width : 1;
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.65);
+                    const pi = issuePhotos[itemId][issueIdx].length;
+                    issuePhotos[itemId][issueIdx].push({ url: base64 });
+                    if (thumbsEl) thumbsEl.appendChild(createIssueThumb(base64, itemId, issueIdx, pi));
+                    autoSaveToStorage();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        input.value = "";
+    }
+
+    function createIssueThumb(src, itemId, issueIdx, pi) {
+        const w = document.createElement('div');
+        w.style.cssText = 'position:relative; display:inline-block;';
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'width:64px; height:64px; object-fit:cover; border-radius:8px; border:1.5px solid #bae6fd; cursor:pointer;';
+        // לחיצה → פתח עורך ציור
+        img.onclick = () => openDrawEditor(src, itemId, issueIdx, pi);
+
+        // אייקון ציור קטן
+        const drawIcon = document.createElement('div');
+        drawIcon.style.cssText = 'position:absolute; bottom:2px; left:2px; background:rgba(10,37,64,0.7); border-radius:4px; padding:2px 4px; cursor:pointer;';
+        drawIcon.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+        drawIcon.onclick = () => openDrawEditor(src, itemId, issueIdx, pi);
+
+        const del = document.createElement('button');
+        del.innerText = '✕';
+        del.style.cssText = 'position:absolute; top:-4px; right:-4px; background:#ef4444; color:white; border:none; border-radius:50%; width:16px; height:16px; font-size:0.58rem; font-weight:900; cursor:pointer; line-height:16px; text-align:center;';
+        del.onclick = (e) => {
+            e.stopPropagation();
+            if (issuePhotos[itemId] && issuePhotos[itemId][issueIdx]) issuePhotos[itemId][issueIdx][pi] = null;
+            w.remove(); autoSaveToStorage();
+        };
+        w.appendChild(img); w.appendChild(drawIcon); w.appendChild(del);
+        return w;
+    }
+
+    // ═══ עורך ציור על תמונה ═══
+    function openDrawEditor(src, itemId, issueIdx, pi) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px;';
+
+        const title = document.createElement('div');
+        title.style.cssText = 'color:white; font-weight:700; font-size:0.85rem; margin-bottom:10px; letter-spacing:0.5px;';
+        title.textContent = '✏️ צייר על התמונה';
+
+        const canvas = document.createElement('canvas');
+        canvas.style.cssText = 'border-radius:10px; max-width:100%; touch-action:none; cursor:crosshair;';
+
+        // כלי ציור
+        const tools = document.createElement('div');
+        tools.style.cssText = 'display:flex; gap:8px; margin-top:10px; align-items:center; flex-wrap:wrap; justify-content:center;';
+
+        let drawColor = '#ef4444';
+        let drawSize = 4;
+        let drawMode = 'pen'; // pen | arrow | rect | text
+
+        const colors = ['#ef4444','#f59e0b','#10b981','#3b82f6','#ffffff','#000000'];
+        colors.forEach(c => {
+            const btn = document.createElement('button');
+            btn.style.cssText = `width:24px; height:24px; border-radius:50%; background:${c}; border:2px solid ${c === drawColor ? 'white' : 'transparent'}; cursor:pointer;`;
+            btn.onclick = () => { drawColor = c; ctx.strokeStyle = c; ctx.fillStyle = c; colors.forEach((_,i) => tools.children[i].style.borderColor = 'transparent'); btn.style.borderColor = 'white'; };
+            tools.appendChild(btn);
+        });
+
+        // גודל עט
+        const sizeSlider = document.createElement('input');
+        sizeSlider.type = 'range'; sizeSlider.min = 2; sizeSlider.max = 20; sizeSlider.value = 4;
+        sizeSlider.style.cssText = 'width:70px; accent-color:#3b82f6;';
+        sizeSlider.oninput = () => { drawSize = +sizeSlider.value; ctx.lineWidth = drawSize; };
+
+        // כפתורי מצב
+        const modebtns = document.createElement('div');
+        modebtns.style.cssText = 'display:flex; gap:6px; margin-top:8px; justify-content:center;';
+        [['✏️','pen'],['↗️','arrow'],['⬜','rect'],['T','text'],['↩️','undo']].forEach(([label, mode]) => {
+            const b = document.createElement('button');
+            b.textContent = label;
+            b.style.cssText = `padding:6px 12px; border-radius:8px; border:1.5px solid rgba(255,255,255,0.2); background:${mode==='pen'?'#3b82f6':'rgba(255,255,255,0.1)'}; color:white; font-size:0.8rem; cursor:pointer; font-family:inherit;`;
+            b.onclick = () => {
+                if (mode === 'undo') { undoDraw(); return; }
+                drawMode = mode;
+                modebtns.querySelectorAll('button').forEach(x => x.style.background = 'rgba(255,255,255,0.1)');
+                b.style.background = '#3b82f6';
+            };
+            modebtns.appendChild(b);
+        });
+
+        // כפתורי פעולה
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex; gap:8px; margin-top:12px;';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = '✅ שמור';
+        saveBtn.style.cssText = 'background:#059669; color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.85rem; font-family:inherit;';
+        saveBtn.onclick = () => {
+            const newSrc = canvas.toDataURL('image/jpeg', 0.85);
+            // עדכן ב-issuePhotos
+            if (issuePhotos[itemId] && issuePhotos[itemId][issueIdx] && issuePhotos[itemId][issueIdx][pi]) {
+                issuePhotos[itemId][issueIdx][pi] = { url: newSrc };
+            }
+            // עדכן thumbnail
+            const thumbEl = document.querySelector(`#issue-photos-${itemId}-${issueIdx} div:nth-child(${pi+1}) img`);
+            if (thumbEl) thumbEl.src = newSrc;
+            autoSaveToStorage();
+            overlay.remove();
+        };
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '✕ סגור';
+        cancelBtn.style.cssText = 'background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.85rem; font-family:inherit;';
+        cancelBtn.onclick = () => overlay.remove();
+
+        actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
+        overlay.appendChild(title); overlay.appendChild(canvas); overlay.appendChild(tools);
+        overlay.appendChild(sizeSlider); overlay.appendChild(modebtns); overlay.appendChild(actions);
+        document.body.appendChild(overlay);
+
+        // טען תמונה ל-canvas
+        const bgImg = new Image();
+        bgImg.onload = () => {
+            const maxW = Math.min(window.innerWidth - 24, 560);
+            const scale = bgImg.width > maxW ? maxW / bgImg.width : 1;
+            canvas.width = bgImg.width * scale;
+            canvas.height = bgImg.height * scale;
+            ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = drawColor; ctx.lineWidth = drawSize; ctx.lineCap = 'round';
+        };
+        bgImg.src = src;
+        const ctx = canvas.getContext('2d');
+
+        // היסטוריה לundo
+        const history = [];
+        function saveHistory() { history.push(canvas.toDataURL()); if (history.length > 20) history.shift(); }
+        function undoDraw() { if (history.length) { const img2 = new Image(); img2.onload = () => ctx.drawImage(img2,0,0); img2.src = history.pop(); } }
+
+        // ציור
+        let drawing = false, startX, startY, snapshot;
+        function getPos(e) {
+            const r = canvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            return { x: (touch.clientX - r.left) * (canvas.width / r.width), y: (touch.clientY - r.top) * (canvas.height / r.height) };
+        }
+        function startDraw(e) {
+            e.preventDefault(); drawing = true;
+            const p = getPos(e); startX = p.x; startY = p.y;
+            saveHistory();
+            snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            if (drawMode === 'pen') { ctx.beginPath(); ctx.moveTo(p.x, p.y); }
+            if (drawMode === 'text') {
+                const t = prompt('הכנס טקסט:'); if (!t) { drawing = false; return; }
+                ctx.font = `bold ${drawSize * 4 + 10}px sans-serif`; ctx.fillStyle = drawColor;
+                ctx.fillText(t, p.x, p.y); drawing = false;
+            }
+        }
+        function moveDraw(e) {
+            if (!drawing || drawMode === 'text') return; e.preventDefault();
+            const p = getPos(e);
+            ctx.strokeStyle = drawColor; ctx.lineWidth = drawSize;
+            if (drawMode === 'pen') { ctx.lineTo(p.x, p.y); ctx.stroke(); }
+            else {
+                ctx.putImageData(snapshot, 0, 0);
+                ctx.beginPath();
+                if (drawMode === 'rect') { ctx.strokeRect(startX, startY, p.x - startX, p.y - startY); }
+                if (drawMode === 'arrow') {
+                    ctx.moveTo(startX, startY); ctx.lineTo(p.x, p.y); ctx.stroke();
+                    const angle = Math.atan2(p.y - startY, p.x - startX);
+                    const len = 12;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p.x - len * Math.cos(angle - 0.4), p.y - len * Math.sin(angle - 0.4));
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p.x - len * Math.cos(angle + 0.4), p.y - len * Math.sin(angle + 0.4));
+                    ctx.stroke();
+                }
+            }
+        }
+        function endDraw() { drawing = false; }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', moveDraw);
+        canvas.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', startDraw, {passive:false});
+        canvas.addEventListener('touchmove', moveDraw, {passive:false});
+        canvas.addEventListener('touchend', endDraw);
+    }
+
+    function sendIssueMailFromBlock(itemId, issueIdx) {
+        const person = (document.getElementById(`person-${itemId}-${issueIdx}`) || {}).value || "";
+        const email = (document.getElementById(`email-${itemId}-${issueIdx}`) || {}).value || "";
+        const desc = (document.getElementById(`desc-${itemId}-${issueIdx}`) || {}).value || "";
+        const sectionText = (document.getElementById(`text-sec-${itemId}`) || {}).innerText || `סעיף ${itemId}`;
+        const panelName = document.getElementById('global-panel-name').value || "לא צוין";
+        const inspector = document.getElementById('global-inspector-name').value || "בודק";
+
+        if (!desc.trim()) { alert("אנא מלא פירוט ליקוי לפני יצירת Issue!"); return; }
+        if (!email) { alert("אנא בחר אחראי עם כתובת מייל!"); return; }
+
+        // שלח מייל
+        const subject = encodeURIComponent(`Electra CX L0 — ליקוי בסעיף ${itemId} | ${panelName}`);
+        const body = encodeURIComponent(`שלום ${person},\n\nנוצר Issue חדש בלוח: ${panelName}\nסעיף ${itemId}: ${sectionText}\n\nפירוט הליקוי:\n${desc}\n\nדווח ע"י: ${inspector}\nתאריך: ${new Date().toLocaleDateString('he-IL')}`);
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        // נעל את ה-Issue — הסתר שדות עריכה, הצג תצוגת "נשלח"
+        const block = document.getElementById(`issue-block-${itemId}-${issueIdx}`);
+        if (block) {
+            // שמור נתונים לפני נעילה
+            const sentData = { person, email, desc, sent: true, sentDate: new Date().toLocaleDateString('he-IL') };
+            
+            block.style.background = '#f0fdf4';
+            block.style.borderColor = '#86efac';
+
+            // בנה תמונות ממוזערות אם קיימות
+            const photos = (issuePhotos[itemId] && issuePhotos[itemId][issueIdx]) ? issuePhotos[itemId][issueIdx].filter(p=>p) : [];
+            const photosHTML = photos.length > 0 ? `
+                <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:6px;">
+                    ${photos.map((p,pi) => `<img src="${p.url}" onclick="openPhotoViewer('${p.url}')" style="width:50px; height:50px; object-fit:cover; border-radius:7px; border:1.5px solid #86efac; cursor:pointer;">`).join('')}
+                </div>` : '';
+
+            block.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:0.78rem; font-weight:800; color:#059669;">✅ Issue #${issueIdx} — נשלח</span>
+                    <button onclick="unlockIssueBlock(${itemId}, ${issueIdx})" style="background:none; border:1px solid #cbd5e1; border-radius:6px; padding:3px 8px; font-size:0.7rem; color:#64748b; cursor:pointer;">✏️ ערוך</button>
+                </div>
+                <div style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;"><strong>אחראי:</strong> ${person} (${email})</div>
+                <div style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;"><strong>ליקוי:</strong> ${desc}</div>
+                ${photosHTML}
+                <div style="font-size:0.72rem; color:#64748b; margin-top:4px;">נשלח: ${sentData.sentDate}</div>
+            `;
+            block.dataset.savedData = JSON.stringify(sentData);
+        }
+        autoSaveToStorage();
+    }
+
+    function unlockIssueBlock(itemId, issueIdx) {
+        const block = document.getElementById(`issue-block-${itemId}-${issueIdx}`);
+        if (!block) return;
+        const saved = JSON.parse(block.dataset.savedData || '{}');
+        block.style.background = 'white';
+        block.style.borderColor = '#fecaca';
+        block.innerHTML = `
+            <div class="issue-block-header">
+                <span>📋 Issue #${issueIdx}</span>
+                <button class="del-issue-btn" onclick="removeIssueBlock(${itemId}, ${issueIdx})">✕ הסר</button>
+            </div>
+            ${buildContactPicker(itemId, issueIdx)}
+            <input type="text" class="issue-input" id="person-${itemId}-${issueIdx}" placeholder="שם האחראי לתיקון..." oninput="autoSaveToStorage()" value="${(saved.person||'').replace(/"/g,'&quot;')}">
+            <input type="email" class="issue-input" id="email-${itemId}-${issueIdx}" placeholder="כתובת מייל..." oninput="autoSaveToStorage()" value="${(saved.email||'').replace(/"/g,'&quot;')}">
+            <textarea id="desc-${itemId}-${issueIdx}" class="issue-input" placeholder="פרט את הליקוי..." oninput="updateIssueStyle(${itemId}); autoSaveToStorage();" style="height:70px; resize:none; margin-top:4px;">${saved.desc||''}</textarea>
+            <div style="margin-top:8px;">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;" id="issue-photos-${itemId}-${issueIdx}"></div>
+                <label style="display:inline-flex; align-items:center; gap:5px; background:#f0f4f8; border:1px dashed #94a3b8; padding:6px 12px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; color:var(--text-muted);">
+                    📷 הוסף תמונה
+                    <input type="file" accept="image/*" multiple style="display:none;" onchange="addIssuePhotos(this, ${itemId}, ${issueIdx})">
+                </label>
+            </div>
+            <button class="btn-a mail" style="margin-top:8px;" onclick="sendIssueMailFromBlock(${itemId}, ${issueIdx})">צור Issue</button>
+        `;
     }
 
     function removeIssueBlock(itemId, idx) {
@@ -796,42 +1320,26 @@
 
     // שמירה לתוך קובץ HTML עם כל הנתונים מוטמעים
     function saveAsHTMLFile() {
-        const data = {
-            panelName: document.getElementById('global-panel-name').value,
-            inspectorName: document.getElementById('global-inspector-name').value,
-            globalStatus: currentGlobalStatus,
-            items: {}
-        };
-        for (let i = 1; i <= 31; i++) {
-            const itemEl = document.getElementById(`scroll-target-${i}`);
-            if (!itemEl) continue;
-            let status = "";
-            if (itemEl.querySelector('.btn-s.p.active')) status = "P";
-            if (itemEl.querySelector('.btn-s.f.active')) status = "F";
-            if (itemEl.querySelector('.btn-s.n.active')) status = "N";
-            const dateEl = itemEl.querySelector('input[type="date"]');
-            data.items[i] = {
-                status: status,
-                note: (document.getElementById(`note-${i}`) || {}).value || "",
-                desc: (document.getElementById(`desc-${i}`) || {}).value || "",
-                person: (document.getElementById(`person-${i}`) || {}).value || "",
-                email: (document.getElementById(`email-${i}`) || {}).value || "",
-                date: dateEl ? dateEl.value : ""
-            };
-        }
-        try { localStorage.setItem('electra_l0_data', JSON.stringify(data)); } catch(e) {}
+        const data = collectData();
+        try { localStorage.setItem('electra_l0_v2', JSON.stringify(data)); } catch(e) {}
+        
         const currentHTML = document.documentElement.outerHTML;
-        const dataScript = `<script id="__saved_data__">window.__ELECTRA_SAVED__ = ${JSON.stringify(data)};window.__ELECTRA_PHOTOS__ = ${JSON.stringify(itemPhotos)};<\/script>`;
+        const dataScript = `<script id="__saved_data__">
+            window.__ELECTRA_SAVED__ = ${JSON.stringify(data)};
+            window.__ELECTRA_PHOTOS__ = ${JSON.stringify(itemPhotos)};
+            window.__ELECTRA_ISSUE_PHOTOS__ = ${JSON.stringify(issuePhotos)};
+            window.__ELECTRA_CONTACTS__ = ${JSON.stringify(contacts)};
+        <\/script>`;
         const cleanHTML = currentHTML.replace(/<script id="__saved_data__">[\s\S]*?<\/script>/g, '');
         const finalHTML = cleanHTML.replace('</head>', dataScript + '</head>');
         const blob = new Blob(['<!DOCTYPE html>\n' + finalHTML], { type: 'text/html;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        const panelName = data.panelName ? data.panelName.replace(/ /g, "_") : "Checklist";
+        const panelName = (data.panelName || "Checklist").replace(/ /g, "_");
         link.download = `Electra_L0_${panelName}.html`;
         link.click();
         setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-        alert('✅ הקובץ נשמר! פתח את הקובץ שהורד כדי להמשיך עם כל הנתונים.');
+        alert('✅ הקובץ נשמר עם כל הנתונים!');
     }
 
     // שמירה ל-CSV
@@ -862,7 +1370,18 @@
 
     // טעינת נתונים מוטמעים בקובץ (אם נשמר קודם)
     function loadFromEmbeddedData() {
-        loadFromFirebase();
+        // אם יש נתונים מוטמעים בקובץ HTML — השתמש בהם קודם
+        if (window.__ELECTRA_SAVED__) {
+            applyData(window.__ELECTRA_SAVED__);
+            if (window.__ELECTRA_CONTACTS__) {
+                contacts = window.__ELECTRA_CONTACTS__;
+                saveContactsLocal();
+                updateContactsSummary();
+            }
+        } else {
+            // אחרת טען מ-Firebase
+            loadFromFirebase();
+        }
     }
 
     // האזנה לשינויים בשדות הפרטים הראשיים
@@ -878,8 +1397,8 @@
         targetBox.appendChild(f);
     });
 
-    // טעינת נתונים מוטמעים בקובץ (אם נשמר קודם)
-    setTimeout(loadFromEmbeddedData, 600);
+    // טעינה אחרי שה-DOM מוכן לחלוטין
+    setTimeout(() => { loadContacts(); loadFromEmbeddedData(); }, 800);
 </script>
 </body>
 </html>
