@@ -222,12 +222,72 @@
 </head>
 <body>
 <div class="app-frame">
+
+<!-- ══════════════════════════════════════ -->
+<!-- דף בית — רשימת צ'קליסטים             -->
+<!-- ══════════════════════════════════════ -->
+<div id="home-screen">
     <div class="premium-header">
         <div class="brand-eyebrow">Electra CX · Quality Control</div>
         <div class="brand-title">ELECTRA <span>CX</span></div>
-        <div class="brand-subtitle">צ'קליסט בדיקת לוחות חשמל</div>
-        <div class="header-badge">שלב L0 — בדיקת עדות</div>
-        <div id="save-indicator"></div>
+        <div class="brand-subtitle">מערכת בדיקת לוחות חשמל</div>
+    </div>
+
+    <!-- אנשי קשר — בין הלוגו לחיפוש -->
+    <div style="display:flex; justify-content:flex-start; margin-bottom:10px;">
+        <button onclick="toggleHomeContacts()" style="background:white; color:var(--text-muted); border:1.5px solid var(--border); padding:7px 14px; border-radius:20px; font-size:0.75rem; font-weight:600; cursor:pointer; font-family:inherit;">👥 אנשי קשר</button>
+    </div>
+
+    <!-- חיפוש -->
+    <div style="position:relative; margin-bottom:12px;">
+        <input type="text" id="search-input" placeholder="🔍  חפש צ'קליסט..." oninput="renderChecklists()"
+            style="width:100%; padding:12px 16px; border:1.5px solid var(--border); border-radius:12px; font-size:0.9rem; background:white; font-family:inherit; box-sizing:border-box;">
+    </div>
+
+    <!-- סטטיסטיקות -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px;">
+        <div style="background:white; border-radius:12px; padding:12px; text-align:center; border:1.5px solid var(--border);">
+            <div id="stat-total" style="font-size:1.4rem; font-weight:900; color:var(--navy);">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">סה"כ</div>
+        </div>
+        <div style="background:white; border-radius:12px; padding:12px; text-align:center; border:1.5px solid var(--border);">
+            <div id="stat-progress" style="font-size:1.4rem; font-weight:900; color:#d97706;">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">בתהליך</div>
+        </div>
+        <div style="background:white; border-radius:12px; padding:12px; text-align:center; border:1.5px solid var(--border);">
+            <div id="stat-done" style="font-size:1.4rem; font-weight:900; color:var(--passed);">0</div>
+            <div style="font-size:0.65rem; color:var(--text-muted); font-weight:600;">הושלמו</div>
+        </div>
+    </div>
+
+    <!-- רשימת צ'קליסטים -->
+    <div id="checklists-list"></div>
+
+    <!-- כפתור פתח צ'קליסט חדש -->
+    <button onclick="createNewChecklist()" style="
+        position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+        background:linear-gradient(135deg, var(--navy), #0f3460);
+        color:white; border:none; padding:14px 28px; border-radius:30px;
+        font-size:0.9rem; font-weight:800; cursor:pointer; font-family:inherit;
+        box-shadow:0 6px 20px rgba(10,37,64,0.3); border-bottom:2px solid var(--gold);
+        white-space:nowrap; z-index:100;
+    ">+ פתח צ'קליסט חדש</button>
+
+    <div style="height:70px;"></div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- מסך צ'קליסט בודד                     -->
+<!-- ══════════════════════════════════════ -->
+<div id="checklist-screen" style="display:none;">
+    <div class="premium-header" style="border-radius:16px 16px 0 0; margin-bottom:0;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <button onclick="goHome()" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:6px 12px; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה</button>
+            <div id="save-indicator" style="font-size:0.7rem; color:rgba(255,255,255,0.7); flex:1; text-align:left;"></div>
+        </div>
+        <div class="brand-eyebrow">Electra CX · L0</div>
+        <div id="checklist-title-display" class="brand-title" style="font-size:1.3rem;"></div>
+        <div class="header-badge" id="checklist-status-badge">שלב L0 — בדיקת עדות</div>
     </div>
 
     <div class="card">
@@ -267,6 +327,8 @@
     </div>
 
     <div id="list"></div>
+</div><!-- סוף checklist-screen -->
+</div><!-- סוף app-frame -->
 <script>
     const items = [
         {c:2, id:1, t:"רישום שם הלוח והתאמתו הפיזית"}, {c:2, id:2, t:"רישום תאריך הבדיקה בפועל", isDate: true},
@@ -514,118 +576,100 @@
 
     function collectData() {
         const data = {
-            v: 2, // גרסה
+            v: 3,
             panelName: (document.getElementById('global-panel-name') || {}).value || "",
             panelNumber: (document.getElementById('global-panel-number') || {}).value || "",
             project: (document.getElementById('global-project') || {}).value || "",
             inspectorName: (document.getElementById('global-inspector-name') || {}).value || "",
             globalStatus: currentGlobalStatus || "not-started",
             items: {},
-            sigNames: [],
             ts: Date.now()
         };
         for (let i = 1; i <= 31; i++) {
             const itemEl = document.getElementById(`scroll-target-${i}`);
             if (!itemEl) continue;
-            let status = "X";
-            if (itemEl.querySelector('.btn-s.p.active')) status = "P";
-            else if (itemEl.querySelector('.btn-s.f.active')) status = "F";
-            else if (itemEl.querySelector('.btn-s.n.active')) status = "N";
+            let s = "X";
+            if (itemEl.querySelector('.btn-s.p.active')) s = "P";
+            else if (itemEl.querySelector('.btn-s.f.active')) s = "F";
+            else if (itemEl.querySelector('.btn-s.n.active')) s = "N";
             const noteEl = document.getElementById(`note-${i}`);
             const issuesData = [];
             const container = document.getElementById(`issues-container-${i}`);
             if (container) {
                 container.querySelectorAll('.issue-block').forEach((block, bidx) => {
                     const n = bidx + 1;
+                    const approved = document.getElementById(`approve-btn-${i}-${n}`)?.textContent?.includes('מאושר') || false;
+                    const photos = (issuePhotos[i] && issuePhotos[i][n]) ? issuePhotos[i][n].filter(p=>p) : [];
                     issuesData.push({
                         person: (document.getElementById(`person-${i}-${n}`) || {}).value || "",
                         email: (document.getElementById(`email-${i}-${n}`) || {}).value || "",
-                        desc: (document.getElementById(`desc-${i}-${n}`) || {}).value || ""
+                        desc: (document.getElementById(`desc-${i}-${n}`) || {}).value || "",
+                        approved, photos
                     });
                 });
             }
-            data.items[`i${i}`] = {
-                s: status,
-                n: noteEl ? noteEl.value : "",
-                issues: issuesData.length > 0 ? issuesData.map((iss, bidx) => ({
-                    ...iss,
-                    photos: (issuePhotos[i] && issuePhotos[i][bidx+1]) ? issuePhotos[i][bidx+1].filter(p=>p) : []
-                })) : []
-            };
-        }
-        for (let i = 0; i < 5; i++) {
-            const el = document.getElementById(`sig-name-${i}`);
-            data.sigNames.push(el ? (el.value || "") : "");
+            data.items[`i${i}`] = { s, n: noteEl ? noteEl.value : "", issues: issuesData };
         }
         return data;
     }
 
-    // שמירה ב-Firebase + localStorage
-    function autoSaveToStorage() {
-        try {
-            const data = collectData();
-            // שמור תמיד ב-localStorage כגיבוי
-            localStorage.setItem('electra_l0_v2', JSON.stringify(data));
-            // שמור ב-Firebase
-            const ind = document.getElementById('save-indicator');
-            if (ind) ind.textContent = '⏳ שומר...';
-            db.ref('checklist').set(data).then(() => {
-                if (ind) { ind.textContent = '✓ נשמר'; setTimeout(() => { if(ind) ind.textContent = ''; }, 2000); }
-            }).catch(() => {
-                if (ind) { ind.textContent = '💾 נשמר מקומית'; setTimeout(() => { if(ind) ind.textContent = ''; }, 2000); }
-            });
-        } catch(e) { console.log('Save error:', e); }
-    }
-
-    // טעינה מ-Firebase עם fallback ל-localStorage
+    // טעינה מ-Firebase — בוחר הנתונים העדכניים ביותר
     function loadFromFirebase() {
-        db.ref('checklist').once('value').then(snapshot => {
-            const data = snapshot.val();
-            if (data && data.v) {
-                applyData(data);
-            } else {
-                // נסה localStorage
-                loadFromLocal();
-            }
-        }).catch(() => loadFromLocal());
+        if (!currentChecklistId) return;
+        const localKey = `cl_${currentChecklistId}`;
+        db.ref(`checklists/${currentChecklistId}/data`).once('value')
+            .then(snap => {
+                const fb = snap.val();
+                let local = null;
+                try { const s = localStorage.getItem(localKey); if(s) local = JSON.parse(s); } catch(e) {}
+                // בחר הנתונים החדשים ביותר לפי timestamp
+                if (fb && local) applyData((fb.ts||0) >= (local.ts||0) ? fb : local);
+                else if (fb) applyData(fb);
+                else if (local) applyData(local);
+            })
+            .catch(() => {
+                try { const s = localStorage.getItem(localKey); if(s) applyData(JSON.parse(s)); } catch(e) {}
+            });
     }
 
     function loadFromLocal() {
         try {
-            const s = localStorage.getItem('electra_l0_v2') || localStorage.getItem('electra_l0_autosave');
+            const s = localStorage.getItem(`cl_${currentChecklistId}`) || localStorage.getItem('electra_l0_v2');
             if (s) applyData(JSON.parse(s));
         } catch(e) {}
     }
 
     function applyData(data) {
+        if (!data) return;
         try {
-            if (data.panelName) document.getElementById('global-panel-name').value = data.panelName;
-            if (data.panelNumber) document.getElementById('global-panel-number').value = data.panelNumber;
-            if (data.project) document.getElementById('global-project').value = data.project;
-            if (data.inspectorName) document.getElementById('global-inspector-name').value = data.inspectorName;
+            const set = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.value = val; };
+            set('global-panel-name', data.panelName);
+            set('global-panel-number', data.panelNumber);
+            set('global-project', data.project);
+            set('global-inspector-name', data.inspectorName);
             syncGlobalStatus(data.globalStatus || "not-started");
 
             for (let i = 1; i <= 31; i++) {
-                // תמיכה בשני פורמטים (ישן וחדש)
                 const item = (data.items || {})[`i${i}`] || (data.items || {})[i];
                 if (!item) continue;
                 const itemEl = document.getElementById(`scroll-target-${i}`);
                 if (!itemEl) continue;
 
-                const status = item.s || item.status || "X";
-                if (status === "P") { const b = itemEl.querySelector('.btn-s.p'); if(b) b.classList.add('active'); }
-                else if (status === "F") { const b = itemEl.querySelector('.btn-s.f'); if(b) b.classList.add('active'); }
-                else if (status === "N") { const b = itemEl.querySelector('.btn-s.n'); if(b) b.classList.add('active'); }
+                itemEl.querySelectorAll('.btn-s').forEach(b => b.classList.remove('active'));
+                const s = item.s || item.status || "X";
+                if (s === "P") { const b = itemEl.querySelector('.btn-s.p'); if(b) b.classList.add('active'); }
+                else if (s === "F") { const b = itemEl.querySelector('.btn-s.f'); if(b) b.classList.add('active'); }
+                else if (s === "N") { const b = itemEl.querySelector('.btn-s.n'); if(b) b.classList.add('active'); }
 
                 const noteVal = item.n || item.note || "";
-                const noteEl = document.getElementById(`note-${i}`);
-                if (noteEl) noteEl.value = noteVal;
-                // עדכן אייקון הערה
+                set(`note-${i}`, noteVal);
                 if (noteVal.trim()) {
                     const icon = document.getElementById(`note-icon-${i}`);
                     const badge = document.getElementById(`note-badge-${i}`);
                     if (icon) icon.setAttribute('stroke', '#f59e0b');
                     if (badge) badge.style.display = 'block';
+                    const panel = document.getElementById(`note-panel-${i}`);
+                    // לא פותח אוטומטית את הפנל — רק מציין שיש הערה
                 }
 
                 const issues = item.issues || [];
@@ -635,46 +679,19 @@
                     if (trig) trig.classList.add('has-issue');
                 }
             }
-
-            if (data.sigNames) {
-                data.sigNames.forEach((name, i) => {
-                    const el = document.getElementById(`sig-name-${i}`);
-                    if (el && name) el.value = name;
-                });
-            }
             updateSummary();
-
-            // טעינת תמונות
-            for (let i = 1; i <= 31; i++) {
-                db.ref(`photos/item${i}`).once('value').then(snap => {
-                    const photos = snap.val();
-                    if (!photos) return;
-                    const arr = Array.isArray(photos) ? photos : Object.values(photos);
-                    if (!arr.length) return;
-                    itemPhotos[i] = arr;
-                    const thumbsContainer = document.getElementById(`photo-thumbs-${i}`);
-                    if (!thumbsContainer) return;
-                    arr.forEach((photo, idx) => {
-                        if (!photo || !photo.url) return;
-                        thumbsContainer.appendChild(createThumb(photo.url, i, idx, false));
-                    });
-                    updatePhotoBtn(i);
-                }).catch(() => {});
-            }
-        } catch(e) { console.log('Apply error:', e); }
+        } catch(e) { console.error('applyData:', e); }
     }
+
+    function loadFromEmbeddedData() {
+        if (window.__ELECTRA_SAVED__) applyData(window.__ELECTRA_SAVED__);
+        else loadFromFirebase();
+    }
+
 </script>
-<!-- חלק 5 -->
-<div class="banner">חלק 5: השלמת הרשימה ואישורי נציגים</div>
-
-<div class="card">
-    <h2 style="margin-bottom:20px;">אישורי נציגים - שלב L0</h2>
-    <div id="sig-section-target"></div>
-</div>
-
-<!-- מערכת שינוי סטטוס שלישית - ממוקמת באופן יוקרתי מיד לאחר פרק 5 -->
-<div class="card">
-    <h2>סטטוס הצ'קליסט הכללי (עדכון סופי בתחתית)</h2>
+<!-- סטטוס סופי -->
+<div class="card" style="margin-top:8px;">
+    <h2>סטטוס סופי</h2>
     <div class="global-status-selector">
         <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
         <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
@@ -682,8 +699,9 @@
     </div>
 </div>
 
-<button class="sub-bar" onclick="saveAsHTMLFile()" style="margin-bottom:10px;">💾 שמור קובץ HTML (פתח שוב עם כל הנתונים)</button>
-<button class="sub-bar" onclick="saveChecklistAndExport()" style="background:linear-gradient(135deg,#065f46,#047857); margin-top:0;">📊 הורד דוח CSV לאקסל</button>
+<!-- כפתורי שמירה — עדינים -->
+<div style="margin:12px 0 24px;">
+    <button onclick="saveChecklistAndExport()" style="width:100%; background:white; color:var(--text-muted); border:1.5px solid var(--border); padding:11px; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">📊 ייצא דוח CSV</button>
 </div>
 
 <script>
@@ -1368,27 +1386,243 @@
         link.click();
     }
 
-    // טעינת נתונים מוטמעים בקובץ (אם נשמר קודם)
-    function loadFromEmbeddedData() {
-        // אם יש נתונים מוטמעים בקובץ HTML — השתמש בהם קודם
-        if (window.__ELECTRA_SAVED__) {
-            applyData(window.__ELECTRA_SAVED__);
-            if (window.__ELECTRA_CONTACTS__) {
-                contacts = window.__ELECTRA_CONTACTS__;
-                saveContactsLocal();
-                updateContactsSummary();
-            }
-        } else {
-            // אחרת טען מ-Firebase
-            loadFromFirebase();
-        }
+    // טעינת נתונים מוטמעים בקובץ — הועבר למעלה
+
+    // ═══════════════════════════════════════════
+    // מערכת ניהול צ'קליסטים — דף בית
+    // ═══════════════════════════════════════════
+    let allChecklists = {}; // { id: { title, status, created, passed, failed, total } }
+    let currentChecklistId = null;
+
+    function goHome() {
+        document.getElementById('checklist-screen').style.display = 'none';
+        document.getElementById('home-screen').style.display = 'block';
+        currentChecklistId = null;
+        loadAllChecklists();
     }
 
-    // האזנה לשינויים בשדות הפרטים הראשיים
+    function openChecklist(id) {
+        currentChecklistId = id;
+        document.getElementById('home-screen').style.display = 'none';
+        document.getElementById('checklist-screen').style.display = 'block';
+        // אפס את הצ'קליסט
+        resetChecklist();
+        // טען מ-Firebase
+        db.ref(`checklists/${id}/data`).once('value').then(snap => {
+            const data = snap.val();
+            if (data) applyData(data);
+            const title = (allChecklists[id] || {}).title || id;
+            document.getElementById('checklist-title-display').textContent = title;
+        });
+        loadContacts();
+    }
+
+    function resetChecklist() {
+        // אפס סטטוסים
+        for (let i = 1; i <= 31; i++) {
+            const itemEl = document.getElementById(`scroll-target-${i}`);
+            if (!itemEl) continue;
+            itemEl.querySelectorAll('.btn-s').forEach(b => b.classList.remove('active'));
+            const noteEl = document.getElementById(`note-${i}`);
+            if (noteEl) noteEl.value = '';
+            const notePanel = document.getElementById(`note-panel-${i}`);
+            if (notePanel) notePanel.style.display = 'none';
+            const noteIcon = document.getElementById(`note-icon-${i}`);
+            if (noteIcon) noteIcon.setAttribute('stroke', '#94a3b8');
+            const noteBadge = document.getElementById(`note-badge-${i}`);
+            if (noteBadge) noteBadge.style.display = 'none';
+            const container = document.getElementById(`issues-container-${i}`);
+            if (container) { container.innerHTML = ''; issueCounters[i] = 0; }
+            const panel = document.getElementById(`panel-${i}`);
+            if (panel) panel.style.display = 'none';
+            const trig = document.getElementById(`trig-${i}`);
+            if (trig) trig.classList.remove('has-issue');
+            const thumbs = document.getElementById(`photo-thumbs-${i}`);
+            if (thumbs) thumbs.innerHTML = '';
+            updatePhotoBtn(i);
+        }
+        itemPhotos = {};
+        issuePhotos = {};
+        syncGlobalStatus('not-started');
+        ['global-panel-name','global-panel-number','global-project','global-inspector-name'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        for (let i = 0; i < 5; i++) { const el = document.getElementById(`sig-name-${i}`); if(el) el.value = ''; }
+        updateSummary();
+    }
+
+    function toggleHomeContacts() {
+        const existing = document.getElementById('home-contacts-modal');
+        if (existing) { existing.remove(); return; }
+        const modal = document.createElement('div');
+        modal.id = 'home-contacts-modal';
+        modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9998; display:flex; align-items:flex-end; padding:0;';
+        modal.innerHTML = `
+            <div style="background:white; border-radius:20px 20px 0 0; padding:20px; width:100%; max-height:80vh; overflow-y:auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <div style="font-size:0.95rem; font-weight:800; color:var(--navy);">👥 אנשי קשר גלובליים</div>
+                    <button onclick="document.getElementById('home-contacts-modal').remove()" style="background:#f1f5f9; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:700;">סגור</button>
+                </div>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">אנשי קשר אלו יופיעו בכל הצ'קליסטים</div>
+                <div id="contacts-list"></div>
+                <button onclick="addContactRow()" style="background:var(--blue-light); color:var(--blue); border:1px dashed var(--blue); padding:9px 14px; border-radius:9px; font-size:0.8rem; font-weight:700; cursor:pointer; width:100%; margin-top:8px; font-family:inherit;">+ הוסף איש קשר</button>
+            </div>
+        `;
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        document.body.appendChild(modal);
+        renderContactsSettings();
+    }
+
+    // שמירה אמינה עם retry
+    let saveTimeout = null;
+    function autoSaveToStorage() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(_doSave, 300);
+    }
+
+    function _doSave() {
+        if (!currentChecklistId) return;
+        try {
+            const data = collectData();
+            try { localStorage.setItem(`cl_${currentChecklistId}`, JSON.stringify(data)); } catch(e) {}
+            const ind = document.getElementById('save-indicator');
+            if (ind) { ind.textContent = '⏳'; ind.style.color = 'rgba(255,255,255,0.7)'; }
+            const attempt = (n) => {
+                db.ref(`checklists/${currentChecklistId}/data`).set(data)
+                    .then(() => {
+                        if (ind) { ind.textContent = '✓'; ind.style.color = '#6ee7b7'; setTimeout(() => { if(ind) ind.textContent=''; }, 2000); }
+                        updateChecklistMeta(data);
+                    })
+                    .catch(() => { if (n > 0) setTimeout(() => attempt(n-1), 1500); else if(ind) { ind.textContent='💾'; setTimeout(()=>{if(ind)ind.textContent='';},3000); } });
+            };
+            attempt(3);
+        } catch(e) { console.error('Save:', e); }
+    }
+
+    function updateChecklistMeta(data) {
+        let p = 0, f = 0;
+        for (let i = 1; i <= 31; i++) {
+            const d = (data.items || {})[`i${i}`];
+            if (d && d.s === 'P') p++;
+            if (d && d.s === 'F') f++;
+        }
+        const ex = allChecklists[currentChecklistId] || {};
+        const meta = { title: data.panelName || ex.title || 'ללא שם', status: data.globalStatus || 'not-started', passed: p, failed: f, total: 31, created: ex.created || new Date().toLocaleDateString('he-IL'), updated: new Date().toLocaleDateString('he-IL') };
+        db.ref(`checklists/${currentChecklistId}/meta`).set(meta).catch(() => {});
+        allChecklists[currentChecklistId] = meta;
+        const badge = document.getElementById('checklist-status-badge');
+        if (badge) badge.textContent = meta.status === 'completed' ? '✓ הושלם' : meta.status === 'in-progress' ? '⏳ בתהליך' : 'L0';
+        const td = document.getElementById('checklist-title-display');
+        if (td && meta.title) td.textContent = meta.title;
+    }
+
+    function createNewChecklist() {
+        const modal = document.createElement('div');
+        modal.id = 'new-cl-modal';
+        modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;';
+        modal.innerHTML = `
+            <div style="background:white; border-radius:16px; padding:24px; width:100%; max-width:360px; box-shadow:0 20px 40px rgba(0,0,0,0.2);">
+                <div style="font-size:1rem; font-weight:800; color:var(--navy); margin-bottom:6px;">צ'קליסט חדש</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">הכנס שם ללוח / פרויקט</div>
+                <input type="text" id="new-cl-title" placeholder="שם הלוח..." style="width:100%; padding:12px; border:1.5px solid var(--border); border-radius:10px; font-size:0.95rem; font-family:inherit; box-sizing:border-box; margin-bottom:14px;">
+                <div style="display:flex; gap:8px;">
+                    <button onclick="document.getElementById('new-cl-modal').remove()" style="flex:1; background:#f1f5f9; color:var(--text-muted); border:none; padding:11px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;">ביטול</button>
+                    <button onclick="confirmNewChecklist()" style="flex:2; background:var(--navy); color:white; border:none; padding:11px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;">פתח ✓</button>
+                </div>
+            </div>`;
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        document.body.appendChild(modal);
+        setTimeout(() => document.getElementById('new-cl-title')?.focus(), 100);
+    }
+
+    function confirmNewChecklist() {
+        const titleEl = document.getElementById('new-cl-title');
+        const title = titleEl ? titleEl.value.trim() : '';
+        if (!title) { if(titleEl) titleEl.style.borderColor = '#dc2626'; return; }
+        document.getElementById('new-cl-modal')?.remove();
+        const id = 'cl_' + Date.now();
+        const meta = { title, status: 'not-started', created: new Date().toLocaleDateString('he-IL'), passed: 0, failed: 0, total: 31 };
+        allChecklists[id] = meta;
+        db.ref(`checklists/${id}/meta`).set(meta).catch(() => {});
+        openChecklist(id);
+    }
+
+    function deleteChecklist(id, e) {
+        e.stopPropagation();
+        if (!confirm('למחוק את הצ\'קליסט הזה לצמיתות?')) return;
+        db.ref(`checklists/${id}`).remove().then(() => {
+            delete allChecklists[id];
+            renderChecklists();
+        });
+    }
+
+    function loadAllChecklists() {
+        db.ref('checklists').once('value').then(snap => {
+            allChecklists = {};
+            const val = snap.val() || {};
+            Object.keys(val).forEach(id => {
+                if (val[id].meta) allChecklists[id] = val[id].meta;
+            });
+            renderChecklists();
+        });
+    }
+
+    function renderChecklists() {
+        const container = document.getElementById('checklists-list');
+        if (!container) return;
+        const q = (document.getElementById('search-input') || {}).value || '';
+        const ids = Object.keys(allChecklists).sort((a,b) => b.localeCompare(a));
+        const filtered = ids.filter(id => allChecklists[id].title.includes(q));
+
+        // סטטיסטיקות
+        document.getElementById('stat-total').textContent = ids.length;
+        document.getElementById('stat-progress').textContent = ids.filter(id => allChecklists[id].status === 'in-progress').length;
+        document.getElementById('stat-done').textContent = ids.filter(id => allChecklists[id].status === 'completed').length;
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px; font-size:0.9rem;">אין צ'קליסטים עדיין<br><span style="font-size:0.8rem;">לחץ על הכפתור למטה כדי להתחיל</span></div>`;
+            return;
+        }
+
+        container.innerHTML = '';
+        filtered.forEach(id => {
+            const cl = allChecklists[id];
+            const statusColor = cl.status === 'completed' ? '#059669' : cl.status === 'in-progress' ? '#d97706' : '#64748b';
+            const statusLabel = cl.status === 'completed' ? 'הושלם' : cl.status === 'in-progress' ? 'בתהליך' : 'לא התחיל';
+            const pct = cl.total > 0 ? Math.round(((cl.passed||0) + (cl.failed||0)) / cl.total * 100) : 0;
+            const card = document.createElement('div');
+            card.style.cssText = 'background:white; border-radius:14px; padding:14px 16px; margin-bottom:10px; border:1.5px solid var(--border); cursor:pointer; transition:box-shadow 0.2s;';
+            card.onmouseenter = () => card.style.boxShadow = '0 4px 16px rgba(10,37,64,0.1)';
+            card.onmouseleave = () => card.style.boxShadow = 'none';
+            card.onclick = () => openChecklist(id);
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                    <div>
+                        <div style="font-size:0.95rem; font-weight:800; color:var(--navy); margin-bottom:3px;">${cl.title}</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted);">נוצר: ${cl.created || ''}</div>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <span style="background:${statusColor}22; color:${statusColor}; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:10px; white-space:nowrap;">${statusLabel}</span>
+                        <button onclick="deleteChecklist('${id}', event)" style="background:#fee2e2; color:#dc2626; border:none; border-radius:7px; width:26px; height:26px; cursor:pointer; font-size:0.8rem; font-weight:700;">✕</button>
+                    </div>
+                </div>
+                <div style="background:#f1f5f9; border-radius:8px; height:6px; overflow:hidden;">
+                    <div style="background:linear-gradient(90deg, #059669, #34d399); height:100%; width:${pct}%; border-radius:8px; transition:width 0.3s;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span style="font-size:0.7rem; color:var(--text-muted);">${cl.passed||0} Passed · ${cl.failed||0} Failed</span>
+                    <span style="font-size:0.7rem; color:var(--text-muted);">${pct}%</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // האזנה לשינויים בשדות
     document.getElementById('global-panel-name').addEventListener('input', autoSaveToStorage);
     document.getElementById('global-inspector-name').addEventListener('input', autoSaveToStorage);
 
-    // יצירת שדות שמות נציגים (ללא חתימות)
+    // יצירת שדות שמות נציגים
     const roles = ["ממלא הטופס", "נציג CX ELECTRA", "נציג ההסמכה", "נציג היצרן", "נציג המזמין"];
     const targetBox = document.getElementById('sig-section-target');
     roles.forEach((r, i) => {
@@ -1397,8 +1631,9 @@
         targetBox.appendChild(f);
     });
 
-    // טעינה אחרי שה-DOM מוכן לחלוטין
-    setTimeout(() => { loadContacts(); loadFromEmbeddedData(); }, 800);
+    // התחל בדף הבית
+    loadContacts();
+    loadAllChecklists();
 </script>
 </body>
 </html>
