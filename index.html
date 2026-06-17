@@ -292,7 +292,7 @@
 <div id="checklist-screen" style="display:none;">
     <div class="premium-header">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-            <button id="back-btn" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:8px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה לרשימה</button>
+            <button id="back-btn" onclick="goHome()" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:8px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה לרשימה</button>
             <div id="save-indicator" style="font-size:0.68rem; color:rgba(255,255,255,0.7);"></div>
         </div>
         <div class="brand-eyebrow">Electra CX · Quality Control</div>
@@ -310,18 +310,25 @@
         </div>
     </div>
 
-    <!-- חלון Issues מרוכז -->
-    <div class="card" id="issues-summary-card" style="display:none; cursor:pointer;" onclick="toggleIssuesSummaryPanel()">
-        <h2 style="color:var(--failed); margin-bottom:8px;">
-            ⚠️ ליקויים פתוחים
-            <span id="issues-count-badge" style="background:#fee2e2; color:#dc2626; font-size:0.72rem; padding:2px 8px; border-radius:10px; margin-right:6px;"></span>
-            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:500;">לחץ לצפייה ▼</span>
-        </h2>
-        <div id="issues-summary-panel" style="display:none; margin-top:8px;"></div>
-    </div>
-
-    <div class="card" id="summary-card" style="display:none;">
-        <ul id="summary-box" class="summary-list"></ul>
+    <!-- כפתור Issues בולט — תמיד מוצג, מספרים מתעדכנים דינמית -->
+    <div id="issues-summary-card" onclick="openIssuesScreen()" style="
+        background:white; border-radius:14px; padding:14px 16px; margin-bottom:10px;
+        border:1.5px solid var(--border); cursor:pointer;
+        box-shadow:0 1px 4px rgba(10,37,64,0.06); transition:all 0.15s;
+        display:flex; justify-content:space-between; align-items:center;
+    " onmouseenter="this.style.borderColor='#fca5a5'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:#fee2e2; border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">⚠️</div>
+            <div>
+                <div style="font-size:0.85rem; font-weight:800; color:var(--navy); margin-bottom:2px;">Issues</div>
+                <div id="issues-count-badge" style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">אין Issues פתוחים</div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+            <span id="issues-open-pill" style="display:none; background:#fee2e2; color:#dc2626; font-size:0.68rem; font-weight:800; padding:4px 10px; border-radius:20px; white-space:nowrap;"></span>
+            <span id="issues-closed-pill" style="display:none; background:#dcfce7; color:#059669; font-size:0.68rem; font-weight:800; padding:4px 10px; border-radius:20px; white-space:nowrap;"></span>
+            <span style="color:#94a3b8; font-size:1.1rem; font-weight:300; margin-right:2px;">›</span>
+        </div>
     </div>
 
     <div class="card">
@@ -355,6 +362,42 @@
         <button onclick="saveChecklistAndExport()" style="width:100%; background:white; color:var(--text-muted); border:1.5px solid var(--border); padding:11px; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">📊 ייצא דוח CSV</button>
     </div>
 </div><!-- סוף checklist-screen -->
+
+<!-- מסך Issues מלא — מחוץ ל-checklist-screen -->
+<div id="issues-screen" style="display:none;">
+    <div class="premium-header">
+        <div style="display:flex; align-items:center; margin-bottom:6px;">
+            <button onclick="closeIssuesScreen()" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:8px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה</button>
+        </div>
+        <div class="brand-eyebrow">Electra CX · Issues</div>
+        <div class="brand-title">ISSUES</div>
+        <div id="issues-screen-count" style="margin-top:6px; font-size:0.75rem; color:rgba(255,255,255,0.55); letter-spacing:0.5px;"></div>
+    </div>
+    <div style="padding:8px 0;">
+        <input type="text" id="issues-search" placeholder="🔍 חפש Issue..." oninput="filterIssuesList()"
+            style="width:100%; padding:12px 16px; border:1.5px solid var(--border); border-radius:12px; font-size:0.9rem; font-family:inherit; box-sizing:border-box; margin-bottom:8px;">
+        <div style="background:white; border-radius:16px; padding:0 16px; box-shadow:0 1px 4px rgba(10,37,64,0.06); border:1px solid var(--border);">
+            <div id="issues-full-list"></div>
+        </div>
+        <div style="height:60px;"></div>
+    </div>
+</div>
+
+<!-- מסך פרטי Issue בודד -->
+<div id="issue-detail-screen" style="display:none;">
+    <div class="premium-header">
+        <div style="display:flex; align-items:center; margin-bottom:6px;">
+            <button onclick="closeIssueDetail()" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:8px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה ל-Issues</button>
+        </div>
+        <div class="brand-eyebrow">Electra CX · Issue Detail</div>
+        <div id="issue-detail-num" class="brand-title" style="font-size:1.4rem;">CHK-0-0</div>
+    </div>
+    <div style="padding:8px 0 80px;">
+        <div id="issue-detail-content"></div>
+    </div>
+</div>
+
+</div><!-- סוף app-frame -->
 <script>
     const items = [
         {c:2, id:1, t:"רישום שם הלוח והתאמתו הפיזית"}, {c:2, id:2, t:"רישום תאריך הבדיקה בפועל", isDate: true},
@@ -466,8 +509,7 @@
         container.appendChild(d);
     });
 
-    // כפתור חזרה — עם addEventListener להבטיח עבודה
-    document.getElementById('back-btn').addEventListener('click', goHome);
+
 
     function toggleNotePanel(id) {
         const panel = document.getElementById(`note-panel-${id}`);
@@ -508,7 +550,8 @@
     }
 
     // מערך גלובלי לשמירת תמונות (base64) לכל סעיף
-    const itemPhotos = {};
+    let itemPhotos = {};
+    let issuePhotos = {}; // issuePhotos[itemId][issueIdx] = [{url}]
 
     function togglePhotoPanel(id) {
         const panel = document.getElementById(`photo-panel-${id}`);
@@ -524,30 +567,31 @@
         if (!input.files || !input.files.length) return;
         if (!itemPhotos[id]) itemPhotos[id] = [];
         const thumbsContainer = document.getElementById(`photo-thumbs-${id}`);
+        if (!thumbsContainer) return;
 
         Array.from(input.files).forEach(file => {
-            // דחס תמונה לפני שמירה
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
+                const imgEl = new Image();
+                imgEl.onload = function() {
                     const canvas = document.createElement('canvas');
                     const maxW = 800;
-                    const scale = img.width > maxW ? maxW / img.width : 1;
-                    canvas.width = img.width * scale;
-                    canvas.height = img.height * scale;
-                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const scale = imgEl.width > maxW ? maxW / imgEl.width : 1;
+                    canvas.width = imgEl.width * scale;
+                    canvas.height = imgEl.height * scale;
+                    canvas.getContext('2d').drawImage(imgEl, 0, 0, canvas.width, canvas.height);
                     const base64 = canvas.toDataURL('image/jpeg', 0.7);
-                    
                     const idx = itemPhotos[id].length;
                     itemPhotos[id].push({ url: base64 });
                     const wrapper = createThumb(base64, id, idx, false);
                     thumbsContainer.appendChild(wrapper);
                     updatePhotoBtn(id);
-                    // שמור ב-Firebase Database
-                    db.ref(`photos/item${id}`).set(itemPhotos[id].filter(p => p));
+                    // שמור תחת הצ'קליסט הנוכחי
+                    const path = currentChecklistId ? `checklists/${currentChecklistId}/photos/item${id}` : `photos/item${id}`;
+                    db.ref(path).set(itemPhotos[id].filter(p => p)).catch(() => {});
+                    autoSaveToStorage();
                 };
-                img.src = e.target.result;
+                imgEl.src = e.target.result;
             };
             reader.readAsDataURL(file);
         });
@@ -621,8 +665,14 @@
             inspectorName: (document.getElementById('global-inspector-name') || {}).value || "",
             globalStatus: currentGlobalStatus || "not-started",
             items: {},
+            sigNames: [],
             ts: Date.now()
         };
+        // שמור אנשי נציגים (חלק 5)
+        for (let i = 0; i < 5; i++) {
+            const el = document.getElementById(`sig-name-${i}`);
+            data.sigNames.push(el ? (el.value || "") : "");
+        }
         for (let i = 1; i <= 31; i++) {
             const itemEl = document.getElementById(`scroll-target-${i}`);
             if (!itemEl) continue;
@@ -636,13 +686,15 @@
             if (container) {
                 container.querySelectorAll('.issue-block').forEach((block, bidx) => {
                     const n = bidx + 1;
-                    const approved = document.getElementById(`approve-btn-${i}-${n}`)?.textContent?.includes('מאושר') || false;
+                    const approveBtn = document.getElementById(`approve-btn-${i}-${n}`);
+                    const issueStatus = approveBtn?.dataset?.status || 'open';
                     const photos = (issuePhotos[i] && issuePhotos[i][n]) ? issuePhotos[i][n].filter(p=>p) : [];
                     issuesData.push({
                         person: (document.getElementById(`person-${i}-${n}`) || {}).value || "",
                         email: (document.getElementById(`email-${i}-${n}`) || {}).value || "",
                         desc: (document.getElementById(`desc-${i}-${n}`) || {}).value || "",
-                        approved, photos
+                        status: issueStatus,
+                        photos
                     });
                 });
             }
@@ -717,7 +769,35 @@
                     if (trig) trig.classList.add('has-issue');
                 }
             }
+            // שחזר נציגים (חלק 5)
+            if (data.sigNames) {
+                data.sigNames.forEach((name, idx) => {
+                    const el = document.getElementById(`sig-name-${idx}`);
+                    if (el && name) el.value = name;
+                });
+            }
             updateSummary();
+
+            // טעינת תמונות סעיפים
+            const photoPath = currentChecklistId ? `checklists/${currentChecklistId}/photos` : 'photos';
+            for (let pi = 1; pi <= 31; pi++) {
+                ((itemId) => {
+                    db.ref(`${photoPath}/item${itemId}`).once('value').then(snap => {
+                        const photos = snap.val();
+                        if (!photos) return;
+                        const arr = Array.isArray(photos) ? photos : Object.values(photos);
+                        if (!arr.length) return;
+                        itemPhotos[itemId] = arr;
+                        const tc = document.getElementById(`photo-thumbs-${itemId}`);
+                        if (!tc) return;
+                        arr.forEach((photo, idx) => {
+                            if (!photo || !photo.url) return;
+                            tc.appendChild(createThumb(photo.url, itemId, idx, false));
+                        });
+                        updatePhotoBtn(itemId);
+                    }).catch(() => {});
+                })(pi);
+            }
         } catch(e) { console.error('applyData:', e); }
     }
 
@@ -726,24 +806,8 @@
         else loadFromFirebase();
     }
 
-</script>
-<!-- סטטוס סופי -->
-<div class="card" style="margin-top:8px;">
-    <h2>סטטוס סופי</h2>
-    <div class="global-status-selector">
-        <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
-        <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
-        <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
-    </div>
-</div>
-
-<!-- כפתורי שמירה — עדינים -->
-<div style="margin:12px 0 24px;">
-    <button onclick="saveChecklistAndExport()" style="width:100%; background:white; color:var(--text-muted); border:1.5px solid var(--border); padding:11px; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">📊 ייצא דוח CSV</button>
-</div>
-
-<script>
     let currentGlobalStatus = "not-started";
+    let realtimeListener = null;
 
     // סנכרון משולש של כל מערכות הסטטוסים בדף (עליון, אמצעי ותחתון) וחסימת המיילים
     function syncGlobalStatus(status) {
@@ -881,10 +945,11 @@
         block.innerHTML = `
             <div class="issue-block-header">
                 <span style="font-size:0.78rem; font-weight:700; color:#64748b;">Issue #${idx}</span>
-                <div style="display:flex; gap:5px; align-items:center;">
-                    <button id="approve-btn-${itemId}-${idx}" onclick="toggleIssueApprove(${itemId}, ${idx})" 
-                        style="background:${approved?'#dcfce7':'#f1f5f9'}; color:${approved?'#059669':'#64748b'}; border:1px solid ${approved?'#86efac':'#e2e8f0'}; border-radius:6px; padding:3px 8px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit;">
-                        ${approved ? '✓ מאושר' : 'אשר'}
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                    <button id="approve-btn-${itemId}-${idx}" data-status="open"
+                        onclick="toggleIssueStatus(${itemId}, ${idx})" 
+                        style="background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;">
+                        פתוח
                     </button>
                     <button class="del-issue-btn" onclick="removeIssueBlock(${itemId}, ${idx})">✕</button>
                 </div>
@@ -928,29 +993,28 @@
         return idx;
     }
 
-    function toggleIssueApprove(itemId, idx) {
-        const block = document.getElementById(`issue-block-${itemId}-${idx}`);
+    function toggleIssueStatus(itemId, idx) {
         const btn = document.getElementById(`approve-btn-${itemId}-${idx}`);
-        if (!block || !btn) return;
-        const isApproved = btn.textContent.includes('מאושר');
-        if (isApproved) {
-            // בטל אישור
-            block.style.border = '1.5px solid #fca5a5';
-            block.style.background = 'rgba(255,255,255,0.8)';
-            btn.textContent = 'אשר';
-            btn.style.background = '#f1f5f9'; btn.style.color = '#64748b'; btn.style.borderColor = '#e2e8f0';
+        const block = document.getElementById(`issue-block-${itemId}-${idx}`);
+        if (!btn) return;
+        const isClosed = btn.dataset.status === 'closed';
+        if (isClosed) {
+            btn.dataset.status = 'open';
+            btn.textContent = 'פתוח';
+            btn.style.cssText = 'background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;';
+            if (block) { block.style.borderColor = '#fca5a5'; block.style.background = 'rgba(255,255,255,0.8)'; }
         } else {
-            // אשר
-            block.style.border = '1.5px solid #86efac';
-            block.style.background = 'rgba(240,253,244,0.5)';
-            btn.textContent = '✓ מאושר';
-            btn.style.background = '#dcfce7'; btn.style.color = '#059669'; btn.style.borderColor = '#86efac';
+            btn.dataset.status = 'closed';
+            btn.textContent = 'סגור';
+            btn.style.cssText = 'background:#dcfce7; color:#059669; border:1px solid #86efac; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;';
+            if (block) { block.style.borderColor = '#86efac'; block.style.background = 'rgba(240,253,244,0.5)'; }
         }
+        updateSummary();
         autoSaveToStorage();
     }
 
     // תמונות ל-Issue
-    const issuePhotos = {}; // issuePhotos[itemId][issueIdx] = [{url}]
+    // תמונות ל-Issue
 
     function addIssuePhotos(input, itemId, issueIdx) {
         if (!input.files || !input.files.length) return;
@@ -1296,7 +1360,7 @@
         if (!box) return;
         box.innerHTML = '';
         if (issuesPanel) issuesPanel.innerHTML = '';
-        let totalIssues = 0;
+        let totalIssues = 0, openIssues = 0, closedIssues = 0;
 
         for (let i = 1; i <= 31; i++) {
             const container = document.getElementById(`issues-container-${i}`);
@@ -1305,33 +1369,61 @@
             if (blocks.length === 0) continue;
             totalIssues += blocks.length;
             blocks.forEach((block, bidx) => {
+                const n = bidx + 1;
                 const descEl = block.querySelector('textarea');
-                const personEl = block.querySelector(`#person-${i}-${bidx+1}`);
+                const personEl = document.getElementById(`person-${i}-${n}`);
+                const approveBtn = document.getElementById(`approve-btn-${i}-${n}`);
                 const desc = descEl ? descEl.value : "";
                 const person = personEl ? personEl.value : "";
+                const isClosed = approveBtn?.dataset?.status === 'closed';
+                if (isClosed) closedIssues++; else openIssues++;
+                const statusColor = isClosed ? '#059669' : '#dc2626';
+                const statusBg = isClosed ? '#dcfce7' : '#fee2e2';
+                const statusLabel = isClosed ? 'סגור' : 'פתוח';
+
                 const li = document.createElement('li');
                 li.innerHTML = `<span style="background:#fee2e2; color:#dc2626; font-size:0.7rem; font-weight:800; padding:1px 6px; border-radius:4px; margin-left:6px;">סעיף ${i}</span>${desc ? desc.substring(0,35)+(desc.length>35?'...':'') : 'Issue ללא פירוט'}`;
                 li.onclick = () => document.getElementById(`scroll-target-${i}`).scrollIntoView({behavior:'smooth'});
                 box.appendChild(li);
                 if (issuesPanel) {
                     const ic = document.createElement('div');
-                    ic.style.cssText = 'background:#fff8f8; border:1px solid #fecaca; border-radius:10px; padding:12px; margin-bottom:8px; cursor:pointer;';
+                    ic.style.cssText = `background:white; border:1.5px solid ${isClosed ? '#86efac' : '#fca5a5'}; border-radius:12px; padding:14px; margin-bottom:8px; cursor:pointer;`;
                     ic.onclick = (e) => { e.stopPropagation(); document.getElementById(`scroll-target-${i}`).scrollIntoView({behavior:'smooth'}); };
                     ic.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <span style="font-size:0.72rem; font-weight:800; color:#dc2626;">⚠️ סעיף ${i} — Issue #${bidx+1}</span>
-                            <span style="font-size:0.65rem; color:var(--text-muted);">← ניווט</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-size:0.72rem; font-weight:700; color:var(--text-muted);">סעיף ${i} · Issue #${n}</span>
+                            <span style="background:${statusBg}; color:${statusColor}; font-size:0.7rem; font-weight:800; padding:3px 12px; border-radius:20px;">${statusLabel}</span>
                         </div>
-                        ${person ? `<div style="font-size:0.78rem; font-weight:600; color:#334155; margin-bottom:3px;">👤 ${person}</div>` : ''}
-                        <div style="font-size:0.78rem; color:#475569;">${desc || 'ללא פירוט'}</div>`;
+                        ${person ? `<div style="font-size:0.82rem; font-weight:700; color:var(--navy); margin-bottom:4px;">👤 ${person}</div>` : ''}
+                        <div style="font-size:0.8rem; color:#475569; line-height:1.4;">${desc || 'ללא פירוט'}</div>`;
                     issuesPanel.appendChild(ic);
                 }
             });
         }
         if (card) card.style.display = totalIssues > 0 ? "block" : "none";
-        if (issuesCard) issuesCard.style.display = totalIssues > 0 ? "block" : "none";
-        if (issuesBadge) issuesBadge.textContent = totalIssues > 0 ? `${totalIssues}` : '';
-        updateFloatingBar(totalIssues);
+        // Issues card — תמיד מוצג, מעדכן pill-ים
+        if (issuesBadge) {
+            if (totalIssues === 0) {
+                issuesBadge.textContent = 'אין Issues פתוחים';
+                issuesBadge.style.color = 'var(--text-muted)';
+            } else {
+                issuesBadge.textContent = `סה"כ ${totalIssues} Issues`;
+                issuesBadge.style.color = openIssues > 0 ? '#dc2626' : '#059669';
+            }
+        }
+        const openPill = document.getElementById('issues-open-pill');
+        const closedPill = document.getElementById('issues-closed-pill');
+        if (openPill) {
+            openPill.style.display = openIssues > 0 ? 'inline-block' : 'none';
+            openPill.textContent = `${openIssues} פתוח`;
+        }
+        if (closedPill) {
+            closedPill.style.display = closedIssues > 0 ? 'inline-block' : 'none';
+            closedPill.textContent = `${closedIssues} סגור`;
+        }
+        // עדכן גם את כרטיס ה-Issues להצגה/הסתרה לפי כמות
+        if (issuesCard) issuesCard.style.display = 'flex'; // תמיד מוצג
+        updateFloatingBar(openIssues);
     }
 
     // כפתור צף קטן בצד
@@ -1358,52 +1450,6 @@
     }
 
     // שליחת הליקוי במייל למבצע
-    function sendIssueMail(itemId) {
-        const person = document.getElementById(`person-${itemId}`).value || "איש קשר";
-        const email = document.getElementById(`email-${itemId}`).value;
-        const description = document.getElementById(`desc-${itemId}`).value || "לא הוזן פירוט";
-        const sectionText = document.getElementById(`text-sec-${itemId}`).innerText;
-        const panelName = document.getElementById('global-panel-name').value || "לא צוין";
-        const inspector = document.getElementById('global-inspector-name').value || "בודק אלקטרה";
-        if (!email) { alert("אנא הזן כתובת מייל תקינה!"); return; }
-        const subject = encodeURIComponent(`Electra CX L0 - ליקוי בסעיף ${itemId}`);
-        let bodyText = `שלום ${person},\n\nהתגלה ליקוי בלוח: ${panelName}\nסעיף: ${itemId} - ${sectionText}\nפירוט הממצא: ${description}\n\nדווח ע"י: ${inspector}`;
-        window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-    }
-
-    // מנוע העלאת תמונה
-    function loadImg(input, id) {
-        if (!input.files || !input.files) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                const wp = document.getElementById(`wp-${id}`); const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
-                wp.style.display = 'block'; const w = window.innerWidth - 64; const s = w / img.width;
-                cv.width = w; cv.height = img.height * s; cx.drawImage(img, 0, 0, cv.width, cv.height);
-                cv.dataset.bg = e.target.result; bindDr(cv, cx);
-            }
-            img.src = e.target.result;
-        }
-        reader.readAsDataURL(input.files);
-    }
-
-    // מנוע ציור באצבע (מגע ומסך)
-    function bindDr(cv, cx) {
-        let d = false; cx.strokeStyle = "#ef4444"; cx.lineWidth = 3; cx.lineCap = "round";
-        function getP(e) { const r = cv.getBoundingClientRect(); const x = e.touches ? e.touches.clientX : e.clientX; const y = e.touches ? e.touches.clientY : e.clientY; return { x: x - r.left, y: y - r.top }; }
-        function s(e) { d = true; cx.beginPath(); const p = getP(e); cx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); }
-        function m(e) { if (!d) return; const p = getP(e); cx.lineTo(p.x, p.y); cx.stroke(); if(e.touches) e.preventDefault(); }
-        cv.addEventListener('mousedown', s); cv.addEventListener('mousemove', m); window.addEventListener('mouseup', () => d = false);
-        cv.addEventListener('touchstart', s, {passive:false}); cv.addEventListener('touchmove', m, {passive:false}); cv.addEventListener('touchend', () => d = false);
-    }
-
-    function clearDr(id) { const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d'); const img = new Image(); img.onload = () => cx.drawImage(img, 0, 0, cv.width, cv.height); img.src = cv.dataset.bg; }
-    function addTx(id) {
-        const t = prompt("הערה על התמונה:"); if (!t) return; const cv = document.getElementById(`cn-${id}`); const cx = cv.getContext('2d');
-        cx.font = "bold 16px sans-serif"; cx.fillStyle = "yellow"; cx.strokeStyle = "black"; cx.lineWidth = 3; cx.strokeText(t, 20, 35); cx.fillText(t, 20, 35);
-    }
-
     // שמירה לתוך קובץ HTML עם כל הנתונים מוטמעים
     function saveAsHTMLFile() {
         const data = collectData();
@@ -1462,27 +1508,267 @@
     let allChecklists = {}; // { id: { title, status, created, passed, failed, total } }
     let currentChecklistId = null;
 
-    let realtimeListener = null; // Firebase realtime listener
+    let issuesData_cache = []; // cache for issues screen
+
+    function openIssuesScreen() {
+        document.getElementById('checklist-screen').style.display = 'none';
+        document.getElementById('issues-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.pushState({ screen: 'issues' }, '', '#issues');
+        // אפס count עד לטעינה
+        const sc = document.getElementById('issues-screen-count');
+        if (sc) sc.textContent = '';
+        renderIssuesList();
+    }
+
+    function closeIssuesScreen() {
+        document.getElementById('issues-screen').style.display = 'none';
+        document.getElementById('checklist-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.back();
+    }
+
+    function renderIssuesList(filter = '') {
+        const container = document.getElementById('issues-full-list');
+        if (!container) return;
+        issuesData_cache = [];
+
+        for (let i = 1; i <= 31; i++) {
+            const cont = document.getElementById(`issues-container-${i}`);
+            if (!cont) continue;
+            cont.querySelectorAll('.issue-block').forEach((block, bidx) => {
+                const n = bidx + 1;
+                const desc = (document.getElementById(`desc-${i}-${n}`) || {}).value || '';
+                const person = (document.getElementById(`person-${i}-${n}`) || {}).value || '';
+                const email = (document.getElementById(`email-${i}-${n}`) || {}).value || '';
+                const approveBtn = document.getElementById(`approve-btn-${i}-${n}`);
+                const status = approveBtn?.dataset?.status || 'open';
+                const sectionText = (document.getElementById(`text-sec-${i}`) || {}).innerText || `סעיף ${i}`;
+                issuesData_cache.push({ sectionId: i, issueIdx: n, desc, person, email, status, sectionText });
+            });
+        }
+
+        const filtered = filter ? issuesData_cache.filter(iss =>
+            iss.desc.toLowerCase().includes(filter) ||
+            iss.person.toLowerCase().includes(filter) ||
+            iss.sectionText.toLowerCase().includes(filter)
+        ) : issuesData_cache;
+
+        container.innerHTML = '';
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">אין Issues</div>`;
+            return;
+        }
+
+        // עדכן כותרת
+        const openCount = filtered.filter(i => i.status !== 'closed').length;
+        const closedCount = filtered.filter(i => i.status === 'closed').length;
+        const screenCount = document.getElementById('issues-screen-count');
+        if (screenCount) screenCount.textContent = `${openCount} פתוחים · ${closedCount} סגורים · סה"כ ${filtered.length}`;
+
+        filtered.forEach((iss, idx) => {
+            const isClosed = iss.status === 'closed';
+            const issueNum = `CHK-${iss.sectionId}-${iss.issueIdx}`;
+            const card = document.createElement('div');
+            card.style.cssText = `background:white; border:none; border-bottom:1px solid var(--border); padding:16px 0; cursor:pointer; transition:background 0.12s;`;
+            card.onmouseenter = () => card.style.background = '#f8fafc';
+            card.onmouseleave = () => card.style.background = 'white';
+            card.addEventListener('touchstart', () => card.style.background = '#f8fafc', {passive:true});
+            card.addEventListener('touchend', () => card.style.background = 'white', {passive:true});
+            card.onclick = () => openIssueDetail(iss);
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+                    <span style="background:${isClosed ? '#dcfce7' : '#fee2e2'}; color:${isClosed ? '#059669' : '#dc2626'}; font-size:0.72rem; font-weight:800; padding:4px 12px; border-radius:20px; white-space:nowrap;">${isClosed ? 'CLOSED · סגור' : 'OPEN · פתוח'}</span>
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">${issueNum}</span>
+                </div>
+                <div style="font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:5px; line-height:1.35;">${iss.desc || 'Issue ללא פירוט'}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">
+                    ${iss.person ? `👤 ${iss.person}` : ''}${iss.person && iss.sectionText ? ' · ' : ''}
+                    <span style="color:#64748b;">סעיף ${iss.sectionId}: ${iss.sectionText.substring(0,45)}${iss.sectionText.length>45?'...':''}</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function filterIssuesList() {
+        const q = (document.getElementById('issues-search') || {}).value || '';
+        renderIssuesList(q.toLowerCase());
+    }
+
+    // ═══ מסך פרטי Issue ═══
+    let currentIssueRef = null; // { sectionId, issueIdx }
+
+    function openIssueDetail(iss) {
+        currentIssueRef = { sectionId: iss.sectionId, issueIdx: iss.issueIdx };
+        document.getElementById('issues-screen').style.display = 'none';
+        document.getElementById('issue-detail-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.pushState({ screen: 'issue-detail' }, '', '#issue-detail');
+
+        const issueNum = `CHK-${iss.sectionId}-${iss.issueIdx}`;
+        document.getElementById('issue-detail-num').textContent = issueNum;
+
+        const isClosed = iss.status === 'closed';
+        const statusColor = isClosed ? '#059669' : '#dc2626';
+        const statusBg = isClosed ? '#dcfce7' : '#fee2e2';
+        const statusLabel = isClosed ? 'סגור ✓' : 'פתוח';
+
+        const content = document.getElementById('issue-detail-content');
+        content.innerHTML = `
+            <!-- סטטוס + שינוי -->
+            <div style="background:white; border-radius:16px; padding:16px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(10,37,64,0.06);">
+                <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;">סטטוס</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="detail-btn-open" onclick="changeIssueStatus('open')"
+                        style="padding:12px; border-radius:12px; border:2px solid ${!isClosed ? '#dc2626' : '#e2e8f0'}; background:${!isClosed ? '#fee2e2' : '#f8fafc'}; color:${!isClosed ? '#dc2626' : '#94a3b8'}; font-size:0.82rem; font-weight:800; cursor:pointer; font-family:inherit; transition:all 0.2s;">
+                        פתוח
+                    </button>
+                    <button id="detail-btn-closed" onclick="changeIssueStatus('closed')"
+                        style="padding:12px; border-radius:12px; border:2px solid ${isClosed ? '#059669' : '#e2e8f0'}; background:${isClosed ? '#dcfce7' : '#f8fafc'}; color:${isClosed ? '#059669' : '#94a3b8'}; font-size:0.82rem; font-weight:800; cursor:pointer; font-family:inherit; transition:all 0.2s;">
+                        סגור ✓
+                    </button>
+                </div>
+            </div>
+
+            <!-- פרטי הסעיף -->
+            <div style="background:white; border-radius:16px; padding:16px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(10,37,64,0.06);">
+                <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">סעיף</div>
+                <div style="font-size:0.82rem; color:var(--navy); font-weight:600; line-height:1.4; background:#f8fafc; border-radius:10px; padding:12px;">
+                    <span style="color:var(--blue); font-weight:800;">סעיף ${iss.sectionId}</span> · ${iss.sectionText}
+                </div>
+            </div>
+
+            <!-- ליקוי -->
+            <div style="background:white; border-radius:16px; padding:16px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(10,37,64,0.06);">
+                <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">תיאור הליקוי</div>
+                <div style="font-size:0.9rem; color:var(--text); line-height:1.55;">${iss.desc || '<span style="color:var(--text-muted); font-style:italic;">ללא פירוט</span>'}</div>
+            </div>
+
+            <!-- אחראי -->
+            ${iss.person || iss.email ? `
+            <div style="background:white; border-radius:16px; padding:16px; margin-bottom:10px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(10,37,64,0.06);">
+                <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">אחראי לתיקון</div>
+                ${iss.person ? `<div style="font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:4px;">👤 ${iss.person}</div>` : ''}
+                ${iss.email ? `<div style="font-size:0.82rem; color:var(--blue);">✉ ${iss.email}</div>` : ''}
+            </div>` : ''}
+
+            <!-- כפתור ניווט לסעיף -->
+            <button onclick="navigateToSection(${iss.sectionId})" style="width:100%; background:var(--navy); color:white; border:none; padding:14px; border-radius:13px; font-size:0.88rem; font-weight:800; cursor:pointer; font-family:inherit; border-bottom:2.5px solid var(--gold);">
+                עבור לסעיף ${iss.sectionId} בצ'קליסט ←
+            </button>
+        `;
+    }
+
+    function closeIssueDetail() {
+        document.getElementById('issue-detail-screen').style.display = 'none';
+        document.getElementById('issues-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.back();
+        renderIssuesList(); // רענן רשימה אחרי שינוי סטטוס אפשרי
+    }
+
+    function changeIssueStatus(newStatus) {
+        if (!currentIssueRef) return;
+        const { sectionId, issueIdx } = currentIssueRef;
+        const approveBtn = document.getElementById(`approve-btn-${sectionId}-${issueIdx}`);
+        if (approveBtn) {
+            approveBtn.dataset.status = newStatus;
+            if (newStatus === 'closed') {
+                approveBtn.textContent = 'סגור';
+                approveBtn.style.cssText = 'background:#dcfce7; color:#059669; border:1px solid #86efac; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;';
+                const block = document.getElementById(`issue-block-${sectionId}-${issueIdx}`);
+                if (block) { block.style.borderColor = '#86efac'; block.style.background = 'rgba(240,253,244,0.5)'; }
+            } else {
+                approveBtn.textContent = 'פתוח';
+                approveBtn.style.cssText = 'background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;';
+                const block = document.getElementById(`issue-block-${sectionId}-${issueIdx}`);
+                if (block) { block.style.borderColor = '#fca5a5'; block.style.background = 'rgba(255,255,255,0.8)'; }
+            }
+        }
+
+        // עדכן כפתורי הסטטוס בדף הפרטים
+        const isClosed = newStatus === 'closed';
+        const btnOpen = document.getElementById('detail-btn-open');
+        const btnClosed = document.getElementById('detail-btn-closed');
+        if (btnOpen) {
+            btnOpen.style.border = `2px solid ${!isClosed ? '#dc2626' : '#e2e8f0'}`;
+            btnOpen.style.background = !isClosed ? '#fee2e2' : '#f8fafc';
+            btnOpen.style.color = !isClosed ? '#dc2626' : '#94a3b8';
+        }
+        if (btnClosed) {
+            btnClosed.style.border = `2px solid ${isClosed ? '#059669' : '#e2e8f0'}`;
+            btnClosed.style.background = isClosed ? '#dcfce7' : '#f8fafc';
+            btnClosed.style.color = isClosed ? '#059669' : '#94a3b8';
+        }
+
+        updateSummary();
+        autoSaveToStorage();
+    }
+
+    function navigateToSection(sectionId) {
+        // סגור את כל מסכי ה-Issues וחזור לצ'קליסט
+        document.getElementById('issue-detail-screen').style.display = 'none';
+        document.getElementById('issues-screen').style.display = 'none';
+        document.getElementById('checklist-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.pushState({ screen: 'checklist' }, '', `#cl-${currentChecklistId}`);
+        setTimeout(() => {
+            const el = document.getElementById(`scroll-target-${sectionId}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+    }
 
     function goHome() {
-        // ניתוק listener
+        if (homeListener) { homeListener.off(); homeListener = null; }
         if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
-        // שמור לפני יציאה
         if (currentChecklistId) _doSave();
         currentChecklistId = null;
-        // מעבר חלק
-        const cs = document.getElementById('checklist-screen');
-        const hs = document.getElementById('home-screen');
-        cs.style.display = 'none';
-        hs.style.display = 'block';
+        ['checklist-screen', 'issues-screen', 'issue-detail-screen'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+        document.getElementById('home-screen').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        // עדכון URL
-        history.pushState({ screen: 'home' }, '', '#');
+        history.pushState({ screen: 'home' }, '', '#home');
         loadAllChecklists();
     }
 
+    // ═══ שמירה חסינת כשל — שמור בכל יציאה מהדף ═══
+    window.addEventListener('beforeunload', () => {
+        if (currentChecklistId) _doSave();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden' && currentChecklistId) {
+            _doSave();
+        }
+    });
+
+    // כפתור חזרה של הדפדפן
+    window.addEventListener('popstate', () => {
+        const issueDetailScreen = document.getElementById('issue-detail-screen');
+        const issuesScreen = document.getElementById('issues-screen');
+        const checklistScreen = document.getElementById('checklist-screen');
+        const homeScreen = document.getElementById('home-screen');
+        if (issueDetailScreen?.style.display !== 'none') {
+            issueDetailScreen.style.display = 'none';
+            issuesScreen.style.display = 'block';
+            renderIssuesList();
+        } else if (issuesScreen?.style.display !== 'none') {
+            issuesScreen.style.display = 'none';
+            checklistScreen.style.display = 'block';
+        } else if (checklistScreen?.style.display !== 'none') {
+            if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
+            if (currentChecklistId) _doSave();
+            currentChecklistId = null;
+            checklistScreen.style.display = 'none';
+            homeScreen.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            loadAllChecklists();
+        }
+    });
     function openChecklist(id) {
-        // ניתוק listener קודם
         if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
         currentChecklistId = id;
         document.getElementById('home-screen').style.display = 'none';
@@ -1490,8 +1776,6 @@
         window.scrollTo({ top: 0, behavior: 'auto' });
         history.pushState({ screen: 'checklist', id }, '', `#cl-${id}`);
         resetChecklist();
-
-        // Real-time listener — מסנכרן בין כל המכשירים
         realtimeListener = db.ref(`checklists/${id}/data`);
         let firstLoad = true;
         realtimeListener.on('value', (snap) => {
@@ -1499,16 +1783,13 @@
             const localKey = `cl_${id}`;
             let localData = null;
             try { const s = localStorage.getItem(localKey); if(s) localData = JSON.parse(s); } catch(e) {}
-
             let data = null;
             if (fbData && localData) data = (fbData.ts||0) >= (localData.ts||0) ? fbData : localData;
             else data = fbData || localData;
-
             if (data) {
                 if (firstLoad) { applyData(data); firstLoad = false; }
                 else {
-                    // עדכון חי — רק אם השינוי הגיע ממכשיר אחר
-                    const myTs = (() => { try { const s = localStorage.getItem(localKey); return s ? JSON.parse(s).ts || 0 : 0; } catch(e) { return 0; } })();
+                    const myTs = (() => { try { const s = localStorage.getItem(localKey); return s ? JSON.parse(s).ts||0 : 0; } catch(e) { return 0; } })();
                     if ((fbData?.ts||0) > myTs + 1000) applyData(fbData);
                 }
             }
@@ -1516,19 +1797,7 @@
         loadContacts();
     }
 
-    // כפתור חזרה של הדפדפן
-    window.addEventListener('popstate', (e) => {
-        if (document.getElementById('checklist-screen').style.display !== 'none') {
-            if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
-            if (currentChecklistId) _doSave();
-            currentChecklistId = null;
-            document.getElementById('checklist-screen').style.display = 'none';
-            document.getElementById('home-screen').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            loadAllChecklists();
-        }
-    });
-
+    // כפתור חזרה של הדפדפן — תיקון מלא
     function resetChecklist() {
         // אפס סטטוסים
         for (let i = 1; i <= 31; i++) {
@@ -1612,22 +1881,24 @@
     }
 
     function updateChecklistMeta(data) {
-        let p = 0, f = 0, issueCount = 0;
+        let p = 0, f = 0, na = 0, openIssues = 0, closedIssues = 0;
         for (let i = 1; i <= 31; i++) {
             const d = (data.items || {})[`i${i}`];
             if (!d) continue;
             if (d.s === 'P') p++;
             if (d.s === 'F') f++;
-            if (d.issues && d.issues.length > 0) {
-                issueCount += d.issues.filter(iss => iss && iss.desc).length;
-            }
+            if (d.s === 'N') na++;
+            if (d.issues) d.issues.forEach(iss => {
+                if (!iss || !iss.desc) return;
+                if (iss.status === 'closed') closedIssues++; else openIssues++;
+            });
         }
         const ex = allChecklists[currentChecklistId] || {};
         const meta = {
             title: data.panelName || ex.title || 'ללא שם',
             status: data.globalStatus || 'not-started',
-            passed: p, failed: f, total: 31,
-            issueCount,
+            passed: p, failed: f, na, total: 31,
+            openIssues, closedIssues,
             created: ex.created || new Date().toLocaleDateString('he-IL'),
             updated: new Date().toLocaleDateString('he-IL')
         };
@@ -1635,7 +1906,6 @@
         allChecklists[currentChecklistId] = meta;
         const badge = document.getElementById('checklist-status-badge');
         if (badge) badge.textContent = meta.status === 'completed' ? '✓ הושלם' : meta.status === 'in-progress' ? '⏳ בתהליך' : 'L0';
-        // כותרת הצ'קליסט נכנסת לשם הלוח בתוך הצ'קליסט
     }
 
     function createNewChecklist() {
@@ -1678,9 +1948,13 @@
         });
     }
 
+    let homeListener = null; // Firebase listener לדף הבית
+
     function loadAllChecklists() {
-        // Real-time listener לדף הבית — מתעדכן אוטומטית
-        db.ref('checklists').on('value', snap => {
+        // ניתוק listener קיים למניעת כפילויות
+        if (homeListener) { homeListener.off(); homeListener = null; }
+        homeListener = db.ref('checklists');
+        homeListener.on('value', snap => {
             allChecklists = {};
             const val = snap.val() || {};
             Object.keys(val).forEach(id => {
@@ -1697,7 +1971,6 @@
         const ids = Object.keys(allChecklists).sort((a,b) => b.localeCompare(a));
         const filtered = ids.filter(id => (allChecklists[id].title || '').toLowerCase().includes(q));
 
-        // סטטיסטיקות
         document.getElementById('stat-total').textContent = ids.length;
         document.getElementById('stat-progress').textContent = ids.filter(id => allChecklists[id].status === 'in-progress').length;
         document.getElementById('stat-done').textContent = ids.filter(id => allChecklists[id].status === 'completed').length;
@@ -1706,7 +1979,7 @@
             container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px 20px;">
                 <div style="font-size:2rem; margin-bottom:8px;">📋</div>
                 <div style="font-size:0.9rem; font-weight:600;">אין צ'קליסטים עדיין</div>
-                <div style="font-size:0.78rem; margin-top:4px;">לחץ על הכפתור למטה כדי להתחיל</div>
+                <div style="font-size:0.78rem; margin-top:4px;">לחץ על הכפתור למטה</div>
             </div>`;
             return;
         }
@@ -1717,11 +1990,17 @@
             const statusColor = cl.status === 'completed' ? '#059669' : cl.status === 'in-progress' ? '#0284c7' : '#64748b';
             const statusBg = cl.status === 'completed' ? '#dcfce7' : cl.status === 'in-progress' ? '#e0f2fe' : '#f1f5f9';
             const statusLabel = cl.status === 'completed' ? 'הושלם ✓' : cl.status === 'in-progress' ? 'בתהליך' : 'לא התחיל';
-            const p = cl.passed || 0, f = cl.failed || 0, total = cl.total || 31;
-            const pct = Math.round((p + f) / total * 100);
-            const passedPct = Math.round(p / total * 100);
-            const failedPct = Math.round(f / total * 100);
-            const issueCount = cl.issueCount || 0;
+            const p = cl.passed || 0, f = cl.failed || 0, na = cl.na || 0, total = cl.total || 31;
+            // N/A יוצא מהחישוב לגמרי — relevant = רק הסעיפים שאינם N/A
+            const relevant = total - na;
+            const done = p + f;
+            const remaining = relevant - done; // רק לא-מסומנים (לא כולל N/A)
+            const pct = relevant > 0 ? Math.round(done / relevant * 100) : 0;
+            const passedPct = relevant > 0 ? Math.round(p / relevant * 100) : 0;
+            const failedPct = relevant > 0 ? Math.round(f / relevant * 100) : 0;
+            const openIssues = cl.openIssues || cl.issueCount || 0;
+            const closedIssues = cl.closedIssues || 0;
+            const totalIssues = openIssues + closedIssues;
 
             const card = document.createElement('div');
             card.style.cssText = 'background:white; border-radius:14px; padding:16px; margin-bottom:10px; border:1px solid var(--border); cursor:pointer; transition:all 0.15s; box-shadow:0 1px 4px rgba(10,37,64,0.05);';
@@ -1731,54 +2010,61 @@
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
                     <div style="flex:1; padding-left:10px;">
-                        <div style="font-size:1rem; font-weight:800; color:var(--navy); line-height:1.3; margin-bottom:3px;">${cl.title}</div>
-                        <div style="font-size:0.72rem; color:var(--text-muted);">
-                            ${cl.created ? `נוצר: ${cl.created}` : ''}
-                            ${cl.updated ? ` · עודכן: ${cl.updated}` : ''}
-                        </div>
-                        ${issueCount > 0 ? `<div style="font-size:0.72rem; color:#dc2626; margin-top:2px; font-weight:600;">⚠️ ${issueCount} ליקויים פתוחים</div>` : ''}
+                        <div style="font-size:1rem; font-weight:800; color:var(--navy); line-height:1.3; margin-bottom:4px;">${cl.title}</div>
+                        <div style="font-size:0.7rem; color:var(--text-muted);">${cl.created ? `נוצר: ${cl.created}` : ''}${cl.updated ? ` · עודכן: ${cl.updated}` : ''}</div>
                     </div>
                     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
                         <span style="background:${statusBg}; color:${statusColor}; font-size:0.68rem; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap;">${statusLabel}</span>
                         <button onclick="deleteChecklist('${id}', event)" style="background:#fee2e2; color:#dc2626; border:none; border-radius:7px; width:26px; height:26px; cursor:pointer; font-size:0.8rem; font-weight:700;">✕</button>
                     </div>
                 </div>
-                <!-- Progress bar -->
-                <div style="background:#f1f5f9; border-radius:8px; height:7px; overflow:hidden; margin-bottom:6px;">
+                <div style="background:#f1f5f9; border-radius:8px; height:6px; overflow:hidden; margin-bottom:5px;">
                     <div style="height:100%; display:flex; border-radius:8px; overflow:hidden;">
                         <div style="background:#059669; width:${passedPct}%; transition:width 0.4s;"></div>
                         <div style="background:#ef4444; width:${failedPct}%; transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div style="display:flex; gap:10px; font-size:0.7rem;">
+                    <div style="display:flex; gap:8px; font-size:0.7rem; align-items:center; flex-wrap:wrap;">
                         <span style="color:#059669; font-weight:700;">✓ ${p}</span>
                         <span style="color:#ef4444; font-weight:700;">✗ ${f}</span>
-                        <span style="color:var(--text-muted);">— ${total - p - f} נותרו</span>
+                        <span style="color:var(--text-muted);">— ${remaining} נותרו</span>
+                        ${openIssues > 0 ? `<span style="color:#dc2626; font-weight:700;">· issues - ${openIssues}</span>` : ''}
                     </div>
-                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">${pct}%</span>
+                    <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">${pct}%</span>
                 </div>
             `;
             container.appendChild(card);
         });
     }
 
-    // האזנה לשינויים בשדות
-    document.getElementById('global-panel-name').addEventListener('input', autoSaveToStorage);
-    document.getElementById('global-inspector-name').addEventListener('input', autoSaveToStorage);
+    document.addEventListener('DOMContentLoaded', () => {
+        // שדות פרטים
+        ['global-panel-name','global-inspector-name','global-panel-number','global-project'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', autoSaveToStorage);
+        });
 
-    // יצירת שדות שמות נציגים
-    const roles = ["ממלא הטופס", "נציג CX ELECTRA", "נציג ההסמכה", "נציג היצרן", "נציג המזמין"];
-    const targetBox = document.getElementById('sig-section-target');
-    roles.forEach((r, i) => {
-        const f = document.createElement('div'); f.className = 'field'; f.style.marginBottom = "12px";
-        f.innerHTML = `<label style="color:var(--slate-800); font-weight:800; font-size:0.85rem;">${r}</label><input type="text" id="sig-name-${i}" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1px solid var(--border); border-radius:10px; font-size:0.95rem; background:#f8fafc; width:100%; box-sizing:border-box;">`;
-        targetBox.appendChild(f);
+        // יצירת שדות שמות נציגים (חלק 5)
+        const roles = ["ממלא הטופס", "נציג CX ELECTRA", "נציג ההסמכה", "נציג היצרן", "נציג המזמין"];
+        const targetBox = document.getElementById('sig-section-target');
+        if (targetBox && targetBox.children.length === 0) {
+            roles.forEach((r, i) => {
+                const fld = document.createElement('div');
+                fld.className = 'field';
+                fld.style.marginBottom = "12px";
+                fld.innerHTML = `<label style="font-weight:700; font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.3px;">${r}</label><input type="text" id="sig-name-${i}" placeholder="שם מלא..." oninput="autoSaveToStorage()" style="padding:11px; border:1.5px solid var(--border); border-radius:10px; font-size:0.9rem; background:#f8fafc; width:100%; box-sizing:border-box; font-family:inherit;">`;
+                targetBox.appendChild(fld);
+            });
+        }
+
+        // URL ראשוני
+        history.replaceState({ screen: 'home' }, '', '#home');
+
+        // טעינה ראשונית
+        loadContacts();
+        loadAllChecklists();
     });
-
-    // התחל בדף הבית
-    loadContacts();
-    loadAllChecklists();
 </script>
 </body>
 </html>
