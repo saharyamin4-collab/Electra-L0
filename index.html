@@ -290,13 +290,14 @@
 <!-- מסך צ'קליסט בודד                     -->
 <!-- ══════════════════════════════════════ -->
 <div id="checklist-screen" style="display:none;">
-    <div class="premium-header" style="border-radius:16px 16px 0 0; margin-bottom:0;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-            <button onclick="goHome()" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:6px 12px; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה</button>
-            <div id="save-indicator" style="font-size:0.7rem; color:rgba(255,255,255,0.7); flex:1; text-align:left;"></div>
+    <div class="premium-header">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <button id="back-btn" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:8px; padding:8px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit;">← חזרה לרשימה</button>
+            <div id="save-indicator" style="font-size:0.68rem; color:rgba(255,255,255,0.7);"></div>
         </div>
-        <div class="brand-eyebrow">Electra CX · L0</div>
-        <div id="checklist-title-display" class="brand-title" style="font-size:1.3rem;"></div>
+        <div class="brand-eyebrow">Electra CX · Quality Control</div>
+        <div class="brand-title">ELECTRA <span>CX</span></div>
+        <div class="brand-subtitle">צ'קליסט בדיקת לוחות חשמל</div>
         <div class="header-badge" id="checklist-status-badge">שלב L0 — בדיקת עדות</div>
     </div>
 
@@ -309,8 +310,17 @@
         </div>
     </div>
 
+    <!-- חלון Issues מרוכז -->
+    <div class="card" id="issues-summary-card" style="display:none; cursor:pointer;" onclick="toggleIssuesSummaryPanel()">
+        <h2 style="color:var(--failed); margin-bottom:8px;">
+            ⚠️ ליקויים פתוחים
+            <span id="issues-count-badge" style="background:#fee2e2; color:#dc2626; font-size:0.72rem; padding:2px 8px; border-radius:10px; margin-right:6px;"></span>
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:500;">לחץ לצפייה ▼</span>
+        </h2>
+        <div id="issues-summary-panel" style="display:none; margin-top:8px;"></div>
+    </div>
+
     <div class="card" id="summary-card" style="display:none;">
-        <h2 style="color:var(--failed);">🔍 ריכוז ליקויים פתוחים (קיצור דרך)</h2>
         <ul id="summary-box" class="summary-list"></ul>
     </div>
 
@@ -323,8 +333,28 @@
     </div>
 
     <div id="list"></div>
+
+    <!-- חלק 5 — אישורי נציגים -->
+    <div class="banner">חלק 5: אישורי נציגים</div>
+    <div class="card">
+        <h2 style="margin-bottom:16px;">אישורי נציגים - שלב L0</h2>
+        <div id="sig-section-target"></div>
+    </div>
+
+    <!-- סטטוס סופי -->
+    <div class="card" style="margin-top:8px;">
+        <h2>סטטוס סופי</h2>
+        <div class="global-status-selector">
+            <button class="g-btn not-started active" data-status="not-started" onclick="syncGlobalStatus('not-started')">לא התחיל</button>
+            <button class="g-btn in-progress" data-status="in-progress" onclick="syncGlobalStatus('in-progress')">בתהליך</button>
+            <button class="g-btn completed" data-status="completed" onclick="syncGlobalStatus('completed')">הושלם</button>
+        </div>
+    </div>
+
+    <div style="margin:12px 0 80px;">
+        <button onclick="saveChecklistAndExport()" style="width:100%; background:white; color:var(--text-muted); border:1.5px solid var(--border); padding:11px; border-radius:10px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">📊 ייצא דוח CSV</button>
+    </div>
 </div><!-- סוף checklist-screen -->
-</div><!-- סוף app-frame -->
 <script>
     const items = [
         {c:2, id:1, t:"רישום שם הלוח והתאמתו הפיזית"}, {c:2, id:2, t:"רישום תאריך הבדיקה בפועל", isDate: true},
@@ -436,6 +466,9 @@
         container.appendChild(d);
     });
 
+    // כפתור חזרה — עם addEventListener להבטיח עבודה
+    document.getElementById('back-btn').addEventListener('click', goHome);
+
     function toggleNotePanel(id) {
         const panel = document.getElementById(`note-panel-${id}`);
         const icon = document.getElementById(`note-icon-${id}`);
@@ -457,6 +490,15 @@
         if (badge) badge.style.display = val.trim() ? 'block' : 'none';
         if (icon) icon.setAttribute('stroke', val.trim() ? '#f59e0b' : '#94a3b8');
         autoSaveToStorage();
+    }
+
+    function toggleIssuesSummaryPanel() {
+        const panel = document.getElementById('issues-summary-panel');
+        const isOpen = panel.style.display === 'block';
+        panel.style.display = isOpen ? 'none' : 'block';
+        const card = document.getElementById('issues-summary-card');
+        const arrow = card.querySelector('span:last-child');
+        if (arrow) arrow.textContent = isOpen ? 'לחץ לצפייה ▼' : 'סגור ▲';
     }
 
     function setSt(btn) { 
@@ -1248,30 +1290,47 @@
     function updateSummary() {
         const box = document.getElementById('summary-box');
         const card = document.getElementById('summary-card');
+        const issuesCard = document.getElementById('issues-summary-card');
+        const issuesPanel = document.getElementById('issues-summary-panel');
+        const issuesBadge = document.getElementById('issues-count-badge');
         if (!box) return;
-        box.innerHTML = ""; let totalIssues = 0;
+        box.innerHTML = '';
+        if (issuesPanel) issuesPanel.innerHTML = '';
+        let totalIssues = 0;
 
         for (let i = 1; i <= 31; i++) {
             const container = document.getElementById(`issues-container-${i}`);
             if (!container) continue;
             const blocks = container.querySelectorAll('.issue-block');
             if (blocks.length === 0) continue;
-            // בדוק אם יש תוכן
-            const hasContent = Array.from(container.querySelectorAll('textarea')).some(t => t.value.trim() !== '');
-            if (!hasContent && blocks.length === 0) continue;
             totalIssues += blocks.length;
             blocks.forEach((block, bidx) => {
                 const descEl = block.querySelector('textarea');
+                const personEl = block.querySelector(`#person-${i}-${bidx+1}`);
                 const desc = descEl ? descEl.value : "";
+                const person = personEl ? personEl.value : "";
                 const li = document.createElement('li');
-                li.innerHTML = `<span style="background:#fee2e2; color:#dc2626; font-size:0.7rem; font-weight:800; padding:1px 6px; border-radius:4px; margin-left:6px;">סעיף ${i}</span>${desc ? desc.substring(0,30) + (desc.length>30?'...':'') : 'Issue ללא פירוט'}`;
-                li.onclick = () => { document.getElementById(`scroll-target-${i}`).scrollIntoView({behavior:'smooth'}); };
+                li.innerHTML = `<span style="background:#fee2e2; color:#dc2626; font-size:0.7rem; font-weight:800; padding:1px 6px; border-radius:4px; margin-left:6px;">סעיף ${i}</span>${desc ? desc.substring(0,35)+(desc.length>35?'...':'') : 'Issue ללא פירוט'}`;
+                li.onclick = () => document.getElementById(`scroll-target-${i}`).scrollIntoView({behavior:'smooth'});
                 box.appendChild(li);
+                if (issuesPanel) {
+                    const ic = document.createElement('div');
+                    ic.style.cssText = 'background:#fff8f8; border:1px solid #fecaca; border-radius:10px; padding:12px; margin-bottom:8px; cursor:pointer;';
+                    ic.onclick = (e) => { e.stopPropagation(); document.getElementById(`scroll-target-${i}`).scrollIntoView({behavior:'smooth'}); };
+                    ic.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span style="font-size:0.72rem; font-weight:800; color:#dc2626;">⚠️ סעיף ${i} — Issue #${bidx+1}</span>
+                            <span style="font-size:0.65rem; color:var(--text-muted);">← ניווט</span>
+                        </div>
+                        ${person ? `<div style="font-size:0.78rem; font-weight:600; color:#334155; margin-bottom:3px;">👤 ${person}</div>` : ''}
+                        <div style="font-size:0.78rem; color:#475569;">${desc || 'ללא פירוט'}</div>`;
+                    issuesPanel.appendChild(ic);
+                }
             });
         }
         if (card) card.style.display = totalIssues > 0 ? "block" : "none";
-
-        // עדכן פס Issues צף
+        if (issuesCard) issuesCard.style.display = totalIssues > 0 ? "block" : "none";
+        if (issuesBadge) issuesBadge.textContent = totalIssues > 0 ? `${totalIssues}` : '';
         updateFloatingBar(totalIssues);
     }
 
@@ -1403,30 +1462,72 @@
     let allChecklists = {}; // { id: { title, status, created, passed, failed, total } }
     let currentChecklistId = null;
 
+    let realtimeListener = null; // Firebase realtime listener
+
     function goHome() {
+        // ניתוק listener
+        if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
         // שמור לפני יציאה
         if (currentChecklistId) _doSave();
-        document.getElementById('checklist-screen').style.display = 'none';
-        document.getElementById('home-screen').style.display = 'block';
         currentChecklistId = null;
+        // מעבר חלק
+        const cs = document.getElementById('checklist-screen');
+        const hs = document.getElementById('home-screen');
+        cs.style.display = 'none';
+        hs.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // עדכון URL
+        history.pushState({ screen: 'home' }, '', '#');
         loadAllChecklists();
     }
 
     function openChecklist(id) {
+        // ניתוק listener קודם
+        if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
         currentChecklistId = id;
         document.getElementById('home-screen').style.display = 'none';
         document.getElementById('checklist-screen').style.display = 'block';
-        // אפס את הצ'קליסט
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        history.pushState({ screen: 'checklist', id }, '', `#cl-${id}`);
         resetChecklist();
-        // טען מ-Firebase
-        db.ref(`checklists/${id}/data`).once('value').then(snap => {
-            const data = snap.val();
-            if (data) applyData(data);
-            const title = (allChecklists[id] || {}).title || id;
-            document.getElementById('checklist-title-display').textContent = title;
+
+        // Real-time listener — מסנכרן בין כל המכשירים
+        realtimeListener = db.ref(`checklists/${id}/data`);
+        let firstLoad = true;
+        realtimeListener.on('value', (snap) => {
+            const fbData = snap.val();
+            const localKey = `cl_${id}`;
+            let localData = null;
+            try { const s = localStorage.getItem(localKey); if(s) localData = JSON.parse(s); } catch(e) {}
+
+            let data = null;
+            if (fbData && localData) data = (fbData.ts||0) >= (localData.ts||0) ? fbData : localData;
+            else data = fbData || localData;
+
+            if (data) {
+                if (firstLoad) { applyData(data); firstLoad = false; }
+                else {
+                    // עדכון חי — רק אם השינוי הגיע ממכשיר אחר
+                    const myTs = (() => { try { const s = localStorage.getItem(localKey); return s ? JSON.parse(s).ts || 0 : 0; } catch(e) { return 0; } })();
+                    if ((fbData?.ts||0) > myTs + 1000) applyData(fbData);
+                }
+            }
         });
         loadContacts();
     }
+
+    // כפתור חזרה של הדפדפן
+    window.addEventListener('popstate', (e) => {
+        if (document.getElementById('checklist-screen').style.display !== 'none') {
+            if (realtimeListener) { realtimeListener.off(); realtimeListener = null; }
+            if (currentChecklistId) _doSave();
+            currentChecklistId = null;
+            document.getElementById('checklist-screen').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            loadAllChecklists();
+        }
+    });
 
     function resetChecklist() {
         // אפס סטטוסים
@@ -1511,20 +1612,30 @@
     }
 
     function updateChecklistMeta(data) {
-        let p = 0, f = 0;
+        let p = 0, f = 0, issueCount = 0;
         for (let i = 1; i <= 31; i++) {
             const d = (data.items || {})[`i${i}`];
-            if (d && d.s === 'P') p++;
-            if (d && d.s === 'F') f++;
+            if (!d) continue;
+            if (d.s === 'P') p++;
+            if (d.s === 'F') f++;
+            if (d.issues && d.issues.length > 0) {
+                issueCount += d.issues.filter(iss => iss && iss.desc).length;
+            }
         }
         const ex = allChecklists[currentChecklistId] || {};
-        const meta = { title: data.panelName || ex.title || 'ללא שם', status: data.globalStatus || 'not-started', passed: p, failed: f, total: 31, created: ex.created || new Date().toLocaleDateString('he-IL'), updated: new Date().toLocaleDateString('he-IL') };
+        const meta = {
+            title: data.panelName || ex.title || 'ללא שם',
+            status: data.globalStatus || 'not-started',
+            passed: p, failed: f, total: 31,
+            issueCount,
+            created: ex.created || new Date().toLocaleDateString('he-IL'),
+            updated: new Date().toLocaleDateString('he-IL')
+        };
         db.ref(`checklists/${currentChecklistId}/meta`).set(meta).catch(() => {});
         allChecklists[currentChecklistId] = meta;
         const badge = document.getElementById('checklist-status-badge');
         if (badge) badge.textContent = meta.status === 'completed' ? '✓ הושלם' : meta.status === 'in-progress' ? '⏳ בתהליך' : 'L0';
-        const td = document.getElementById('checklist-title-display');
-        if (td && meta.title) td.textContent = meta.title;
+        // כותרת הצ'קליסט נכנסת לשם הלוח בתוך הצ'קליסט
     }
 
     function createNewChecklist() {
@@ -1568,7 +1679,8 @@
     }
 
     function loadAllChecklists() {
-        db.ref('checklists').once('value').then(snap => {
+        // Real-time listener לדף הבית — מתעדכן אוטומטית
+        db.ref('checklists').on('value', snap => {
             allChecklists = {};
             const val = snap.val() || {};
             Object.keys(val).forEach(id => {
@@ -1581,9 +1693,9 @@
     function renderChecklists() {
         const container = document.getElementById('checklists-list');
         if (!container) return;
-        const q = (document.getElementById('search-input') || {}).value || '';
+        const q = ((document.getElementById('search-input') || {}).value || '').toLowerCase();
         const ids = Object.keys(allChecklists).sort((a,b) => b.localeCompare(a));
-        const filtered = ids.filter(id => allChecklists[id].title.includes(q));
+        const filtered = ids.filter(id => (allChecklists[id].title || '').toLowerCase().includes(q));
 
         // סטטיסטיקות
         document.getElementById('stat-total').textContent = ids.length;
@@ -1591,38 +1703,60 @@
         document.getElementById('stat-done').textContent = ids.filter(id => allChecklists[id].status === 'completed').length;
 
         if (filtered.length === 0) {
-            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px; font-size:0.9rem;">אין צ'קליסטים עדיין<br><span style="font-size:0.8rem;">לחץ על הכפתור למטה כדי להתחיל</span></div>`;
+            container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px 20px;">
+                <div style="font-size:2rem; margin-bottom:8px;">📋</div>
+                <div style="font-size:0.9rem; font-weight:600;">אין צ'קליסטים עדיין</div>
+                <div style="font-size:0.78rem; margin-top:4px;">לחץ על הכפתור למטה כדי להתחיל</div>
+            </div>`;
             return;
         }
 
         container.innerHTML = '';
         filtered.forEach(id => {
             const cl = allChecklists[id];
-            const statusColor = cl.status === 'completed' ? '#059669' : cl.status === 'in-progress' ? '#d97706' : '#64748b';
-            const statusLabel = cl.status === 'completed' ? 'הושלם' : cl.status === 'in-progress' ? 'בתהליך' : 'לא התחיל';
-            const pct = cl.total > 0 ? Math.round(((cl.passed||0) + (cl.failed||0)) / cl.total * 100) : 0;
+            const statusColor = cl.status === 'completed' ? '#059669' : cl.status === 'in-progress' ? '#0284c7' : '#64748b';
+            const statusBg = cl.status === 'completed' ? '#dcfce7' : cl.status === 'in-progress' ? '#e0f2fe' : '#f1f5f9';
+            const statusLabel = cl.status === 'completed' ? 'הושלם ✓' : cl.status === 'in-progress' ? 'בתהליך' : 'לא התחיל';
+            const p = cl.passed || 0, f = cl.failed || 0, total = cl.total || 31;
+            const pct = Math.round((p + f) / total * 100);
+            const passedPct = Math.round(p / total * 100);
+            const failedPct = Math.round(f / total * 100);
+            const issueCount = cl.issueCount || 0;
+
             const card = document.createElement('div');
-            card.style.cssText = 'background:white; border-radius:14px; padding:14px 16px; margin-bottom:10px; border:1.5px solid var(--border); cursor:pointer; transition:box-shadow 0.2s;';
-            card.onmouseenter = () => card.style.boxShadow = '0 4px 16px rgba(10,37,64,0.1)';
-            card.onmouseleave = () => card.style.boxShadow = 'none';
+            card.style.cssText = 'background:white; border-radius:14px; padding:16px; margin-bottom:10px; border:1px solid var(--border); cursor:pointer; transition:all 0.15s; box-shadow:0 1px 4px rgba(10,37,64,0.05);';
+            card.addEventListener('touchstart', () => card.style.background = '#f8fafc', {passive:true});
+            card.addEventListener('touchend', () => card.style.background = 'white', {passive:true});
             card.onclick = () => openChecklist(id);
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
-                    <div>
-                        <div style="font-size:0.95rem; font-weight:800; color:var(--navy); margin-bottom:3px;">${cl.title}</div>
-                        <div style="font-size:0.72rem; color:var(--text-muted);">נוצר: ${cl.created || ''}</div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                    <div style="flex:1; padding-left:10px;">
+                        <div style="font-size:1rem; font-weight:800; color:var(--navy); line-height:1.3; margin-bottom:3px;">${cl.title}</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted);">
+                            ${cl.created ? `נוצר: ${cl.created}` : ''}
+                            ${cl.updated ? ` · עודכן: ${cl.updated}` : ''}
+                        </div>
+                        ${issueCount > 0 ? `<div style="font-size:0.72rem; color:#dc2626; margin-top:2px; font-weight:600;">⚠️ ${issueCount} ליקויים פתוחים</div>` : ''}
                     </div>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <span style="background:${statusColor}22; color:${statusColor}; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:10px; white-space:nowrap;">${statusLabel}</span>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                        <span style="background:${statusBg}; color:${statusColor}; font-size:0.68rem; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap;">${statusLabel}</span>
                         <button onclick="deleteChecklist('${id}', event)" style="background:#fee2e2; color:#dc2626; border:none; border-radius:7px; width:26px; height:26px; cursor:pointer; font-size:0.8rem; font-weight:700;">✕</button>
                     </div>
                 </div>
-                <div style="background:#f1f5f9; border-radius:8px; height:6px; overflow:hidden;">
-                    <div style="background:linear-gradient(90deg, #059669, #34d399); height:100%; width:${pct}%; border-radius:8px; transition:width 0.3s;"></div>
+                <!-- Progress bar -->
+                <div style="background:#f1f5f9; border-radius:8px; height:7px; overflow:hidden; margin-bottom:6px;">
+                    <div style="height:100%; display:flex; border-radius:8px; overflow:hidden;">
+                        <div style="background:#059669; width:${passedPct}%; transition:width 0.4s;"></div>
+                        <div style="background:#ef4444; width:${failedPct}%; transition:width 0.4s;"></div>
+                    </div>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-top:5px;">
-                    <span style="font-size:0.7rem; color:var(--text-muted);">${cl.passed||0} Passed · ${cl.failed||0} Failed</span>
-                    <span style="font-size:0.7rem; color:var(--text-muted);">${pct}%</span>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; gap:10px; font-size:0.7rem;">
+                        <span style="color:#059669; font-weight:700;">✓ ${p}</span>
+                        <span style="color:#ef4444; font-weight:700;">✗ ${f}</span>
+                        <span style="color:var(--text-muted);">— ${total - p - f} נותרו</span>
+                    </div>
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">${pct}%</span>
                 </div>
             `;
             container.appendChild(card);
