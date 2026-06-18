@@ -1071,7 +1071,7 @@ function setPFN(btn,id){
   if(settings.vibrateOnPFN&&navigator.vibrate)navigator.vibrate(25);
   if(!wasOn&&btn.classList.contains('f')&&settings.autoOpenIssue)setTimeout(()=>{const p=document.getElementById('isp'+id);if(p&&p.style.display!=='block')toggleIssPan(id);},200);
   logAct('סעיף '+id+': '+(wasOn?'ביטול':(btn.classList.contains('p')?'Passed':btn.classList.contains('f')?'Failed':'N/A')),btn.classList.contains('p')?'✅':btn.classList.contains('f')?'❌':'—');
-  updHeroProg();schedSave();
+  updHeroProg();forceSave();
 }
 
 function updHeroProg(){
@@ -1333,7 +1333,6 @@ function leaveChecklist(){
   if(CID)forceSave();CID=null;
   goHome();loadHome();
 }
-window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
 
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
