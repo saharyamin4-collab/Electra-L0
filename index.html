@@ -864,13 +864,14 @@ function apply(data){
   for(let i=1;i<=31;i++){(id=>{db.ref('checklists/'+CID+'/photos/item'+id).once('value').then(s=>{const ph=s.val();if(!ph)return;const arr=Array.isArray(ph)?ph:Object.values(ph);itemPhotos[id]=arr;const row=document.getElementById('pt'+id);if(row)arr.forEach((p,idx)=>{if(p?.url&&!document.getElementById('th-'+id+'-'+idx)){const t=mkThumb(p.url,id,idx,'item');t.id='th-'+id+'-'+idx;row.appendChild(t);}});updCB(id);}).catch(()=>{})})(i);}
 }
 
-function updMeta(data){
+function updMetaFor(id,data){
   let p=0,f=0,na=0,open=0,closed=0,waiting=0;
   for(let i=1;i<=31;i++){const d=data.items?.['i'+i];if(!d)continue;if(d.s==='P')p++;else if(d.s==='F')f++;else if(d.s==='N')na++;if(d.issues)d.issues.forEach(iss=>{if(!iss?.desc)return;if(iss.status==='closed')closed++;else if(iss.status==='waiting')waiting++;else open++;});}
-  const ex=allCls[CID]||{};
+  const ex=allCls[id]||{};
   const meta={title:data.panel||ex.title||'ללא שם',proj:data.proj||'',insp:data.insp||'',fdate:data.fdate||'',status:data.status||'not-started',passed:p,failed:f,na,total:31,openIssues:open,closedIssues:closed,waitingIssues:waiting,created:ex.created||new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL')};
-  db.ref('checklists/'+CID+'/meta').set(meta).catch(()=>{});allCls[CID]=meta;
+  db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});allCls[id]=meta;
 }
+function updMeta(data){updMetaFor(CID,data);}
 
 function resetCl(){
   for(let i=1;i<=31;i++){
@@ -1127,26 +1128,80 @@ function openDraw(src,cb){
 
 function closeDraw(){document.getElementById('draw-ov').classList.remove('show');drawCb=null;}
 
-function schedSave(){if(saveT)clearTimeout(saveT);saveT=setTimeout(forceSave,400);}
+function schedSave(){
+  // Write to localStorage immediately so nothing is ever lost, even mid-keystroke
+  if(CID){
+    const myId=CID;
+    try{localStorage.setItem('cl_'+myId,JSON.stringify(collect()));}catch(e){}
+  }
+  if(saveT)clearTimeout(saveT);
+  saveT=setTimeout(forceSave,300);
+}
 
 function forceSave(){
   if(!CID)return;
-  const data=collect();saveQueue=data;
-  try{localStorage.setItem('cl_'+CID,JSON.stringify(data));}catch(e){}
-  if(saveInFlight)return;
-  _doSave();
+  const myId=CID;
+  const data=collect();
+  // ALWAYS write to localStorage synchronously, first, no matter what — this can never be lost
+  try{localStorage.setItem('cl_'+myId,JSON.stringify(data));}catch(e){}
+  _queueRemoteSave(myId,data);
 }
 
-function _doSave(){
-  if(!saveQueue||!CID)return;
-  const data=saveQueue;saveQueue=null;saveInFlight=true;
-  const pill=document.getElementById('save-pill');if(pill){pill.textContent='שומר...';pill.className='spill saving';}
+let _remoteSaveState={}; // per-id: {pending:data, inFlight:bool}
+
+function _queueRemoteSave(id,data){
+  if(!_remoteSaveState[id])_remoteSaveState[id]={pending:null,inFlight:false};
+  const st=_remoteSaveState[id];
+  st.pending=data;
+  if(st.inFlight)return;
+  _flushRemoteSave(id);
+}
+
+function _flushRemoteSave(id){
+  const st=_remoteSaveState[id];
+  if(!st||!st.pending)return;
+  const data=st.pending;st.pending=null;st.inFlight=true;
+  const pill=document.getElementById('save-pill');
+  const showPill=(CID===id);
+  if(showPill&&pill){pill.textContent='שומר...';pill.className='spill saving';}
   const attempt=(n,delay)=>{
-    db.ref('checklists/'+CID+'/data').set(data)
-      .then(()=>{saveInFlight=false;lastSavedTs=data.ts||0;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMeta(data);if(saveQueue)_doSave();})
-      .catch(()=>{if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);else{saveInFlight=false;if(pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}if(saveQueue)_doSave();}});
+    db.ref('checklists/'+id+'/data').set(data)
+      .then(()=>{
+        st.inFlight=false;
+        if(CID===id)lastSavedTs=data.ts||0;
+        if(showPill&&pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}
+        updMetaFor(id,data);
+        if(st.pending)_flushRemoteSave(id);
+      })
+      .catch(()=>{
+        if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);
+        else{
+          st.inFlight=false;
+          if(showPill&&pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}
+          if(st.pending)_flushRemoteSave(id);
+        }
+      });
   };
-  attempt(4,700);
+  attempt(5,800);
+}
+
+// Retry any data still sitting unsaved in localStorage from a previous session (e.g. tab killed mid-save)
+function _resyncPendingLocalSaves(){
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.indexOf('cl_')===0){
+        const id=k.slice(3);
+        const raw=localStorage.getItem(k);
+        if(!raw)continue;
+        const data=JSON.parse(raw);
+        db.ref('checklists/'+id+'/data').once('value').then(snap=>{
+          const fb=snap.val();
+          if((data.ts||0)>(fb?.ts||0)){_queueRemoteSave(id,data);}
+        }).catch(()=>{});
+      }
+    }
+  }catch(e){}
 }
 
 function renderIssues(){
@@ -1948,7 +2003,10 @@ window.addEventListener('online',()=>{document.getElementById('offline-bar').cla
 window.addEventListener('offline',()=>{document.getElementById('offline-bar').classList.add('show');toast('📡 עובד מקומית');});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&CID)forceSave();});
 window.addEventListener('beforeunload',()=>{if(CID)forceSave();});
+window.addEventListener('pagehide',()=>{if(CID)forceSave();});
 window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
+// Safety-net heartbeat — guarantees nothing is ever more than 5s unsaved, no matter how the user exits
+setInterval(()=>{if(CID)forceSave();},5000);
 
 // ════════════════════════════════════════
 // INIT
@@ -1973,7 +2031,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     _loadClData(_urlCl);
     // Override back button to close tab / go back
     document.getElementById('nav-l').innerHTML=
-      '<button class="nav-back" onclick="window.history.length>1?history.back():window.close()">'+
+      '<button class="nav-back" onclick="forceSave();setTimeout(()=>{window.history.length>1?history.back():window.close();},250);">'+
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>'+
       ' חזור</button>';
   } else {
