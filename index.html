@@ -611,7 +611,7 @@ const SIG_ROLES=["ממלא הטופס","נציג CX ELECTRA","נציג ההסמ�
 // ══════════════════════════════════════════
 let CID=null, STATUS='not-started', allCls={}, contacts=[];
 let itemPhotos={}, issuePhotos={}, issueCnt={}, issuePriority={};
-let homeRef=null, clRef=null, saveT=null, saveQueue=null, saveInFlight=false;
+let homeRef=null, clRef=null, saveT=null, saveQueue=null, saveInFlight=false, lastSavedTs=0;
 let drawCb=null, drawMode='pen', drawColor='#ef4444', drawSz=4, dCtx=null, dHist=[];
 let homeF='all', issF='all', sortMode='newest';
 let actLog=[];
@@ -1078,7 +1078,7 @@ function _doSave(){
   const pill=document.getElementById('save-pill');if(pill){pill.textContent='שומר...';pill.className='spill saving';}
   const attempt=(n,delay)=>{
     db.ref('checklists/'+CID+'/data').set(data)
-      .then(()=>{saveInFlight=false;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMeta(data);if(saveQueue)_doSave();})
+      .then(()=>{saveInFlight=false;lastSavedTs=data.ts||0;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMeta(data);if(saveQueue)_doSave();})
       .catch(()=>{if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);else{saveInFlight=false;if(pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}if(saveQueue)_doSave();}});
   };
   attempt(4,700);
@@ -1115,6 +1115,10 @@ function apply(data){
     else if(item.s==='F'){el.querySelector('.pfn.f')?.classList.add('on');el.classList.add('f');}
     else if(item.s==='N'){el.querySelector('.pfn.n')?.classList.add('on');el.classList.add('n');}
     set('note'+i,item.note||'');if((item.note||'').trim())noteChg(i);
+    // Clear existing issues before re-rendering to prevent duplicates on every Firebase update
+    const cont=document.getElementById('iss'+i);if(cont){cont.innerHTML='';issueCnt[i]=0;}
+    const isp=document.getElementById('isp'+i);if(isp)isp.style.display='none';
+    document.getElementById('isb'+i)?.classList.remove('hot');
     if(item.issues?.length)item.issues.forEach(iss=>{if(iss)addIss(i,iss);});
   }
   updIssBar();updHeroProg();applyAuthState();
@@ -1165,7 +1169,8 @@ function openCl(id){
   clRef.on('value',snap=>{
     const fb=snap.val();
     if(first){first=false;let data;if(fb&&localData)data=(fb.ts||0)>=(localData.ts||0)?fb:localData;else data=fb||localData;if(data)apply(data);}
-    else{if(!fb)return;const myTs=saveQueue?.ts||0;if((fb.ts||0)>myTs+1500)apply(fb);}
+    else{if(!fb)return;// Skip if this update is our own save (timestamp matches what we saved)
+    if(fb.ts&&Math.abs(fb.ts-(lastSavedTs||0))<3000)return;apply(fb);}
   });
 }
 
@@ -1180,7 +1185,7 @@ function viewCl(id){
   clRef.on('value',snap=>{
     const fb=snap.val();
     if(first){first=false;let data;if(fb&&localData)data=(fb.ts||0)>=(localData.ts||0)?fb:localData;else data=fb||localData;if(data)apply(data);}
-    else{if(!fb)return;const myTs=saveQueue?.ts||0;if((fb.ts||0)>myTs+1500)apply(fb);}
+    else{if(!fb)return;if(fb.ts&&Math.abs(fb.ts-(lastSavedTs||0))<3000)return;apply(fb);}
   });
 }
 
