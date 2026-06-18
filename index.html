@@ -741,7 +741,7 @@ let homeRef=null,clRef=null,saveT=null,saveQueue=null,saveInFlight=false,lastSav
 let drawCb=null,drawMode='pen',drawColor='#ef4444',drawSz=4,dCtx=null,dHist=[];
 let homeF='all',issF='all',sortMode='newest';
 let actLog=[],isAuthed=false,authCb=null;
-let settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:''};
+let settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:'',openInNewTab:true};
 function buildItems(){
   const list=document.getElementById('cl-list');
   if(list.childElementCount>0)return;
@@ -865,7 +865,53 @@ function resetCl(){
   const sub=document.getElementById('cl-sub');if(sub)sub.textContent='';
 }
 
-function addIss(itemId,data={}
+function addIss(itemId,data={}){
+  const cont=document.getElementById('iss'+itemId);if(!cont)return;
+  if(!issueCnt[itemId])issueCnt[itemId]=0;
+  issueCnt[itemId]++;
+  const idx=issueCnt[itemId];
+  const st=data.status||'open';
+  const prio=data.prio||'med';
+  if(!issuePriority[itemId])issuePriority[itemId]={};
+  issuePriority[itemId][idx]=prio;
+  const bl=document.createElement('div');
+  bl.className='iss-block'+(st==='closed'?' closed':st==='waiting'?' waiting':'');
+  bl.id='ib-'+itemId+'-'+idx;
+  const cats=['חיבורים','תיעוד','ציוד','בטיחות','תקשורת','אחר'];
+  const selCats=data.cats||[];
+  bl.innerHTML=
+    '<div class="iss-top">'+
+      '<span class="iss-num">Issue #'+idx+'</span>'+
+      '<div style="display:flex;gap:5px;">'+
+        '<button class="iss-st '+(st==='closed'?'closed':st==='waiting'?'waiting':'open')+'" id="ist-'+itemId+'-'+idx+'" data-s="'+st+'" onclick="cycleIssStatus('+itemId+','+idx+',this)">'+
+          (st==='closed'?'✓ סגור':st==='waiting'?'⏳ ממתין':'⚠ פתוח')+
+        '</button>'+
+        '<button class="iss-del" onclick="requireAuth(()=>delIss('+itemId+','+idx+'))">✕</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="prio-sel">'+
+      '<button class="prio-btn'+(prio==='high'?' sel-h':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'high\',this))">🔴 גבוהה</button>'+
+      '<button class="prio-btn'+(prio==='med'?' sel-m':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'med\',this))">🟡 בינונית</button>'+
+      '<button class="prio-btn'+(prio==='low'?' sel-l':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'low\',this))">🟢 נמוכה</button>'+
+    '</div>'+
+    '<div class="cpills">'+cats.map(c=>'<button class="cpill'+(selCats.includes(c)?' sel':'')+'" onclick="requireAuth(()=>this.classList.toggle(\'sel\'));schedSave();">'+c+'</button>').join('')+'</div>'+
+    '<input class="ii" id="ip-'+itemId+'-'+idx+'" placeholder="שם אחראי..." value="'+(data.person||'')+'" oninput="requireAuth(()=>{});schedSave();" '+(isAuthed?'':'disabled')+'>'+
+    '<input class="ii" id="ie-'+itemId+'-'+idx+'" type="email" placeholder="מייל..." value="'+(data.email||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
+    '<input class="ii" id="id-'+itemId+'-'+idx+'" placeholder="תיאור הממצא..." value="'+(data.desc||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
+    '<textarea class="ita" id="iact-'+itemId+'-'+idx+'" placeholder="פעולה נדרשת..." oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
+      (data.action||'')+'</textarea>'+
+    '<div class="iss-ph" id="ibp-'+itemId+'-'+idx+'"></div>'+
+    '<label class="iph-add" style="'+(isAuthed?'':'display:none;')+'">📷 הוסף תמונה<input type="file" accept="image/*" multiple style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+')"></label>'+
+    '<button class="wait-btn" style="'+(isAuthed?'display:none;':'')+'" onclick="setIssWaiting('+itemId+','+idx+')">⏳ סמן כממתין לאישור</button>';
+  // restore issue photos
+  if(data.photos?.length){
+    const row=document.getElementById('ibp-'+itemId+'-'+idx);
+    data.photos.forEach(src=>{if(src)mkThumb(row,src,()=>{},true);});
+  }
+  cont.appendChild(bl);
+  document.getElementById('isb'+itemId)?.classList.add('hot');
+  updIssBar();
+}
 
 function setPrio(itemId,idx,prio,btn){
   if(!issuePriority[itemId])issuePriority[itemId]={};issuePriority[itemId][idx]=prio;
@@ -1178,182 +1224,6 @@ function toggleClSearch(){
 
 function filterItems(q){const lq=q.toLowerCase();ITEMS.forEach(item=>{const el=document.getElementById('ic'+item.id);if(!el)return;const match=!q||item.t.toLowerCase().includes(lq)||(document.getElementById('note'+item.id)?.value||'').toLowerCase().includes(lq);el.style.display=match?'':'none';});document.querySelectorAll('#cl-list .banner').forEach(b=>b.style.display=!q?'':'none');}
 
-function loadHome(){if(homeRef){homeRef.off();homeRef=null;}homeRef=db.ref('checklists');homeRef.on('value',s=>{allCls={};const v=s.val()||{};Object.keys(v).forEach(id=>{if(v[id].meta)allCls[id]=v[id].meta;});renderHome();});}
-
-function setF(btn,f){homeF=f;document.querySelectorAll('.chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderHome();}
-
-function showSort(){
-  const ov=document.createElement('div');ov.className='modal-bg show';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-  const sh=document.createElement('div');sh.className='msheet';
-  const modes=[['newest','חדש לישן'],['oldest','ישן לחדש'],['name','שם'],['status','סטטוס'],['progress','התקדמות'],['issues','Issues פתוחים']];
-  sh.innerHTML='<div class="mhandle"></div><div style="font-size:.85rem;font-weight:800;color:var(--t1);margin-bottom:12px;">מיין לפי</div>'+modes.map(([m,l])=>'<button onclick="sortMode=\''+m+'\';this.closest(\'.modal-bg\').remove();renderHome();" style="width:100%;background:'+(sortMode===m?'var(--blue-d)':'')+';color:'+(sortMode===m?'var(--blue)':'var(--t2)')+';border:none;padding:12px;border-radius:var(--r3);font-size:.83rem;font-weight:'+(sortMode===m?'800':'600')+';cursor:pointer;font-family:inherit;text-align:right;margin-bottom:4px;">'+l+'</button>').join('');
-  ov.appendChild(sh);document.body.appendChild(ov);
-}
-
-function renderHome(){
-  const q=(document.getElementById('home-q')?.value||'').toLowerCase();
-  let ids=Object.keys(allCls);
-  if(homeF==='in-progress')ids=ids.filter(id=>allCls[id].status==='in-progress');
-  else if(homeF==='completed')ids=ids.filter(id=>allCls[id].status==='completed');
-  else if(homeF==='not-started')ids=ids.filter(id=>allCls[id].status==='not-started');
-  else if(homeF==='open-issues')ids=ids.filter(id=>(allCls[id].openIssues||0)>0);
-  else if(homeF==='waiting')ids=ids.filter(id=>(allCls[id].waitingIssues||0)>0);
-  if(sortMode==='oldest')ids.sort((a,b)=>a.localeCompare(b));
-  else if(sortMode==='name')ids.sort((a,b)=>(allCls[a].title||'').localeCompare(allCls[b].title||''));
-  else if(sortMode==='status'){const o={completed:0,'in-progress':1,'not-started':2};ids.sort((a,b)=>(o[allCls[a].status]||2)-(o[allCls[b].status]||2));}
-  else if(sortMode==='progress')ids.sort((a,b)=>((allCls[b].passed||0)+(allCls[b].failed||0))-((allCls[a].passed||0)+(allCls[a].failed||0)));
-  else if(sortMode==='issues')ids.sort((a,b)=>(allCls[b].openIssues||0)-(allCls[a].openIssues||0));
-  else ids.sort((a,b)=>b.localeCompare(a));
-  const fil=ids.filter(id=>[allCls[id].title,allCls[id].proj,allCls[id].insp,allCls[id].loc].some(v=>(v||'').toLowerCase().includes(q)));
-  const all=Object.keys(allCls);
-  document.getElementById('st-tot').textContent=all.length;
-  document.getElementById('st-ip').textContent=all.filter(id=>allCls[id].status==='in-progress').length;
-  document.getElementById('st-dn').textContent=all.filter(id=>allCls[id].status==='completed').length;
-  const hc=document.getElementById('home-count');if(hc)hc.textContent=fil.length?fil.length+" צ'קליסטים":'';
-  const list=document.getElementById('home-list');list.innerHTML='';
-  if(!fil.length){list.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">אין צ\'קליסטים</div><div class="empty-s">לחץ על הכפתור למטה</div></div>';return;}
-  fil.forEach(id=>{
-    const cl=allCls[id];
-    const[sbg,sc,sl]=cl.status==='completed'?['var(--ok-d)','var(--ok2)','הושלם ✓']:cl.status==='in-progress'?['var(--warn-d)','var(--warn2)','בתהליך']:['rgba(6,16,30,.05)','var(--t3)','לא התחיל'];
-    const stripe=cl.status==='completed'?'var(--ok2)':cl.status==='in-progress'?'var(--warn2)':'rgba(6,16,30,.1)';
-    const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
-    const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
-    const card=document.createElement('div');card.className='clc';
-    card.onclick=()=>openCl(id);
-    card.innerHTML=
-      '<div class="clc-acc" style="background:'+stripe+';"></div>'+
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
-        '<div style="flex:1;min-width:0;">'+
-          '<div class="clc-name">'+(cl.title||'ללא שם')+'</div>'+
-          (cl.proj||cl.loc?'<div class="clc-proj">'+[cl.proj,cl.loc].filter(Boolean).join(' · ')+'</div>':'')+
-          '<div class="clc-meta">'+(cl.insp?'👤 '+cl.insp+' · ':'')+( cl.fdate||cl.created||'')+'</div>'+
-          ((oi+ci+wi)>0?'<div class="ichips">'+(oi>0?'<span class="ich ich-o">⚠️ '+oi+' פתוח</span>':'')+' '+(wi>0?'<span class="ich ich-w">⏳ '+wi+' ממתין</span>':'')+' '+(ci>0?'<span class="ich ich-c">✓ '+ci+' סגור</span>':'')+'</div>':'')+
-        '</div>'+
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">'+
-          '<span class="schip" style="background:'+sbg+';color:'+sc+';">'+sl+'</span>'+
-          '<div style="display:flex;gap:4px;">'+
-            '<button onclick="event.stopPropagation();openCl(\''+id+'\')" style="background:var(--blue);color:#fff;border:none;border-radius:var(--r4);padding:5px 11px;cursor:pointer;font-size:.68rem;font-weight:800;font-family:inherit;white-space:nowrap;">פתח ▶</button>'+
-            (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:var(--blue-d);color:var(--blue);border:none;border-radius:var(--r4);width:28px;height:28px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'') +
-          '</div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/tot*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/tot*100)+'%;"></div></div></div>'+
-      '<div style="display:flex;justify-content:space-between;">'+
-        '<div class="cnums"><span class="cn-p">✓ '+p+'</span><span class="cn-f">✗ '+f+'</span>'+(na?'<span style="color:var(--t3);">N/A '+na+'</span>':'')+' <span class="cn-r">— '+(tot-p-f-na)+'</span></div>'+
-        '<span style="font-size:.65rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+pct+'%</span>'+
-      '</div>';
-    list.appendChild(card);
-  });
-}
-
-function deleteCl(id){
-  if(!isAuthed){requireAuth(()=>deleteCl(id));return;}
-  const code=prompt('הזן קוד אישור למחיקה:');
-  if(code!==ADMIN_PASS){toast('❌ קוד שגוי — מחיקה בוטלה');return;}
-  if(!confirm('למחוק "'+( allCls[id]?.title||id)+'" לצמיתות?'))return;
-  db.ref('checklists/'+id).remove().then(()=>{delete allCls[id];renderHome();toast('🗑️ נמחק');}).catch(()=>toast('שגיאה במחיקה'));
-}
-
-function duplicateCl(id,e){
-  e.stopPropagation();if(!isAuthed){toast('🔒 נדרשת הרשאה');return;}
-  const src=allCls[id];if(!src)return;
-  toast('📋 יוצר עותק...');
-  const newId='cl_'+Date.now();
-  const meta={...src,title:src.title+' (עותק)',status:'not-started',created:new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL'),passed:0,failed:0,na:0,openIssues:0,closedIssues:0,waitingIssues:0};
-  allCls[newId]=meta;db.ref('checklists/'+newId+'/meta').set(meta).catch(()=>{});
-  db.ref('checklists/'+id+'/data').once('value').then(snap=>{
-    const data=snap.val();if(!data)return;
-    const nd={v:11,ts:Date.now(),status:'not-started',panel:meta.title,proj:data.proj||'',insp:data.insp||'',mfr:data.mfr||'',fdate:'',notes:'',sigs:data.sigs||[],items:{},actLog:[]};
-    Object.keys(data.items||{}).forEach(k=>{nd.items[k]={s:'X',note:data.items[k]?.note||'',issues:[]};});
-    db.ref('checklists/'+newId+'/data').set(nd).then(()=>toast('✅ עותק נוצר')).catch(()=>{});
-  }).catch(()=>{});
-}
-
-function exportAllCSV(){
-  const all=Object.keys(allCls);if(!all.length){toast('אין צ\'קליסטים');return;}
-  let csv='\uFEFFדוח כל הצ\'קליסטים — Electra CX\n\n';
-  csv+='לוח,פרויקט,בודק,תאריך,סטטוס,Passed,Failed,N/A,Issues פתוחים,ממתין,סגורים,%\n';
-  all.forEach(id=>{const cl=allCls[id];const p=cl.passed||0,f=cl.failed||0,na=cl.na||0,tot=cl.total||31,pct=Math.round((p+f)/tot*100);csv+='"'+(cl.title||'')+'","'+(cl.proj||'')+'","'+(cl.insp||'')+'","'+(cl.fdate||cl.created||'')+'","'+(cl.status||'')+'",'+p+','+f+','+na+','+(cl.openIssues||0)+','+(cl.waitingIssues||0)+','+(cl.closedIssues||0)+','+pct+'%\n';});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='Electra_All_'+new Date().toLocaleDateString('he-IL').replace(/\//g,'-')+'.csv';a.click();toast('✅ CSV יוצא');
-}
-
-function newCl(){document.getElementById('new-modal').classList.add('show');setTimeout(()=>document.getElementById('new-name')?.focus(),100);}
-
-function closeNewCl(){document.getElementById('new-modal').classList.remove('show');['new-name','new-proj','new-insp','new-loc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
-
-function confirmNewCl(){
-  const title=document.getElementById('new-name')?.value.trim();if(!title){document.getElementById('new-name').style.borderColor='var(--fail2)';toast('⚠️ הכנס שם ללוח');return;}
-  const proj=document.getElementById('new-proj')?.value.trim();const insp=document.getElementById('new-insp')?.value.trim();const loc=document.getElementById('new-loc')?.value.trim();
-  closeNewCl();const id='cl_'+Date.now();
-  const meta={title,proj,insp,loc,status:'not-started',created:new Date().toLocaleDateString('he-IL'),fdate:'',passed:0,failed:0,na:0,total:31,openIssues:0,closedIssues:0,waitingIssues:0};
-  allCls[id]=meta;db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});
-  openCl(id);
-}
-
-function loadContacts(){db.ref('contacts').once('value').then(s=>{const v=s.val();if(Array.isArray(v)&&v.length)contacts=v;}).catch(()=>{});try{const s=localStorage.getItem('cx_contacts');if(s)contacts=JSON.parse(s);}catch(e){}}
-
-function saveContacts(){try{localStorage.setItem('cx_contacts',JSON.stringify(contacts));}catch(e){}db.ref('contacts').set(contacts).catch(()=>{});}
-
-function showContacts(){
-  const ex=document.getElementById('cm');if(ex){ex.remove();return;}
-  const ov=document.createElement('div');ov.className='modal-bg show';ov.id='cm';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-  const sh=document.createElement('div');sh.className='msheet';
-  sh.innerHTML='<div class="mhandle"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-size:.92rem;font-weight:800;">👥 אנשי קשר</div><button onclick="document.getElementById(\'cm\').remove()" style="background:var(--card2);border:none;border-radius:var(--r4);padding:6px 12px;cursor:pointer;font-weight:700;font-size:.78rem;">סגור</button></div><div id="c-list"></div><button onclick="addContact()" style="width:100%;background:var(--blue-d);color:var(--blue);border:1px dashed var(--blue-m);padding:10px;border-radius:var(--r3);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;">+ הוסף</button>';
-  ov.appendChild(sh);document.body.appendChild(ov);renderCList();
-}
-
-function renderCList(){const div=document.getElementById('c-list');if(!div)return;div.innerHTML='';contacts.forEach((c,i)=>{const row=document.createElement('div');row.style.cssText='display:flex;gap:6px;margin-bottom:7px;align-items:center;';row.innerHTML='<input class="ii" style="margin:0;flex:1;" type="text" value="'+(c.name||'')+'" placeholder="שם..." oninput="contacts['+i+'].name=this.value;saveContacts();"><input class="ii" style="margin:0;flex:1.5;" type="email" value="'+(c.email||'')+'" placeholder="מייל..." oninput="contacts['+i+'].email=this.value;saveContacts();"><button onclick="contacts.splice('+i+',1);saveContacts();renderCList();" style="background:var(--fail-d);color:var(--fail2);border:none;border-radius:var(--r4);padding:7px 10px;font-size:.68rem;font-weight:800;cursor:pointer;flex-shrink:0;">✕</button>';div.appendChild(row);});}
-
-function addContact(){if(contacts.length>=12){toast('מקסימום 12');return;}contacts.push({name:'',email:''});saveContacts();renderCList();}
-
-function loadSettings(){try{const s=localStorage.getItem('cx_settings');if(s)Object.assign(settings,JSON.parse(s));}catch(e){}settings.autoOpenIssue=false;saveSettings();}
-
-function saveSettings(){try{localStorage.setItem('cx_settings',JSON.stringify(settings));}catch(e){}}
-
-function sendAllIssues(){
-  if(!isAuthed){requireAuth(sendAllIssues);return;}
-  const panel=document.getElementById('f-panel')?.value||'לא צוין';
-  const proj=document.getElementById('f-proj')?.value||'';
-  const insp=document.getElementById('f-insp')?.value||'';
-  const fdate=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');
-  const emails=new Set();const lines=[];
-  for(let i=1;i<=31;i++){
-    const cont=document.getElementById('iss'+i);if(!cont)continue;
-    cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
-      const n=bi+1;
-      const stBtn=document.getElementById('ist-'+i+'-'+n);
-      if(!stBtn||stBtn.dataset.s==='closed')return;
-      const email=document.getElementById('ie-'+i+'-'+n)?.value||'';
-      const person=document.getElementById('ip-'+i+'-'+n)?.value||'';
-      const desc=document.getElementById('id-'+i+'-'+n)?.value||'';
-      const action=document.getElementById('iact-'+i+'-'+n)?.value||'';
-      const prio=issuePriority[i]?.[n]||'med';
-      const prioTxt=prio==='high'?'🔴 גבוהה':prio==='med'?'🟡 בינונית':'🟢 נמוכה';
-      const sec=ITEMS.find(x=>x.id===i)?.t||'סעיף '+i;
-      const stTxt=stBtn.dataset.s==='waiting'?'⏳ ממתין לאישור':'⚠️ פתוח';
-      if(email)emails.add(email);
-      lines.push('─── Issue #'+n+' — סעיף '+i+' ['+prioTxt+'] ───\nסעיף: '+sec+'\nאחראי: '+(person||'—')+'\nסטטוס: '+stTxt+'\nפירוט: '+(desc||'—')+(action?'\nפעולה: '+action:''));
-    });
-  }
-  if(!lines.length){toast('אין Issues פתוחים לשליחה');return;}
-  if(settings.notifyEmail)emails.add(settings.notifyEmail);
-  const to=[...emails].join(',');
-  const sub=encodeURIComponent('[Electra CX L0] דוח Issues מרוכז — '+panel+' | '+fdate);
-  const body=encodeURIComponent('שלום,\n\nסיכום Issues פתוחים:\n\n🏭 לוח: '+panel+'\n📁 פרויקט: '+(proj||'—')+'\n📅 תאריך: '+fdate+'\n\n'+lines.join('\n\n')+'\n\nסה"כ: '+lines.length+' Issues פתוחים\n\nדווח ע"י: '+(insp||'מנהל')+'\n\n— Electra CX Quality Control System');
-  window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;
-  logAct('דוח Issues מרוכז נשלח ('+lines.length+')','📨');
-  toast('📨 שולח '+lines.length+' Issues...');
-}
-
-function shareChecklist(){
-  const panel=document.getElementById('f-panel')?.value||'לא צוין';let p=0,f=0,na=0;for(let i=1;i<=31;i++){const el=document.getElementById('ic'+i);if(!el)continue;if(el.querySelector('.pfn.p.on'))p++;else if(el.querySelector('.pfn.f.on'))f++;else if(el.querySelector('.pfn.n.on'))na++;}
-  let open=0,closed=0,waiting=0;for(let i=1;i<=31;i++){const cont=document.getElementById('iss'+i);if(!cont)continue;cont.querySelectorAll('.iss-block').forEach(bl=>{const s=bl.querySelector('.iss-st')?.dataset.s;if(s==='closed')closed++;else if(s==='waiting')waiting++;else open++;});}
-  const txt='📋 דוח L0 — '+panel+'\n━━━━━━━━━━━━━━\n✅ Passed: '+p+' | ❌ Failed: '+f+' | — N/A: '+na+'\n⚠️ Issues: '+open+' פתוח | ⏳ '+waiting+' ממתין | ✓ '+closed+' סגור\n━━━━━━━━━━━━━━\nElectra CX L0';
-  if(navigator.share)navigator.share({title:'Electra CX L0',text:txt}).catch(()=>navigator.clipboard?.writeText(txt).then(()=>toast('✅ הועתק')));
-  else navigator.clipboard?.writeText(txt).then(()=>toast('✅ הועתק ללוח'));
-}
-
-function toast(msg,dur=2500){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),dur);}
 // ════════════════════════════════════════
 // AUTH
 // ════════════════════════════════════════
@@ -1502,7 +1372,7 @@ function renderHome(){
     const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
     const card=document.createElement('div');card.className='clc';
-    card.onclick=()=>viewCl(id);
+    card.onclick=()=>{ if(settings.openInNewTab){ window.open(location.pathname+'?cl='+id,'_blank'); } else { viewCl(id); } };
     card.innerHTML=
       '<div class="clc-stripe" style="background:'+stripe+';"></div>'+
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
@@ -1629,6 +1499,7 @@ function showSettings(){
     '</div>'+
 
     '<div class="sett-section">עבודה</div>'+
+    '<div class="sett-row"><div><div class="sett-label">🔗 פתח בדף חדש</div><div class="sett-desc">כל כניסה תיפתח בטאב נפרד</div></div><button class="tog '+(settings.openInNewTab?'on':'off')+'" onclick="settings.openInNewTab=!settings.openInNewTab;this.className=\'tog \'+(settings.openInNewTab?\'on\':\'off\');saveSettings();toast(settings.openInNewTab?\'✅ יפתח בדף חדש\':\'✅ יפתח באותו דף\');"></button></div>'+
     '<div class="sett-row"><div><div class="sett-label">רטט בסימון P/F/N</div><div class="sett-desc">ויברציה קצרה בכל סימון</div></div><button class="tog '+(settings.vibrateOnPFN?'on':'off')+'" onclick="settings.vibrateOnPFN=!settings.vibrateOnPFN;this.className=\'tog \'+(settings.vibrateOnPFN?\'on\':\'off\');saveSettings();"></button></div>'+
     '<div class="sett-row"><div><div class="sett-label">פתיחת Issue ב-Failed</div><div class="sett-desc">פתח Issue אוטומטית כשסועיף נכשל</div></div><button class="tog '+(settings.autoOpenIssue?'on':'off')+'" onclick="settings.autoOpenIssue=!settings.autoOpenIssue;this.className=\'tog \'+(settings.autoOpenIssue?\'on\':\'off\');saveSettings();"></button></div>'+
 
@@ -1837,7 +1708,9 @@ window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
 // ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
+const _urlCl=new URLSearchParams(location.search).get('cl');
 document.addEventListener('DOMContentLoaded',()=>{
+  if(_urlCl){ setTimeout(()=>viewCl(_urlCl),800); }
   buildItems();loadSettings();loadContacts();
   history.replaceState({sc:'home'},'','#home');
   if(!navigator.onLine)document.getElementById('offline-bar').classList.add('show');
