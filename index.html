@@ -347,6 +347,12 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);c
       <div class="hst"><div class="hst-n" id="st-ip" style="color:#fbbf24;">0</div><div class="hst-l">פעילים</div></div>
       <div class="hst"><div class="hst-n" id="st-dn" style="color:#4ade80;">0</div><div class="hst-l">הושלמו</div></div>
     </div>
+    <div id="admin-new-btn" style="display:none;margin-top:14px;">
+      <button onclick="newCl()" style="width:100%;background:var(--gold2);color:var(--ink);border:none;border-radius:12px;padding:13px 20px;font-size:.9rem;font-weight:900;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:-.2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        פתח צ'קליסט חדש
+      </button>
+    </div>
   </div>
   <div class="srow">
     <div class="sbox">
@@ -510,9 +516,9 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);c
 </div><!-- app -->
 
 <!-- FAB -->
-<button class="fab" id="fab" onclick="requireAuth(newCl)">
+<button class="fab" id="fab" onclick="requireAuth(newCl)" style="display:none;">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  פתח צ'קליסט חדש
+  + צ'קליסט חדש
 </button>
 
 <!-- FLOAT INDICATOR -->
@@ -610,7 +616,7 @@ let drawCb=null, drawMode='pen', drawColor='#ef4444', drawSz=4, dCtx=null, dHist
 let homeF='all', issF='all', sortMode='newest';
 let actLog=[];
 let isAuthed=false;
-let settings={vibrateOnPFN:true, autoOpenIssue:true, notifyEmail:''};
+let settings={vibrateOnPFN:true, autoOpenIssue:false, notifyEmail:''};
 let authCb=null;
 
 // ══════════════════════════════════════════
@@ -662,6 +668,12 @@ function updateAuthUI(){
   if(dot)dot.className='auth-dot'+(isAuthed?' on':'');
   if(lbl)lbl.textContent=isAuthed?'מנהל':'התחבר';
   if(pill)pill.onclick=isAuthed?logout:showAuthModal;
+  // Show/hide FAB based on auth (only on home screen)
+  const fab=document.getElementById('fab');
+  if(fab&&document.getElementById('sc-home')?.classList.contains('on'))fab.style.display=isAuthed?'flex':'none';
+  // Show/hide admin new-checklist button in hero
+  const adminBtn=document.getElementById('admin-new-btn');
+  if(adminBtn)adminBtn.style.display=isAuthed?'block':'none';
 }
 function applyAuthState(){
   const e=isAuthed;
@@ -706,7 +718,7 @@ function goHome(){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
   document.getElementById('sc-home').classList.add('on');
   document.getElementById('tabs').classList.remove('show');
-  document.getElementById('fab').style.display='flex';
+  document.getElementById('fab').style.display=isAuthed?'flex':'none';
   document.getElementById('nav-l').innerHTML='<span class="nav-logo">⚡ ELECTRA CX</span>';
   document.getElementById('nav-r').innerHTML='<div class="auth-pill" id="auth-pill" onclick="'+(isAuthed?'logout()':'showAuthModal()')+'"><div class="auth-dot'+(isAuthed?' on':'')+'"></div><span class="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div><button class="nico" onclick="showSettings()">⚙️</button>';
 }
@@ -1144,7 +1156,6 @@ function resetCl(){
 // OPEN
 // ══════════════════════════════════════════
 function openCl(id){
-  if(!isAuthed){requireAuth(()=>openCl(id));return;}
   if(clRef){clRef.off();clRef=null;}
   CID=id;resetCl();
   switchTab('cl');
@@ -1214,8 +1225,7 @@ function renderHome(){
     const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
     const card=document.createElement('div');card.className='clc';
-    // clicking goes to view-only by default; auth required for edit
-    card.onclick=()=>viewCl(id);
+    card.onclick=()=>openCl(id);
     card.innerHTML=
       '<div class="clc-acc" style="background:'+stripe+';"></div>'+
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
@@ -1227,7 +1237,10 @@ function renderHome(){
         '</div>'+
         '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">'+
           '<span class="schip" style="background:'+sbg+';color:'+sc+';">'+sl+'</span>'+
-          (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:var(--blue-d);color:var(--blue);border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'')  +
+          '<div style="display:flex;gap:4px;">'+
+            '<button onclick="event.stopPropagation();openCl(\''+id+'\')" style="background:var(--blue);color:#fff;border:none;border-radius:var(--r4);padding:5px 11px;cursor:pointer;font-size:.68rem;font-weight:800;font-family:inherit;white-space:nowrap;">פתח ▶</button>'+
+            (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:var(--blue-d);color:var(--blue);border:none;border-radius:var(--r4);width:28px;height:28px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'') +
+          '</div>'+
         '</div>'+
       '</div>'+
       '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/tot*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/tot*100)+'%;"></div></div></div>'+
@@ -1305,7 +1318,7 @@ function addContact(){if(contacts.length>=12){toast('מקסימום 12');return;
 // ══════════════════════════════════════════
 // SETTINGS
 // ══════════════════════════════════════════
-function loadSettings(){try{const s=localStorage.getItem('cx_settings');if(s)Object.assign(settings,JSON.parse(s));}catch(e){}}
+function loadSettings(){try{const s=localStorage.getItem('cx_settings');if(s)Object.assign(settings,JSON.parse(s));}catch(e){}settings.autoOpenIssue=false;saveSettings();}
 function saveSettings(){try{localStorage.setItem('cx_settings',JSON.stringify(settings));}catch(e){}}
 function showSettings(){
   const ex=document.getElementById('settings-m');if(ex){ex.remove();return;}
@@ -1325,7 +1338,7 @@ function showSettings(){
       '<button onclick="document.getElementById(\'settings-m\').remove()" style="background:var(--card2);border:none;border-radius:var(--r4);padding:6px 12px;cursor:pointer;font-weight:700;font-size:.78rem;">סגור</button>'+
     '</div>'+
     '<div class="sett-row"><div><div style="font-size:.82rem;font-weight:700;">רטט בסימון P/F/N</div><div style="font-size:.7rem;color:var(--t3);">ויברציה בכל סימון</div></div><button class="tog '+(settings.vibrateOnPFN?'on':'off')+'" onclick="settings.vibrateOnPFN=!settings.vibrateOnPFN;this.className=\'tog \'+(settings.vibrateOnPFN?\'on\':\'off\');saveSettings();"></button></div>'+
-    '<div class="sett-row"><div><div style="font-size:.82rem;font-weight:700;">פתיחת Issue ב-Failed</div><div style="font-size:.7rem;color:var(--t3);">פתח Issue אוטומטי</div></div><button class="tog '+(settings.autoOpenIssue?'on':'off')+'" onclick="settings.autoOpenIssue=!settings.autoOpenIssue;this.className=\'tog \'+(settings.autoOpenIssue?\'on\':\'off\');saveSettings();"></button></div>'+
+
     '<div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:6px;"><div style="font-size:.82rem;font-weight:700;">מייל לשליחה אוטומטית</div><div style="font-size:.7rem;color:var(--t3);">מייל CC בכל שליחת Issue</div><input type="email" value="'+(settings.notifyEmail||'')+'" placeholder="admin@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r3);font-size:.82rem;font-family:inherit;background:var(--card2);outline:none;"></div>'+
     '<div class="sett-row" style="border-bottom:none;"><div style="font-size:.82rem;font-weight:700;">אנשי קשר</div><button onclick="showContacts()" style="background:var(--blue-d);color:var(--blue);border:none;border-radius:var(--r4);padding:7px 14px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;">נהל 👥</button></div>'+
     (isAuthed?'<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"><button onclick="logout();document.getElementById(\'settings-m\').remove();" style="width:100%;background:var(--fail-d);color:var(--fail2);border:1.5px solid var(--fail-m);padding:10px;border-radius:var(--r3);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">התנתק מחשבון מנהל</button></div>':'')+
