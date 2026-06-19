@@ -291,6 +291,19 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 .ita:focus{border-color:var(--blue-accent);}
 .iss-ph{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
 .iss-ph .thumb img{width:54px;height:54px;}
+
+/* CREATE ISSUE BUTTON */
+.create-iss-btn{width:100%;margin-top:8px;padding:11px;background:linear-gradient(135deg,var(--ok),#16a34a);color:#fff;border:none;border-radius:var(--r3);font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 12px rgba(34,197,94,.28);transition:all .18s;}
+.create-iss-btn:active{transform:scale(.97);}
+.create-iss-btn:disabled{background:var(--ok-d);color:var(--ok);box-shadow:none;cursor:default;}
+
+/* FILE ATTACHMENT */
+.file-list{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.file-item{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:var(--r4);padding:7px 10px;}
+.file-ico{font-size:1rem;flex-shrink:0;}
+.file-name{flex:1;font-size:.75rem;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-sz{font-size:.62rem;color:var(--t3);flex-shrink:0;}
+.file-del{background:var(--fail-d);color:var(--fail);border:none;border-radius:5px;padding:2px 7px;font-size:.62rem;font-weight:700;cursor:pointer;flex-shrink:0;}
 .iph-add{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px dashed var(--border2);padding:6px 10px;border-radius:var(--r4);font-size:.68rem;font-weight:600;cursor:pointer;color:var(--t2);}
 .create-btn{width:100%;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.1);padding:11px;border-radius:var(--r3);font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
 .create-btn:active{opacity:.85;}
@@ -394,6 +407,29 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 
 /* RESPONSIVE TOUCH */
 @media (hover:hover){.clc:hover{transform:scale(.992)}.new-cl-card:hover{filter:brightness(1.08);transform:translateX(-50%) scale(1.04);}.nico:hover{background:rgba(255,255,255,.14)}}
+
+/* INLINE EXPAND PANEL */
+.clc-active{border-color:var(--blue-accent)!important;box-shadow:0 0 0 2px rgba(41,121,255,.25),var(--sh2)!important;}
+.clx-panel{background:var(--card);border-radius:var(--r);margin:0 14px 10px;border:1.5px solid rgba(41,121,255,.2);box-shadow:0 6px 24px rgba(41,121,255,.1),var(--sh2);padding:16px;position:relative;animation:clxin .22s ease both;}
+@keyframes clxin{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.clx-arrow{position:absolute;top:-8px;right:24px;width:16px;height:16px;background:var(--card);border-right:1.5px solid rgba(41,121,255,.2);border-top:1.5px solid rgba(41,121,255,.2);transform:rotate(-45deg);border-radius:3px 0 0 0;}
+.clx-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.clx-title{font-size:1rem;font-weight:900;color:var(--t1);letter-spacing:-.3px;}
+.clx-sub{font-size:.68rem;color:var(--t3);margin-top:3px;}
+.clx-close{background:rgba(6,16,30,.06);border:none;color:var(--t3);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.75rem;font-weight:800;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.clx-prog-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.clx-prog-bg{flex:1;height:8px;background:rgba(6,16,30,.06);border-radius:6px;overflow:hidden;}
+.clx-pct{font-size:.72rem;font-weight:800;color:var(--t2);font-family:'JetBrains Mono',monospace;width:32px;text-align:left;}
+.clx-stats{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(6,16,30,.03);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;}
+.clx-stat{padding:9px 6px;text-align:center;border-left:1px solid var(--border);}
+.clx-stat:last-child{border-left:none;}
+.clx-stat-n{font-size:1.2rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
+.clx-stat-l{font-size:.56rem;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.3px;}
+.clx-issues{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.clx-btn{background:rgba(6,16,30,.06);color:var(--t2);border:1px solid var(--border);border-radius:var(--r4);padding:8px 14px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.clx-btn:active{opacity:.75;}
+.clx-btn-open{background:var(--blue-accent);color:#fff;border-color:var(--blue-accent);}
+.clx-btn-del{background:var(--fail-d);color:var(--fail);border-color:rgba(239,68,68,.2);}
 
 /* ══ SETTINGS APP ══ */
 .sett-page{display:none;position:fixed;inset:0;background:var(--surf,#f0f4f8);z-index:5000;flex-direction:column;overflow:hidden;}
@@ -798,12 +834,17 @@ function buildItems(){
       '<div class="tools">'+
         '<button class="tool" onclick="toggleNote('+item.id+')" style="position:relative;">'+
           '<svg id="ni'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'+
-          '<span id="nd'+item.id+'" class="tbadge2" style="display:none;background:var(--gold2);">✓</span>'+
+          '<span id="nd'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);">✓</span>'+
         '</button>'+
         '<button class="tool" onclick="togglePhoto('+item.id+')" style="position:relative;">'+
           '<svg id="ci'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'+
-          '<span id="cb'+item.id+'" class="tbadge2" style="display:none;background:var(--blue);"></span>'+
+          '<span id="cb'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
         '</button>'+
+        '<label class="tool" style="position:relative;cursor:pointer;" title="צרף קובץ">'+
+          '<svg id="fi'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>'+
+          '<span id="fb'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
+          '<input type="file" multiple style="display:none;" onchange="requireAuth(()=>addFile(this,'+item.id+'))">'+
+        '</label>'+
       '</div>'+
       '<div class="note-p" id="np'+item.id+'"><textarea id="note'+item.id+'" placeholder="הוסף הערה..." oninput="noteChg('+item.id+')"></textarea></div>';
     d.innerHTML=
@@ -826,6 +867,7 @@ function buildItems(){
           '<label class="addph" style="background:var(--blue);color:#fff;">📷 מצלמה<input type="file" accept="image/*" capture="environment" style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+item.id+'))"></label>'+
           '<label class="addph" style="background:var(--blue-d);color:var(--blue);">🖼 גלריה<input type="file" accept="image/*" multiple style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+item.id+'))"></label>'+
         '</div>'+
+        '<div class="file-list" id="fl'+item.id+'"></div>'+
       '</div>'+
       '<div class="iss-p" id="isp'+item.id+'">'+
         '<div id="iss'+item.id+'"></div>'+
@@ -846,7 +888,7 @@ function collect(){
     const note=document.getElementById('note'+i)?.value||'';
     const issues=[];
     const cont=document.getElementById('iss'+i);
-    if(cont){cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const n=bi+1;const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s||'open';const prio=issuePriority[i]?.[n]||'med';const photos=(issuePhotos[i]?.[n]||[]).filter(p=>p);issues.push({person:document.getElementById('ip-'+i+'-'+n)?.value||'',email:document.getElementById('ie-'+i+'-'+n)?.value||'',desc:document.getElementById('id-'+i+'-'+n)?.value||'',action:document.getElementById('iact-'+i+'-'+n)?.value||'',status:st,priority:prio,photos});});}
+    if(cont){cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const n=bi+1;const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s||'open';const prio=issuePriority[i]?.[n]||'med';const photos=(issuePhotos[i]?.[n]||[]).filter(p=>p);const confirmed=bl.dataset.confirmed==='1';issues.push({person:document.getElementById('ip-'+i+'-'+n)?.value||'',email:document.getElementById('ie-'+i+'-'+n)?.value||'',desc:document.getElementById('id-'+i+'-'+n)?.value||'',action:document.getElementById('iact-'+i+'-'+n)?.value||'',status:st,priority:prio,photos,confirmed});});}
     data.items['i'+i]={s,note,issues};
   }
   return data;
@@ -921,6 +963,7 @@ function addIss(itemId,data={}){
   const bl=document.createElement('div');
   bl.className='iss-block'+(st==='closed'?' closed':st==='waiting'?' waiting':'');
   bl.id='ib-'+itemId+'-'+idx;
+  if(data.confirmed)bl.dataset.confirmed='1';
   const cats=['חיבורים','תיעוד','ציוד','בטיחות','תקשורת','אחר'];
   const selCats=data.cats||[];
   bl.innerHTML=
@@ -946,7 +989,8 @@ function addIss(itemId,data={}){
       (data.action||'')+'</textarea>'+
     '<div class="iss-ph" id="ibp-'+itemId+'-'+idx+'"></div>'+
     '<label class="iph-add" style="'+(isAuthed?'':'display:none;')+'">📷 הוסף תמונה<input type="file" accept="image/*" multiple style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+')"></label>'+
-    '<button class="wait-btn" style="'+(isAuthed?'display:none;':'')+'" onclick="setIssWaiting('+itemId+','+idx+')">⏳ סמן כממתין לאישור</button>';
+    '<button class="wait-btn" style="'+(isAuthed?'display:none;':'')+'" onclick="setIssWaiting('+itemId+','+idx+')">⏳ סמן כממתין לאישור</button>'+
+    '<button class="create-iss-btn" id="cib-'+itemId+'-'+idx+'" onclick="requireAuth(()=>confirmIss('+itemId+','+idx+'))"'+(data.confirmed?'style="display:none;"':'')+'>✅ צור Issue</button>';
   // restore issue photos
   if(data.photos?.length){
     const row=document.getElementById('ibp-'+itemId+'-'+idx);
@@ -1008,7 +1052,7 @@ function createIss(itemId,idx){
 
 function updIssBar(){
   let open=0,closed=0,waiting=0;
-  for(let i=1;i<=31;i++){const cont=document.getElementById('iss'+i);if(!cont)continue;cont.querySelectorAll('.iss-block').forEach(bl=>{const s=bl.querySelector('.iss-st')?.dataset.s;if(s==='closed')closed++;else if(s==='waiting')waiting++;else open++;});}
+  for(let i=1;i<=31;i++){const cont=document.getElementById('iss'+i);if(!cont)continue;cont.querySelectorAll('.iss-block').forEach(bl=>{if(bl.dataset.confirmed!=='1')return;const s=bl.querySelector('.iss-st')?.dataset.s;if(s==='closed')closed++;else if(s==='waiting')waiting++;else open++;});}
   const bar=document.getElementById('iss-bar');const ob=document.getElementById('ib-open');const wb=document.getElementById('ib-wait');const cb=document.getElementById('ib-closed');const fi=document.getElementById('fi');const fin=document.getElementById('fi-n');const tot=open+closed+waiting;
   if(bar)bar.classList.toggle('show',tot>0);
   if(ob){ob.style.display=open>0?'inline-block':'none';ob.textContent='⚠️ '+open+' פתוח';}
@@ -1098,7 +1142,7 @@ function updHeroProg(){
 
 function toggleNote(id){const p=document.getElementById('np'+id);const o=p.style.display==='block';p.style.display=o?'none':'block';if(!o)document.getElementById('note'+id)?.focus();}
 
-function noteChg(id){const v=(document.getElementById('note'+id)?.value||'').trim();document.getElementById('ni'+id)?.setAttribute('stroke',v?'#c8921a':'#94a3b8');const nd=document.getElementById('nd'+id);if(nd)nd.style.display=v?'flex':'none';schedSave();}
+function noteChg(id){const v=(document.getElementById('note'+id)?.value||'').trim();document.getElementById('ni'+id)?.setAttribute('stroke',v?'var(--blue-accent)':'#94a3b8');const nd=document.getElementById('nd'+id);if(nd)nd.style.display=v?'flex':'none';schedSave();}
 
 function togglePhoto(id){const p=document.getElementById('pp'+id);p.style.display=p.style.display==='block'?'none':'block';}
 
@@ -1116,7 +1160,7 @@ function mkThumb(src,id,idx,type){
   w.appendChild(img);w.appendChild(del);return w;
 }
 
-function updCB(id){const n=(itemPhotos[id]||[]).filter(p=>p).length;const b=document.getElementById('cb'+id);const i=document.getElementById('ci'+id);if(b){b.style.display=n?'flex':'none';b.textContent=n||'';}if(i)i.setAttribute('stroke',n?'var(--blue)':'#94a3b8');}
+function updCB(id){const n=(itemPhotos[id]||[]).filter(p=>p).length;const b=document.getElementById('cb'+id);const i=document.getElementById('ci'+id);if(b){b.style.display=n?'flex':'none';b.textContent=n||'';}if(i)i.setAttribute('stroke',n?'var(--blue-accent)':'#94a3b8');}
 
 function savePhotos(id){if(!CID)return;db.ref('checklists/'+CID+'/photos/item'+id).set((itemPhotos[id]||[]).filter(p=>p)||null).catch(()=>{});}
 
@@ -1142,6 +1186,59 @@ function openDraw(src,cb){
 function closeDraw(){document.getElementById('draw-ov').classList.remove('show');drawCb=null;}
 
 function schedSave(){if(saveT)clearTimeout(saveT);saveT=setTimeout(forceSave,400);}
+
+function confirmIss(itemId,idx){
+  if(!isAuthed){toast('🔒 נדרשת הרשאה');return;}
+  const desc=document.getElementById('id-'+itemId+'-'+idx)?.value||'';
+  if(!desc.trim()){toast('⚠️ אנא מלא פירוט ליקוי');return;}
+  const bl=document.getElementById('ib-'+itemId+'-'+idx);
+  if(bl)bl.dataset.confirmed='1';
+  const btn=document.getElementById('cib-'+itemId+'-'+idx);
+  if(btn){btn.textContent='✅ Issue נוצר';btn.disabled=true;btn.style.background='var(--ok-d)';btn.style.color='var(--ok)';btn.style.borderColor='var(--ok-m)';}
+  document.getElementById('isb'+itemId)?.classList.add('hot');
+  updIssBar();schedSave();
+  toast('✅ Issue נוסף לסיכום!');
+  if(navigator.vibrate)navigator.vibrate([40,20,40]);
+}
+
+// ──── FILE ATTACHMENT ────
+let itemFiles={};
+function addFile(inp,id){
+  if(!inp.files?.length)return;
+  if(!itemFiles[id])itemFiles[id]=[];
+  const list=document.getElementById('fl'+id);
+  if(!list)return;
+  // Show photo panel if hidden
+  const pp=document.getElementById('pp'+id);
+  if(pp&&pp.style.display!=='block')pp.style.display='block';
+  [...inp.files].forEach(f=>{
+    const fobj={name:f.name,size:f.size,type:f.type,dataUrl:''};
+    const r=new FileReader();
+    r.onload=e=>{
+      fobj.dataUrl=e.target.result;
+      itemFiles[id].push(fobj);
+      const row=document.createElement('div');
+      row.className='file-item';
+      const isImg=f.type.startsWith('image/');
+      row.innerHTML='<span class="file-ico">'+(isImg?'🖼️':f.type.includes('pdf')?'📄':f.type.includes('word')||f.name.endsWith('.docx')?'📝':'📎')+'</span>'+
+        '<span class="file-name">'+f.name+'</span>'+
+        '<span class="file-sz">'+Math.round(f.size/1024)+'KB</span>'+
+        '<button class="file-del" onclick="this.parentElement.remove();itemFiles['+id+']=itemFiles['+id+'].filter(x=>x.name!==\''+f.name+'\');updFB('+id+');schedSave();">✕</button>';
+      list.appendChild(row);
+      updFB(id);schedSave();
+    };
+    r.readAsDataURL(f);
+  });
+  inp.value='';
+}
+
+function updFB(id){
+  const n=(itemFiles[id]||[]).length;
+  const b=document.getElementById('fb'+id);
+  const ic=document.getElementById('fi'+id);
+  if(b){b.style.display=n?'flex':'none';b.textContent=n||'';}
+  if(ic)ic.setAttribute('stroke',n?'var(--blue-accent)':'#94a3b8');
+}
 
 function forceSave(){
   if(!CID)return;
@@ -1169,6 +1266,7 @@ function renderIssues(){
   for(let i=1;i<=31;i++){
     const cont=document.getElementById('iss'+i);if(!cont)continue;
     cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
+      if(bl.dataset.confirmed!=='1')return;
       const n=bi+1;
       const desc=document.getElementById('id-'+i+'-'+n)?.value||'';
       const person=document.getElementById('ip-'+i+'-'+n)?.value||'';
@@ -1415,8 +1513,8 @@ function renderHome(){
     const stripe=cl.status==='completed'?'var(--ok)':cl.status==='in-progress'?'var(--warn)':'rgba(6,16,30,.1)';
     const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
-    const card=document.createElement('div');card.className='clc';
-    card.onclick=()=>{ if(settings.openInNewTab){ window.open(location.pathname+'?cl='+id,'_blank'); } else { viewCl(id); } };
+    const card=document.createElement('div');card.className='clc';card.id='clc-'+id;
+    card.onclick=(e)=>{if(e.target.closest('button[onclick*="duplicateCl"]'))return;toggleClExpand(id,card,cl);};
     card.innerHTML=
       '<div class="clc-stripe" style="background:'+stripe+';"></div>'+
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
@@ -1439,6 +1537,70 @@ function renderHome(){
     list.appendChild(card);
   });
 }
+let _expandedId=null;
+function toggleClExpand(id,card,cl){
+  // close any open expand
+  const prev=document.getElementById('clx-'+_expandedId);
+  if(prev){prev.remove();if(_expandedId===id){_expandedId=null;document.getElementById('clc-'+id)?.classList.remove('clc-active');return;}}
+  document.querySelectorAll('.clc').forEach(c=>c.classList.remove('clc-active'));
+  _expandedId=id;card.classList.add('clc-active');
+
+  const panel=document.createElement('div');
+  panel.id='clx-'+id;
+  panel.className='clx-panel';
+  const p=cl.passed||0,f=cl.failed||0,na=cl.na||0,tot=cl.total||31;
+  const pct=Math.round((p+f)/tot*100);
+  const oi=cl.openIssues||0,wi=cl.waitingIssues||0,ci=cl.closedIssues||0;
+  const stLabel=cl.status==='completed'?'הושלם ✓':cl.status==='in-progress'?'בתהליך ⏳':'טרם התחיל';
+  const stCol=cl.status==='completed'?'var(--ok)':cl.status==='in-progress'?'var(--warn)':'var(--t3)';
+
+  panel.innerHTML=
+    '<div class="clx-arrow"></div>'+
+    '<div class="clx-header">'+
+      '<div style="flex:1;">'+
+        '<div class="clx-title">'+(cl.title||'ללא שם')+'</div>'+
+        (cl.proj?'<div class="clx-sub">📁 '+cl.proj+(cl.loc?' · 📍'+cl.loc:'')+'</div>':'')+
+        (cl.insp?'<div class="clx-sub">👤 '+cl.insp+(cl.fdate?' · 📅'+cl.fdate:'')+'</div>':'')+
+      '</div>'+
+      '<button class="clx-close" onclick="document.getElementById(\'clx-'+id+'\').remove();document.getElementById(\'clc-'+id+'\')?.classList.remove(\'clc-active\');_expandedId=null;">✕</button>'+
+    '</div>'+
+    // progress bar
+    '<div class="clx-prog-wrap">'+
+      '<div class="clx-prog-bg"><div style="height:100%;display:flex;border-radius:6px;overflow:hidden;">'+
+        '<div style="width:'+Math.round(p/tot*100)+'%;background:var(--ok);transition:width .6s;"></div>'+
+        '<div style="width:'+Math.round(f/tot*100)+'%;background:var(--fail);transition:width .6s;"></div>'+
+      '</div></div>'+
+      '<div class="clx-pct">'+pct+'%</div>'+
+    '</div>'+
+    // stats row
+    '<div class="clx-stats">'+
+      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--ok);">'+p+'</div><div class="clx-stat-l">Passed</div></div>'+
+      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--fail);">'+f+'</div><div class="clx-stat-l">Failed</div></div>'+
+      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--t3);">'+na+'</div><div class="clx-stat-l">N/A</div></div>'+
+      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--t3);">'+(tot-p-f-na)+'</div><div class="clx-stat-l">נותר</div></div>'+
+    '</div>'+
+    // issues row
+    ((oi+wi+ci)>0?
+      '<div class="clx-issues">'+
+        (oi?'<span class="ich ich-o">⚠️ '+oi+' פתוח</span>':'')+
+        (wi?'<span class="ich ich-w">⏳ '+wi+' ממתין</span>':'')+
+        (ci?'<span class="ich ich-c">✓ '+ci+' סגור</span>':'')+
+      '</div>':'')+
+    // status badge
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;">'+
+      '<span style="font-size:.72rem;font-weight:800;color:'+stCol+';">'+stLabel+'</span>'+
+      '<div style="display:flex;gap:6px;">'+
+        (isAuthed?'<button class="clx-btn clx-btn-del" onclick="document.getElementById(\'clx-'+id+'\').remove();document.getElementById(\'clc-'+id+'\')?.classList.remove(\'clc-active\');_expandedId=null;deleteCl(\''+id+'\');">🗑️ מחק</button>':'')+
+        '<button class="clx-btn" onclick="window.open(location.pathname+\'?cl='+id+'\',\'_blank\')">🔗 שתף</button>'+
+        '<button class="clx-btn clx-btn-open" onclick="viewCl(\''+id+'\')">פתח →</button>'+
+      '</div>'+
+    '</div>';
+
+  card.insertAdjacentElement('afterend',panel);
+  // smooth scroll so the panel is visible
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+}
+
 function deleteCl(id){
   if(!isAuthed){requireAuth(()=>deleteCl(id));return;}
   const code=prompt('הזן קוד אישור למחיקה (electra1234):');
