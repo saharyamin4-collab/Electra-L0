@@ -87,9 +87,7 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 .adot.on{background:var(--ok);box-shadow:0 0 6px var(--ok);}
 .auth-lbl{font-size:.64rem;font-weight:700;color:rgba(255,255,255,.65);}
 
-/* ── DEDICATED CL PAGE ── */
-body.cl-page #sc-home{display:none!important;}
-body.cl-page .new-cl-card{display:none!important;}
+/* ── OFFLINE ── */
 .offline-bar{background:var(--warn);color:#fff;font-size:.72rem;font-weight:700;padding:6px 16px;text-align:center;display:none;justify-content:center;align-items:center;gap:6px;flex-shrink:0;}
 .offline-bar.show{display:flex;}
 
@@ -124,10 +122,10 @@ body.cl-page .new-cl-card{display:none!important;}
 .kpi-l{font-size:.57rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
 
 /* NEW CL BUTTON — big inviting card */
-.new-cl-card{margin:14px 14px 0;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));border:1px solid rgba(245,158,11,.2);border-radius:var(--r);padding:18px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 0 0 0 var(--gold-glow);transition:all .18s;position:relative;overflow:hidden;}
-.new-cl-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(245,158,11,.04));opacity:0;transition:opacity .2s;}
-.new-cl-card:active{transform:scale(.97);}
-.new-cl-card:active::before{opacity:1;}
+.new-cl-card{position:fixed;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom,0px) + 18px);left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:50px;padding:14px 26px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 6px 30px rgba(245,158,11,.55),0 2px 8px rgba(0,0,0,.25);z-index:290;white-space:nowrap;transition:all .18s cubic-bezier(.34,1.4,.64,1);}
+.new-cl-card::before{content:'';position:absolute;inset:0;border-radius:50px;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);pointer-events:none;}
+.new-cl-card:active{transform:translateX(-50%) scale(.93);box-shadow:0 3px 14px rgba(245,158,11,.4);}
+.new-cl-card:active::before{opacity:0;}
 .new-cl-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 4px 16px var(--gold-glow);}
 .new-cl-text{flex:1;}
 .new-cl-title{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:2px;}
@@ -390,36 +388,8 @@ body.cl-page .new-cl-card{display:none!important;}
 .log-device{font-size:.8rem;font-weight:700;color:var(--t1);margin-bottom:2px;}
 .log-meta{font-size:.67rem;color:var(--t3);display:flex;gap:8px;flex-wrap:wrap;}
 
-/* SETTINGS V2 */
-.sm-nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px;margin-bottom:14px;border-bottom:1px solid var(--border);}
-.sm-nav::-webkit-scrollbar{display:none;}
-.sm-tab{background:var(--card2);border:1.5px solid var(--border);border-radius:20px;padding:6px 13px;font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--t2);flex-shrink:0;transition:all .15s;}
-.sm-tab.on{background:var(--bg-deep);border-color:var(--bg-deep);color:#fff;}
-.sm-page{display:none;}
-.sm-page.on{display:block;}
-.sett-card{background:var(--card2);border-radius:var(--r2);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;}
-.sett-card .sett-row{padding:13px 14px;border-bottom:1px solid var(--border);}
-.sett-card .sett-row:last-child{border-bottom:none;}
-.profile-hero{background:linear-gradient(135deg,var(--bg-deep),var(--bg-mid));border-radius:var(--r2);padding:18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
-.profile-av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 0 16px var(--gold-glow);}
-.profile-name{font-size:1rem;font-weight:800;color:#fff;}
-.profile-role{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:2px;}
-.sett-btn{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r3);padding:11px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--t1);text-align:right;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;transition:background .15s;}
-.sett-btn:active{background:var(--surf2);}
-.sett-btn.danger{color:var(--fail);border-color:rgba(239,68,68,.25);background:var(--fail-d);}
-.sett-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r3);font-size:.82rem;font-family:inherit;background:var(--card);outline:none;color:var(--t1);transition:border-color .2s;margin-top:6px;}
-.sett-input:focus{border-color:var(--blue-accent);}
-.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
-.theme-opt{border:2px solid var(--border);border-radius:var(--r3);padding:10px 6px;cursor:pointer;text-align:center;font-size:.7rem;font-weight:700;color:var(--t2);transition:all .15s;}
-.theme-opt.on{border-color:var(--blue-accent);color:var(--blue-accent);background:rgba(41,121,255,.06);}
-.font-row{display:flex;gap:6px;margin-top:8px;}
-.font-opt{flex:1;border:2px solid var(--border);border-radius:var(--r3);padding:8px 4px;cursor:pointer;text-align:center;font-size:.72rem;font-weight:700;color:var(--t2);transition:all .15s;}
-.font-opt.on{border-color:var(--blue-accent);color:var(--blue-accent);background:rgba(41,121,255,.06);}
-.hist-clear{background:none;border:none;color:var(--fail);font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 0;}
-.badge-new{background:var(--ok);color:#fff;font-size:.52rem;font-weight:900;padding:2px 6px;border-radius:8px;margin-right:4px;}
-
 /* RESPONSIVE TOUCH */
-@media (hover:hover){.clc:hover{transform:scale(.992)}.new-cl-card:hover{border-color:rgba(245,158,11,.35)}.nico:hover{background:rgba(255,255,255,.14)}}
+@media (hover:hover){.clc:hover{transform:scale(.992)}.new-cl-card:hover{filter:brightness(1.08);transform:translateX(-50%) scale(1.04);}.nico:hover{background:rgba(255,255,255,.14)}}
 </style>
 </head>
 <body>
@@ -459,13 +429,11 @@ body.cl-page .new-cl-card{display:none!important;}
     </div>
   </div>
 
-  <!-- BIG INVITING NEW CL BUTTON -->
-  <div class="new-cl-card" onclick="requireAuth(newCl)">
-    <div class="new-cl-icon">📋</div>
-    <div class="new-cl-text">
-      <div class="new-cl-title">פתח צ'קליסט חדש</div>
-      <div class="new-cl-sub">בדיקת עדות L0 — 31 סעיפים</div>
-    </div>
+  <!-- FAB NEW CHECKLIST -->
+  <button class="new-cl-card" onclick="requireAuth(newCl)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span style="font-size:.9rem;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.2);">צ'קליסט חדש</span>
+  </button>
     <div class="new-cl-arrow">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
@@ -771,7 +739,7 @@ let homeRef=null,clRef=null,saveT=null,saveQueue=null,saveInFlight=false,lastSav
 let drawCb=null,drawMode='pen',drawColor='#ef4444',drawSz=4,dCtx=null,dHist=[];
 let homeF='all',issF='all',sortMode='newest';
 let actLog=[],isAuthed=false,authCb=null;
-let settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:'',openInNewTab:true,compactCards:false,showProgress:true,animationsOn:true,showAvatar:true,highContrast:false,largeButtons:false,reduceMotion:false,rtlForce:false,emailOnIssue:true,ccSelf:false,summaryEmail:false,theme:'dark',fontSize:'m',defaultInsp:'',defaultProj:'',defaultLoc:''};
+let settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:'',openInNewTab:true};
 function buildItems(){
   const list=document.getElementById('cl-list');
   if(list.childElementCount>0)return;
@@ -864,14 +832,13 @@ function apply(data){
   for(let i=1;i<=31;i++){(id=>{db.ref('checklists/'+CID+'/photos/item'+id).once('value').then(s=>{const ph=s.val();if(!ph)return;const arr=Array.isArray(ph)?ph:Object.values(ph);itemPhotos[id]=arr;const row=document.getElementById('pt'+id);if(row)arr.forEach((p,idx)=>{if(p?.url&&!document.getElementById('th-'+id+'-'+idx)){const t=mkThumb(p.url,id,idx,'item');t.id='th-'+id+'-'+idx;row.appendChild(t);}});updCB(id);}).catch(()=>{})})(i);}
 }
 
-function updMetaFor(id,data){
+function updMeta(data){
   let p=0,f=0,na=0,open=0,closed=0,waiting=0;
   for(let i=1;i<=31;i++){const d=data.items?.['i'+i];if(!d)continue;if(d.s==='P')p++;else if(d.s==='F')f++;else if(d.s==='N')na++;if(d.issues)d.issues.forEach(iss=>{if(!iss?.desc)return;if(iss.status==='closed')closed++;else if(iss.status==='waiting')waiting++;else open++;});}
-  const ex=allCls[id]||{};
+  const ex=allCls[CID]||{};
   const meta={title:data.panel||ex.title||'ללא שם',proj:data.proj||'',insp:data.insp||'',fdate:data.fdate||'',status:data.status||'not-started',passed:p,failed:f,na,total:31,openIssues:open,closedIssues:closed,waitingIssues:waiting,created:ex.created||new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL')};
-  db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});allCls[id]=meta;
+  db.ref('checklists/'+CID+'/meta').set(meta).catch(()=>{});allCls[CID]=meta;
 }
-function updMeta(data){updMetaFor(CID,data);}
 
 function resetCl(){
   for(let i=1;i<=31;i++){
@@ -1072,7 +1039,7 @@ function setPFN(btn,id){
   if(settings.vibrateOnPFN&&navigator.vibrate)navigator.vibrate(25);
   if(!wasOn&&btn.classList.contains('f')&&settings.autoOpenIssue)setTimeout(()=>{const p=document.getElementById('isp'+id);if(p&&p.style.display!=='block')toggleIssPan(id);},200);
   logAct('סעיף '+id+': '+(wasOn?'ביטול':(btn.classList.contains('p')?'Passed':btn.classList.contains('f')?'Failed':'N/A')),btn.classList.contains('p')?'✅':btn.classList.contains('f')?'❌':'—');
-  updHeroProg();forceSave();
+  updHeroProg();schedSave();
 }
 
 function updHeroProg(){
@@ -1128,80 +1095,26 @@ function openDraw(src,cb){
 
 function closeDraw(){document.getElementById('draw-ov').classList.remove('show');drawCb=null;}
 
-function schedSave(){
-  // Write to localStorage immediately so nothing is ever lost, even mid-keystroke
-  if(CID){
-    const myId=CID;
-    try{localStorage.setItem('cl_'+myId,JSON.stringify(collect()));}catch(e){}
-  }
-  if(saveT)clearTimeout(saveT);
-  saveT=setTimeout(forceSave,300);
-}
+function schedSave(){if(saveT)clearTimeout(saveT);saveT=setTimeout(forceSave,400);}
 
 function forceSave(){
   if(!CID)return;
-  const myId=CID;
-  const data=collect();
-  // ALWAYS write to localStorage synchronously, first, no matter what — this can never be lost
-  try{localStorage.setItem('cl_'+myId,JSON.stringify(data));}catch(e){}
-  _queueRemoteSave(myId,data);
+  const data=collect();saveQueue=data;
+  try{localStorage.setItem('cl_'+CID,JSON.stringify(data));}catch(e){}
+  if(saveInFlight)return;
+  _doSave();
 }
 
-let _remoteSaveState={}; // per-id: {pending:data, inFlight:bool}
-
-function _queueRemoteSave(id,data){
-  if(!_remoteSaveState[id])_remoteSaveState[id]={pending:null,inFlight:false};
-  const st=_remoteSaveState[id];
-  st.pending=data;
-  if(st.inFlight)return;
-  _flushRemoteSave(id);
-}
-
-function _flushRemoteSave(id){
-  const st=_remoteSaveState[id];
-  if(!st||!st.pending)return;
-  const data=st.pending;st.pending=null;st.inFlight=true;
-  const pill=document.getElementById('save-pill');
-  const showPill=(CID===id);
-  if(showPill&&pill){pill.textContent='שומר...';pill.className='spill saving';}
+function _doSave(){
+  if(!saveQueue||!CID)return;
+  const data=saveQueue;saveQueue=null;saveInFlight=true;
+  const pill=document.getElementById('save-pill');if(pill){pill.textContent='שומר...';pill.className='spill saving';}
   const attempt=(n,delay)=>{
-    db.ref('checklists/'+id+'/data').set(data)
-      .then(()=>{
-        st.inFlight=false;
-        if(CID===id)lastSavedTs=data.ts||0;
-        if(showPill&&pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}
-        updMetaFor(id,data);
-        if(st.pending)_flushRemoteSave(id);
-      })
-      .catch(()=>{
-        if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);
-        else{
-          st.inFlight=false;
-          if(showPill&&pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}
-          if(st.pending)_flushRemoteSave(id);
-        }
-      });
+    db.ref('checklists/'+CID+'/data').set(data)
+      .then(()=>{saveInFlight=false;lastSavedTs=data.ts||0;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMeta(data);if(saveQueue)_doSave();})
+      .catch(()=>{if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);else{saveInFlight=false;if(pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}if(saveQueue)_doSave();}});
   };
-  attempt(5,800);
-}
-
-// Retry any data still sitting unsaved in localStorage from a previous session (e.g. tab killed mid-save)
-function _resyncPendingLocalSaves(){
-  try{
-    for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i);
-      if(k&&k.indexOf('cl_')===0){
-        const id=k.slice(3);
-        const raw=localStorage.getItem(k);
-        if(!raw)continue;
-        const data=JSON.parse(raw);
-        db.ref('checklists/'+id+'/data').once('value').then(snap=>{
-          const fb=snap.val();
-          if((data.ts||0)>(fb?.ts||0)){_queueRemoteSave(id,data);}
-        }).catch(()=>{});
-      }
-    }
-  }catch(e){}
+  attempt(4,700);
 }
 
 function renderIssues(){
@@ -1228,7 +1141,7 @@ function renderIssues(){
       const stCls=st==='closed'?' closed':st==='waiting'?' waiting':'';
       const stBadge=st==='closed'?'<span class="ich ich-c">✓ סגור</span>':st==='waiting'?'<span class="ich ich-w">⏳ ממתין</span>':'<span class="ich ich-o">⚠️ פתוח</span>';
       const card=document.createElement('div');card.className='iss-card'+stCls;
-      card.onclick=()=>{switchTab('cl');setTimeout(()=>document.getElementById('ic'+i)?.scrollIntoView({behavior:'smooth',block:'center'}),350);};
+      card.onclick=()=>window.open(location.pathname+'?cl='+id,'_blank');
       card.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:.64rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">סעיף '+i+' · #'+n+'</span>'+prioLabel+'</div>'+stBadge+'</div>'+(person?'<div style="font-size:.8rem;font-weight:700;color:var(--navy);margin-bottom:4px;">👤 '+person+(email?' <span style="font-weight:500;color:var(--t3);font-size:.72rem;">('+email+')</span>':'')+'</div>':'')+'<div style="font-size:.77rem;color:var(--t2);line-height:1.45;margin-bottom:'+(action?'5':'0')+'px;">'+(desc||'<span style="color:var(--t3)">ללא פירוט</span>')+'</div>'+(action?'<div style="font-size:.72rem;color:var(--t3);margin-top:4px;">🔧 '+action+'</div>':'')+'<div style="font-size:.64rem;color:var(--t3);margin-top:6px;font-family:\'JetBrains Mono\',monospace;">'+sec.substring(0,55)+(sec.length>55?'...':'')+'</div>';
       list.appendChild(card);
     });
@@ -1358,13 +1271,11 @@ function switchTab(tab){
     document.getElementById('tab-'+t)?.classList.toggle('on',t===tab);
   });
   document.getElementById('tabs').classList.add('show');
-  // Update nav — only if NOT in dedicated checklist page
-  if(!_urlCl){
-    document.getElementById('nav-l').innerHTML=
-      '<button class="nav-back" onclick="leaveChecklist()">'+
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>'+
-      ' ראשי</button>';
-  }
+  // Update nav
+  document.getElementById('nav-l').innerHTML=
+    '<button class="nav-back" onclick="leaveChecklist()">'+
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>'+
+    ' ראשי</button>';
   document.getElementById('nav-r').innerHTML=
     '<div class="spill" id="save-pill"></div>'+
     (isAuthed?'<button class="nico" onclick="logout()" style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.5);">יצא</button>':'')+
@@ -1380,14 +1291,15 @@ function goHome(){
     '<div class="nav-logo-wrap"><div class="nav-bolt">⚡</div><div class="nav-brand"><div class="nav-name">Electra CX</div><div class="nav-sub">Quality Control</div></div></div>';
   document.getElementById('nav-r').innerHTML=
     '<div class="auth-pill" id="auth-pill" onclick="'+(isAuthed?'logout()':'showAuthModal()')+'">'+
-    '<div class="adot'+(isAuthed?' on':'')+'" id="auth-dot"></div>'+
-    '<span class="auth-lbl" id="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div>'+
+    '<div class="adot'+(isAuthed?' on':'')+'"></div>'+
+    '<span class="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div>'+
     '<button class="nico" onclick="showSettings()">⚙️</button>';
 }
 function leaveChecklist(){
   if(CID)forceSave();CID=null;
   goHome();loadHome();
 }
+window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
 
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
@@ -1458,7 +1370,7 @@ function renderHome(){
     const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
     const card=document.createElement('div');card.className='clc';
-    card.onclick=()=>{ window.open(location.pathname+'?cl='+id,'_blank'); };
+    card.onclick=()=>{ if(settings.openInNewTab){ window.open(location.pathname+'?cl='+id,'_blank'); } else { viewCl(id); } };
     card.innerHTML=
       '<div class="clc-stripe" style="background:'+stripe+';"></div>'+
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
@@ -1512,15 +1424,7 @@ function exportAllCSV(){
 // ════════════════════════════════════════
 // NEW CL
 // ════════════════════════════════════════
-function newCl(){
-  document.getElementById('new-modal').classList.add('show');
-  setTimeout(()=>{
-    document.getElementById('new-name')?.focus();
-    if(settings.defaultInsp){const e=document.getElementById('new-insp');if(e&&!e.value)e.value=settings.defaultInsp;}
-    if(settings.defaultProj){const e=document.getElementById('new-proj');if(e&&!e.value)e.value=settings.defaultProj;}
-    if(settings.defaultLoc){const e=document.getElementById('new-loc');if(e&&!e.value)e.value=settings.defaultLoc;}
-  },100);
-}
+function newCl(){document.getElementById('new-modal').classList.add('show');setTimeout(()=>document.getElementById('new-name')?.focus(),100);}
 function closeNewCl(){document.getElementById('new-modal').classList.remove('show');['new-name','new-proj','new-insp','new-loc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
 function confirmNewCl(){
   const title=document.getElementById('new-name')?.value.trim();
@@ -1561,8 +1465,7 @@ function recordLogin(){
   try{
     const ua=navigator.userAgent;
     const device=ua.includes('iPhone')?'📱 iPhone':ua.includes('iPad')?'📱 iPad':ua.includes('Android')?'📱 Android':ua.includes('Mac')?'💻 Mac':ua.includes('Windows')?'🖥️ Windows':'🌐 Browser';
-    const name=localStorage.getItem('cx_profile_name')||'';
-    const entry={device,ts:Date.now(),time:new Date().toLocaleString('he-IL'),name};
+    const entry={device,ts:Date.now(),time:new Date().toLocaleString('he-IL'),ip:'—'};
     let hist=[];try{const s=localStorage.getItem('cx_login_hist');if(s)hist=JSON.parse(s);}catch(e){}
     hist.unshift(entry);if(hist.length>20)hist=hist.slice(0,20);
     localStorage.setItem('cx_login_hist',JSON.stringify(hist));
@@ -1575,263 +1478,58 @@ function getLoginHistory(){try{const s=localStorage.getItem('cx_login_hist');ret
 // ════════════════════════════════════════
 function loadSettings(){try{const s=localStorage.getItem('cx_settings');if(s)Object.assign(settings,JSON.parse(s));}catch(e){}}
 function saveSettings(){try{localStorage.setItem('cx_settings',JSON.stringify(settings));}catch(e){}}
-
 function showSettings(){
   const ex=document.getElementById('settings-m');if(ex){ex.remove();return;}
-  const ov=document.createElement('div');ov.className='modal-bg show';ov.id='settings-m';
-  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  const ov=document.createElement('div');ov.className='modal-bg show';ov.id='settings-m';ov.onclick=e=>{if(e.target===ov)ov.remove();};
   const sh=document.createElement('div');sh.className='msheet';
-  sh.style.cssText='max-height:88vh;overflow-y:auto;padding-bottom:32px;';
-
+  // Login history
   const hist=getLoginHistory();
-  const profileName=localStorage.getItem('cx_profile_name')||'';
-  const profileTitle=localStorage.getItem('cx_profile_title')||'';
-  const av=profileName?profileName.charAt(0).toUpperCase():'⚡';
+  const histHTML=hist.length?hist.slice(0,5).map(h=>`<div class="log-entry"><div class="log-device">${h.device}</div><div class="log-meta"><span>🕐 ${h.time}</span></div></div>`).join(''):'<div style="font-size:.75rem;color:var(--t3);padding:8px 0;">אין היסטוריית כניסות</div>';
+  // Delete list
+  const delList=isAuthed&&Object.keys(allCls).length>0?
+    '<div style="margin-top:4px;">'+Object.keys(allCls).map(id=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:.8rem;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%;">${allCls[id]?.title||id}</span><button onclick="deleteCl('${id}')" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:var(--r4);padding:5px 12px;font-size:.72rem;font-weight:800;cursor:pointer;">מחק</button></div>`).join('')+'</div>':'<div style="font-size:.75rem;color:var(--t3);padding:4px 0;">'+(isAuthed?'אין צ\'קליסטים':'נדרשת הרשאת מנהל')+'</div>';
 
-  // Toggle helper
-  const tog=(key,label,desc)=>`<div class="sett-row"><div><div class="sett-label">${label}</div>${desc?`<div class="sett-desc">${desc}</div>`:''}</div><button class="tog ${settings[key]?'on':'off'}" id="tog-${key}" onclick="settings['${key}']=!settings['${key}'];this.className='tog '+(settings['${key}']?'on':'off');saveSettings();"></button></div>`;
+  sh.innerHTML=
+    '<div class="mhandle"></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'+
+      '<div style="font-size:.95rem;font-weight:800;color:var(--t1);">⚙️ הגדרות</div>'+
+      '<button onclick="document.getElementById(\'settings-m\').remove()" style="background:var(--card2);border:none;border-radius:var(--r4);padding:6px 12px;cursor:pointer;font-weight:700;font-size:.78rem;">סגור</button>'+
+    '</div>'+
 
-  sh.innerHTML=`
-  <div class="mhandle"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-    <div style="font-size:.95rem;font-weight:800;color:var(--t1);">⚙️ הגדרות</div>
-    <button onclick="document.getElementById('settings-m').remove()" style="background:var(--card2);border:none;border-radius:var(--r4);padding:6px 12px;cursor:pointer;font-weight:700;font-size:.78rem;">סגור</button>
-  </div>
+    '<div class="sett-section">עבודה</div>'+
+    '<div class="sett-row"><div><div class="sett-label">🔗 פתח בדף חדש</div><div class="sett-desc">כל כניסה תיפתח בטאב נפרד</div></div><button class="tog '+(settings.openInNewTab?'on':'off')+'" onclick="settings.openInNewTab=!settings.openInNewTab;this.className=\'tog \'+(settings.openInNewTab?\'on\':\'off\');saveSettings();toast(settings.openInNewTab?\'✅ יפתח בדף חדש\':\'✅ יפתח באותו דף\');"></button></div>'+
+    '<div class="sett-row"><div><div class="sett-label">רטט בסימון P/F/N</div><div class="sett-desc">ויברציה קצרה בכל סימון</div></div><button class="tog '+(settings.vibrateOnPFN?'on':'off')+'" onclick="settings.vibrateOnPFN=!settings.vibrateOnPFN;this.className=\'tog \'+(settings.vibrateOnPFN?\'on\':\'off\');saveSettings();"></button></div>'+
+    '<div class="sett-row"><div><div class="sett-label">פתיחת Issue ב-Failed</div><div class="sett-desc">פתח Issue אוטומטית כשסועיף נכשל</div></div><button class="tog '+(settings.autoOpenIssue?'on':'off')+'" onclick="settings.autoOpenIssue=!settings.autoOpenIssue;this.className=\'tog \'+(settings.autoOpenIssue?\'on\':\'off\');saveSettings();"></button></div>'+
 
-  <div class="sm-nav" id="sm-nav">
-    <button class="sm-tab on" onclick="smGo('profile',this)">👤 פרופיל</button>
-    <button class="sm-tab" onclick="smGo('work',this)">⚡ עבודה</button>
-    <button class="sm-tab" onclick="smGo('appear',this)">🎨 מראה</button>
-    <button class="sm-tab" onclick="smGo('notify',this)">🔔 התראות</button>
-    <button class="sm-tab" onclick="smGo('access',this)">♿ נגישות</button>
-    <button class="sm-tab" onclick="smGo('history',this)">📋 היסטוריה</button>
-    <button class="sm-tab" onclick="smGo('manage',this)">🗄️ ניהול</button>
-    <button class="sm-tab" onclick="smGo('about',this)">ℹ️ אודות</button>
-  </div>
+    '<div class="sett-section">התראות</div>'+
+    '<div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:7px;">'+
+      '<div><div class="sett-label">מייל לשליחה אוטומטית</div><div class="sett-desc">CC בכל שליחת Issue</div></div>'+
+      '<input type="email" value="'+(settings.notifyEmail||'')+'" placeholder="admin@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r3);font-size:.82rem;font-family:inherit;background:var(--card2);outline:none;color:var(--t1);">'+
+    '</div>'+
 
-  <!-- ── PROFILE ── -->
-  <div class="sm-page on" id="smp-profile">
-    <div class="profile-hero">
-      <div class="profile-av" id="prof-av">${av}</div>
-      <div>
-        <div class="profile-name" id="prof-name-disp">${profileName||'אורח'}</div>
-        <div class="profile-role">${isAuthed?'🟢 מנהל מחובר':'⚪ צופה'}</div>
-      </div>
-    </div>
-    <div class="sett-card">
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">שם מלא</div>
-        <input class="sett-input" id="inp-pname" value="${profileName}" placeholder="ישראל ישראלי" oninput="smSavePName(this.value)">
-      </div>
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">תפקיד / חברה</div>
-        <input class="sett-input" id="inp-ptitle" value="${profileTitle}" placeholder="מהנדס CX — Electra" oninput="localStorage.setItem('cx_profile_title',this.value)">
-      </div>
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">מייל ברירת מחדל (CC)</div>
-        <input class="sett-input" type="email" value="${settings.notifyEmail||''}" placeholder="me@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();">
-      </div>
-    </div>
-    ${isAuthed?
-      `<button class="sett-btn danger" onclick="logout();document.getElementById('settings-m').remove();">🚪 התנתק מחשבון מנהל <span>→</span></button>`:
-      `<button class="sett-btn" style="background:rgba(41,121,255,.08);color:var(--blue-accent);border-color:rgba(41,121,255,.2);" onclick="document.getElementById('settings-m').remove();setTimeout(showAuthModal,200);">🔐 התחבר כמנהל <span>→</span></button>`
-    }
-  </div>
+    '<div class="sett-section">ניהול</div>'+
+    '<div class="sett-row" style="border-bottom:none;"><div class="sett-label">אנשי קשר</div><button onclick="showContacts()" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);padding:7px 14px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;">נהל 👥</button></div>'+
 
-  <!-- ── WORK ── -->
-  <div class="sm-page" id="smp-work">
-    <div class="sett-card">
-      ${tog('openInNewTab','🔗 פתח צ\'קליסט בטאב חדש','כל כרטיס ייפתח בחלון נפרד')}
-      ${tog('vibrateOnPFN','📳 רטט בסימון P/F/N','ויברציה קצרה בכל לחיצה')}
-      ${tog('autoOpenIssue','⚡ פתח Issue אוטומטית ב-Failed','כשסעיף נכשל — פתח Issue מיד')}
-      ${tog('compactCards','📐 כרטיסים קומפקטיים','הצג פחות פרטים בכרטיסי הבית')}
-      ${tog('showProgress','📊 הצג אחוז התקדמות','הצג % השלמה בכרטיסים')}
-    </div>
-    <div class="sett-section" style="padding-top:8px;">מילוי אוטומטי</div>
-    <div class="sett-card">
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">בודק ברירת מחדל</div>
-        <div class="sett-desc">ימולא אוטומטית בפתיחת צ'קליסט חדש</div>
-        <input class="sett-input" value="${settings.defaultInsp||''}" placeholder="שם הבודק..." oninput="settings.defaultInsp=this.value;saveSettings();">
-      </div>
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">פרויקט ברירת מחדל</div>
-        <input class="sett-input" value="${settings.defaultProj||''}" placeholder="שם הפרויקט..." oninput="settings.defaultProj=this.value;saveSettings();">
-      </div>
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">מיקום ברירת מחדל</div>
-        <input class="sett-input" value="${settings.defaultLoc||''}" placeholder="מיקום..." oninput="settings.defaultLoc=this.value;saveSettings();">
-      </div>
-    </div>
-  </div>
+    (isAuthed?
+      '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"><button onclick="logout();document.getElementById(\'settings-m\').remove();" style="width:100%;background:var(--fail-d);color:var(--fail);border:1.5px solid var(--fail-m);padding:10px;border-radius:var(--r3);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">התנתק מחשבון מנהל</button></div>':
+      '')+
 
-  <!-- ── APPEARANCE ── -->
-  <div class="sm-page" id="smp-appear">
-    <div class="sett-section" style="padding-top:0;">ערכת צבעים</div>
-    <div class="theme-grid">
-      <div class="theme-opt ${(settings.theme||'dark')==='dark'?'on':''}" onclick="smTheme('dark',this)">🌑<br>כהה</div>
-      <div class="theme-opt ${(settings.theme||'dark')==='light'?'on':''}" onclick="smTheme('light',this)">☀️<br>בהיר</div>
-      <div class="theme-opt ${(settings.theme||'dark')==='auto'?'on':''}" onclick="smTheme('auto',this)">🔄<br>אוטומטי</div>
-    </div>
-    <div class="sett-section">גודל טקסט</div>
-    <div class="font-row">
-      <div class="font-opt ${(settings.fontSize||'m')==='s'?'on':''}" onclick="smFont('s',this)" style="font-size:.65rem;">S קטן</div>
-      <div class="font-opt ${(settings.fontSize||'m')==='m'?'on':''}" onclick="smFont('m',this)" style="font-size:.75rem;">M רגיל</div>
-      <div class="font-opt ${(settings.fontSize||'m')==='l'?'on':''}" onclick="smFont('l',this)" style="font-size:.85rem;">L גדול</div>
-    </div>
-    <div class="sett-section">תצוגה</div>
-    <div class="sett-card">
-      ${tog('animationsOn','✨ אנימציות','אנימציות מעברים ואפקטים')}
-      ${tog('showAvatar','🖼️ הצג אווטר בנאב\'','אות ראשונה של שמך בסרגל העליון')}
-    </div>
-  </div>
+    '<div class="sett-section">🗑️ מחיקת צ\'קליסטים</div>'+
+    delList+
 
-  <!-- ── NOTIFICATIONS ── -->
-  <div class="sm-page" id="smp-notify">
-    <div class="sett-card">
-      ${tog('emailOnIssue','📧 מייל בפתיחת Issue','שלח מייל אוטומטי עם פירוט הליקוי')}
-      ${tog('ccSelf','📬 CC לעצמי','הוסף אותי ב-CC בכל שליחה')}
-      ${tog('summaryEmail','📊 דוח שבועי','שלח סיכום שבועי על Issues פתוחים')}
-    </div>
-    <div class="sett-section">מייל ניהול</div>
-    <div class="sett-card">
-      <div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div class="sett-label">כתובת CC קבועה</div>
-        <input class="sett-input" type="email" value="${settings.notifyEmail||''}" placeholder="manager@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();">
-      </div>
-    </div>
-    <button class="sett-btn" onclick="showContacts()">👥 נהל אנשי קשר <span>→</span></button>
-  </div>
+    '<div class="sett-section">📋 היסטוריית כניסות</div>'+
+    histHTML+
+    (hist.length>5?'<div style="font-size:.7rem;color:var(--t3);margin-top:6px;">ועוד '+(hist.length-5)+' כניסות</div>':'')+
 
-  <!-- ── ACCESSIBILITY ── -->
-  <div class="sm-page" id="smp-access">
-    <div class="sett-card">
-      ${tog('highContrast','⬛ ניגודיות גבוהה','הגדל את הניגוד בין טקסט לרקע')}
-      ${tog('largeButtons','🔲 כפתורים גדולים','הגדל כפתורי P/F/N ו-Issue')}
-      ${tog('reduceMotion','🛑 הפחת תנועה','בטל אנימציות לנוחות הקריאה')}
-      ${tog('rtlForce','🔤 RTL מאולץ','כפה כיוון טקסט מימין לשמאל')}
-    </div>
-    <div class="sett-section">גודל כתב (קיצור)</div>
-    <div style="display:flex;align-items:center;gap:14px;padding:12px 0;">
-      <button onclick="smFontStep(-1)" style="width:40px;height:40px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);font-size:1.2rem;cursor:pointer;font-weight:800;">−</button>
-      <div style="flex:1;text-align:center;font-size:.82rem;font-weight:700;color:var(--t2);" id="font-size-lbl">${{s:'קטן (S)',m:'רגיל (M)',l:'גדול (L)'}[settings.fontSize||'m']}</div>
-      <button onclick="smFontStep(1)" style="width:40px;height:40px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);font-size:1.2rem;cursor:pointer;font-weight:800;">+</button>
-    </div>
-  </div>
-
-  <!-- ── HISTORY ── -->
-  <div class="sm-page" id="smp-history">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <div style="font-size:.82rem;font-weight:700;color:var(--t1);">כניסות אחרונות</div>
-      ${hist.length?`<button class="hist-clear" onclick="smClearHist()">🗑️ נקה היסטוריה</button>`:''}
-    </div>
-    ${hist.length?
-      hist.map((h,i)=>`
-        <div class="log-entry" style="${i===0?'border-color:rgba(41,121,255,.25);':''}" >
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div class="log-device">${h.device}</div>
-            ${i===0?'<span style="font-size:.6rem;background:var(--ok-d);color:var(--ok);padding:2px 7px;border-radius:8px;font-weight:800;">אחרון</span>':''}
-          </div>
-          <div class="log-meta">
-            <span>🕐 ${h.time}</span>
-            ${h.name?`<span>👤 ${h.name}</span>`:''}
-          </div>
-        </div>`).join(''):
-      '<div class="empty" style="padding:24px;"><div class="empty-ico" style="font-size:1.8rem;">📋</div><div class="empty-t">אין היסטוריית כניסות</div><div class="empty-s">הכניסות ייתעדו לאחר ההתחברות</div></div>'
-    }
-  </div>
-
-  <!-- ── MANAGE ── -->
-  <div class="sm-page" id="smp-manage">
-    <div class="sett-section" style="padding-top:0;">ייצוא נתונים</div>
-    <button class="sett-btn" onclick="requireAuth(exportAllCSV)">📊 ייצא כל הצ'קליסטים CSV <span>→</span></button>
-    <div class="sett-section">מחיקת צ'קליסטים</div>
-    ${isAuthed&&Object.keys(allCls).length>0?
-      '<div class="sett-card">'+Object.keys(allCls).map(id=>`
-        <div class="sett-row">
-          <div style="flex:1;min-width:0;">
-            <div class="sett-label" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${allCls[id]?.title||id}</div>
-            <div class="sett-desc">${allCls[id]?.status==='completed'?'✅ הושלם':allCls[id]?.status==='in-progress'?'⏳ בתהליך':'○ לא התחיל'}</div>
-          </div>
-          <button onclick="deleteCl('${id}')" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:var(--r4);padding:5px 12px;font-size:.72rem;font-weight:800;cursor:pointer;flex-shrink:0;">מחק</button>
-        </div>`).join('')+'</div>':
-      `<div style="background:var(--card2);border-radius:var(--r2);padding:14px;font-size:.78rem;color:var(--t3);text-align:center;">${isAuthed?'אין צ\'קליסטים':'🔒 נדרשת הרשאת מנהל'}</div>`
-    }
-    <div class="sett-section">איפוס</div>
-    <button class="sett-btn danger" onclick="smResetSettings()">↺ איפוס כל ההגדרות <span>→</span></button>
-    <button class="sett-btn danger" style="margin-top:4px;" onclick="smClearAll()">🗑️ מחק כל הנתונים המקומיים <span>→</span></button>
-  </div>
-
-  <!-- ── ABOUT ── -->
-  <div class="sm-page" id="smp-about">
-    <div style="background:linear-gradient(135deg,var(--bg-deep),var(--bg-mid));border-radius:var(--r2);padding:20px;text-align:center;margin-bottom:10px;">
-      <div style="font-size:2.2rem;margin-bottom:8px;">⚡</div>
-      <div style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-0.5px;">Electra CX</div>
-      <div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:3px;">Quality Control System — L0</div>
-      <div style="margin-top:12px;display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);border-radius:20px;padding:4px 14px;font-size:.68rem;color:var(--gold);font-weight:700;">גרסה 3.2.0</div>
-    </div>
-    <div class="sett-card">
-      <div class="sett-row"><div class="sett-label">מסד נתונים</div><div style="font-size:.72rem;color:var(--t3);">Firebase Realtime DB</div></div>
-      <div class="sett-row"><div class="sett-label">גרסת אפליקציה</div><div style="font-size:.72rem;color:var(--t3);font-family:'JetBrains Mono',monospace;">v3.2.0</div></div>
-      <div class="sett-row"><div class="sett-label">סעיפי בדיקה</div><div style="font-size:.72rem;color:var(--t3);">31 סעיפים</div></div>
-      <div class="sett-row" style="border-bottom:none;"><div class="sett-label">מזהה DB</div><div style="font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;">electra-10</div></div>
-    </div>
-  </div>`;
+    '<div class="sett-section">אודות</div>'+
+    '<div style="background:var(--card2);border-radius:var(--r2);padding:12px;font-size:.72rem;color:var(--t3);line-height:1.6;">'+
+      '<div>⚡ Electra CX — Quality Control System</div>'+
+      '<div>גרסה 3.0 | Firebase Realtime DB</div>'+
+      '<div>electra-10-default-rtdb.firebaseio.com</div>'+
+    '</div>'+
+    '<div style="height:8px;"></div>';
 
   ov.appendChild(sh);document.body.appendChild(ov);
-}
-
-function smGo(page,btn){
-  document.querySelectorAll('.sm-page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.sm-tab').forEach(b=>b.classList.remove('on'));
-  document.getElementById('smp-'+page)?.classList.add('on');
-  btn.classList.add('on');
-}
-function smSavePName(v){
-  localStorage.setItem('cx_profile_name',v);
-  const av=document.getElementById('prof-av');const nd=document.getElementById('prof-name-disp');
-  if(av)av.textContent=v?v.charAt(0).toUpperCase():'⚡';
-  if(nd)nd.textContent=v||'אורח';
-}
-function smTheme(t,el){
-  settings.theme=t;saveSettings();
-  document.querySelectorAll('.theme-opt').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  toast('🎨 ערכת '+{dark:'כהה',light:'בהירה',auto:'אוטומטית'}[t]+' נבחרה (בגרסה הבאה)');
-}
-function smFont(s,el){
-  settings.fontSize=s;saveSettings();
-  document.querySelectorAll('.font-opt').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  const lbl=document.getElementById('font-size-lbl');
-  if(lbl)lbl.textContent={s:'קטן (S)',m:'רגיל (M)',l:'גדול (L)'}[s];
-  document.documentElement.style.fontSize={s:'13px',m:'15px',l:'17px'}[s];
-  toast('✅ גודל טקסט עודכן');
-}
-function smFontStep(d){
-  const order=['s','m','l'];const cur=order.indexOf(settings.fontSize||'m');const next=Math.max(0,Math.min(2,cur+d));
-  settings.fontSize=order[next];saveSettings();
-  document.documentElement.style.fontSize={s:'13px',m:'15px',l:'17px'}[settings.fontSize];
-  const lbl=document.getElementById('font-size-lbl');
-  if(lbl)lbl.textContent={s:'קטן (S)',m:'רגיל (M)',l:'גדול (L)'}[settings.fontSize];
-  toast('✅ '+{s:'קטן',m:'רגיל',l:'גדול'}[settings.fontSize]);
-}
-function smClearHist(){
-  if(!confirm('למחוק היסטוריית כניסות?'))return;
-  localStorage.removeItem('cx_login_hist');
-  toast('🗑️ היסטוריה נמחקה');
-  document.getElementById('settings-m')?.remove();
-  showSettings();smGo('history',document.querySelector('.sm-tab'));
-}
-function smResetSettings(){
-  if(!confirm('לאפס את כל ההגדרות לברירת מחדל?'))return;
-  settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:'',openInNewTab:true,compactCards:false,showProgress:true,animationsOn:true,showAvatar:true,highContrast:false,largeButtons:false,reduceMotion:false,rtlForce:false,emailOnIssue:true,ccSelf:false,summaryEmail:false,theme:'dark',fontSize:'m',defaultInsp:'',defaultProj:'',defaultLoc:''};
-  saveSettings();toast('↺ הגדרות אופסו');document.getElementById('settings-m')?.remove();showSettings();
-}
-function smClearAll(){
-  if(!confirm('⚠️ למחוק את כל הנתונים המקומיים? (לא כולל Firebase)'))return;
-  localStorage.clear();sessionStorage.clear();isAuthed=false;
-  toast('🗑️ נתונים מקומיים נמחקו');document.getElementById('settings-m')?.remove();location.reload();
 }
 
 // ════════════════════════════════════════
@@ -2003,47 +1701,22 @@ window.addEventListener('online',()=>{document.getElementById('offline-bar').cla
 window.addEventListener('offline',()=>{document.getElementById('offline-bar').classList.add('show');toast('📡 עובד מקומית');});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&CID)forceSave();});
 window.addEventListener('beforeunload',()=>{if(CID)forceSave();});
-window.addEventListener('pagehide',()=>{if(CID)forceSave();});
 window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
-// Safety-net heartbeat — guarantees nothing is ever more than 5s unsaved, no matter how the user exits
-setInterval(()=>{if(CID)forceSave();},5000);
 
 // ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
 const _urlCl=new URLSearchParams(location.search).get('cl');
 document.addEventListener('DOMContentLoaded',()=>{
+  if(_urlCl){ setTimeout(()=>viewCl(_urlCl),800); }
   buildItems();loadSettings();loadContacts();
+  history.replaceState({sc:'home'},'','#home');
   if(!navigator.onLine)document.getElementById('offline-bar').classList.add('show');
   // Restore auth session
-  if(sessionStorage.getItem('ecx_auth')==='1'){isAuthed=true;}
-
-  if(_urlCl){
-    // ── DEDICATED CHECKLIST PAGE ──
-    document.body.classList.add('cl-page');
-    document.getElementById('sc-home').style.display='none';
-    // Show auth status in nav
-    updateAuthUI();
-    // Load and show checklist directly
-    CID=_urlCl;
-    resetCl();
-    switchTab('cl');
-    _loadClData(_urlCl);
-    // Override back button to close tab / go back
-    document.getElementById('nav-l').innerHTML=
-      '<button class="nav-back" onclick="forceSave();setTimeout(()=>{window.history.length>1?history.back():window.close();},250);">'+
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>'+
-      ' חזור</button>';
-  } else {
-    // ── HOME PAGE ──
-    history.replaceState({sc:'home'},'','#home');
-    // Build the nav first (goHome builds nav-r with auth-pill)
-    goHome();
-    loadHome();
-    // Now update UI elements that depend on the nav being rendered
-    updateAuthUI();
-    if(!isAuthed)setTimeout(showAuthModal,1000);
-  }
+  if(sessionStorage.getItem('ecx_auth')==='1'){isAuthed=true;updateAuthUI();}
+  // Show auth modal after short delay
+  if(!isAuthed)setTimeout(showAuthModal,1000);
+  loadHome();
 });
 </script>
 </body>
