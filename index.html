@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#05111f">
 <title>Electra CX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Heebo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -121,20 +121,38 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .kpi-n{font-size:1.8rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
 .kpi-l{font-size:.57rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
 
-/* NEW CL BUTTON — big inviting card */
-.new-cl-card{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:14px;padding:15px 16px;cursor:pointer;width:calc(100% - 28px);margin:10px 14px 0;box-shadow:0 4px 20px rgba(245,158,11,.38);transition:transform .14s;text-align:right;}
-.new-cl-card:active{transform:scale(.97);}
-.new-cl-icon-wrap{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.new-cl-title{font-size:.9rem;font-weight:900;color:#fff;}
-.new-cl-sub{font-size:.66rem;color:rgba(255,255,255,.75);margin-top:1px;}
-.new-cl-card::before{content:'';position:absolute;inset:0;border-radius:50px;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);pointer-events:none;}
-.new-cl-card:active{transform:translateX(-50%) scale(.93);box-shadow:0 3px 14px rgba(245,158,11,.4);}
-.new-cl-card:active::before{opacity:0;}
+/* NEW CL BUTTON — modern clean card */
+.new-cl-card{
+  display:flex;align-items:center;gap:16px;
+  background:#fff;
+  border:1.5px solid rgba(245,158,11,.25);
+  border-radius:20px;
+  padding:16px 18px;
+  cursor:pointer;width:calc(100% - 28px);margin:14px 14px 0;
+  box-shadow:0 2px 12px rgba(0,0,0,.06),0 8px 24px rgba(245,158,11,.1);
+  transition:transform .18s cubic-bezier(.34,1.4,.64,1),box-shadow .18s;
+  text-align:right;position:relative;overflow:hidden;
+}
+.new-cl-card:active{transform:scale(.97);box-shadow:0 1px 6px rgba(0,0,0,.08);}
+.new-cl-icon-wrap{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 4px 14px rgba(245,158,11,.4);
+}
+.new-cl-title{
+  font-size:1rem;font-weight:700;
+  color:#0f172a;
+  letter-spacing:-.3px;
+  font-family:'Plus Jakarta Sans','Heebo',sans-serif;
+}
+.new-cl-sub{font-size:.72rem;color:rgba(255,255,255,.4);}
 .new-cl-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 4px 16px var(--gold-glow);}
 .new-cl-text{flex:1;}
-.new-cl-title{font-size:.95rem;font-weight:800;color:#fff;margin-bottom:2px;}
-.new-cl-sub{font-size:.72rem;color:rgba(255,255,255,.4);}
 .new-cl-arrow{color:var(--gold);opacity:.7;flex-shrink:0;}
+.new-cl-chevron-wrap{width:30px;height:30px;background:#f8fafc;border:1px solid rgba(0,0,0,.07);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 /* SEARCH + FILTER */
 .srow{display:flex;gap:8px;padding:12px 14px 6px;}
@@ -522,13 +540,14 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
   <button class="new-cl-card" onclick="requireAuth(newCl)">
     <div class="new-cl-icon-wrap">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.95)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </div>
     <div style="flex:1;">
       <div class="new-cl-title">פתח צ'קליסט חדש</div>
-      <div class="new-cl-sub">בדיקת עדות L0 — 31 סעיפים</div>
     </div>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    <div class="new-cl-chevron-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
   </button>
 
   <div class="srow">
