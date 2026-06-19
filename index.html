@@ -109,20 +109,24 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 .tab-dot.show{display:flex;}
 
 /* ═══ HOME SCREEN ═══ */
-.home-hero{background:linear-gradient(160deg,var(--bg-deep) 0%,var(--bg-mid) 60%,#0a2040 100%);padding:24px 20px 22px;position:relative;overflow:hidden;}
+.home-hero{background:linear-gradient(160deg,var(--bg-deep) 0%,var(--bg-mid) 60%,#0a2040 100%);padding:14px 16px 13px;position:relative;overflow:hidden;}
 .home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 20% 110%,rgba(41,121,255,.18) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% -5%,rgba(245,158,11,.16) 0%,transparent 55%);pointer-events:none;}
 .home-eyebrow{font-size:.6rem;font-weight:700;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;position:relative;}
 .home-title{font-size:2.4rem;font-weight:900;color:#fff;letter-spacing:-2px;line-height:.95;position:relative;}
 .home-title em{color:var(--gold);font-style:normal;}
 .home-desc{font-size:.74rem;color:rgba(255,255,255,.38);margin-top:7px;position:relative;}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);}
-.kpi{padding:13px 8px;text-align:center;border-left:1px solid rgba(255,255,255,.06);}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);margin-top:0;border-radius:11px;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);}
+.kpi{padding:8px 6px;text-align:center;border-left:1px solid rgba(255,255,255,.06);}
 .kpi:last-child{border-left:none;}
 .kpi-n{font-size:1.8rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
 .kpi-l{font-size:.57rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
 
 /* NEW CL BUTTON — big inviting card */
-.new-cl-card{position:fixed;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom,0px) + 18px);left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:50px;padding:14px 26px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 6px 30px rgba(245,158,11,.55),0 2px 8px rgba(0,0,0,.25);z-index:290;white-space:nowrap;transition:all .18s cubic-bezier(.34,1.4,.64,1);}
+.new-cl-card{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:14px;padding:15px 16px;cursor:pointer;width:calc(100% - 28px);margin:10px 14px 0;box-shadow:0 4px 20px rgba(245,158,11,.38);transition:transform .14s;text-align:right;}
+.new-cl-card:active{transform:scale(.97);}
+.new-cl-icon-wrap{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.new-cl-title{font-size:.9rem;font-weight:900;color:#fff;}
+.new-cl-sub{font-size:.66rem;color:rgba(255,255,255,.75);margin-top:1px;}
 .new-cl-card::before{content:'';position:absolute;inset:0;border-radius:50px;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);pointer-events:none;}
 .new-cl-card:active{transform:translateX(-50%) scale(.93);box-shadow:0 3px 14px rgba(245,158,11,.4);}
 .new-cl-card:active::before{opacity:0;}
@@ -390,6 +394,43 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 
 /* RESPONSIVE TOUCH */
 @media (hover:hover){.clc:hover{transform:scale(.992)}.new-cl-card:hover{filter:brightness(1.08);transform:translateX(-50%) scale(1.04);}.nico:hover{background:rgba(255,255,255,.14)}}
+
+/* ══ SETTINGS APP ══ */
+.sett-page{display:none;position:fixed;inset:0;background:var(--surf,#f0f4f8);z-index:5000;flex-direction:column;overflow:hidden;}
+.sett-page.open{display:flex;animation:scup .2s ease both;}
+.sett-nav{background:var(--bg-deep,#05111f);height:calc(56px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:12px;padding-left:16px;padding-right:16px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);}
+.sett-nav-back{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.85);border-radius:8px;padding:7px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;}
+.sett-nav-title{flex:1;font-size:.85rem;font-weight:800;color:#fff;text-align:center;}
+.sett-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,20px);}
+.sett-sec-hdr{padding:20px 16px 7px;font-size:.6rem;font-weight:800;color:var(--t3,#8fa3bc);text-transform:uppercase;letter-spacing:1.2px;}
+.sett-grp{background:var(--card,#fff);border-radius:14px;margin:0 14px 12px;overflow:hidden;border:1px solid var(--border,rgba(6,16,30,.07));box-shadow:var(--sh,0 1px 3px rgba(6,16,30,.05),0 4px 14px rgba(6,16,30,.07));}
+.si{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border,rgba(6,16,30,.07));cursor:pointer;min-height:54px;gap:12px;}
+.si:last-child{border-bottom:none;}
+.si:active{background:var(--card2,#f8fafc);}
+.si-l{display:flex;align-items:center;gap:13px;flex:1;min-width:0;}
+.si-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.si-t{font-size:.85rem;font-weight:600;color:var(--t1,#0f172a);}
+.si-d{font-size:.7rem;color:var(--t3,#8fa3bc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
+.si-r{display:flex;align-items:center;gap:6px;flex-shrink:0;color:var(--t4,#b8c6d9);}
+.sett-sub{display:none;position:fixed;inset:0;background:var(--surf,#f0f4f8);z-index:5100;flex-direction:column;overflow:hidden;}
+.sett-sub.open{display:flex;animation:slideInR .22s ease both;}
+@keyframes slideInR{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.sett-sub-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,20px);}
+.stog{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
+.stog::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.25);transition:left .2s;}
+.stog.on{background:var(--ok,#22c55e);}
+.stog.on::after{left:23px;}
+.stog.off{background:#d1d5db;}
+.chev{color:var(--t4,#b8c6d9);}
+.hist-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border,rgba(6,16,30,.07));}
+.hist-item:last-child{border-bottom:none;}
+.hist-ico{width:40px;height:40px;border-radius:11px;background:rgba(41,121,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.hist-info{flex:1;}
+.hist-dev{font-size:.82rem;font-weight:700;color:var(--t1,#0f172a);}
+.hist-time{font-size:.7rem;color:var(--t3,#8fa3bc);margin-top:2px;}
+.danger-btn{width:100%;background:var(--fail-d,rgba(239,68,68,.1));color:var(--fail,#ef4444);border:1.5px solid rgba(239,68,68,.2);border-radius:12px;padding:13px;font-size:.84rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.sett-slider{width:100%;height:4px;accent-color:#2979ff;cursor:pointer;}
+
 </style>
 </head>
 <body>
@@ -419,25 +460,30 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 <!-- ═══ HOME ═══ -->
 <div id="sc-home" class="sc on">
   <div class="home-hero">
-    <div class="home-eyebrow">Electra CX · שלב L0</div>
-    <div class="home-title">ELECTRA<br><em>CX</em></div>
-    <div class="home-desc">מערכת בדיקת לוחות חשמל — בדיקת עדות</div>
-    <div class="kpis">
-      <div class="kpi"><div class="kpi-n" id="st-tot">0</div><div class="kpi-l">סה"כ</div></div>
-      <div class="kpi"><div class="kpi-n" id="st-ip" style="color:#fbbf24;">0</div><div class="kpi-l">פעילים</div></div>
-      <div class="kpi"><div class="kpi-n" id="st-dn" style="color:#4ade80;">0</div><div class="kpi-l">הושלמו</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <div class="home-eyebrow">Electra CX · L0</div>
+        <div class="home-title" style="font-size:1.6rem;letter-spacing:-1.5px;line-height:1;">ELECTRA <em>CX</em></div>
+        <div class="home-desc" style="font-size:.68rem;margin-top:3px;">מערכת בדיקת לוחות חשמל</div>
+      </div>
+      <div class="kpis" style="margin-top:0;flex-shrink:0;">
+        <div class="kpi"><div class="kpi-n" id="st-tot">0</div><div class="kpi-l">סה"כ</div></div>
+        <div class="kpi"><div class="kpi-n" id="st-ip" style="color:#fbbf24;">0</div><div class="kpi-l">פעיל</div></div>
+        <div class="kpi"><div class="kpi-n" id="st-dn" style="color:#4ade80;">0</div><div class="kpi-l">סיים</div></div>
+      </div>
     </div>
   </div>
 
-  <!-- FAB NEW CHECKLIST -->
   <button class="new-cl-card" onclick="requireAuth(newCl)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    <span style="font-size:.9rem;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.2);">צ'קליסט חדש</span>
-  </button>
-    <div class="new-cl-arrow">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    <div class="new-cl-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.95)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </div>
-  </div>
+    <div style="flex:1;">
+      <div class="new-cl-title">פתח צ'קליסט חדש</div>
+      <div class="new-cl-sub">בדיקת עדות L0 — 31 סעיפים</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
 
   <div class="srow">
     <div class="sbox">
@@ -1299,7 +1345,7 @@ function leaveChecklist(){
   if(CID)forceSave();CID=null;
   goHome();loadHome();
 }
-window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
+
 
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
@@ -1307,12 +1353,12 @@ window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
 function openCl(id){
   if(!isAuthed){requireAuth(()=>openCl(id));return;}
   CID=id;resetCl();switchTab('cl');
-  history.pushState({sc:'cl',id},'','#cl');
+  
   _loadClData(id);
 }
 function viewCl(id){
   CID=id;resetCl();switchTab('cl');
-  history.pushState({sc:'cl',id},'','#cl');
+  
   _loadClData(id);
 }
 function _loadClData(id){
@@ -1478,59 +1524,215 @@ function getLoginHistory(){try{const s=localStorage.getItem('cx_login_hist');ret
 // ════════════════════════════════════════
 function loadSettings(){try{const s=localStorage.getItem('cx_settings');if(s)Object.assign(settings,JSON.parse(s));}catch(e){}}
 function saveSettings(){try{localStorage.setItem('cx_settings',JSON.stringify(settings));}catch(e){}}
+
 function showSettings(){
-  const ex=document.getElementById('settings-m');if(ex){ex.remove();return;}
-  const ov=document.createElement('div');ov.className='modal-bg show';ov.id='settings-m';ov.onclick=e=>{if(e.target===ov)ov.remove();};
-  const sh=document.createElement('div');sh.className='msheet';
-  // Login history
+  const pg=document.getElementById('sett-page');if(!pg)return;
+  // update dynamic badges
   const hist=getLoginHistory();
-  const histHTML=hist.length?hist.slice(0,5).map(h=>`<div class="log-entry"><div class="log-device">${h.device}</div><div class="log-meta"><span>🕐 ${h.time}</span></div></div>`).join(''):'<div style="font-size:.75rem;color:var(--t3);padding:8px 0;">אין היסטוריית כניסות</div>';
-  // Delete list
-  const delList=isAuthed&&Object.keys(allCls).length>0?
-    '<div style="margin-top:4px;">'+Object.keys(allCls).map(id=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:.8rem;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%;">${allCls[id]?.title||id}</span><button onclick="deleteCl('${id}')" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:var(--r4);padding:5px 12px;font-size:.72rem;font-weight:800;cursor:pointer;">מחק</button></div>`).join('')+'</div>':'<div style="font-size:.75rem;color:var(--t3);padding:4px 0;">'+(isAuthed?'אין צ\'קליסטים':'נדרשת הרשאת מנהל')+'</div>';
-
-  sh.innerHTML=
-    '<div class="mhandle"></div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'+
-      '<div style="font-size:.95rem;font-weight:800;color:var(--t1);">⚙️ הגדרות</div>'+
-      '<button onclick="document.getElementById(\'settings-m\').remove()" style="background:var(--card2);border:none;border-radius:var(--r4);padding:6px 12px;cursor:pointer;font-weight:700;font-size:.78rem;">סגור</button>'+
-    '</div>'+
-
-    '<div class="sett-section">עבודה</div>'+
-    '<div class="sett-row"><div><div class="sett-label">🔗 פתח בדף חדש</div><div class="sett-desc">כל כניסה תיפתח בטאב נפרד</div></div><button class="tog '+(settings.openInNewTab?'on':'off')+'" onclick="settings.openInNewTab=!settings.openInNewTab;this.className=\'tog \'+(settings.openInNewTab?\'on\':\'off\');saveSettings();toast(settings.openInNewTab?\'✅ יפתח בדף חדש\':\'✅ יפתח באותו דף\');"></button></div>'+
-    '<div class="sett-row"><div><div class="sett-label">רטט בסימון P/F/N</div><div class="sett-desc">ויברציה קצרה בכל סימון</div></div><button class="tog '+(settings.vibrateOnPFN?'on':'off')+'" onclick="settings.vibrateOnPFN=!settings.vibrateOnPFN;this.className=\'tog \'+(settings.vibrateOnPFN?\'on\':\'off\');saveSettings();"></button></div>'+
-    '<div class="sett-row"><div><div class="sett-label">פתיחת Issue ב-Failed</div><div class="sett-desc">פתח Issue אוטומטית כשסועיף נכשל</div></div><button class="tog '+(settings.autoOpenIssue?'on':'off')+'" onclick="settings.autoOpenIssue=!settings.autoOpenIssue;this.className=\'tog \'+(settings.autoOpenIssue?\'on\':\'off\');saveSettings();"></button></div>'+
-
-    '<div class="sett-section">התראות</div>'+
-    '<div class="sett-row" style="flex-direction:column;align-items:flex-start;gap:7px;">'+
-      '<div><div class="sett-label">מייל לשליחה אוטומטית</div><div class="sett-desc">CC בכל שליחת Issue</div></div>'+
-      '<input type="email" value="'+(settings.notifyEmail||'')+'" placeholder="admin@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r3);font-size:.82rem;font-family:inherit;background:var(--card2);outline:none;color:var(--t1);">'+
-    '</div>'+
-
-    '<div class="sett-section">ניהול</div>'+
-    '<div class="sett-row" style="border-bottom:none;"><div class="sett-label">אנשי קשר</div><button onclick="showContacts()" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);padding:7px 14px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;">נהל 👥</button></div>'+
-
-    (isAuthed?
-      '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"><button onclick="logout();document.getElementById(\'settings-m\').remove();" style="width:100%;background:var(--fail-d);color:var(--fail);border:1.5px solid var(--fail-m);padding:10px;border-radius:var(--r3);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">התנתק מחשבון מנהל</button></div>':
-      '')+
-
-    '<div class="sett-section">🗑️ מחיקת צ\'קליסטים</div>'+
-    delList+
-
-    '<div class="sett-section">📋 היסטוריית כניסות</div>'+
-    histHTML+
-    (hist.length>5?'<div style="font-size:.7rem;color:var(--t3);margin-top:6px;">ועוד '+(hist.length-5)+' כניסות</div>':'')+
-
-    '<div class="sett-section">אודות</div>'+
-    '<div style="background:var(--card2);border-radius:var(--r2);padding:12px;font-size:.72rem;color:var(--t3);line-height:1.6;">'+
-      '<div>⚡ Electra CX — Quality Control System</div>'+
-      '<div>גרסה 3.0 | Firebase Realtime DB</div>'+
-      '<div>electra-10-default-rtdb.firebaseio.com</div>'+
-    '</div>'+
-    '<div style="height:8px;"></div>';
-
-  ov.appendChild(sh);document.body.appendChild(ov);
+  const hb=document.getElementById('sp-hist-badge');if(hb)hb.textContent=hist.length;
+  const hd=document.getElementById('sp-hist-d');if(hd)hd.textContent=hist.length?'אחרון: '+hist[0].time:'אין כניסות רשומות';
+  const pd=document.getElementById('sp-profile-d');if(pd)pd.textContent=isAuthed?'מנהל מערכת מחובר':'צופה — לחץ להתחברות';
+  const cd=document.getElementById('sp-contacts-d');if(cd){const n=contacts.filter(c=>c.name).length;cd.textContent=n?n+' אנשי קשר':'אין אנשי קשר';}
+  const nd=document.getElementById('sp-notif-d');if(nd)nd.textContent=settings.notifyEmail||'לא הוגדר מייל';
+  const adm=document.getElementById('sp-admin-sec');if(adm)adm.style.display=isAuthed?'block':'none';
+  pg.classList.add('open');
 }
+function closeSettings(){document.getElementById('sett-page')?.classList.remove('open');}
+
+function openSub(id){
+  const sub=document.getElementById('sett-sub');
+  const body=document.getElementById('sett-sub-body');
+  const titleEl=document.getElementById('sett-sub-title');
+  if(!sub||!body||!titleEl)return;
+  const map={
+    profile:['פרופיל משתמש',pgProfile],
+    security:['אבטחה והרשאות',pgSecurity],
+    checklist:["הגדרות צ'קליסט",pgChecklist],
+    contacts:['אנשי קשר',pgContacts],
+    notifications:['התראות ומיילים',pgNotifications],
+    appearance:['מראה ועיצוב',pgAppearance],
+    accessibility:['נגישות',pgAccessibility],
+    data:['נתונים וגיבוי',pgData],
+    history:['היסטוריית כניסות',pgHistory],
+    performance:['מערכת וביצועים',pgPerformance],
+    about:['אודות Electra CX',pgAbout],
+    admin:['ניהול אדמין',pgAdmin],
+  };
+  const p=map[id];if(!p)return;
+  titleEl.textContent=p[0];
+  body.innerHTML=p[1]();
+  sub.classList.add('open');
+}
+function closeSub(){document.getElementById('sett-sub')?.classList.remove('open');}
+
+// helpers
+function sg(rows){return '<div class="sett-grp">'+rows+'</div>';}
+function sh(t){return '<div class="sett-sec-hdr">'+t+'</div>';}
+function si(ico,bg,ttl,dsc,right,oc){
+  return '<div class="si"'+(oc?' onclick="'+oc+'"':'')+'>'+
+    '<div class="si-l"><div class="si-ico" style="background:'+bg+';">'+ico+'</div>'+
+    '<div><div class="si-t">'+ttl+'</div><div class="si-d">'+dsc+'</div></div></div>'+
+    '<div class="si-r">'+right+'</div></div>';
+}
+function stog(key){
+  return '<button class="stog '+(settings[key]?'on':'off')+'" onclick="settings[\''+key+'\']=!settings[\''+key+'\'];this.className=\'stog \'+(settings[\''+key+'\']?\'on\':\'off\');saveSettings();" style="flex-shrink:0;"></button>';
+}
+const chev='<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+const check='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ok,#22c55e)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+const badge=(txt,color)=>'<span style="font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;background:'+(color||'rgba(41,121,255,.1)')+';color:'+(color?'#fff':'#2979ff')+';">'+txt+'</span>';
+
+function pgProfile(){
+  return sh('חשבון')+sg(
+    '<div class="si"><div class="si-l">'+
+    '<div class="si-ico" style="background:'+(isAuthed?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#94a3b8,#64748b)')+'">'+(isAuthed?'🛡️':'👤')+'</div>'+
+    '<div><div class="si-t">'+(isAuthed?'מנהל מערכת':'צופה')+'</div><div class="si-d">'+(isAuthed?'הרשאה מלאה':'גישת קריאה בלבד')+'</div></div></div>'+
+    '<div class="si-r">'+(isAuthed
+      ?'<button onclick="logout();closeSub();closeSettings();toast(\'👋 התנתקת\');" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:8px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;">התנתק</button>'
+      :'<button onclick="closeSub();closeSettings();showAuthModal();" style="background:rgba(41,121,255,.1);color:#2979ff;border:none;border-radius:8px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;">התחבר</button>'
+    )+'</div></div>'
+  )+sh('מכשיר')+sg(
+    si('📱','linear-gradient(135deg,#6366f1,#4338ca)','מכשיר',
+      navigator.userAgent.includes('Android')?'Android':navigator.userAgent.includes('iPhone')?'iPhone':'Desktop','')
+  );
+}
+
+function pgSecurity(){
+  return sh('סיסמאות')+sg(
+    si('🔑','linear-gradient(135deg,#f59e0b,#d97706)','סיסמת מנהל','electra1234',
+      '<button onclick="toast(\'שנה את ADMIN_PASS בקוד הראשי\');" style="background:var(--warn-d);color:var(--warn);border:none;border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:700;cursor:pointer;">מידע</button>'
+    )+si('👁️','linear-gradient(135deg,#6366f1,#4338ca)','ברירת מחדל','צפייה ללא סיסמה','')
+  )+sh('מצב נוכחי')+sg(
+    si(isAuthed?'✅':'🔒','linear-gradient(135deg,#22c55e,#15803d)',
+      isAuthed?'מחובר כמנהל':'לא מחובר',
+      isAuthed?'יש הרשאה מלאה':'גישת צפייה','')
+  );
+}
+
+function pgChecklist(){
+  return sh('בדיקה')+sg(
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">📳</div><div><div class="si-t">רטט בסימון P/F/N</div><div class="si-d">ויברציה קצרה בכל סימון</div></div></div>'+stog('vibrateOnPFN')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">⚠️</div><div><div class="si-t">Issue אוטומטי ב-Failed</div><div class="si-d">פתח Issue כשסעיף נכשל</div></div></div>'+stog('autoOpenIssue')+'</div>'
+  )+sh('תצוגה')+sg(
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">🔵</div><div><div class="si-t">גלול לסעיף הבא אוטומטית</div><div class="si-d">אחרי סימון P/F/N</div></div></div>'+stog('autoScroll')+'</div>'
+  );
+}
+
+function pgContacts(){
+  const rows=contacts.filter(c=>c.name).map((c,i)=>
+    '<div class="si"><div class="si-l">'+
+    '<div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);font-size:.82rem;font-weight:900;color:#fff;">'+c.name[0].toUpperCase()+'</div>'+
+    '<div><div class="si-t">'+c.name+'</div><div class="si-d">'+(c.email||'ללא מייל')+'</div></div></div>'+
+    '<button onclick="contacts.splice('+i+',1);saveContacts();openSub(\'contacts\');" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:8px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">הסר</button></div>'
+  ).join('');
+  return (rows?sg(rows):'<div style="text-align:center;padding:28px;color:var(--t3);font-size:.82rem;">אין אנשי קשר עדיין</div>')+
+    '<div style="padding:0 14px 16px;">'+
+    '<button onclick="const nm=prompt(\'שם:\');if(nm&&nm.trim()){const em=prompt(\'מייל (אופציונלי):\');contacts.push({name:nm.trim(),email:(em||\'\')\' .trim()});saveContacts();openSub(\'contacts\');}" style="width:100%;background:rgba(41,121,255,.1);color:#2979ff;border:1px dashed rgba(41,121,255,.3);border-radius:12px;padding:13px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">+ הוסף איש קשר</button>'+
+    '</div>';
+}
+
+function pgNotifications(){
+  return sh('מייל CC')+
+  '<div class="sett-grp"><div class="si" style="flex-direction:column;align-items:flex-start;gap:10px;">'+
+  '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">📧</div>'+
+  '<div><div class="si-t">מייל לשליחה אוטומטית</div><div class="si-d">נשלח CC עם כל Issue</div></div></div>'+
+  '<input type="email" value="'+(settings.notifyEmail||'')+'" placeholder="admin@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();" '+
+  'style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:inherit;background:var(--card2);outline:none;color:var(--t1);">'+
+  '</div></div>';
+}
+
+function pgAppearance(){
+  return sh('ערכת צבעים')+sg(
+    ['Navy Dark (פעיל)','Slate Dark','Carbon Dark'].map((n,i)=>
+      '<div class="si" onclick="'+(i>0?'toast(\'בגרסה הבאה\')':'')+'" style="cursor:'+(i>0?'default':'pointer')+';">'+
+      '<div class="si-l"><div class="si-t">'+n+'</div></div>'+(i===0?check:'')+'</div>'
+    ).join('')
+  )+sh('גודל גופן')+
+  '<div class="sett-grp"><div style="padding:16px;">'+
+  '<div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:.75rem;color:var(--t3);">קטן</span><span style="font-size:.75rem;color:var(--t3);">גדול</span></div>'+
+  '<input type="range" class="sett-slider" min="85" max="115" value="100" oninput="document.documentElement.style.fontSize=(this.value/100)*16+\'px\';">'+
+  '</div></div>';
+}
+
+function pgAccessibility(){
+  return sh('קריאות')+sg(
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);">📏</div><div><div class="si-t">גדל טקסט</div><div class="si-d">הגדל טקסטים</div></div></div>'+stog('largeText')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">🎨</div><div><div class="si-t">ניגודיות גבוהה</div><div class="si-d">הגדל ניגודיות צבעים</div></div></div>'+stog('highContrast')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#f97316,#c2410c);">🌀</div><div><div class="si-t">הפחת אנימציות</div><div class="si-d">לרגישות לתנועה</div></div></div>'+stog('reduceMotion')+'</div>'
+  );
+}
+
+function pgData(){
+  const localKB=Math.round(Object.keys(localStorage).reduce((a,k)=>{try{return a+(localStorage.getItem(k)||'').length;}catch(e){return a;}},0)/1024);
+  const clCount=Object.keys(allCls).length;
+  return sh('אחסון')+sg(
+    si('🗄️','linear-gradient(135deg,#6366f1,#4338ca)','Firebase Cloud','electra-10-default-rtdb.firebaseio.com',
+      badge(navigator.onLine?'מחובר':'מנותק',navigator.onLine?'#22c55e':'#ef4444'))+
+    si('💾','linear-gradient(135deg,#78716c,#44403c)','אחסון מקומי',clCount+" צ'קליסטים · "+localKB+'KB','')
+  )+sh('ייצוא')+sg(
+    si('📊','linear-gradient(135deg,#22c55e,#15803d)',"ייצא הכל CSV","כל הצ'קליסטים",chev,'requireAuth(exportAllCSV)')
+  )+sh('ניקוי')+'<div style="padding:0 14px;">'+
+  '<button class="danger-btn" onclick="if(confirm(\'למחוק נתונים מקומיים?\')){{localStorage.clear();toast(\'✅ נמחק\');}}">🗑️ נקה אחסון מקומי</button>'+
+  '</div>';
+}
+
+function pgHistory(){
+  const hist=getLoginHistory();
+  if(!hist.length)return '<div style="text-align:center;padding:48px 20px;color:var(--t3);"><div style="font-size:2.5rem;margin-bottom:12px;">📋</div><div style="font-size:.9rem;font-weight:600;">אין היסטוריית כניסות</div><div style="font-size:.76rem;margin-top:6px;">כניסות נרשמות כשמתחברים כמנהל</div></div>';
+  const devIco={'Android':'🤖','iPhone':'📱','iPad':'📱','Mac':'💻','Windows':'🖥️'};
+  return '<div class="sett-grp">'+
+    hist.map((e,i)=>{
+      const dev=Object.keys(devIco).find(k=>e.device.includes(k));
+      const ico=dev?devIco[dev]:'🌐';
+      const nm=e.device.replace(/📱|💻|🖥️|🌐|🤖/g,'').trim()||e.device;
+      return '<div class="hist-item"><div class="hist-ico">'+ico+'</div>'+
+        '<div class="hist-info"><div class="hist-dev">'+nm+'</div><div class="hist-time">🕐 '+e.time+'</div></div>'+
+        (i===0?badge('אחרון','#22c55e'):'')+'</div>';
+    }).join('')+
+  '</div><div style="padding:14px;">'+
+  '<button class="danger-btn" onclick="localStorage.removeItem(\'cx_login_hist\');openSub(\'history\');toast(\'✅ נמחק\');">🗑️ מחק היסטוריה</button>'+
+  '</div>';
+}
+
+function pgPerformance(){
+  const conn=navigator.connection;
+  return sh('חיבור')+sg(
+    si('📡','linear-gradient(135deg,#22c55e,#15803d)','סטטוס','',badge(navigator.onLine?'Online':'Offline',navigator.onLine?'#22c55e':'#ef4444'))+
+    si('📶','linear-gradient(135deg,#0ea5e9,#0369a1)','סוג חיבור',(conn&&conn.effectiveType?conn.effectiveType:'—')+(conn&&conn.downlink?' · '+conn.downlink+' Mbps':''),'')
+  )+sh('מסך')+sg(
+    si('🖥️','linear-gradient(135deg,#6366f1,#4338ca)','רזולוציה',window.screen.width+'×'+window.screen.height+' · '+Math.round(window.devicePixelRatio*10)/10+'x','')
+  );
+}
+
+function pgAbout(){
+  return '<div style="text-align:center;padding:32px 20px;">'+
+  '<div style="width:72px;height:72px;background:linear-gradient(135deg,#05111f,#0c1f3a);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 14px;box-shadow:0 4px 20px rgba(0,0,0,.2);">⚡</div>'+
+  '<div style="font-size:1.2rem;font-weight:900;">Electra CX</div>'+
+  '<div style="font-size:.78rem;color:var(--t3);margin-top:3px;">Quality Control System</div>'+
+  '<div style="margin-top:14px;display:inline-block;background:var(--card2);border-radius:10px;padding:8px 20px;font-size:.8rem;font-weight:700;color:var(--t2);">גרסה 3.0</div>'+
+  '</div>'+sg(
+    si('🔥','linear-gradient(135deg,#f97316,#c2410c)','Firebase','electra-10-default-rtdb','')+
+    si('📱','linear-gradient(135deg,#0ea5e9,#0369a1)','PWA','ניתן להתקין כאפליקציה','')+
+    si('🔒','linear-gradient(135deg,#22c55e,#15803d)','מאובטח','HTTPS · Auth מובנה','')+
+    si('📂','linear-gradient(135deg,#8b5cf6,#6d28d9)','GitHub','saharyamin4-collab/Electra-L0','')
+  );
+}
+
+function pgAdmin(){
+  if(!isAuthed)return '<div style="text-align:center;padding:32px;color:var(--t3);">נדרשת הרשאת מנהל</div>';
+  const cls=Object.keys(allCls);
+  return sh("מחיקת צ'קליסטים")+
+  (cls.length?sg(cls.map(id=>
+    '<div class="si"><div class="si-l"><div><div class="si-t">'+(allCls[id]&&allCls[id].title?allCls[id].title:id)+'</div>'+
+    '<div class="si-d">'+(allCls[id]&&allCls[id].status||'')+' · '+(allCls[id]&&allCls[id].created||'')+'</div></div></div>'+
+    '<button onclick="deleteCl(\''+id+'\');openSub(\'admin\');" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:8px;padding:5px 12px;font-size:.72rem;font-weight:800;cursor:pointer;">מחק</button></div>'
+  ).join('')):'<div style="padding:20px;text-align:center;color:var(--t3);">אין צ\'קליסטים</div>')+
+  sh('פעולות מסוכנות')+'<div style="padding:0 14px;">'+
+  '<button class="danger-btn" onclick="if(confirm(\'למחוק היסטוריה?\')){{localStorage.removeItem(\'cx_login_hist\');toast(\'✅ נמחק\');}}">🗑️ מחק היסטוריית כניסות</button>'+
+  '<button class="danger-btn" onclick="if(prompt(\'סיסמה:\')==\'electra1234\'){{if(confirm(\'לאפס הכל?\')){{localStorage.clear();location.reload();}}}}">⚠️ איפוס מלא</button>'+
+  '</div>';
+}
+
+
 
 // ════════════════════════════════════════
 // PDF EXPORT — full report with issues
@@ -1701,7 +1903,7 @@ window.addEventListener('online',()=>{document.getElementById('offline-bar').cla
 window.addEventListener('offline',()=>{document.getElementById('offline-bar').classList.add('show');toast('📡 עובד מקומית');});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&CID)forceSave();});
 window.addEventListener('beforeunload',()=>{if(CID)forceSave();});
-window.addEventListener('popstate',()=>{if(CID)leaveChecklist();});
+
 
 // ════════════════════════════════════════
 // INIT
@@ -1710,7 +1912,7 @@ const _urlCl=new URLSearchParams(location.search).get('cl');
 document.addEventListener('DOMContentLoaded',()=>{
   if(_urlCl){ setTimeout(()=>viewCl(_urlCl),800); }
   buildItems();loadSettings();loadContacts();
-  history.replaceState({sc:'home'},'','#home');
+  
   if(!navigator.onLine)document.getElementById('offline-bar').classList.add('show');
   // Restore auth session
   if(sessionStorage.getItem('ecx_auth')==='1'){isAuthed=true;updateAuthUI();}
@@ -1719,5 +1921,61 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadHome();
 });
 </script>
+
+<!-- ══ SETTINGS MAIN PAGE ══ -->
+<div class="sett-page" id="sett-page">
+  <div class="sett-nav">
+    <button class="sett-nav-back" onclick="closeSettings()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>חזור
+    </button>
+    <div class="sett-nav-title">הגדרות</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="sett-body">
+    <div class="sett-sec-hdr">פרופיל</div>
+    <div class="sett-grp">
+      <div class="si" onclick="openSub('profile')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#2979ff,#1565c0);">👤</div><div><div class="si-t">פרופיל משתמש</div><div class="si-d" id="sp-profile-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('security')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#f59e0b,#d97706);">🔐</div><div><div class="si-t">אבטחה והרשאות</div><div class="si-d">סיסמה · הרשאות מנהל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+    </div>
+    <div class="sett-sec-hdr">עבודה ובדיקה</div>
+    <div class="sett-grp">
+      <div class="si" onclick="openSub('checklist')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">✅</div><div><div class="si-t">הגדרות צ'קליסט</div><div class="si-d">ויברציה, Issue, גלילה</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('contacts')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">👥</div><div><div class="si-t">אנשי קשר</div><div class="si-d" id="sp-contacts-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('notifications')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">🔔</div><div><div class="si-t">התראות ומיילים</div><div class="si-d" id="sp-notif-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+    </div>
+    <div class="sett-sec-hdr">מראה ושפה</div>
+    <div class="sett-grp">
+      <div class="si" onclick="openSub('appearance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">🎨</div><div><div class="si-t">מראה ועיצוב</div><div class="si-d">צבעים · גופן · גודל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('accessibility')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);">♿</div><div><div class="si-t">נגישות</div><div class="si-d">גופן, ניגודיות, אנימציות</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+    </div>
+    <div class="sett-sec-hdr">נתונים ומערכת</div>
+    <div class="sett-grp">
+      <div class="si" onclick="openSub('data')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">💾</div><div><div class="si-t">נתונים וגיבוי</div><div class="si-d">Firebase · אחסון · ייצוא</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('history')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#78716c,#44403c);">📋</div><div><div class="si-t">היסטוריית כניסות</div><div class="si-d" id="sp-hist-d">טוען...</div></div></div><div class="si-r"><span id="sp-hist-badge" style="background:rgba(41,121,255,.1);color:#2979ff;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;">0</span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('performance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#64748b,#334155);">⚙️</div><div><div class="si-t">מערכת וביצועים</div><div class="si-d">חיבור · מסך · מכשיר</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('about')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#05111f,#0c1f3a);">⚡</div><div><div class="si-t">אודות Electra CX</div><div class="si-d">גרסה 3.0 · Firebase · PWA</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+    </div>
+    <div id="sp-admin-sec" style="display:none;">
+      <div class="sett-sec-hdr" style="color:#ef4444;">ניהול אדמין</div>
+      <div class="sett-grp">
+        <div class="si" onclick="openSub('admin')"><div class="si-l"><div class="si-ico" style="background:rgba(239,68,68,.1);">🗑️</div><div><div class="si-t" style="color:#ef4444;">מחיקה ואיפוס</div><div class="si-d">מחק צ'קליסטים, איפוס מערכת</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+    </div>
+    <div style="height:30px;"></div>
+  </div>
+</div>
+
+<!-- ══ SUB PAGE ══ -->
+<div class="sett-sub" id="sett-sub">
+  <div class="sett-nav">
+    <button class="sett-nav-back" onclick="closeSub()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>הגדרות
+    </button>
+    <div class="sett-nav-title" id="sett-sub-title"></div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="sett-sub-body" id="sett-sub-body"></div>
+</div>
+
 </body>
 </html>
