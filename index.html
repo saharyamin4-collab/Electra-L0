@@ -148,12 +148,13 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 .chips::-webkit-scrollbar{display:none;}
 .chip{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 13px;font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--t2);box-shadow:var(--sh);flex-shrink:0;}
 .chip.on{background:var(--bg-deep);border-color:var(--bg-deep);color:#fff;}
-.slbl{font-size:.63rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:8px 14px 4px;display:flex;justify-content:space-between;}
+.slbl{font-size:.63rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:2px 14px 2px;display:flex;justify-content:space-between;}
 
 /* CL CARD */
-.clc{background:var(--card);border-radius:var(--r);padding:15px 16px;margin:0 14px 10px;border:1px solid var(--border);box-shadow:var(--sh);cursor:pointer;transition:transform .12s;position:relative;overflow:hidden;}
+.clc{background:var(--card);border-radius:var(--r);padding:15px 16px;margin:0 14px 10px;border:1px solid var(--border);box-shadow:var(--sh);cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;}
 .clc:active{transform:scale(.982);}
-.clc-stripe{position:absolute;right:0;top:0;bottom:0;width:4px;}
+.clc-stripe{position:absolute;right:0;top:0;height:100%;width:4px;border-radius:0 var(--r) 0 0;pointer-events:none;}
+.clc-summary{position:relative;}
 .clc-name{font-size:.95rem;font-weight:800;color:var(--t1);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:8px;}
 .clc-proj{font-size:.67rem;color:var(--blue-accent);font-weight:700;margin-top:2px;}
 .clc-meta{font-size:.62rem;color:var(--t3);margin-top:2px;}
@@ -406,29 +407,26 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
 .log-meta{font-size:.67rem;color:var(--t3);display:flex;gap:8px;flex-wrap:wrap;}
 
 /* RESPONSIVE TOUCH */
-@media (hover:hover){.clc:hover{transform:scale(.992)}.new-cl-card:hover{filter:brightness(1.08);transform:translateX(-50%) scale(1.04);}.nico:hover{background:rgba(255,255,255,.14)}}
+@media (hover:hover){.clc:not(.clc-active):hover{transform:scale(.992)}.new-cl-card:hover{filter:brightness(1.08);transform:translateX(-50%) scale(1.04);}.nico:hover{background:rgba(255,255,255,.14)}}
 
-/* INLINE EXPAND PANEL */
-.clc-active{border-color:var(--blue-accent)!important;box-shadow:0 0 0 2px rgba(41,121,255,.25),var(--sh2)!important;}
-.clx-panel{background:var(--card);border-radius:var(--r);margin:0 14px 10px;border:1.5px solid rgba(41,121,255,.2);box-shadow:0 6px 24px rgba(41,121,255,.1),var(--sh2);padding:16px;position:relative;animation:clxin .22s ease both;}
-@keyframes clxin{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-.clx-arrow{position:absolute;top:-8px;right:24px;width:16px;height:16px;background:var(--card);border-right:1.5px solid rgba(41,121,255,.2);border-top:1.5px solid rgba(41,121,255,.2);transform:rotate(-45deg);border-radius:3px 0 0 0;}
-.clx-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
-.clx-title{font-size:1rem;font-weight:900;color:var(--t1);letter-spacing:-.3px;}
-.clx-sub{font-size:.68rem;color:var(--t3);margin-top:3px;}
-.clx-close{background:rgba(6,16,30,.06);border:none;color:var(--t3);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.75rem;font-weight:800;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.clx-prog-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.clx-prog-bg{flex:1;height:8px;background:rgba(6,16,30,.06);border-radius:6px;overflow:hidden;}
-.clx-pct{font-size:.72rem;font-weight:800;color:var(--t2);font-family:'JetBrains Mono',monospace;width:32px;text-align:left;}
+/* INLINE ACCORDION EXPAND */
+.clc-active{border-color:var(--blue-accent)!important;box-shadow:0 0 0 2px rgba(41,121,255,.18),var(--sh2)!important;}
+.clc-chev{flex-shrink:0;transition:transform .25s ease;}
+.clx-body{display:none;}
+.clx-body.open{display:block;animation:clxin .22s ease both;}
+@keyframes clxin{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.clx-divider{height:1px;background:var(--border);margin:10px 0 12px;}
 .clx-stats{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(6,16,30,.03);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;}
-.clx-stat{padding:9px 6px;text-align:center;border-left:1px solid var(--border);}
+.clx-stat{padding:10px 6px;text-align:center;border-left:1px solid var(--border);}
 .clx-stat:last-child{border-left:none;}
-.clx-stat-n{font-size:1.2rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
-.clx-stat-l{font-size:.56rem;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.3px;}
-.clx-issues{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
-.clx-btn{background:rgba(6,16,30,.06);color:var(--t2);border:1px solid var(--border);border-radius:var(--r4);padding:8px 14px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.clx-stat-n{font-size:1.3rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
+.clx-stat-l{font-size:.56rem;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.3px;}
+.clx-issues{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.clx-detail{font-size:.7rem;color:var(--t3);margin-bottom:4px;}
+.clx-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.clx-btn{flex:1;min-width:0;background:rgba(6,16,30,.05);color:var(--t2);border:1px solid var(--border);border-radius:var(--r4);padding:10px 10px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center;white-space:nowrap;}
 .clx-btn:active{opacity:.75;}
-.clx-btn-open{background:var(--blue-accent);color:#fff;border-color:var(--blue-accent);}
+.clx-btn-open{background:var(--blue-accent);color:#fff;border-color:var(--blue-accent);flex:2;}
 .clx-btn-del{background:var(--fail-d);color:var(--fail);border-color:rgba(239,68,68,.2);}
 
 /* ══ SETTINGS APP ══ */
@@ -542,7 +540,7 @@ body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--surf)
     <button class="chip" onclick="setF(this,'waiting')">ממתין לאישור</button>
   </div>
   <div class="slbl"><span id="home-count"></span></div>
-  <div id="home-list"></div>
+  <div id="home-list" style="margin-top:0;"></div>
   <div style="height:20px;"></div>
 </div>
 
@@ -920,13 +918,14 @@ function apply(data){
   for(let i=1;i<=31;i++){(id=>{db.ref('checklists/'+CID+'/photos/item'+id).once('value').then(s=>{const ph=s.val();if(!ph)return;const arr=Array.isArray(ph)?ph:Object.values(ph);itemPhotos[id]=arr;const row=document.getElementById('pt'+id);if(row)arr.forEach((p,idx)=>{if(p?.url&&!document.getElementById('th-'+id+'-'+idx)){const t=mkThumb(p.url,id,idx,'item');t.id='th-'+id+'-'+idx;row.appendChild(t);}});updCB(id);}).catch(()=>{})})(i);}
 }
 
-function updMeta(data){
+function updMetaFor(id,data){
   let p=0,f=0,na=0,open=0,closed=0,waiting=0;
   for(let i=1;i<=31;i++){const d=data.items?.['i'+i];if(!d)continue;if(d.s==='P')p++;else if(d.s==='F')f++;else if(d.s==='N')na++;if(d.issues)d.issues.forEach(iss=>{if(!iss?.desc)return;if(iss.status==='closed')closed++;else if(iss.status==='waiting')waiting++;else open++;});}
-  const ex=allCls[CID]||{};
+  const ex=allCls[id]||{};
   const meta={title:data.panel||ex.title||'ללא שם',proj:data.proj||'',insp:data.insp||'',fdate:data.fdate||'',status:data.status||'not-started',passed:p,failed:f,na,total:31,openIssues:open,closedIssues:closed,waitingIssues:waiting,created:ex.created||new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL')};
-  db.ref('checklists/'+CID+'/meta').set(meta).catch(()=>{});allCls[CID]=meta;
+  db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});allCls[id]=meta;
 }
+function updMeta(data){updMetaFor(CID,data);}
 
 function resetCl(){
   for(let i=1;i<=31;i++){
@@ -1242,20 +1241,23 @@ function updFB(id){
 
 function forceSave(){
   if(!CID)return;
-  const data=collect();saveQueue=data;
-  try{localStorage.setItem('cl_'+CID,JSON.stringify(data));}catch(e){}
+  const myId=CID;
+  const data=collect();
+  saveQueue=data;
+  try{localStorage.setItem('cl_'+myId,JSON.stringify(data));}catch(e){}
   if(saveInFlight)return;
   _doSave();
 }
 
 function _doSave(){
   if(!saveQueue||!CID)return;
+  const myId=CID;
   const data=saveQueue;saveQueue=null;saveInFlight=true;
   const pill=document.getElementById('save-pill');if(pill){pill.textContent='שומר...';pill.className='spill saving';}
   const attempt=(n,delay)=>{
-    db.ref('checklists/'+CID+'/data').set(data)
-      .then(()=>{saveInFlight=false;lastSavedTs=data.ts||0;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMeta(data);if(saveQueue)_doSave();})
-      .catch(()=>{if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);else{saveInFlight=false;if(pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}if(saveQueue)_doSave();}});
+    db.ref('checklists/'+myId+'/data').set(data)
+      .then(()=>{saveInFlight=false;lastSavedTs=data.ts||0;if(pill){pill.textContent='✓ נשמר';pill.className='spill saved';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},2200);}updMetaFor(myId,data);if(saveQueue&&CID)_doSave();})
+      .catch(()=>{if(n>0)setTimeout(()=>attempt(n-1,delay*1.5),delay);else{saveInFlight=false;if(pill){pill.textContent='💾 מקומי';pill.className='spill local';setTimeout(()=>{if(pill){pill.textContent='';pill.className='spill';}},3000);}if(saveQueue&&CID)_doSave();}});
   };
   attempt(4,700);
 }
@@ -1415,7 +1417,10 @@ function switchTab(tab){
     document.getElementById('tab-'+t)?.classList.toggle('on',t===tab);
   });
   document.getElementById('tabs').classList.add('show');
-  // Update nav
+  // Scroll to top on every tab switch
+  const content=document.querySelector('.content');
+  if(content)content.scrollTop=0;
+  // Nav
   document.getElementById('nav-l').innerHTML=
     '<button class="nav-back" onclick="leaveChecklist()">'+
     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>'+
@@ -1448,28 +1453,59 @@ function leaveChecklist(){
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
 // ════════════════════════════════════════
-function openCl(id){
-  if(!isAuthed){requireAuth(()=>openCl(id));return;}
-  CID=id;resetCl();switchTab('cl');
-  
+function enterCl(id){
+  // Hide home, show checklist — no new tab, no scroll junk
+  document.getElementById('sc-home').classList.remove('on');
+  CID=id; resetCl(); switchTab('cl');
+  // Scroll to very top immediately
+  const content=document.querySelector('.content');
+  if(content)content.scrollTop=0;
+  window.scrollTo(0,0);
   _loadClData(id);
 }
-function viewCl(id){
-  CID=id;resetCl();switchTab('cl');
-  
-  _loadClData(id);
+function openCl(id){
+  if(!isAuthed){requireAuth(()=>enterCl(id));return;}
+  enterCl(id);
+}
+function viewCl(id){ enterCl(id); }
+function leaveChecklist(){
+  if(CID)forceSave();
+  CID=null;
+  // Hide checklist screens, show home
+  ['sc-cl','sc-issues','sc-dash'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('on');
+  });
+  document.getElementById('sc-home').classList.add('on');
+  document.getElementById('tabs').classList.remove('show');
+  // Scroll to top of home
+  const content=document.querySelector('.content');
+  if(content)content.scrollTop=0;
+  window.scrollTo(0,0);
+  goHome(); loadHome();
 }
 function _loadClData(id){
   let localData=null;
   try{const s=localStorage.getItem('cl_'+id);if(s)localData=JSON.parse(s);}catch(e){}
-  // ONE-TIME read — prevents Firebase listener from re-adding issues on every save
+  // Apply local immediately — never wait for network
+  if(localData)apply(localData);
+  // Check Firebase — override ONLY if strictly more than 2s newer (= different device)
   db.ref('checklists/'+id+'/data').once('value').then(snap=>{
     const fb=snap.val();
-    let data;
-    if(fb&&localData)data=(fb.ts||0)>=(localData.ts||0)?fb:localData;
-    else data=fb||localData;
-    if(data)apply(data);
-  }).catch(()=>{if(localData)apply(localData);});
+    if(!fb)return;
+    if(!localData){
+      apply(fb);
+      try{localStorage.setItem('cl_'+id,JSON.stringify(fb));}catch(e){}
+      return;
+    }
+    if((fb.ts||0)>(localData.ts||0)+2000){
+      apply(fb);
+      try{localStorage.setItem('cl_'+id,JSON.stringify(fb));}catch(e){}
+    }
+    // local is fresher — push it to Firebase to keep in sync
+    else if((localData.ts||0)>(fb.ts||0)){
+      db.ref('checklists/'+id+'/data').set(localData).catch(()=>{});
+    }
+  }).catch(()=>{});
 }
 
 // ════════════════════════════════════════
@@ -1514,91 +1550,83 @@ function renderHome(){
     const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
     const card=document.createElement('div');card.className='clc';card.id='clc-'+id;
-    card.onclick=(e)=>{if(e.target.closest('button[onclick*="duplicateCl"]'))return;toggleClExpand(id,card,cl);};
+    const stLabel=cl.status==='completed'?'הושלם ✓':cl.status==='in-progress'?'בתהליך ⏳':'טרם התחיל';
+    const stCol=cl.status==='completed'?'var(--ok)':cl.status==='in-progress'?'var(--warn)':'var(--t3)';
+    card.onclick=(e)=>{if(e.target.closest('button'))return;enterCl(id);};
     card.innerHTML=
       '<div class="clc-stripe" style="background:'+stripe+';"></div>'+
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
-        '<div style="flex:1;min-width:0;">'+
-          '<div class="clc-name">'+(cl.title||'ללא שם')+'</div>'+
-          (cl.proj||cl.loc?'<div class="clc-proj">'+[cl.proj,cl.loc].filter(Boolean).join(' · ')+'</div>':'')+
-          '<div class="clc-meta">'+(cl.insp?'👤 '+cl.insp+' · ':'')+( cl.fdate||cl.created||'')+'</div>'+
-          ((oi+ci+wi)>0?'<div class="ichips">'+(oi?'<span class="ich ich-o">⚠️ '+oi+'</span>':'')+' '+(wi?'<span class="ich ich-w">⏳ '+wi+'</span>':'')+' '+(ci?'<span class="ich ich-c">✓ '+ci+'</span>':'')+'</div>':'')+
+      // ── SUMMARY (always visible) ──
+      '<div class="clc-summary">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;padding-right:8px;">'+
+          '<div style="flex:1;min-width:0;">'+
+            '<div class="clc-name">'+(cl.title||'ללא שם')+'</div>'+
+            (cl.proj||cl.loc?'<div class="clc-proj">'+[cl.proj,cl.loc].filter(Boolean).join(' · ')+'</div>':'')+
+            '<div class="clc-meta">'+(cl.insp?'👤 '+cl.insp+' · ':'')+(cl.fdate||cl.created||'')+'</div>'+
+            ((oi+ci+wi)>0?'<div class="ichips">'+(oi?'<span class="ich ich-o">⚠️ '+oi+'</span>':'')+' '+(wi?'<span class="ich ich-w">⏳ '+wi+'</span>':'')+' '+(ci?'<span class="ich ich-c">✓ '+ci+'</span>':'')+'</div>':'')+
+          '</div>'+
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">'+
+            '<span class="sttag" style="background:'+sbg+';color:'+sc+';">'+sl+'</span>'+
+            (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'')+
+          '</div>'+
         '</div>'+
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">'+
-          '<span class="sttag" style="background:'+sbg+';color:'+sc+';">'+sl+'</span>'+
-          (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'')+
+        '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/tot*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/tot*100)+'%;"></div></div></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">'+
+          '<div class="cnums"><span class="cn-p">✓ '+p+'</span><span class="cn-f">✗ '+f+'</span>'+(na?'<span style="color:var(--t3);">N/A '+na+'</span>':'')+' <span class="cn-r">— '+(tot-p-f-na)+'</span></div>'+
+          '<div style="display:flex;align-items:center;gap:5px;">'+
+            '<span style="font-size:.65rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+pct+'%</span>'+
+            '<svg class="clc-chev" id="chev-'+id+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'+
+          '</div>'+
         '</div>'+
       '</div>'+
-      '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/tot*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/tot*100)+'%;"></div></div></div>'+
-      '<div style="display:flex;justify-content:space-between;">'+
-        '<div class="cnums"><span class="cn-p">✓ '+p+'</span><span class="cn-f">✗ '+f+'</span>'+(na?'<span style="color:var(--t3);">N/A '+na+'</span>':'')+' <span class="cn-r">— '+(tot-p-f-na)+'</span></div>'+
-        '<span style="font-size:.65rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+pct+'%</span>'+
+      // ── EXPAND BODY (hidden until toggled) ──
+      '<div class="clx-body" id="clxb-'+id+'">'+
+        '<div class="clx-divider"></div>'+
+        '<div class="clx-stats">'+
+          '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--ok);">'+p+'</div><div class="clx-stat-l">Passed</div></div>'+
+          '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--fail);">'+f+'</div><div class="clx-stat-l">Failed</div></div>'+
+          '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--t3);">'+na+'</div><div class="clx-stat-l">N/A</div></div>'+
+          '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--warn);">'+(tot-p-f-na)+'</div><div class="clx-stat-l">נותר</div></div>'+
+        '</div>'+
+        ((oi+wi+ci)>0?'<div class="clx-issues">'+(oi?'<span class="ich ich-o">⚠️ '+oi+' פתוח</span> ':'')+' '+(wi?'<span class="ich ich-w">⏳ '+wi+' ממתין</span>':'')+' '+(ci?'<span class="ich ich-c">✓ '+ci+' סגור</span>':'')+'</div>':'')+
+        (cl.proj?'<div class="clx-detail">📁 '+cl.proj+(cl.loc?' · 📍'+cl.loc:'')+'</div>':'')+
+        (cl.insp?'<div class="clx-detail">👤 '+cl.insp+(cl.fdate?' · 📅 '+cl.fdate:'')+'</div>':'')+
+        '<div class="clx-actions">'+
+          (isAuthed?'<button class="clx-btn clx-btn-del" onclick="event.stopPropagation();deleteCl(\''+id+'\')">🗑️ מחק</button>':'')+
+          '<button class="clx-btn" onclick="event.stopPropagation();window.open(location.pathname+\'?cl='+id+'\',\'_blank\')">🔗 שתף</button>'+
+          '<button class="clx-btn clx-btn-open" onclick="event.stopPropagation();viewCl(\''+id+'\')">⚡ פתח בדיקה</button>'+
+        '</div>'+
       '</div>';
     list.appendChild(card);
   });
 }
 let _expandedId=null;
-function toggleClExpand(id,card,cl){
-  // close any open expand
-  const prev=document.getElementById('clx-'+_expandedId);
-  if(prev){prev.remove();if(_expandedId===id){_expandedId=null;document.getElementById('clc-'+id)?.classList.remove('clc-active');return;}}
-  document.querySelectorAll('.clc').forEach(c=>c.classList.remove('clc-active'));
-  _expandedId=id;card.classList.add('clc-active');
-
-  const panel=document.createElement('div');
-  panel.id='clx-'+id;
-  panel.className='clx-panel';
-  const p=cl.passed||0,f=cl.failed||0,na=cl.na||0,tot=cl.total||31;
-  const pct=Math.round((p+f)/tot*100);
-  const oi=cl.openIssues||0,wi=cl.waitingIssues||0,ci=cl.closedIssues||0;
-  const stLabel=cl.status==='completed'?'הושלם ✓':cl.status==='in-progress'?'בתהליך ⏳':'טרם התחיל';
-  const stCol=cl.status==='completed'?'var(--ok)':cl.status==='in-progress'?'var(--warn)':'var(--t3)';
-
-  panel.innerHTML=
-    '<div class="clx-arrow"></div>'+
-    '<div class="clx-header">'+
-      '<div style="flex:1;">'+
-        '<div class="clx-title">'+(cl.title||'ללא שם')+'</div>'+
-        (cl.proj?'<div class="clx-sub">📁 '+cl.proj+(cl.loc?' · 📍'+cl.loc:'')+'</div>':'')+
-        (cl.insp?'<div class="clx-sub">👤 '+cl.insp+(cl.fdate?' · 📅'+cl.fdate:'')+'</div>':'')+
-      '</div>'+
-      '<button class="clx-close" onclick="document.getElementById(\'clx-'+id+'\').remove();document.getElementById(\'clc-'+id+'\')?.classList.remove(\'clc-active\');_expandedId=null;">✕</button>'+
-    '</div>'+
-    // progress bar
-    '<div class="clx-prog-wrap">'+
-      '<div class="clx-prog-bg"><div style="height:100%;display:flex;border-radius:6px;overflow:hidden;">'+
-        '<div style="width:'+Math.round(p/tot*100)+'%;background:var(--ok);transition:width .6s;"></div>'+
-        '<div style="width:'+Math.round(f/tot*100)+'%;background:var(--fail);transition:width .6s;"></div>'+
-      '</div></div>'+
-      '<div class="clx-pct">'+pct+'%</div>'+
-    '</div>'+
-    // stats row
-    '<div class="clx-stats">'+
-      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--ok);">'+p+'</div><div class="clx-stat-l">Passed</div></div>'+
-      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--fail);">'+f+'</div><div class="clx-stat-l">Failed</div></div>'+
-      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--t3);">'+na+'</div><div class="clx-stat-l">N/A</div></div>'+
-      '<div class="clx-stat"><div class="clx-stat-n" style="color:var(--t3);">'+(tot-p-f-na)+'</div><div class="clx-stat-l">נותר</div></div>'+
-    '</div>'+
-    // issues row
-    ((oi+wi+ci)>0?
-      '<div class="clx-issues">'+
-        (oi?'<span class="ich ich-o">⚠️ '+oi+' פתוח</span>':'')+
-        (wi?'<span class="ich ich-w">⏳ '+wi+' ממתין</span>':'')+
-        (ci?'<span class="ich ich-c">✓ '+ci+' סגור</span>':'')+
-      '</div>':'')+
-    // status badge
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;">'+
-      '<span style="font-size:.72rem;font-weight:800;color:'+stCol+';">'+stLabel+'</span>'+
-      '<div style="display:flex;gap:6px;">'+
-        (isAuthed?'<button class="clx-btn clx-btn-del" onclick="document.getElementById(\'clx-'+id+'\').remove();document.getElementById(\'clc-'+id+'\')?.classList.remove(\'clc-active\');_expandedId=null;deleteCl(\''+id+'\');">🗑️ מחק</button>':'')+
-        '<button class="clx-btn" onclick="window.open(location.pathname+\'?cl='+id+'\',\'_blank\')">🔗 שתף</button>'+
-        '<button class="clx-btn clx-btn-open" onclick="viewCl(\''+id+'\')">פתח →</button>'+
-      '</div>'+
-    '</div>';
-
-  card.insertAdjacentElement('afterend',panel);
-  // smooth scroll so the panel is visible
-  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+function toggleClExpand(id){
+  const body=document.getElementById('clxb-'+id);
+  const chev=document.getElementById('chev-'+id);
+  const card=document.getElementById('clc-'+id);
+  if(!body)return;
+  const isOpen=body.classList.contains('open');
+  // close any other open one
+  if(_expandedId&&_expandedId!==id){
+    const ob=document.getElementById('clxb-'+_expandedId);
+    const oc=document.getElementById('chev-'+_expandedId);
+    const oc2=document.getElementById('clc-'+_expandedId);
+    if(ob)ob.classList.remove('open');
+    if(oc)oc.style.transform='rotate(0deg)';
+    if(oc2)oc2.classList.remove('clc-active');
+  }
+  if(isOpen){
+    body.classList.remove('open');
+    chev.style.transform='rotate(0deg)';
+    card.classList.remove('clc-active');
+    _expandedId=null;
+  } else {
+    body.classList.add('open');
+    chev.style.transform='rotate(180deg)';
+    card.classList.add('clc-active');
+    _expandedId=id;
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+  }
 }
 
 function deleteCl(id){
@@ -1697,6 +1725,11 @@ function showSettings(){
   const cd=document.getElementById('sp-contacts-d');if(cd){const n=contacts.filter(c=>c.name).length;cd.textContent=n?n+' אנשי קשר':'אין אנשי קשר';}
   const nd=document.getElementById('sp-notif-d');if(nd)nd.textContent=settings.notifyEmail||'לא הוגדר מייל';
   const adm=document.getElementById('sp-admin-sec');if(adm)adm.style.display=isAuthed?'block':'none';
+  const bks=getBackups();
+  const bb=document.getElementById('sp-bk-badge');
+  if(bb){bb.textContent=bks.length+' גיבויים';bb.style.display=bks.length?'inline':'none';}
+  const dd=document.getElementById('sp-data-d');
+  if(dd){const lb=bks[0];dd.textContent=lb?'גיבוי אחרון: '+new Date(lb.ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+' '+new Date(lb.ts).toLocaleDateString('he-IL'):'לא בוצע גיבוי עדיין';}
   pg.classList.add('open');
 }
 function closeSettings(){document.getElementById('sett-page')?.classList.remove('open');}
@@ -1823,16 +1856,216 @@ function pgAccessibility(){
   );
 }
 
+// ════════════════════════════════════════
+// BACKUP SYSTEM — hourly auto + manual restore
+// ════════════════════════════════════════
+const BK_KEY='cx_backups';
+const BK_MAX=10; // keep last 10 backups
+let bkInterval=null;
+
+function getBackups(){
+  try{const s=localStorage.getItem(BK_KEY);return s?JSON.parse(s):[];}catch(e){return [];}
+}
+function saveBackups(arr){
+  try{localStorage.setItem(BK_KEY,JSON.stringify(arr));}catch(e){
+    // If localStorage full, drop oldest and retry
+    try{arr=arr.slice(0,BK_MAX-2);localStorage.setItem(BK_KEY,JSON.stringify(arr));}catch(e2){}
+  }
+}
+
+async function runBackup(manual=false){
+  if(!navigator.onLine&&!manual){return;} // skip auto if offline
+  const snapshot={};
+  // Fetch all checklist data from Firebase
+  try{
+    const snap=await db.ref('checklists').once('value');
+    const v=snap.val()||{};
+    Object.keys(v).forEach(id=>{
+      snapshot[id]={meta:v[id].meta||null,data:v[id].data||null};
+    });
+  }catch(e){
+    // Fallback: use what we have in memory from allCls
+    Object.keys(allCls).forEach(id=>{
+      snapshot[id]={meta:allCls[id],data:null};
+    });
+    if(!Object.keys(snapshot).length){if(manual)toast('⚠️ אין נתונים לגיבוי');return;}
+  }
+  if(!Object.keys(snapshot).length){if(manual)toast('⚠️ אין צ\'קליסטים לגיבוי');return;}
+
+  const entry={
+    ts:Date.now(),
+    auto:!manual,
+    data:snapshot,
+    ver:3
+  };
+  const bks=getBackups();
+  bks.unshift(entry);
+  // Keep only BK_MAX entries
+  if(bks.length>BK_MAX)bks.splice(BK_MAX);
+  saveBackups(bks);
+  // Also save to Firebase under backups/ node
+  try{
+    const bkKey='bk_'+Date.now();
+    await db.ref('backups/'+bkKey).set({
+      ts:entry.ts,auto:entry.auto,
+      summary:{count:Object.keys(snapshot).length},
+      data:snapshot
+    });
+    // Prune old Firebase backups — keep last 10
+    const fbBks=await db.ref('backups').orderByKey().once('value');
+    const keys=Object.keys(fbBks.val()||{}).sort();
+    if(keys.length>BK_MAX){
+      const toDelete=keys.slice(0,keys.length-BK_MAX);
+      await Promise.all(toDelete.map(k=>db.ref('backups/'+k).remove()));
+    }
+  }catch(e){}
+
+  if(manual)toast('✅ גיבוי נשמר — '+Object.keys(snapshot).length+" צ'קליסטים");
+  else console.log('[Electra CX] Auto backup done —',Object.keys(snapshot).length,'checklists');
+}
+
+function startAutoBackup(){
+  if(bkInterval)return;
+  bkInterval=setInterval(()=>runBackup(false),3600000); // every hour
+  // Run once now if last backup > 1h ago
+  const bks=getBackups();
+  const last=bks[0]?.ts||0;
+  if(Date.now()-last>3600000)setTimeout(()=>runBackup(false),5000);
+}
+
+function stopAutoBackup(){
+  if(bkInterval){clearInterval(bkInterval);bkInterval=null;}
+}
+
+function toggleAutoBackup(btn){
+  if(bkInterval){
+    stopAutoBackup();
+    btn.className='stog off';
+    settings.autoBackup=false;saveSettings();
+    toast('⏸ גיבוי אוטומטי כובה');
+  }else{
+    startAutoBackup();
+    btn.className='stog on';
+    settings.autoBackup=true;saveSettings();
+    toast('✅ גיבוי אוטומטי הופעל');
+  }
+}
+
+function deleteBackup(idx){
+  if(!confirm('למחוק גיבוי זה?'))return;
+  const bks=getBackups();
+  bks.splice(idx,1);
+  saveBackups(bks);
+  toast('🗑️ גיבוי נמחק');
+}
+
+function showRestoreModal(idx){
+  const bks=getBackups();
+  const bk=bks[idx];if(!bk)return;
+  const dt=new Date(bk.ts).toLocaleString('he-IL');
+  const n=Object.keys(bk.data||{}).length;
+  const cls=Object.keys(bk.data||{});
+
+  const ov=document.createElement('div');ov.className='modal-bg show';ov.id='restore-modal';
+  const sh=document.createElement('div');sh.className='msheet';
+  sh.innerHTML=
+    '<div class="mhandle"></div>'+
+    '<div style="padding:18px 14px 0;">'+
+    '<div style="font-size:1rem;font-weight:800;color:var(--t1);margin-bottom:4px;">🔄 שחזור גיבוי</div>'+
+    '<div style="font-size:.78rem;color:var(--t3);margin-bottom:16px;">'+dt+' · '+(bk.auto?'אוטומטי':'ידני')+'</div>'+
+    '<div style="background:var(--warn-d);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:.78rem;color:var(--warn);line-height:1.5;">'+
+    '⚠️ שחזור יחליף את נתוני הצ\'קליסטים הנבחרים בנתוני הגיבוי. לא ניתן לבטל פעולה זו.</div>'+
+    '<div style="font-size:.8rem;font-weight:700;color:var(--t1);margin-bottom:10px;">'+n+" צ'קליסטים בגיבוי — בחר מה לשחזר:"+'</div>'+
+    '<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;">'+
+    '<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">'+
+    '<input type="checkbox" id="bk-sel-all" onchange="document.querySelectorAll(\'.bk-cl-cb\').forEach(c=>c.checked=this.checked)" style="width:16px;height:16px;accent-color:var(--blue-accent);">'+
+    '<label for="bk-sel-all" style="font-size:.8rem;font-weight:700;cursor:pointer;">בחר הכל</label></div>'+
+    cls.map(id=>{
+      const m=bk.data[id]?.meta||{};
+      return '<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">'+
+        '<input type="checkbox" class="bk-cl-cb" value="'+id+'" checked style="width:16px;height:16px;accent-color:var(--blue-accent);">'+
+        '<div><div style="font-size:.8rem;font-weight:700;color:var(--t1);">'+(m.title||id)+'</div>'+
+        '<div style="font-size:.68rem;color:var(--t3);">'+(m.proj||'')+(m.proj&&m.created?' · ':''+(m.created||''))+'</div></div></div>';
+    }).join('')+
+    '</div>'+
+    '<div style="display:flex;gap:8px;">'+
+    '<button onclick="document.getElementById(\'restore-modal\').remove();" style="flex:1;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:13px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;">ביטול</button>'+
+    '<button onclick="confirmRestore('+idx+')" style="flex:2;background:linear-gradient(135deg,#2979ff,#1565c0);color:#fff;border:none;border-radius:10px;padding:13px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit;">🔄 שחזר נבחרים</button>'+
+    '</div></div>';
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  ov.appendChild(sh);document.body.appendChild(ov);
+}
+
+async function confirmRestore(idx){
+  if(!isAuthed){toast('🔒 נדרשת הרשאת מנהל');return;}
+  const bks=getBackups();
+  const bk=bks[idx];if(!bk)return;
+  const selected=[...document.querySelectorAll('.bk-cl-cb:checked')].map(c=>c.value);
+  if(!selected.length){toast('⚠️ לא נבחרו צ\'קליסטים');return;}
+  document.getElementById('restore-modal')?.remove();
+  toast('⏳ משחזר '+selected.length+" צ'קליסטים...");
+
+  let ok=0,fail=0;
+  for(const id of selected){
+    const entry=bk.data[id];if(!entry)continue;
+    try{
+      const writes=[];
+      if(entry.meta)writes.push(db.ref('checklists/'+id+'/meta').set(entry.meta));
+      if(entry.data)writes.push(db.ref('checklists/'+id+'/data').set(entry.data));
+      await Promise.all(writes);
+      // Also restore to localStorage
+      if(entry.data){try{localStorage.setItem('cl_'+id,JSON.stringify(entry.data));}catch(e){}}
+      ok++;
+    }catch(e){fail++;}
+  }
+  if(ok)loadHome();
+  if(fail)toast('⚠️ שוחזרו '+ok+', נכשלו '+fail);
+  else toast('✅ שוחזרו '+ok+" צ'קליסטים בהצלחה!");
+  // Refresh settings panel
+  setTimeout(()=>{closeSub();openSub('data');},800);
+}
+
 function pgData(){
   const localKB=Math.round(Object.keys(localStorage).reduce((a,k)=>{try{return a+(localStorage.getItem(k)||'').length;}catch(e){return a;}},0)/1024);
   const clCount=Object.keys(allCls).length;
-  return sh('אחסון')+sg(
-    si('🗄️','linear-gradient(135deg,#6366f1,#4338ca)','Firebase Cloud','electra-10-default-rtdb.firebaseio.com',
+  const backups=getBackups();
+  const lastBk=backups.length?backups[0]:null;
+  const lastBkTxt=lastBk?'גיבוי אחרון: '+new Date(lastBk.ts).toLocaleString('he-IL'):'לא בוצע גיבוי עדיין';
+  const nextBk=bkInterval?'הבא: '+Math.round((3600000-(Date.now()%3600000))/60000)+' דק\'':'כבוי';
+
+  return sh('ענן ואחסון')+sg(
+    si('🔥','linear-gradient(135deg,#f97316,#c2410c)','Firebase Cloud','electra-10-default-rtdb.firebaseio.com',
       badge(navigator.onLine?'מחובר':'מנותק',navigator.onLine?'#22c55e':'#ef4444'))+
     si('💾','linear-gradient(135deg,#78716c,#44403c)','אחסון מקומי',clCount+" צ'קליסטים · "+localKB+'KB','')
-  )+sh('ייצוא')+sg(
+  )+
+  sh('🔄 גיבוי אוטומטי')+sg(
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">🕐</div>'+
+    '<div><div class="si-t">גיבוי כל שעה</div><div class="si-d">'+nextBk+'</div></div></div>'+
+    '<button class="stog '+(bkInterval?'on':'off')+'" onclick="toggleAutoBackup(this)" style="flex-shrink:0;"></button></div>'+
+    '<div class="si" onclick="requireAuth(()=>{runBackup(true);setTimeout(()=>openSub(\'data\'),1200);})" style="cursor:pointer;">'+
+    '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">💾</div>'+
+    '<div><div class="si-t">גבה עכשיו</div><div class="si-d">'+lastBkTxt+'</div></div></div>'+chev+'</div>'
+  )+
+  sh('📦 גיבויים שמורים ('+backups.length+')')+
+  (backups.length?
+    '<div class="sett-grp">'+backups.map((b,i)=>{
+      const dt=new Date(b.ts).toLocaleString('he-IL');
+      const n=Object.keys(b.data||{}).length;
+      const isAuto=b.auto;
+      return '<div class="si">'+
+        '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,'+(isAuto?'#6366f1,#4338ca':'#f59e0b,#d97706')+');">'+(isAuto?'🔄':'👤')+'</div>'+
+        '<div><div class="si-t">'+dt+'</div>'+
+        '<div class="si-d">'+(isAuto?'אוטומטי':'ידני')+' · '+n+" צ'קליסטים"+'</div></div></div>'+
+        '<div style="display:flex;gap:5px;">'+
+        '<button onclick="showRestoreModal('+i+')" style="background:rgba(41,121,255,.1);color:#2979ff;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">שחזר</button>'+
+        '<button onclick="deleteBackup('+i+');openSub(\'data\')" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:.8rem;font-weight:900;">✕</button>'+
+        '</div></div>';
+    }).join('')+'</div>':
+    '<div style="text-align:center;padding:24px;color:var(--t3);font-size:.8rem;">אין גיבויים. לחץ "גבה עכשיו" להתחיל.</div>'
+  )+
+  sh('ייצוא')+sg(
     si('📊','linear-gradient(135deg,#22c55e,#15803d)',"ייצא הכל CSV","כל הצ'קליסטים",chev,'requireAuth(exportAllCSV)')
-  )+sh('ניקוי')+'<div style="padding:0 14px;">'+
+  )+sh('ניקוי')+'<div style="padding:0 14px 14px;">'+
   '<button class="danger-btn" onclick="if(confirm(\'למחוק נתונים מקומיים?\')){{localStorage.clear();toast(\'✅ נמחק\');}}">🗑️ נקה אחסון מקומי</button>'+
   '</div>';
 }
@@ -1899,156 +2132,156 @@ function pgAdmin(){
 // ════════════════════════════════════════
 // PDF EXPORT — full report with issues
 // ════════════════════════════════════════
-async function exportPDF(){
-  if(typeof window.jspdf==='undefined'){toast('⏳ טוען מודול PDF...');return;}
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=210,H=297,M=15;
-  let y=M;
-  const addText=(text,x,size,bold,color,wrap)=>{
-    doc.setFontSize(size);doc.setFont('helvetica',bold?'bold':'normal');if(color)doc.setTextColor(...color);else doc.setTextColor(0);
-    if(wrap){const lines=doc.splitTextToSize(text,W-2*M);doc.text(lines,x,y,{align:'right'});y+=lines.length*(size*0.5);return;}
-    doc.text(text,x,y,{align:'right'});y+=size*0.5;
-  };
-  const checkPage=(needed=20)=>{if(y+needed>H-M){doc.addPage();y=M;}};
-
+function exportPDF(){
   const panel=document.getElementById('f-panel')?.value||'—';
+  const pnum=document.getElementById('f-num')?.value||'—';
   const proj=document.getElementById('f-proj')?.value||'—';
+  const loc=document.getElementById('f-loc')?.value||'—';
   const insp=document.getElementById('f-insp')?.value||'—';
   const fdate=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');
-  const loc=document.getElementById('f-loc')?.value||'—';
+  const notes=document.getElementById('f-notes')?.value||'';
 
-  // Header
-  doc.setFillColor(5,17,31);doc.rect(0,0,W,35,'F');
-  doc.setTextColor(245,158,11);doc.setFontSize(16);doc.setFont('helvetica','bold');
-  doc.text('Electra CX - L0 Inspection Report',W-M,15,{align:'right'});
-  doc.setTextColor(200,200,200);doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('Quality Control System',W-M,22,{align:'right'});
-  y=42;
-
-  // Panel info box
-  doc.setFillColor(240,244,248);doc.roundedRect(M,y-4,W-2*M,36,3,3,'F');
-  doc.setTextColor(0);
-  const fields=[['לוח:',panel],['פרויקט:',proj],['בודק:',insp],['תאריך:',fdate],['מיקום:',loc]];
-  let col=0;
-  fields.forEach(([label,val])=>{
-    const cx=W-M-(col%2)*(W/2-M-2);const cy=y+Math.floor(col/2)*10;
-    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(100,100,100);doc.text(label,cx,cy,{align:'right'});
-    doc.setFont('helvetica','normal');doc.setTextColor(0);doc.text(val,cx-20,cy,{align:'right'});
-    col++;
-  });
-  y+=42;
-
-  // Summary stats
   let p=0,f=0,na=0,openIss=0,closedIss=0;
-  for(let i=1;i<=31;i++){const el=document.getElementById('ic'+i);if(!el)continue;if(el.querySelector('.pfn.p.on'))p++;else if(el.querySelector('.pfn.f.on'))f++;else if(el.querySelector('.pfn.n.on'))na++;}
-  for(let i=1;i<=31;i++){const cont=document.getElementById('iss'+i);if(!cont)continue;cont.querySelectorAll('.iss-block').forEach(bl=>{const s=bl.querySelector('.iss-st')?.dataset.s;if(s==='closed')closedIss++;else openIss++;});}
-
-  const stats=[['✓ Passed',p,'22,197,94'],['✗ Failed',f,'239,68,68'],['N/A',na,'148,163,184'],['Issues פתוחים',openIss,'239,68,68'],['Issues סגורים',closedIss,'22,197,94']];
-  const bw=(W-2*M-16)/5;
-  stats.forEach((st,i)=>{
-    const bx=M+i*(bw+4);const by=y;
-    const rgb=st[2].split(',').map(Number);
-    doc.setFillColor(rgb[0],rgb[1],rgb[2],0.1);doc.roundedRect(bx,by,bw,16,2,2,'F');
-    doc.setTextColor(...rgb);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(String(st[1]),bx+bw/2,by+9,{align:'center'});
-    doc.setTextColor(100,100,100);doc.setFontSize(6);doc.setFont('helvetica','normal');doc.text(st[0],bx+bw/2,by+14,{align:'center'});
-  });
-  y+=24;
-
-  // Checklist items
-  const CH_LOCAL={2:"חלק 2: בדיקות חזותיות",3:"חלק 3: בדיקות פונקציונאליות",4:"חלק 4: הזנות כפולות"};
-  let lastC=0;
   for(let i=1;i<=31;i++){
     const el=document.getElementById('ic'+i);if(!el)continue;
-    const item=ITEMS.find(x=>x.id===i);
-    const ch=item?.c||2;
-    checkPage(12);
-    if(ch!==lastC){lastC=ch;doc.setFillColor(5,17,31);doc.rect(M,y-3,W-2*M,8,'F');doc.setTextColor(245,158,11);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(CH_LOCAL[ch]||'',W-M-2,y+3,{align:'right'});y+=9;}
-    let stText='—',stRgb=[148,163,184];
-    if(el.querySelector('.pfn.p.on')){stText='Passed';stRgb=[22,197,94];}
-    else if(el.querySelector('.pfn.f.on')){stText='Failed';stRgb=[239,68,68];}
-    else if(el.querySelector('.pfn.n.on')){stText='N/A';stRgb=[148,163,184];}
-    const rowColor=el.querySelector('.pfn.f.on')?[255,250,250]:el.querySelector('.pfn.p.on')?[250,255,252]:[250,250,250];
-    doc.setFillColor(...rowColor);doc.rect(M,y-3,W-2*M,7,'F');
-    // Item number
-    doc.setFillColor(...stRgb,0.15);doc.roundedRect(M+1,y-2,8,5,1,1,'F');
-    doc.setTextColor(...stRgb);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(String(i),M+5,y+2,{align:'center'});
-    // Status
-    doc.setTextColor(...stRgb);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(stText,M+13,y+2);
-    // Text
-    const itemText=item?.t||'';const truncated=itemText.length>55?itemText.substring(0,55)+'...':itemText;
-    doc.setTextColor(50,50,50);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(truncated,W-M-2,y+2,{align:'right'});
-    // Note
+    if(el.querySelector('.pfn.p.on'))p++;
+    else if(el.querySelector('.pfn.f.on'))f++;
+    else if(el.querySelector('.pfn.n.on'))na++;
+  }
+  const done=(p+f+na);const pct=done>0?Math.round(p/done*100):0;
+
+  // Items table
+  const CH={2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'חלק 4 — הזנות כפולות ופיקוד'};
+  let lastCh=0,itemRows='';
+  for(let i=1;i<=31;i++){
+    const el=document.getElementById('ic'+i);if(!el)continue;
+    const item=ITEMS.find(x=>x.id===i);const ch=item?.c||2;
+    if(ch!==lastCh){lastCh=ch;itemRows+=`<tr><td colspan="3" style="background:#05111f;color:#f59e0b;font-weight:800;font-size:.78rem;padding:8px 14px;">${CH[ch]||''}</td></tr>`;}
+    let stLabel='—',stColor='#94a3b8',stBg='#f8fafc';
+    if(el.querySelector('.pfn.p.on')){stLabel='✓ Passed';stColor='#16a34a';stBg='#f0fdf4';}
+    else if(el.querySelector('.pfn.f.on')){stLabel='✗ Failed';stColor='#dc2626';stBg='#fef2f2';}
+    else if(el.querySelector('.pfn.n.on')){stLabel='N/A';stColor='#64748b';stBg='#f1f5f9';}
     const note=document.getElementById('note'+i)?.value||'';
-    if(note){y+=5;checkPage(6);doc.setTextColor(150,120,0);doc.setFontSize(6.5);doc.setFont('helvetica','italic');const noteLines=doc.splitTextToSize('📝 '+note,W-2*M-20);doc.text(noteLines,W-M-2,y+2,{align:'right'});y+=noteLines.length*4;}
-    y+=5;
-    // Issues for this item
-    const cont=document.getElementById('iss'+i);
-    if(cont){
-      for(const bl of cont.querySelectorAll('.iss-block')){
-        checkPage(30);
-        const n=Array.from(cont.querySelectorAll('.iss-block')).indexOf(bl)+1;
-        const st=bl.querySelector('.iss-st')?.dataset.s||'open';
-        const person=bl.querySelector('.ii')?.value||'';
-        const desc=bl.querySelectorAll('.ita')[0]?.value||'';
-        const action=bl.querySelectorAll('.ita')[1]?.value||'';
-        const prio=issuePriority[i]?.[n]||'med';
-        const prioTxt=prio==='high'?'🔴 גבוהה':prio==='med'?'🟡 בינונית':'🟢 נמוכה';
-        const stRgb2=st==='closed'?[22,197,94]:st==='waiting'?[168,85,247]:[239,68,68];
-        doc.setFillColor(250,245,245);doc.roundedRect(M+5,y-2,W-2*M-5,desc?22:12,2,2,'F');
-        doc.setDrawColor(...stRgb2);doc.setLineWidth(0.8);doc.line(M+5,y-2,M+5,y+(desc?20:10));
-        doc.setTextColor(...stRgb2);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('Issue #'+n+' ['+prioTxt+']',W-M-8,y+3,{align:'right'});
-        doc.setTextColor(100,100,100);doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.text(person?'👤 '+person:'',M+10,y+3);
-        if(desc){doc.setTextColor(50,50,50);const dl=doc.splitTextToSize(desc,W-2*M-15);doc.text(dl,W-M-8,y+8,{align:'right'});y+=dl.length*3.5;}
-        if(action){doc.setTextColor(80,80,200);const al=doc.splitTextToSize('🔧 '+action,W-2*M-15);doc.text(al,W-M-8,y+8,{align:'right'});y+=al.length*3.5+4;}
-        y+=14;
-        // Issue photos
-        const imgs=bl.querySelectorAll('.iss-ph img');
-        if(imgs.length){
-          let px=M+10;
-          for(const img of imgs){
-            if(px+35>W-M){y+=36;px=M+10;}
-            checkPage(40);
-            try{doc.addImage(img.src,'JPEG',px,y,30,30);doc.setDrawColor(200,200,200);doc.rect(px,y,30,30);}catch(e){}
-            px+=33;
-          }
-          if(imgs.length)y+=34;
-        }
-      }
-    }
-    // Item photos
-    const itemImgs=document.getElementById('pt'+i)?.querySelectorAll('img');
-    if(itemImgs?.length){
-      let px=M+2;
-      for(const img of itemImgs){
-        if(px+32>W-M){y+=34;px=M+2;}
-        checkPage(36);
-        try{doc.addImage(img.src,'JPEG',px,y,28,28);}catch(e){}
-        px+=31;
-      }
-      if(itemImgs.length)y+=32;
-    }
+    itemRows+=`<tr style="border-bottom:1px solid #f1f5f9;">
+      <td style="padding:7px 12px;font-size:.75rem;color:#64748b;width:5%;text-align:center;">${i}</td>
+      <td style="padding:7px 12px;font-size:.76rem;color:#334155;line-height:1.5;">${item?.t||''}</td>
+      <td style="padding:7px 12px;text-align:center;white-space:nowrap;"><span style="background:${stBg};color:${stColor};border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:800;">${stLabel}</span></td>
+    </tr>${note?`<tr><td></td><td colspan="2" style="padding:0 12px 7px;font-size:.7rem;color:#94a3b8;font-style:italic;">📝 ${note}</td></tr>`:''}`;
   }
 
-  // Footer on every page
-  const pageCount=doc.getNumberOfPages();
-  for(let i=1;i<=pageCount;i++){
-    doc.setPage(i);doc.setFillColor(5,17,31);doc.rect(0,H-12,W,12,'F');
-    doc.setTextColor(100,100,100);doc.setFontSize(7);doc.setFont('helvetica','normal');
-    doc.text('Electra CX Quality Control | '+panel+' | '+fdate,W-M,H-5,{align:'right'});
-    doc.text(i+'/'+pageCount,M,H-5);
+  // Issues
+  let issHtml='';
+  for(let i=1;i<=31;i++){
+    const cont=document.getElementById('iss'+i);if(!cont)continue;
+    const blocks=cont.querySelectorAll('.iss-block');if(!blocks.length)continue;
+    const item=ITEMS.find(x=>x.id===i);
+    blocks.forEach((bl,bi)=>{
+      const st=bl.querySelector('.iss-st')?.dataset.s||'open';
+      const stLabel=st==='closed'?'סגור':st==='waiting'?'ממתין':'פתוח';
+      const stColor=st==='closed'?'#16a34a':st==='waiting'?'#d97706':'#dc2626';
+      const prio=bl.querySelector('.prio-btn.sel-h')?'גבוהה':bl.querySelector('.prio-btn.sel-m')?'בינונית':'נמוכה';
+      const prioColor=bl.querySelector('.prio-btn.sel-h')?'#dc2626':bl.querySelector('.prio-btn.sel-m')?'#d97706':'#16a34a';
+      const n=bi+1;
+      const person=document.getElementById('ip-'+i+'-'+n)?.value||'';
+      const email2=document.getElementById('ie-'+i+'-'+n)?.value||'';
+      const desc=document.getElementById('id-'+i+'-'+n)?.value||'';
+      const action=document.getElementById('iact-'+i+'-'+n)?.value||'';
+      const cats=Array.from(bl.querySelectorAll('.cpill.sel')).map(c=>c.textContent).join(', ');
+      const photos=Array.from(bl.querySelectorAll('.iss-ph img')).map(img=>`<img src="${img.src}" style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">`).join('');
+      if(st!=='closed')openIss++;else closedIss++;
+      issHtml+=`<div style="border:1px solid #e2e8f0;border-right:4px solid ${prioColor};border-radius:10px;padding:14px;margin-bottom:12px;page-break-inside:avoid;background:#fff;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
+          <div style="font-weight:800;font-size:.85rem;color:#0f172a;line-height:1.4;">סעיף ${i}: ${item?.t||''}</div>
+          <div style="display:flex;gap:5px;flex-shrink:0;">
+            <span style="background:${prioColor}1a;color:${prioColor};border:1px solid ${prioColor}40;border-radius:20px;padding:2px 9px;font-size:.7rem;font-weight:700;">${prio}</span>
+            <span style="background:${stColor}1a;color:${stColor};border:1px solid ${stColor}40;border-radius:20px;padding:2px 9px;font-size:.7rem;font-weight:700;">${stLabel}</span>
+          </div>
+        </div>
+        ${cats?`<div style="font-size:.72rem;color:#64748b;margin-bottom:6px;">🏷️ ${cats}</div>`:''}
+        ${desc?`<div style="font-size:.8rem;margin-bottom:5px;"><strong>ממצא:</strong> ${desc}</div>`:''}
+        ${action?`<div style="font-size:.8rem;margin-bottom:5px;"><strong>פעולה נדרשת:</strong> ${action}</div>`:''}
+        ${person?`<div style="font-size:.75rem;color:#64748b;margin-bottom:5px;">👤 ${person}${email2?' · '+email2:''}</div>`:''}
+        ${photos?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">${photos}</div>`:''}
+      </div>`;
+    });
   }
 
-  const filename='Electra_L0_'+panel.replace(/[^\w]/g,'_')+'_'+fdate.replace(/\//g,'-')+'.pdf';
-  doc.save(filename);
-  toast('✅ PDF יוצא בהצלחה!');
+  const html=`<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>Electra CX · דוח בדיקה L0 · ${panel}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',Arial,sans-serif;direction:rtl;background:#f0f4f8;color:#0f172a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@page{margin:12mm 10mm;size:A4;}
+@media print{body{background:#fff;}.no-print{display:none!important;}tr{page-break-inside:avoid;}}
+.wrap{max-width:800px;margin:0 auto;padding:16px;}
+.header{background:linear-gradient(135deg,#05111f,#0a2040);color:#fff;padding:22px 24px;border-radius:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.h-title{font-size:1.35rem;font-weight:900;color:#f59e0b;margin-bottom:4px;}
+.h-sub{font-size:.72rem;color:rgba(255,255,255,.4);}
+.pct-bar{background:rgba(255,255,255,.12);border-radius:20px;height:5px;width:160px;margin-top:8px;overflow:hidden;}
+.pct-fill{background:linear-gradient(90deg,#22c55e,#4ade80);height:100%;border-radius:20px;}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.meta-box{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:11px 13px;}
+.meta-lbl{font-size:.6rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:700;}
+.meta-val{font-size:.86rem;font-weight:700;}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 6px;text-align:center;}
+.kpi-n{font-size:1.7rem;font-weight:900;line-height:1;}
+.kpi-l{font-size:.6rem;color:#94a3b8;margin-top:3px;}
+.sec{font-size:.72rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid #e2e8f0;}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:14px;}
+.print-btn{position:fixed;bottom:20px;right:20px;background:#05111f;color:#fff;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">🖨 הדפס / שמור PDF</button>
+<div class="wrap">
 
-  // Offer to email
-  setTimeout(()=>{
-    if(contacts.length>0&&confirm('שלח את הדוח במייל לאנשי קשר?')){emailPDF(panel,fdate);}
-  },800);
+<div class="header">
+  <div>
+    <div class="h-title">⚡ Electra CX — L0 Inspection Report</div>
+    <div class="h-sub">Quality Control System · ${new Date().toLocaleDateString('he-IL')} ${new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}</div>
+    <div class="pct-bar" style="margin-top:10px;"><div class="pct-fill" style="width:${pct}%;"></div></div>
+    <div style="font-size:.68rem;color:rgba(255,255,255,.35);margin-top:4px;">Pass Rate: ${pct}%</div>
+  </div>
+</div>
+
+<div class="meta">
+  <div class="meta-box"><div class="meta-lbl">שם הלוח</div><div class="meta-val">${panel}</div></div>
+  <div class="meta-box"><div class="meta-lbl">מס׳ לוח</div><div class="meta-val">${pnum}</div></div>
+  <div class="meta-box"><div class="meta-lbl">פרויקט</div><div class="meta-val">${proj}</div></div>
+  <div class="meta-box"><div class="meta-lbl">בודק</div><div class="meta-val">${insp}</div></div>
+  <div class="meta-box"><div class="meta-lbl">תאריך</div><div class="meta-val">${fdate}</div></div>
+  <div class="meta-box"><div class="meta-lbl">מיקום</div><div class="meta-val">${loc}</div></div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="kpi-n" style="color:#16a34a;">${p}</div><div class="kpi-l">Passed</div></div>
+  <div class="kpi"><div class="kpi-n" style="color:#dc2626;">${f}</div><div class="kpi-l">Failed</div></div>
+  <div class="kpi"><div class="kpi-n" style="color:#64748b;">${na}</div><div class="kpi-l">N/A</div></div>
+  <div class="kpi"><div class="kpi-n" style="color:#dc2626;">${openIss}</div><div class="kpi-l">Issues פתוחים</div></div>
+</div>
+
+<div class="sec">פירוט סעיפי הבדיקה</div>
+<table>
+  <thead><tr style="background:#f8fafc;"><th style="padding:9px 12px;font-size:.7rem;color:#64748b;text-align:center;width:5%;">#</th><th style="padding:9px 12px;font-size:.7rem;color:#64748b;text-align:right;">סעיף</th><th style="padding:9px 12px;font-size:.7rem;color:#64748b;text-align:center;width:20%;">תוצאה</th></tr></thead>
+  <tbody>${itemRows}</tbody>
+</table>
+
+${issHtml?`<div class="sec" style="page-break-before:always;">ממצאים ו-Issues</div>${issHtml}`:''}
+${notes?`<div class="sec">הערות כלליות</div><div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;font-size:.82rem;line-height:1.8;">${notes}</div>`:''}
+
+<div style="text-align:center;margin-top:16px;font-size:.65rem;color:#cbd5e1;">Electra CX Quality Control | ${panel} | ${fdate}</div>
+</div></body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){toast('⚠️ אפשר חלונות קופצים בדפדפן');return;}
+  win.document.write(html);win.document.close();
+  toast('✅ הדוח נפתח — לחץ הדפס לשמירה כ-PDF');
 }
-
 function emailPDF(panel,fdate){
   const emails=contacts.filter(c=>c.email).map(c=>c.email).join(',');
   if(!emails&&!settings.notifyEmail){toast('לא הוגדרו מיילים בהגדרות');return;}
@@ -2072,15 +2305,29 @@ window.addEventListener('beforeunload',()=>{if(CID)forceSave();});
 // ════════════════════════════════════════
 const _urlCl=new URLSearchParams(location.search).get('cl');
 document.addEventListener('DOMContentLoaded',()=>{
-  if(_urlCl){ setTimeout(()=>viewCl(_urlCl),800); }
   buildItems();loadSettings();loadContacts();
-  
   if(!navigator.onLine)document.getElementById('offline-bar').classList.add('show');
-  // Restore auth session
   if(sessionStorage.getItem('ecx_auth')==='1'){isAuthed=true;updateAuthUI();}
-  // Show auth modal after short delay
-  if(!isAuthed)setTimeout(showAuthModal,1000);
-  loadHome();
+  if(_urlCl){
+    const cont=document.querySelector('.content');
+    if(cont)cont.scrollTop=0;
+    viewCl(_urlCl);
+    setTimeout(()=>{
+      if(cont)cont.scrollTop=0;
+      const backBtn=document.querySelector('.nav-back');
+      if(backBtn){
+        backBtn.onclick=()=>{
+          forceSave();
+          setTimeout(()=>{window.history.length>1?history.back():window.close();},300);
+        };
+      }
+    },100);
+  } else {
+    if(!isAuthed)setTimeout(showAuthModal,1000);
+    loadHome();
+    // Start hourly auto backup after app loads
+    if(settings.autoBackup!==false)setTimeout(startAutoBackup,8000);
+  }
 });
 </script>
 
@@ -2112,7 +2359,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     </div>
     <div class="sett-sec-hdr">נתונים ומערכת</div>
     <div class="sett-grp">
-      <div class="si" onclick="openSub('data')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">💾</div><div><div class="si-t">נתונים וגיבוי</div><div class="si-d">Firebase · אחסון · ייצוא</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('data')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">💾</div><div><div class="si-t">נתונים וגיבוי</div><div class="si-d" id="sp-data-d">Firebase · גיבוי אוטומטי</div></div></div><div class="si-r"><span id="sp-bk-badge" style="background:rgba(139,92,246,.12);color:#8b5cf6;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;display:none;"></span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
       <div class="si" onclick="openSub('history')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#78716c,#44403c);">📋</div><div><div class="si-t">היסטוריית כניסות</div><div class="si-d" id="sp-hist-d">טוען...</div></div></div><div class="si-r"><span id="sp-hist-badge" style="background:rgba(41,121,255,.1);color:#2979ff;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;">0</span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
       <div class="si" onclick="openSub('performance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#64748b,#334155);">⚙️</div><div><div class="si-t">מערכת וביצועים</div><div class="si-d">חיבור · מסך · מכשיר</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
       <div class="si" onclick="openSub('about')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#05111f,#0c1f3a);">⚡</div><div><div class="si-t">אודות Electra CX</div><div class="si-d">גרסה 3.0 · Firebase · PWA</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
