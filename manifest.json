@@ -1,17 +1,12 @@
 {
-  "name": "Electra CX App",
-  "short_name": "ElectraCX",
-  "description": "אפליקציית השירות של אלקטרה לקוחות - בדיקת לוחות חשמל מערכת L0",
-  "start_url": "/",
-  "display": "standalone",
   "background_color": "#05111f",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Electra CX",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "ElectraCX",
+  "start_url": "/",
   "theme_color": "#05111f",
-  "icons": [
-    {
-      "src": "https://flaticon.com",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ]
+  "description": "אפליקציית השירות של אלקטרה לקוחות"
 }
