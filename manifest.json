@@ -1,0 +1,16 @@
+{
+  "name": "Electra CX App",
+  "short_name": "ElectraCX",
+  "description": "אפליקציית השירות של אלקטרה לקוחות - בדיקת לוחות חשמל מערכת L0",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05111f",
+  "theme_color": "#05111f",
+  "icons": [
+    {
+      "src": "https://icons8.com",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
