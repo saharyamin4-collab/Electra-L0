@@ -3008,7 +3008,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;ove
 </head>
 <body>
 <button class="print-btn no-print" onclick="window.print()">🖨 שמור PDF</button>
-<button class="back-btn no-print" onclick="window.close()">← חזרה לצ'קליסט</button>
+<button class="back-btn no-print" onclick="history.back()">← חזרה לצ'קליסט</button>
 <div class="wrap">
 
 <div class="header">
@@ -3048,32 +3048,76 @@ ${notes?`<div class="sec">הערות כלליות</div><div style="background:#f
 <div style="text-align:center;margin-top:16px;font-size:.65rem;color:#cbd5e1;">Electra CX Quality Control | ${panel} | ${fdate}</div>
 </div></body></html>`;
 
-  // Save as HTML file (mobile: open + print to PDF / desktop: download)
+  // Open report — blob in same tab so browser back button works; print dialog = Save PDF
   try {
     const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
     const url = URL.createObjectURL(blob);
-    const fname = 'L0_' + (panel||'report').replace(/[^\w\u0590-\u05FF]/g,'_') + '.html';
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(isMobile){
-      // On mobile: download the file, then user can open & share as PDF
-      const a = document.createElement('a');
-      a.href = url; a.download = fname;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(url), 8000);
-      toast('\u2705 \u05e7\u05d5\u05d1\u05e5 \u05e0\u05e9\u05de\u05e8 \u2014 \u05e4\u05ea\u05d7 \u05d0\u05d5\u05ea\u05d5 \u05d5\u05d4\u05d3\u05e4\u05e1 \u05dc-PDF');
-    } else {
-      const win = window.open(url, '_blank');
-      if(!win) throw new Error('blocked');
-      setTimeout(()=>URL.revokeObjectURL(url), 15000);
-      toast('\u2705 \u05d4\u05d3\u05d5\u05d7 \u05e0\u05e4\u05ea\u05d7 \u2014 \u05dc\u05d7\u05e5 \u05d4\u05d3\u05e4\u05e1 \u05dc\u05e9\u05de\u05d9\u05e8\u05d4 \u05db\u05e1-PDF');
-    }
+    // Navigate current tab → browser back button returns to app
+    location.href = url;
+    toast('✅ הדוח נפתח — לחץ שמור PDF');
   } catch(e) {
     const win = window.open('','_blank');
-    if(!win){toast('\u26a0\ufe0f \u05d0\u05e4\u05e9\u05e8 \u05d7\u05dc\u05d5\u05e0\u05d5\u05ea \u05e7\u05d5\u05e4\u05e6\u05d9\u05dd \u05d1\u05d3\u05e4\u05d3\u05e4\u05df');return;}
+    if(!win){toast('⚠️ אפשר חלונות קופצים בדפדפן');return;}
     win.document.write(html); win.document.close();
-    toast('\u2705 \u05d4\u05d3\u05d5\u05d7 \u05e0\u05e4\u05ea\u05d7');
+    toast('✅ הדוח נפתח');
   }
 }
+
+// ════════════════════════════════════════
+// SHARE CHECKLIST
+// ════════════════════════════════════════
+function shareChecklist(){
+  if(!CID){toast('אין צ\u05f3קליסט פעיל');return;}
+  const panel=document.getElementById('f-panel')?.value||'צ\u05f3קליסט';
+  const url=location.origin+location.pathname+'?cl='+CID;
+  if(navigator.share){
+    navigator.share({title:'Electra CX — '+panel,url}).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(url).then(()=>toast('🔗 הקישור הועתק')).catch(()=>{
+      prompt('העתק קישור:',url);
+    });
+  }
+}
+
+// ════════════════════════════════════════
+// SEND ALL ISSUES EMAIL
+// ════════════════════════════════════════
+function sendAllIssues(){
+  if(!isAuthed){toast('🔒 נדרשת הרשאת מנהל');return;}
+  const panel=document.getElementById('f-panel')?.value||'לוח';
+  const insp=document.getElementById('f-insp')?.value||'';
+  const fdate=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');
+  let body='שלום,\n\nסיכום Issues פתוחים לפרויקט: '+panel+'\nתאריך: '+fdate+'\nבודק: '+insp+'\n\n';
+  let emails=new Set();let count=0;
+  for(let i=1;i<=31;i++){
+    const cont=document.getElementById('iss'+i);if(!cont)continue;
+    cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
+      const n=bi+1;
+      const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s||'open';
+      if(st==='closed')return;
+      const person=document.getElementById('ip-'+i+'-'+n)?.value||'';
+      const email=document.getElementById('ie-'+i+'-'+n)?.value||'';
+      const desc=document.getElementById('id-'+i+'-'+n)?.value||'';
+      const prio=issuePriority[i]?.[n]||'med';
+      const prioTxt=prio==='high'?'🔴 גבוהה':prio==='med'?'🟡 בינונית':'🟢 נמוכה';
+      const sec=ITEMS.find(x=>x.id===i)?.t||'';
+      body+='━━━━━━━━━━━━━━\n';
+      body+='Issue #'+(++count)+' | סעיף '+i+' | '+prioTxt+'\n';
+      body+='סעיף: '+sec+'\n';
+      if(desc)body+='ממצא: '+desc+'\n';
+      if(person)body+='אחראי: '+person+'\n';
+      if(email){body+='מייל: '+email+'\n';emails.add(email);}
+      body+='\n';
+    });
+  }
+  if(count===0){toast('אין Issues פתוחים לשליחה');return;}
+  if(settings.notifyEmail)emails.add(settings.notifyEmail);
+  const to=[...emails].join(',');
+  const sub=encodeURIComponent('[Electra CX] '+count+' Issues פתוחים — '+panel);
+  window.location.href='mailto:'+to+'?subject='+sub+'&body='+encodeURIComponent(body);
+  toast('📧 פותח לקוח מייל...');
+}
+
 function emailPDF(panel,fdate){
   const emails=contacts.filter(c=>c.email).map(c=>c.email).join(',');
   if(!emails&&!settings.notifyEmail){toast('לא הוגדרו מיילים בהגדרות');return;}
