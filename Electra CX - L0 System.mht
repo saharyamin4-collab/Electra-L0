@@ -13,65 +13,93 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw",
-  authDomain:"electra-10.firebaseapp.com",
-  databaseURL:"https://electra-10-default-rtdb.firebaseio.com",
-  projectId:"electra-10",storageBucket:"electra-10.firebasestorage.app",
-  messagingSenderId:"751223433308",appId:"1:751223433308:web:c07da01b36d20e7b3cde99"
-});
-const db=firebase.database();
+try{
+  firebase.initializeApp({
+    apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw",
+    authDomain:"electra-10.firebaseapp.com",
+    databaseURL:"https://electra-10-default-rtdb.firebaseio.com",
+    projectId:"electra-10",storageBucket:"electra-10.firebasestorage.app",
+    messagingSenderId:"751223433308",appId:"1:751223433308:web:c07da01b36d20e7b3cde99"
+  });
+}catch(e){console.warn('Firebase init error:',e);}
+
+// Safe db wrapper — works even if Firebase fails (file:// / content://)
+const _fbDb = (()=>{
+  try{ return firebase.database(); }catch(e){ return null; }
+})();
+const db = {
+  ref:(path)=>({
+    on:(ev,cb,err)=>{ try{ if(_fbDb)_fbDb.ref(path).on(ev,cb,err||null); }catch(e){} return {off:()=>{}}; },
+    off:()=>{ try{ if(_fbDb)_fbDb.ref(path).off(); }catch(e){} },
+    once:(ev)=>{ if(_fbDb)return _fbDb.ref(path).once(ev); return Promise.resolve({val:()=>null}); },
+    set:(v)=>{ if(_fbDb)return _fbDb.ref(path).set(v); return Promise.resolve(); },
+    remove:()=>{ if(_fbDb)return _fbDb.ref(path).remove(); return Promise.resolve(); },
+    orderByKey:()=>db.ref(path),
+  })
+};
 </script>
 <style>
 /* ═══════════════════════════════════════════
-   ELECTRA CX — DESIGN SYSTEM v3
-   Industrial precision meets mobile-first UX
+   ELECTRA CX — DESIGN SYSTEM v4
+   World-class industrial inspection platform
 ═══════════════════════════════════════════ */
 :root{
-  /* Core palette — dark navy + electric gold accent */
-  --bg-deep:#05111f;
-  --bg-mid:#091a2e;
-  --bg-card:#0d2240;
-  --blue-accent:#2979ff;
-  --gold:#f59e0b;
+  /* ── Core palette ── */
+  --bg-deep:#030d1a;
+  --bg-mid:#071525;
+  --bg-card:#0a1f35;
+  --bg-card2:#0d2642;
+
+  /* ── Accent ── */
+  --gold:#f5a623;
   --gold2:#fbbf24;
-  --gold-glow:rgba(245,158,11,.15);
-  --ok:#22c55e;--ok-d:rgba(34,197,94,.12);--ok-m:rgba(34,197,94,.22);
-  --warn:#f97316;--warn-d:rgba(249,115,22,.12);
-  --fail:#ef4444;--fail-d:rgba(239,68,68,.12);--fail-m:rgba(239,68,68,.22);
-  --purple:#a855f7;--purple-d:rgba(168,85,247,.12);--purple-m:rgba(168,85,247,.22);
+  --gold3:#fcd34d;
+  --gold-glow:rgba(245,166,35,.18);
+  --gold-border:rgba(245,166,35,.25);
+  --blue:#3b82f6;
+  --blue2:#60a5fa;
+  --blue-glow:rgba(59,130,246,.15);
 
-  /* Light surface (cards in checklist) */
-  --surf:#f0f4f8;--surf2:#e2e8f0;
-  --card:#ffffff;--card2:#f8fafc;
-  --border:rgba(6,16,30,.07);--border2:rgba(6,16,30,.13);
-  --t1:#0f172a;--t2:#334155;--t3:#64748b;--t4:#94a3b8;
+  /* ── Semantic ── */
+  --ok:#10b981;--ok-d:rgba(16,185,129,.12);--ok-m:rgba(16,185,129,.2);
+  --warn:#f59e0b;--warn-d:rgba(245,158,11,.12);
+  --fail:#ef4444;--fail-d:rgba(239,68,68,.12);--fail-m:rgba(239,68,68,.2);
+  --purple:#8b5cf6;--purple-d:rgba(139,92,246,.12);--purple-m:rgba(139,92,246,.2);
+  --cyan:#06b6d4;--cyan-d:rgba(6,182,212,.12);
 
-  /* Geometry */
-  --r:18px;--r2:13px;--r3:10px;--r4:7px;
-  --sh:0 1px 3px rgba(6,16,30,.06),0 4px 16px rgba(6,16,30,.08);
-  --sh2:0 8px 28px rgba(6,16,30,.16);--sh3:0 20px 60px rgba(6,16,30,.28);
+  /* ── Light surface (checklist) ── */
+  --surf:#f1f5f9;--surf2:#e2e8f0;--surf3:#f8fafc;
+  --card:#ffffff;--card2:#f8fafc;--card3:#f0f4f8;
+  --border:rgba(15,23,42,.06);--border2:rgba(15,23,42,.11);--border3:rgba(15,23,42,.17);
+  --t1:#0f172a;--t2:#1e293b;--t3:#475569;--t4:#94a3b8;--t5:#cbd5e1;
 
-  /* Layout */
-  --nav-h:56px;--tab-h:68px;
+  /* ── Geometry ── */
+  --r:20px;--r2:14px;--r3:10px;--r4:8px;--r5:6px;
+  --sh:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.06);
+  --sh2:0 8px 24px rgba(0,0,0,.10);
+  --sh3:0 20px 50px rgba(0,0,0,.22);
+  --sh-gold:0 0 0 1px var(--gold-border),0 8px 24px var(--gold-glow);
+
+  /* ── Layout ── */
+  --nav-h:58px;--tab-h:70px;
   --safe-t:env(safe-area-inset-top,0px);
   --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{height:100%;text-size-adjust:none;}
-body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var(--surf);color:var(--t1);-webkit-font-smoothing:antialiased;overscroll-behavior:none;-webkit-overflow-scrolling:touch;}
+body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var(--surf);color:var(--t1);-webkit-font-smoothing:antialiased;overscroll-behavior:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;}
 
 /* ── APP SHELL ── */
 #app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;box-shadow:0 0 60px rgba(0,0,0,.25);}
 
 /* ── NAVBAR ── */
-.nav{background:var(--bg-deep);height:calc(var(--nav-h)+var(--safe-t));padding-top:var(--safe-t);display:flex;align-items:center;justify-content:space-between;padding-left:16px;padding-right:16px;flex-shrink:0;position:relative;z-index:300;}
-.nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.3),transparent);}
-.nav-logo-wrap{display:flex;align-items:center;gap:8px;}
-.nav-bolt{width:28px;height:28px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;box-shadow:0 0 12px var(--gold-glow);}
-.nav-brand{display:flex;flex-direction:column;line-height:1.1;}
-.nav-name{font-size:.7rem;font-weight:900;letter-spacing:2.5px;color:#fff;text-transform:uppercase;}
-.nav-sub{font-size:.52rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;}
+.nav{background:var(--bg-deep);height:calc(var(--nav-h)+var(--safe-t));padding-top:var(--safe-t);display:flex;align-items:center;justify-content:space-between;padding-left:16px;padding-right:16px;flex-shrink:0;position:relative;z-index:300;border-bottom:1px solid rgba(255,255,255,.04);}
+.nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--gold) 50%,transparent 100%);opacity:.35;}
+.nav-logo-wrap{display:flex;align-items:center;gap:10px;}
+.nav-bolt{width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;box-shadow:0 0 16px var(--gold-glow),0 2px 8px rgba(0,0,0,.3);}
+.nav-brand{display:flex;flex-direction:column;line-height:1;}
+.nav-name{font-size:.72rem;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;}
+.nav-sub{font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
 .nav-r{display:flex;gap:6px;align-items:center;}
 .nav-back{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.85);border-radius:var(--r4);padding:7px 12px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
 .nav-back:active{background:rgba(255,255,255,.15);}
@@ -98,18 +126,20 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 @keyframes scup{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
 /* ── BOTTOM TABS ── */
-.tabs{background:var(--bg-deep);height:calc(var(--tab-h)+var(--safe-b));padding-bottom:var(--safe-b);display:none;align-items:flex-start;justify-content:space-around;padding-top:8px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.05);}
+.tabs{background:var(--bg-deep);height:calc(var(--tab-h)+var(--safe-b));padding-bottom:var(--safe-b);display:none;align-items:flex-start;justify-content:space-around;padding-top:10px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.06);backdrop-filter:blur(12px);}
 .tabs.show{display:flex;}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 12px;min-width:52px;position:relative;transition:opacity .2s;}
 .tab-ico{color:rgba(255,255,255,.28);transition:color .2s;}
 .tab-lbl{font-size:.56rem;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.3px;transition:color .2s;}
-.tab.on .tab-ico{color:var(--gold);}
+.tab.on .tab-ico{color:var(--gold);filter:drop-shadow(0 0 6px var(--gold-glow));}
 .tab.on .tab-lbl{color:var(--gold);}
+.tab.on::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--gold);border-radius:0 0 2px 2px;}
 .tab-dot{position:absolute;top:0;right:8px;background:var(--fail);color:#fff;font-size:.48rem;font-weight:900;min-width:14px;height:14px;border-radius:7px;display:none;align-items:center;justify-content:center;padding:0 3px;}
 .tab-dot.show{display:flex;}
 
 /* ═══ HOME SCREEN ═══ */
-.home-hero{background:linear-gradient(160deg,var(--bg-deep) 0%,var(--bg-mid) 60%,#0a2040 100%);padding:14px 16px 13px;position:relative;overflow:hidden;}
+.home-hero{background:linear-gradient(160deg,var(--bg-deep) 0%,#081d36 55%,#0a2540 100%);padding:18px 16px 16px;position:relative;overflow:hidden;}
+.home-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-border),transparent);}
 .home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 20% 110%,rgba(41,121,255,.18) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% -5%,rgba(245,158,11,.16) 0%,transparent 55%);pointer-events:none;}
 .home-eyebrow{font-size:.6rem;font-weight:700;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;position:relative;}
 .home-title{font-size:2.2rem;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1;position:relative;font-family:'Heebo','Inter',sans-serif;}
@@ -582,7 +612,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .si:last-child{border-bottom:none;border-radius:0 0 18px 18px;}
 .si:active{background:#f8fafc;}
 .si-l{display:flex;align-items:center;gap:13px;flex:1;min-width:0;}
-.si-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.si-ico{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.18);}
 .si-t{font-size:.87rem;font-weight:700;color:#0f172a;font-family:'Heebo','Inter',sans-serif;}
 .si-d{font-size:.71rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;font-family:'Heebo','Inter',sans-serif;}
 .si-r{display:flex;align-items:center;gap:6px;flex-shrink:0;color:var(--t4);}
@@ -624,7 +654,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 <!-- ── NAV ── -->
 <div class="nav" id="app-nav">
   <div class="nav-logo-wrap" id="nav-l">
-    <div class="nav-bolt">⚡</div>
+    <div class="nav-bolt"><svg width="14" height="14" viewBox="0 0 24 24" fill="#05111f" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
     <div class="nav-brand">
       <div class="nav-name">Electra CX</div>
       <div class="nav-sub">Quality Control</div>
@@ -635,7 +665,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
       <div class="adot" id="auth-dot"></div>
       <span class="auth-lbl" id="auth-lbl">התחבר</span>
     </div>
-    <button class="nico" onclick="showSettings()">⚙️</button>
+    <button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
   </div>
 </div>
 <div class="offline-bar" id="offline-bar">📡 אין חיבור — עובד מקומית</div>
@@ -644,17 +674,31 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 <!-- ═══ HOME ═══ -->
 <div id="sc-home" class="sc on">
-  <div class="home-hero">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+  <div class="home-hero" style="background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:20px 16px 18px;position:relative;overflow:hidden;">
+    <!-- Grid overlay -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;"></div>
+    <!-- Glow orb -->
+    <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,166,35,.12) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div>
-        <div class="home-eyebrow">Electra CX · L0</div>
-        <div class="home-title" style="font-size:1.6rem;letter-spacing:-1.5px;line-height:1;">ELECTRA <em>CX</em></div>
-        <div class="home-desc" style="font-size:.68rem;margin-top:3px;">מערכת בדיקת לוחות חשמל</div>
+        <div style="font-size:.58rem;font-weight:700;letter-spacing:2.5px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;opacity:.85;">Electra CX · L0</div>
+        <div style="font-size:1.75rem;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#fff;">ELECTRA <span style="color:var(--gold);">CX</span></div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.4);margin-top:5px;letter-spacing:.3px;">מערכת בקרת איכות לוחות חשמל</div>
       </div>
-      <div class="kpis" style="margin-top:0;flex-shrink:0;">
-        <div class="kpi"><div class="kpi-n" id="st-tot">0</div><div class="kpi-l">סה"כ</div></div>
-        <div class="kpi"><div class="kpi-n" id="st-ip" style="color:#fbbf24;">0</div><div class="kpi-l">פעיל</div></div>
-        <div class="kpi"><div class="kpi-n" id="st-dn" style="color:#4ade80;">0</div><div class="kpi-l">סיים</div></div>
+      <div class="kpis" style="margin-top:0;flex-shrink:0;gap:12px;">
+        <div class="kpi" style="text-align:center;">
+          <div class="kpi-n" id="st-tot" style="color:#fff;">0</div>
+          <div class="kpi-l">סה"כ</div>
+        </div>
+        <div class="kpi" style="text-align:center;">
+          <div class="kpi-n" id="st-ip" style="color:var(--gold);">0</div>
+          <div class="kpi-l">פעיל</div>
+        </div>
+        <div class="kpi" style="text-align:center;">
+          <div class="kpi-n" id="st-dn" style="color:#10b981;">0</div>
+          <div class="kpi-l">הושלם</div>
+        </div>
       </div>
     </div>
   </div>
@@ -702,6 +746,24 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     <div class="cl-ey">ELECTRA CX · L0 CHECKLIST</div>
     <div class="cl-name" id="cl-name">צ'קליסט חדש</div>
     <div class="cl-sub" id="cl-sub"></div>
+<div class="cl-stats-bar" id="cl-stats-bar">
+  <div class="cl-stat" onclick="switchTab('cl')">
+    <div class="cl-stat-n" id="qs-p" style="color:#10b981;">0</div>
+    <div class="cl-stat-l">Passed</div>
+  </div>
+  <div class="cl-stat" onclick="switchTab('cl')">
+    <div class="cl-stat-n" id="qs-f" style="color:#ef4444;">0</div>
+    <div class="cl-stat-l">Failed</div>
+  </div>
+  <div class="cl-stat" onclick="switchTab('cl')">
+    <div class="cl-stat-n" id="qs-n" style="color:#94a3b8;">0</div>
+    <div class="cl-stat-l">N/A</div>
+  </div>
+  <div class="cl-stat" onclick="switchTab('cl')">
+    <div class="cl-stat-n" id="qs-t" style="color:var(--gold);">0</div>
+    <div class="cl-stat-l">סה"כ</div>
+  </div>
+</div>
     <div class="cl-badge" id="cl-badge">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       L0 — בדיקת עדות
@@ -899,7 +961,11 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 <!-- DRAW -->
 <div class="draw-ov" id="draw-ov">
-  <div style="color:rgba(255,255,255,.7);font-size:.8rem;font-weight:700;margin-top:4px;">✏️ ציור על התמונה</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;">
+    <button onclick="closeDraw()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);border-radius:9px;padding:7px 14px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>חזור</button>
+    <div style="color:rgba(255,255,255,.7);font-size:.8rem;font-weight:700;">✏️ ציור על התמונה</div>
+    <button id="dsave-top" style="background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>שמור</button>
+  </div>
   <canvas id="draw-cv"></canvas>
   <div class="drow2" id="dcols"></div>
   <div style="display:flex;align-items:center;gap:8px;"><span style="color:rgba(255,255,255,.4);font-size:.7rem;">עובי</span><input type="range" id="dsz" min="2" max="20" value="4" style="width:90px;accent-color:var(--blue-accent);"></div>
@@ -909,22 +975,70 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 <!-- NEW CL MODAL -->
 <div class="cntr-modal" id="new-modal">
-  <div class="cntr-sheet">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📋</div>
-      <div>
-        <div style="font-size:1rem;font-weight:800;color:var(--t1);">צ'קליסט חדש</div>
-        <div style="font-size:.72rem;color:var(--t3);">בדיקת עדות L0 — 31 סעיפים</div>
+  <div class="cntr-sheet" style="max-height:88vh;overflow-y:auto;">
+
+    <!-- ── STEP 1 ── -->
+    <div id="new-step1">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📋</div>
+        <div>
+          <div style="font-size:1rem;font-weight:800;color:var(--t1);">צ'קליסט חדש</div>
+          <div style="font-size:.72rem;color:var(--t3);">בדיקת עדות L0 — 31 סעיפים</div>
+        </div>
+      </div>
+      <!-- QUICK SCAN in step 1 -->
+      <input type="file" id="scan-input-s1" accept="image/*" capture="environment" style="display:none;" onchange="scanPanelStep1(this)">
+      <button onclick="document.getElementById('scan-input-s1').click()" id="scan-btn-s1"
+        style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#1a56db,#1e40af);border:none;color:#fff;border-radius:14px;padding:14px 16px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:14px;position:relative;box-shadow:0 4px 18px rgba(29,78,216,.35);letter-spacing:.01em;transition:opacity .15s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>סרוק שלט — מילוי אוטומטי</span>
+        <span id="scan-spinner-s1" style="display:none;position:absolute;left:14px;background:rgba(0,0,0,.25);border-radius:8px;padding:2px 8px;font-size:.7rem;color:#fff;">⏳ מנתח...</span>
+      </button>
+      <div id="scan-preview-s1" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;max-height:110px;border:1px solid rgba(96,165,250,.2);">
+        <img id="scan-img-s1" style="width:100%;max-height:110px;object-fit:cover;display:block;">
+      </div>
+      <div class="field"><label>שם הלוח / צ'קליסט *</label><input type="text" id="new-name" class="ii" style="margin:0;" placeholder="200A-L1-MSB..."></div>
+      <div class="field"><label>בודק</label><input type="text" id="new-insp" class="ii" style="margin:0;" placeholder="שם הבודק"></div>
+      <div class="field"><label>פרויקט</label><input type="text" id="new-proj" class="ii" style="margin:0;" placeholder="שם הפרויקט"></div>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button onclick="closeNewCl()" style="flex:1;background:var(--card2);color:var(--t2);border:none;padding:13px;border-radius:11px;font-weight:700;cursor:pointer;font-family:inherit;">ביטול</button>
+        <button onclick="newClStep2()" style="flex:2;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));color:#fff;border:1px solid rgba(245,158,11,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:11px;font-weight:800;cursor:pointer;font-family:inherit;">הבא — פרטי ציוד →</button>
       </div>
     </div>
-    <div class="field"><label>שם הלוח *</label><input type="text" id="new-name" class="ii" style="margin:0;" placeholder="200A-L1-MSB..."></div>
-    <div class="field"><label>פרויקט</label><input type="text" id="new-proj" class="ii" style="margin:0;"></div>
-    <div class="field"><label>בודק</label><input type="text" id="new-insp" class="ii" style="margin:0;"></div>
-    <div class="field"><label>מיקום</label><input type="text" id="new-loc" class="ii" style="margin:0;" placeholder="קומה, בניין..."></div>
-    <div style="display:flex;gap:8px;margin-top:16px;">
-      <button onclick="closeNewCl()" style="flex:1;background:var(--card2);color:var(--t2);border:none;padding:13px;border-radius:11px;font-weight:700;cursor:pointer;font-family:inherit;">ביטול</button>
-      <button onclick="confirmNewCl()" style="flex:2;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));color:#fff;border:1px solid rgba(245,158,11,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:11px;font-weight:800;cursor:pointer;font-family:inherit;">פתח בדיקה →</button>
+
+    <!-- ── STEP 2 ── -->
+    <div id="new-step2" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <button onclick="newClBack()" style="background:var(--card2);border:none;color:var(--t2);width:34px;height:34px;border-radius:9px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
+        <div>
+          <div style="font-size:1rem;font-weight:800;color:var(--t1);">פרטי הציוד</div>
+          <div style="font-size:.72rem;color:var(--t3);">סרוק שלט לוח או מלא ידנית</div>
+        </div>
+      </div>
+
+      <!-- SCAN -->
+      <input type="file" id="scan-input" accept="image/*" capture="environment" style="display:none;" onchange="scanPanel(this)">
+      <button onclick="document.getElementById('scan-input').click()" id="scan-btn"
+        style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#0f2744,#0d3060);border:1.5px dashed rgba(96,165,250,.45);color:#60a5fa;border-radius:12px;padding:12px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:12px;position:relative;">
+        <span style="font-size:1.1rem;">📷</span> צלם שלט לוח — מילוי אוטומטי
+        <span id="scan-spinner" style="display:none;position:absolute;right:12px;font-size:.72rem;color:#94a3b8;">⏳ מנתח...</span>
+      </button>
+      <div id="scan-preview" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;max-height:130px;border:1px solid rgba(96,165,250,.2);">
+        <img id="scan-img" style="width:100%;max-height:130px;object-fit:cover;display:block;">
+      </div>
+
+      <div class="field"><label>שם הלוח</label><input type="text" id="new-panel" class="ii" style="margin:0;" placeholder="200A-MSB-L1 (יזוהה אוטומטית)"></div>
+      <div class="field"><label>מס' לוח / עבודה</label><input type="text" id="new-pnum" class="ii" style="margin:0;" placeholder="מספר סידורי או מספר עבודה"></div>
+      <div class="field"><label>יצרן</label><input type="text" id="new-mfr" class="ii" style="margin:0;" placeholder="Schneider / ABB / Siemens..."></div>
+      <div class="field"><label>מיקום</label><input type="text" id="new-loc" class="ii" style="margin:0;" placeholder="מיקום הבדיקה"></div>
+      <div class="field"><label>תאריך בדיקה</label><input type="date" id="new-date" class="ii" style="margin:0;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button onclick="closeNewCl()" style="flex:1;background:var(--card2);color:var(--t2);border:none;padding:13px;border-radius:11px;font-weight:700;cursor:pointer;font-family:inherit;">ביטול</button>
+        <button onclick="confirmNewCl()" style="flex:2;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));color:#fff;border:1px solid rgba(245,158,11,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:11px;font-weight:800;cursor:pointer;font-family:inherit;">פתח בדיקה ✓</button>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -948,7 +1062,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 const ADMIN_PASS='electra1234';
 const ITEMS=[
   {c:2,id:1,t:"רישום שם הלוח והתאמתו הפיזית"},
-  {c:2,id:2,t:"רישום תאריך הבדיקה בפועל",isDate:true},
+  // id:2 removed — date already in checklist header
   {c:2,id:3,t:"ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן"},
   {c:2,id:4,t:"ודא התאמת מספר סידורי של הפריט לטופס הבדיקה"},
   {c:2,id:5,t:"צלם תווית הציוד כולל דגם ומספר סידורי"},
@@ -992,6 +1106,16 @@ let drawCb=null,drawMode='pen',drawColor='#ef4444',drawSz=4,dCtx=null,dHist=[];
 let homeF='all',issF='all',sortMode='newest';
 let actLog=[],isAuthed=false,authCb=null;
 let settings={vibrateOnPFN:true,autoOpenIssue:false,notifyEmail:'',openInNewTab:true};
+
+let _toastT=null;
+function toast(msg,dur=2800){
+  let el=document.getElementById('_toast');
+  if(!el){el=document.createElement('div');el.id='_toast';el.className='toast';document.body.appendChild(el);}
+  el.textContent=msg;el.style.display='block';el.style.opacity='1';
+  if(_toastT)clearTimeout(_toastT);
+  _toastT=setTimeout(()=>{el.style.opacity='0';setTimeout(()=>{if(el)el.style.display='none';},300);},dur);
+}
+
 function buildItems(){
   const list=document.getElementById('cl-list');
   if(list.childElementCount>0)return;
@@ -1087,8 +1211,9 @@ function apply(data){
     else if(item.s==='F'){el.querySelector('.pfn.f')?.classList.add('on');el.classList.add('f');}
     else if(item.s==='N'){el.querySelector('.pfn.n')?.classList.add('on');el.classList.add('n');}
     set('note'+i,item.note||'');if((item.note||'').trim())noteChg(i);
-    // Clear existing issues before re-rendering to prevent duplicates on every Firebase update
+    // Clear issues AND reset photo state before re-rendering — prevents duplicates
     const cont=document.getElementById('iss'+i);if(cont){cont.innerHTML='';issueCnt[i]=0;}
+    issuePhotos[i]={};
     const isp=document.getElementById('isp'+i);if(isp)isp.style.display='none';
     document.getElementById('isb'+i)?.classList.remove('hot');
     if(item.issues?.length)item.issues.forEach(iss=>{if(iss)addIss(i,iss);});
@@ -1173,18 +1298,21 @@ function addIss(itemId,data={}){
       ? '<button class="wait-btn" onclick="setIssWaiting('+itemId+','+idx+')" style="'+(st!=='open'?'display:none;':'')+'">⏳ סמן כממתין לאישור</button>'
       : '<button class="create-iss-btn" id="cib-'+itemId+'-'+idx+'" onclick="confirmIss('+itemId+','+idx+')"'+(data.confirmed?' style="display:none;"':'')+'>✅ צור Issue</button>'
     );
-  // restore issue photos
+  // restore issue photos — reset first to avoid accumulation
+  if(!issuePhotos[itemId])issuePhotos[itemId]={};
+  issuePhotos[itemId][idx]=[];
   if(data.photos?.length){
-    if(!issuePhotos[itemId])issuePhotos[itemId]={};
-    if(!issuePhotos[itemId][idx])issuePhotos[itemId][idx]=[];
-    const row=document.getElementById('ibp-'+itemId+'-'+idx);
     data.photos.forEach(p=>{
       if(!p)return;
       const url=typeof p==='string'?p:(p.url||null);
-      if(!url)return;
-      issuePhotos[itemId][idx].push({url});
-      if(row)row.appendChild(mkThumb(url,itemId,idx,'iss'));
+      if(url)issuePhotos[itemId][idx].push({url});
     });
+  }
+  // draw ibp- row from state
+  const _ibpRow=document.getElementById('ibp-'+itemId+'-'+idx);
+  if(_ibpRow){
+    _ibpRow.innerHTML='';
+    issuePhotos[itemId][idx].forEach((p,pi)=>_ibpRow.appendChild(mkThumb(p.url,itemId,pi,'iss')));
   }
   cont.appendChild(bl);
   document.getElementById('isb'+itemId)?.classList.add('hot');
@@ -1224,14 +1352,12 @@ function openIssuePage(itemId,idx){
 
 
 
-  // ── VIEWER BANNER (non-admin) ──
+  // Viewer banner
   (!isAuthed?
     '<div style="background:rgba(41,121,255,.08);border:1px solid rgba(41,121,255,.18);border-radius:12px;padding:10px 14px;margin:12px 14px 4px;display:flex;align-items:center;gap:10px;">'+
       '<span style="font-size:1rem;">👁️</span>'+
-      '<div>'+
-        '<div style="font-size:.75rem;font-weight:800;color:#2979ff;">מצב צפייה</div>'+
-        '<div style="font-size:.67rem;color:#64748b;margin-top:1px;">ניתן לצרף תמונות בלבד · לעריכה נדרשת כניסת מנהל</div>'+
-      '</div>'+
+      '<div><div style="font-size:.75rem;font-weight:800;color:#2979ff;">מצב צפייה</div>'+
+      '<div style="font-size:.67rem;color:#64748b;margin-top:1px;">ניתן לצרף תמונות בלבד · לעריכה נדרשת כניסת מנהל</div></div>'+
     '</div>'
   :'')+
 
@@ -1313,7 +1439,7 @@ function openIssuePage(itemId,idx){
       '<div class="ip-field-icon">📋</div>'+
       '<div class="ip-field-inner">'+
         '<div class="ip-field-lbl">תיאור הממצא</div>'+
-        '<textarea class="ip-textarea" id="idp-'+itemId+'-'+idx+'" placeholder="פרט את הממצא בצורה ברורה..." oninput="syncIssField(\'id\',\''+itemId+'\','+idx+',this.value)" '+(isAuthed?'':'disabled style="opacity:.7;background:#f8fafc;color:var(--t2);cursor:default;"')+'>'+curDesc+'</textarea>'+
+        '<textarea class="ip-textarea" id="idp-'+itemId+'-'+idx+'" placeholder="פרט את הממצא בצורה ברורה..." oninput="syncIssField(\'id\',\''+itemId+'\','+idx+',this.value)">'+curDesc+'</textarea>'+
       '</div>'+
     '</div>'+
   '</div>'+
@@ -1365,13 +1491,14 @@ function openIssuePage(itemId,idx){
 
   '<div style="height:20px;"></div>';
 
-  // Restore photos
-  (issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url).forEach((p,pi)=>{
-    const row=document.getElementById('iph-page-'+itemId+'-'+idx);
-    if(row&&!row.querySelector('[data-pi="'+pi+'"]')){
-      const t=mkThumb(p.url,itemId,idx,'iss');t.dataset.pi=pi;row.appendChild(t);
-    }
-  });
+  // Restore photos — always clear first
+  const _pr=document.getElementById('iph-page-'+itemId+'-'+idx);
+  if(_pr){
+    _pr.innerHTML='';
+    (issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url).forEach((p,pi)=>{
+      const t=mkThumb(p.url,itemId,pi,'iss');t.dataset.pi=pi;_pr.appendChild(t);
+    });
+  }
 
   pg.classList.add('open');
   body.scrollTop=0;
@@ -1430,7 +1557,7 @@ function syncIssPhotosToPage(itemId,idx){
   const row=document.getElementById('iph-page-'+itemId+'-'+idx);if(!row)return;
   row.innerHTML='';
   (issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url).forEach((p,pi)=>{
-    const t=mkThumb(p.url,itemId,idx,'iss');t.dataset.pi=pi;row.appendChild(t);
+    const t=mkThumb(p.url,itemId,pi,'iss');t.dataset.pi=pi;row.appendChild(t);
   });
 }
 function pickIssContact(itemId,idx,name,email){
@@ -1463,8 +1590,40 @@ function addIssPhoto(inp,itemId,idx){
   if(!inp.files?.length)return;
   if(!issuePhotos[itemId])issuePhotos[itemId]={};
   if(!issuePhotos[itemId][idx])issuePhotos[itemId][idx]=[];
-  const row=document.getElementById('ibp-'+itemId+'-'+idx);
-  [...inp.files].forEach(f=>{const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);const b64=c.toDataURL('image/jpeg',.7);issuePhotos[itemId][idx].push({url:b64});row.appendChild(mkThumb(b64,itemId,idx,'iss'));schedSave();};img.src=e.target.result;};r.readAsDataURL(f);});inp.value='';
+  const MAX=2;
+  const existing=(issuePhotos[itemId][idx]).filter(p=>p&&p.url).length;
+  const available=MAX-existing;
+  if(available<=0){toast('⚠️ מקסימום '+MAX+' תמונות לכל Issue');inp.value='';return;}
+  const files=[...inp.files].slice(0,available);
+  if([...inp.files].length>available)toast('⚠️ ניתן להוסיף עוד '+available+' תמונות בלבד');
+  let pending=files.length;
+  files.forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const c=document.createElement('canvas');
+        const sc=Math.min(1,900/img.width);
+        c.width=img.width*sc;c.height=img.height*sc;
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        issuePhotos[itemId][idx].push({url:c.toDataURL('image/jpeg',.8)});
+        if(--pending===0) redrawIssPhotos(itemId,idx);
+      };
+      img.src=e.target.result;
+    };
+    r.readAsDataURL(f);
+  });
+  inp.value='';
+}
+function redrawIssPhotos(itemId,idx){
+  const photos=(issuePhotos[itemId]?.[idx]||[]).filter(p=>p&&p.url);
+  ['ibp-'+itemId+'-'+idx,'iph-page-'+itemId+'-'+idx].forEach(id=>{
+    const row=document.getElementById(id);
+    if(!row)return;
+    row.innerHTML='';
+    photos.forEach((p,pi)=>row.appendChild(mkThumb(p.url,itemId,pi,'iss')));
+  });
+  schedSave();
 }
 
 function mkCPills(itemId,idx){
@@ -1608,6 +1767,7 @@ function openItemIssuesPage(itemId){
   renderItemIssuesPage(itemId);
   pg.classList.add('open');
   pg.dataset.itemId=itemId;
+  _push('item:'+itemId);
 }
 
 function renderItemIssuesPage(itemId){
@@ -1724,7 +1884,9 @@ function openDraw(src,cb){
   const td=document.getElementById('dtools');td.innerHTML='';
   [['✏️','pen'],['↗️','arrow'],['⬜','rect'],['⭕','circle'],['T','text'],['↩️','undo']].forEach(([l,m])=>{const b=document.createElement('button');b.className='dtool'+(m===drawMode?' on':'');b.textContent=l;b.onclick=()=>{if(m==='undo'){if(dHist.length)dCtx.putImageData(dHist.pop(),0,0);return;}drawMode=m;td.querySelectorAll('.dtool').forEach(x=>x.classList.remove('on'));b.classList.add('on');};td.appendChild(b);});
   document.getElementById('dsz').oninput=e=>{drawSz=+e.target.value;dCtx.lineWidth=drawSz;};
-  document.getElementById('dsave').onclick=()=>{if(drawCb)drawCb(cv.toDataURL('image/jpeg',.88));closeDraw();};
+  const _saveDraw=()=>{if(drawCb)drawCb(cv.toDataURL('image/jpeg',.88));closeDraw();};
+  document.getElementById('dsave').onclick=_saveDraw;
+  document.getElementById('dsave-top').onclick=_saveDraw;
   let dr=false,sx=0,sy=0,sn;
   const gp=e=>{const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};};
   cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();dr=true;const p=gp(e);sx=p.x;sy=p.y;dHist.push(dCtx.getImageData(0,0,cv.width,cv.height));sn=dCtx.getImageData(0,0,cv.width,cv.height);if(drawMode==='pen'){dCtx.beginPath();dCtx.moveTo(p.x,p.y);}if(drawMode==='text'){const t=prompt('טקסט:');if(t){dCtx.font='bold '+(drawSz*4+10)+'px sans-serif';dCtx.fillStyle=drawColor;dCtx.fillText(t,p.x,p.y);}dr=false;}};
@@ -1837,17 +1999,11 @@ function renderIssues(){
       const stCls=st==='closed'?' closed':st==='waiting'?' waiting':'';
       const stBadge=st==='closed'?'<span class="ich ich-c">✓ סגור</span>':st==='waiting'?'<span class="ich ich-w">⏳ ממתין</span>':'<span class="ich ich-o">⚠️ פתוח</span>';
 
-      // Photos
       // Photos from issuePhotos state
       const phArr=(issuePhotos[i]?.[n]||[]).filter(p=>p&&p.url);
 
       const card=document.createElement('div');card.className='iss-card'+stCls;
-      // Click on card → open the Issue page directly
-      card.onclick=e=>{
-        if(e.target.closest('button')||e.target.tagName==='IMG')return;
-        switchTab('cl');
-        setTimeout(()=>{ openItemIssuesPage(i); setTimeout(()=>openIssuePage(i,n),200); },250);
-      };
+      card.onclick=e=>{if(e.target.closest('button')||e.target.tagName==='IMG')return;switchTab('cl');setTimeout(()=>{openItemIssuesPage(i);setTimeout(()=>openIssuePage(i,n),200);},250);};
 
       // Build innerHTML for text parts
       card.innerHTML=
@@ -2165,7 +2321,7 @@ function applyAuthState(){
 // ════════════════════════════════════════
 // NAV / TABS
 // ════════════════════════════════════════
-function switchTab(tab){
+function switchTab(tab){ _push('tab:'+tab);
   ['cl','issues','dash'].forEach(t=>{
     document.getElementById('sc-'+(t==='cl'?'cl':t==='issues'?'issues':'dash'))?.classList.toggle('on',t===tab);
     document.getElementById('tab-'+t)?.classList.toggle('on',t===tab);
@@ -2182,7 +2338,7 @@ function switchTab(tab){
   document.getElementById('nav-r').innerHTML=
     '<div class="spill" id="save-pill"></div>'+
     (isAuthed?'<button class="nico" onclick="logout()" style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.5);">יצא</button>':'')+
-    '<button class="nico" onclick="showSettings()">⚙️</button>';
+    '<button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>';
   if(tab==='issues')renderIssues();
   if(tab==='dash')renderDash();
 }
@@ -2191,29 +2347,41 @@ function goHome(){
   document.getElementById('sc-home').classList.add('on');
   document.getElementById('tabs').classList.remove('show');
   document.getElementById('nav-l').innerHTML=
-    '<div class="nav-logo-wrap"><div class="nav-bolt">⚡</div><div class="nav-brand"><div class="nav-name">Electra CX</div><div class="nav-sub">Quality Control</div></div></div>';
+    '<div class="nav-logo-wrap"><div class="nav-bolt"><svg width="14" height="14" viewBox="0 0 24 24" fill="#05111f" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="nav-brand"><div class="nav-name">Electra CX</div><div class="nav-sub">Quality Control</div></div></div>';
   document.getElementById('nav-r').innerHTML=
     '<div class="auth-pill" id="auth-pill" onclick="'+(isAuthed?'logout()':'showAuthModal()')+'">'+
     '<div class="adot'+(isAuthed?' on':'')+'"></div>'+
     '<span class="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div>'+
-    '<button class="nico" onclick="showSettings()">⚙️</button>';
+    '<button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>';
 }
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
 // ════════════════════════════════════════
-function enterCl(id){
-  // Hide home, show checklist — no new tab, no scroll junk
+function enterCl(id, prefill){
   document.getElementById('sc-home').classList.remove('on');
   CID=id; resetCl(); switchTab('cl');
-  // Scroll to very top immediately
   const content=document.querySelector('.content');
   if(content)content.scrollTop=0;
   window.scrollTo(0,0);
   _loadClData(id);
+  // Apply prefill after fields are rendered
+  if(prefill){
+    setTimeout(()=>{
+      const set=(fid,val)=>{if(!val)return;const e=document.getElementById(fid);if(e&&!e.value){e.value=val;}};
+      set('f-panel', prefill.panel); syncName();
+      set('f-num',   prefill.pnum);
+      set('f-mfr',   prefill.mfr);
+      set('f-proj',  prefill.proj);
+      set('f-loc',   prefill.loc);
+      set('f-insp',  prefill.insp);
+      set('f-date',  prefill.fdate);
+      schedSave();
+    }, 350);
+  }
 }
-function openCl(id){
-  if(!isAuthed){requireAuth(()=>enterCl(id));return;}
-  enterCl(id);
+function openCl(id, prefill){
+  if(!isAuthed){requireAuth(()=>enterCl(id, prefill));return;}
+  enterCl(id, prefill);
 }
 function viewCl(id){ enterCl(id); }
 function leaveChecklist(){
@@ -2409,23 +2577,75 @@ function exportAllCSV(){
 // ════════════════════════════════════════
 // NEW CL
 // ════════════════════════════════════════
-function newCl(){document.getElementById('new-modal').classList.add('show');setTimeout(()=>document.getElementById('new-name')?.focus(),100);}
-function closeNewCl(){document.getElementById('new-modal').classList.remove('show');['new-name','new-proj','new-insp','new-loc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+function newCl(){
+  // Reset to step 1
+  document.getElementById('new-step1').style.display='';
+  document.getElementById('new-step2').style.display='none';
+  // Set today's date
+  const nd=document.getElementById('new-date');
+  if(nd){const t=new Date();nd.value=t.toISOString().split('T')[0];}
+  document.getElementById('new-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('new-name')?.focus(),100);
+}
+function newClStep2(){
+  const name=document.getElementById('new-name')?.value.trim();
+  if(!name){document.getElementById('new-name').style.borderColor='var(--fail)';toast('⚠️ הכנס שם ללוח');return;}
+  // Pre-fill panel name from checklist name
+  const panelInp=document.getElementById('new-panel');
+  if(panelInp&&!panelInp.value)panelInp.value=name;
+  // Auto-fill from scan result if available
+  const sc=window._scanResult||{};
+  if(sc.panel_number){const e=document.getElementById('new-pnum');if(e&&!e.value)e.value=sc.panel_number;}
+  if(sc.manufacturer){const e=document.getElementById('new-mfr');if(e&&!e.value)e.value=sc.manufacturer;}
+  if(sc.location){const e=document.getElementById('new-loc');if(e&&!e.value)e.value=sc.location;}
+  if(sc.date){const e=document.getElementById('new-date');if(e&&!e.value)e.value=sc.date;}
+  window._scanResult=null;
+  // Copy scan preview to step2
+  const img1=document.getElementById('scan-img-s1');
+  const img2=document.getElementById('scan-img');
+  const prev2=document.getElementById('scan-preview');
+  if(img1&&img1.src&&img2&&prev2){img2.src=img1.src;prev2.style.display='block';}
+  document.getElementById('new-step1').style.display='none';
+  document.getElementById('new-step2').style.display='';
+}
+function newClBack(){
+  document.getElementById('new-step1').style.display='';
+  document.getElementById('new-step2').style.display='none';
+}
+function closeNewCl(){
+  document.getElementById('new-modal').classList.remove('show');
+  ['new-name','new-panel','new-pnum','new-mfr','new-proj','new-insp','new-loc','new-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const sp=document.getElementById('scan-preview');if(sp)sp.style.display='none';
+  const sp1=document.getElementById('scan-preview-s1');if(sp1)sp1.style.display='none';
+  window._scanResult=null;
+  const sb=document.getElementById('scan-btn');if(sb)sb.style.borderColor='rgba(96,165,250,.45)';
+  // Reset to step 1
+  const s1=document.getElementById('new-step1');if(s1)s1.style.display='';
+  const s2=document.getElementById('new-step2');if(s2)s2.style.display='none';
+}
 function confirmNewCl(){
   const title=document.getElementById('new-name')?.value.trim();
-  if(!title){document.getElementById('new-name').style.borderColor='var(--fail)';toast('⚠️ הכנס שם ללוח');return;}
+  if(!title){toast('⚠️ הכנס שם ללוח');return;}
+  const panelVal=document.getElementById('new-panel')?.value.trim()||title;
   const proj=document.getElementById('new-proj')?.value.trim()||'';
   const insp=document.getElementById('new-insp')?.value.trim()||'';
   const loc=document.getElementById('new-loc')?.value.trim()||'';
+  const pnum=document.getElementById('new-pnum')?.value.trim()||'';
+  const mfr=document.getElementById('new-mfr')?.value.trim()||'';
+  const fdate=document.getElementById('new-date')?.value||new Date().toISOString().split('T')[0];
   closeNewCl();const id='cl_'+Date.now();
-  const meta={title,proj,insp,loc,status:'not-started',created:new Date().toLocaleDateString('he-IL'),fdate:'',passed:0,failed:0,na:0,total:31,openIssues:0,closedIssues:0,waitingIssues:0};
+  // Checklist name = panel name
+  const meta={title:panelVal,proj,insp,loc,pnum,mfr,status:'not-started',created:new Date().toLocaleDateString('he-IL'),fdate,passed:0,failed:0,na:0,total:31,openIssues:0,closedIssues:0,waitingIssues:0};
   allCls[id]=meta;db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});
-  openCl(id);
+  openCl(id,{panel:panelVal,pnum,mfr,proj,loc,insp,fdate});
 }
 document.getElementById('pin-inp')?.addEventListener('keydown',e=>{if(e.key==='Enter')doAuth();});
-document.getElementById('new-name')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-proj')?.focus();});
-document.getElementById('new-proj')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-insp')?.focus();});
-document.getElementById('new-insp')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-loc')?.focus();});
+document.getElementById('new-name')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-insp')?.focus();});
+document.getElementById('new-insp')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-proj')?.focus();});
+document.getElementById('new-proj')?.addEventListener('keydown',e=>{if(e.key==='Enter')newClStep2();});
+document.getElementById('new-panel')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-pnum')?.focus();});
+document.getElementById('new-pnum')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-mfr')?.focus();});
+document.getElementById('new-mfr')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-loc')?.focus();});
 document.getElementById('new-loc')?.addEventListener('keydown',e=>{if(e.key==='Enter')confirmNewCl();});
 
 // ════════════════════════════════════════
@@ -2518,6 +2738,37 @@ function openSub(id){
 function closeSub(){document.getElementById('sett-sub')?.classList.remove('open');}
 
 // helpers
+
+// ── SVG Icon set (iOS-style) ──
+const _ico={
+  profile:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
+  shield:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  key:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2 10.7 12.3M15.6 6.4l2.8 2.8"/></svg>',
+  checklist:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+  contacts:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  bell:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>',
+  palette:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
+  database:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+  performance:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  info:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  admin:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  vibrate:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20M17 2v20M2 7h3M2 12h3M2 17h3M19 7h3M19 12h3M19 17h3M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>',
+  warning:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  scroll:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>',
+  firebase:'<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M3.89 15.67L6.6 2.02l4.26 7.87-2.38 4.38L3.89 15.67zM20.11 15.67l-1.28-9.13-4.09 7.53 5.37 1.6zM12 22l-3.68-6.64 3.68-1.1 3.68 1.1L12 22zM6.6 2.02L12 13.26l-5.4-7.59V2.02z"/></svg>',
+  save:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+  clock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  chart:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  eye:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  email:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+  resize:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>',
+  contrast:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M12 2a10 10 0 0110 10A10 10 0 0112 22"/></svg>',
+  motion:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>',
+  device:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+  backup:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>',
+  csv:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+};
+
 function sg(rows){return '<div class="sett-grp">'+rows+'</div>';}
 function sh(t){return '<div class="sett-sec-hdr">'+t+'</div>';}
 function si(ico,bg,ttl,dsc,right,oc){
@@ -2536,23 +2787,23 @@ const badge=(txt,color)=>'<span style="font-size:.65rem;font-weight:800;padding:
 function pgProfile(){
   return sh('חשבון')+sg(
     '<div class="si"><div class="si-l">'+
-    '<div class="si-ico" style="background:'+(isAuthed?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#94a3b8,#64748b)')+'">'+(isAuthed?'🛡️':'👤')+'</div>'+
+    '<div class="si-ico" style="background:'+(isAuthed?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#64748b,#475569)')+'">'+( isAuthed?_ico.shield:_ico.profile)+'</div>'+
     '<div><div class="si-t">'+(isAuthed?'מנהל מערכת':'צופה')+'</div><div class="si-d">'+(isAuthed?'הרשאה מלאה':'גישת קריאה בלבד')+'</div></div></div>'+
     '<div class="si-r">'+(isAuthed
       ?'<button onclick="logout();closeSub();closeSettings();toast(\'👋 התנתקת\');" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:8px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;">התנתק</button>'
       :'<button onclick="closeSub();closeSettings();showAuthModal();" style="background:rgba(41,121,255,.1);color:#2979ff;border:none;border-radius:8px;padding:6px 14px;font-size:.75rem;font-weight:700;cursor:pointer;">התחבר</button>'
     )+'</div></div>'
   )+sh('מכשיר')+sg(
-    si('📱','linear-gradient(135deg,#6366f1,#4338ca)','מכשיר',
+    si(_ico.device,'linear-gradient(135deg,#6366f1,#4338ca)','מכשיר',
       navigator.userAgent.includes('Android')?'Android':navigator.userAgent.includes('iPhone')?'iPhone':'Desktop','')
   );
 }
 
 function pgSecurity(){
   return sh('סיסמאות')+sg(
-    si('🔑','linear-gradient(135deg,#f59e0b,#d97706)','סיסמת מנהל','electra1234',
+    si(_ico.key,'linear-gradient(135deg,#f59e0b,#d97706)','סיסמת מנהל','electra1234',
       '<button onclick="toast(\'שנה את ADMIN_PASS בקוד הראשי\');" style="background:var(--warn-d);color:var(--warn);border:none;border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:700;cursor:pointer;">מידע</button>'
-    )+si('👁️','linear-gradient(135deg,#6366f1,#4338ca)','ברירת מחדל','צפייה ללא סיסמה','')
+    )+si(_ico.eye,'linear-gradient(135deg,#6366f1,#4338ca)','ברירת מחדל','צפייה ללא סיסמה','')
   )+sh('מצב נוכחי')+sg(
     si(isAuthed?'✅':'🔒','linear-gradient(135deg,#22c55e,#15803d)',
       isAuthed?'מחובר כמנהל':'לא מחובר',
@@ -2562,10 +2813,10 @@ function pgSecurity(){
 
 function pgChecklist(){
   return sh('בדיקה')+sg(
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">📳</div><div><div class="si-t">רטט בסימון P/F/N</div><div class="si-d">ויברציה קצרה בכל סימון</div></div></div>'+stog('vibrateOnPFN')+'</div>'+
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">⚠️</div><div><div class="si-t">Issue אוטומטי ב-Failed</div><div class="si-d">פתח Issue כשסעיף נכשל</div></div></div>'+stog('autoOpenIssue')+'</div>'
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20M17 2v20M2 7h3M2 12h3M2 17h3M19 7h3M19 12h3M19 17h3M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg></div><div><div class="si-t">רטט בסימון P/F/N</div><div class="si-d">ויברציה קצרה בכל סימון</div></div></div>'+stog('vibrateOnPFN')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><div class="si-t">Issue אוטומטי ב-Failed</div><div class="si-d">פתח Issue כשסעיף נכשל</div></div></div>'+stog('autoOpenIssue')+'</div>'
   )+sh('תצוגה')+sg(
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">🔵</div><div><div class="si-t">גלול לסעיף הבא אוטומטית</div><div class="si-d">אחרי סימון P/F/N</div></div></div>'+stog('autoScroll')+'</div>'
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 10 12 15 17 10"/></svg></div><div><div class="si-t">גלול לסעיף הבא אוטומטית</div><div class="si-d">אחרי סימון P/F/N</div></div></div>'+stog('autoScroll')+'</div>'
   );
 }
 
@@ -2585,7 +2836,7 @@ function pgContacts(){
 function pgNotifications(){
   return sh('מייל CC')+
   '<div class="sett-grp"><div class="si" style="flex-direction:column;align-items:flex-start;gap:10px;">'+
-  '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">📧</div>'+
+  '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>'+
   '<div><div class="si-t">מייל לשליחה אוטומטית</div><div class="si-d">נשלח CC עם כל Issue</div></div></div>'+
   '<input type="email" value="'+(settings.notifyEmail||'')+'" placeholder="admin@electra.co.il" oninput="settings.notifyEmail=this.value;saveSettings();" '+
   'style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:inherit;background:var(--card2);outline:none;color:var(--t1);">'+
@@ -2607,9 +2858,9 @@ function pgAppearance(){
 
 function pgAccessibility(){
   return sh('קריאות')+sg(
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);">📏</div><div><div class="si-t">גדל טקסט</div><div class="si-d">הגדל טקסטים</div></div></div>'+stog('largeText')+'</div>'+
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">🎨</div><div><div class="si-t">ניגודיות גבוהה</div><div class="si-d">הגדל ניגודיות צבעים</div></div></div>'+stog('highContrast')+'</div>'+
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#f97316,#c2410c);">🌀</div><div><div class="si-t">הפחת אנימציות</div><div class="si-d">לרגישות לתנועה</div></div></div>'+stog('reduceMotion')+'</div>'
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></div><div><div class="si-t">גדל טקסט</div><div class="si-d">הגדל טקסטים</div></div></div>'+stog('largeText')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div><div><div class="si-t">ניגודיות גבוהה</div><div class="si-d">הגדל ניגודיות צבעים</div></div></div>'+stog('highContrast')+'</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#64748b,#475569);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div><div class="si-t">הפחת אנימציות</div><div class="si-d">לרגישות לתנועה</div></div></div>'+stog('reduceMotion')+'</div>'
   );
 }
 
@@ -2631,54 +2882,72 @@ function saveBackups(arr){
 }
 
 async function runBackup(manual=false){
-  if(!navigator.onLine&&!manual){return;} // skip auto if offline
+  if(!navigator.onLine&&!manual&&!getBackups().length===0){return;}
+
   const snapshot={};
-  // Fetch all checklist data from Firebase
+
+  // 1. Try Firebase first
   try{
     const snap=await db.ref('checklists').once('value');
     const v=snap.val()||{};
     Object.keys(v).forEach(id=>{
       snapshot[id]={meta:v[id].meta||null,data:v[id].data||null};
     });
-  }catch(e){
-    // Fallback: use what we have in memory from allCls
-    Object.keys(allCls).forEach(id=>{
-      snapshot[id]={meta:allCls[id],data:null};
-    });
-    if(!Object.keys(snapshot).length){if(manual)toast('⚠️ אין נתונים לגיבוי');return;}
-  }
-  if(!Object.keys(snapshot).length){if(manual)toast('⚠️ אין צ\'קליסטים לגיבוי');return;}
+  }catch(e){}
 
-  const entry={
-    ts:Date.now(),
-    auto:!manual,
-    data:snapshot,
-    ver:3
-  };
+  // 2. Merge with localStorage data (more complete — includes issuePhotos etc)
+  try{
+    Object.keys(localStorage).forEach(k=>{
+      if(!k.startsWith('cl_'))return;
+      const id=k.slice(3);
+      try{
+        const data=JSON.parse(localStorage.getItem(k));
+        if(!snapshot[id])snapshot[id]={meta:allCls[id]||null,data:null};
+        // localStorage data takes priority as it's most current
+        snapshot[id].data=data;
+        if(!snapshot[id].meta && allCls[id]) snapshot[id].meta=allCls[id];
+      }catch(ex){}
+    });
+  }catch(e){}
+
+  // 3. Add in-memory allCls for any missing meta
+  Object.keys(allCls).forEach(id=>{
+    if(!snapshot[id])snapshot[id]={meta:allCls[id],data:null};
+    else if(!snapshot[id].meta)snapshot[id].meta=allCls[id];
+  });
+
+  if(!Object.keys(snapshot).length){
+    if(manual)toast('⚠️ אין צ\'קליסטים לגיבוי');
+    return;
+  }
+
+  const entry={ts:Date.now(),auto:!manual,data:snapshot,ver:4,count:Object.keys(snapshot).length};
+
+  // Save to localStorage (always works)
   const bks=getBackups();
   bks.unshift(entry);
-  // Keep only BK_MAX entries
   if(bks.length>BK_MAX)bks.splice(BK_MAX);
   saveBackups(bks);
-  // Also save to Firebase under backups/ node
+
+  // Also try Firebase
   try{
     const bkKey='bk_'+Date.now();
-    await db.ref('backups/'+bkKey).set({
-      ts:entry.ts,auto:entry.auto,
-      summary:{count:Object.keys(snapshot).length},
-      data:snapshot
-    });
-    // Prune old Firebase backups — keep last 10
+    await db.ref('backups/'+bkKey).set({ts:entry.ts,auto:entry.auto,count:entry.count,data:snapshot});
     const fbBks=await db.ref('backups').orderByKey().once('value');
     const keys=Object.keys(fbBks.val()||{}).sort();
     if(keys.length>BK_MAX){
       const toDelete=keys.slice(0,keys.length-BK_MAX);
       await Promise.all(toDelete.map(k=>db.ref('backups/'+k).remove()));
     }
-  }catch(e){}
+  }catch(e){/* Firebase unavailable — localStorage backup still saved */}
 
-  if(manual)toast('✅ גיבוי נשמר — '+Object.keys(snapshot).length+" צ'קליסטים");
-  else console.log('[Electra CX] Auto backup done —',Object.keys(snapshot).length,'checklists');
+  if(manual){
+    toast('✅ גיבוי נשמר — '+Object.keys(snapshot).length+" צ'קליסטים");
+    // Refresh the data page after backup
+    setTimeout(()=>{if(document.getElementById('sett-sub')?.classList.contains('open'))openSub('data');},600);
+  }else{
+    console.log('[ECX] Auto backup —',Object.keys(snapshot).length,'checklists');
+  }
 }
 
 function startAutoBackup(){
@@ -2760,26 +3029,60 @@ async function confirmRestore(idx){
   const selected=[...document.querySelectorAll('.bk-cl-cb:checked')].map(c=>c.value);
   if(!selected.length){toast('⚠️ לא נבחרו צ\'קליסטים');return;}
   document.getElementById('restore-modal')?.remove();
-  toast('⏳ משחזר '+selected.length+" צ'קליסטים...");
+
+  const total=selected.length;
+  toast('⏳ משחזר '+total+" צ'קליסטים...");
 
   let ok=0,fail=0;
   for(const id of selected){
     const entry=bk.data[id];if(!entry)continue;
     try{
-      const writes=[];
-      if(entry.meta)writes.push(db.ref('checklists/'+id+'/meta').set(entry.meta));
-      if(entry.data)writes.push(db.ref('checklists/'+id+'/data').set(entry.data));
-      await Promise.all(writes);
-      // Also restore to localStorage
-      if(entry.data){try{localStorage.setItem('cl_'+id,JSON.stringify(entry.data));}catch(e){}}
+      // 1. Restore to localStorage first (always works)
+      if(entry.data){
+        try{localStorage.setItem('cl_'+id,JSON.stringify(entry.data));}catch(e){}
+      }
+      // 2. Restore meta to localStorage
+      if(entry.meta){
+        try{
+          const existing=JSON.parse(localStorage.getItem('cl_meta_'+id)||'{}');
+          localStorage.setItem('cl_meta_'+id,JSON.stringify({...existing,...entry.meta}));
+        }catch(e){}
+      }
+      // 3. Try Firebase
+      try{
+        const writes=[];
+        if(entry.meta)writes.push(db.ref('checklists/'+id+'/meta').set(entry.meta));
+        if(entry.data)writes.push(db.ref('checklists/'+id+'/data').set(entry.data));
+        if(writes.length)await Promise.all(writes);
+      }catch(fbErr){/* Firebase unavailable — localStorage already restored */}
+      // 4. Update in-memory allCls
+      if(entry.meta){allCls[id]=entry.meta;}
       ok++;
-    }catch(e){fail++;}
+    }catch(e){console.error('Restore failed for',id,e);fail++;}
   }
-  if(ok)loadHome();
-  if(fail)toast('⚠️ שוחזרו '+ok+', נכשלו '+fail);
-  else toast('✅ שוחזרו '+ok+" צ'קליסטים בהצלחה!");
-  // Refresh settings panel
-  setTimeout(()=>{closeSub();openSub('data');},800);
+
+  // 5. Force full UI reload
+  if(ok>0){
+    // Clear current checklist state to force reload
+    if(CID && selected.includes(CID)){
+      CID=null;
+      try{
+        document.getElementById('sc-cl')?.classList.remove('on');
+        document.getElementById('tabs')?.classList.remove('show');
+        document.getElementById('sc-home')?.classList.add('on');
+      }catch(e){}
+    }
+    // Reload home list
+    loadHome();
+    renderHome();
+  }
+
+  if(fail>0) toast('⚠️ שוחזרו '+ok+', נכשלו '+fail);
+  else toast('✅ שוחזרו '+ok+" צ'קליסטים! לחץ כדי לפתוח.");
+  setTimeout(()=>{
+    closeSub();
+    setTimeout(()=>closeSettings(),200);
+  },800);
 }
 
 function pgData(){
@@ -2791,16 +3094,16 @@ function pgData(){
   const nextBk=bkInterval?'הבא: '+Math.round((3600000-(Date.now()%3600000))/60000)+' דק\'':'כבוי';
 
   return sh('ענן ואחסון')+sg(
-    si('🔥','linear-gradient(135deg,#f97316,#c2410c)','Firebase Cloud','electra-10-default-rtdb.firebaseio.com',
+    si(_ico.firebase,'linear-gradient(135deg,#f97316,#c2410c)','Firebase Cloud','electra-10-default-rtdb.firebaseio.com',
       badge(navigator.onLine?'מחובר':'מנותק',navigator.onLine?'#22c55e':'#ef4444'))+
-    si('💾','linear-gradient(135deg,#78716c,#44403c)','אחסון מקומי',clCount+" צ'קליסטים · "+localKB+'KB','')
+    si(_ico.save,'linear-gradient(135deg,#64748b,#475569)','אחסון מקומי',clCount+" צ'קליסטים · "+localKB+'KB','')
   )+
   sh('🔄 גיבוי אוטומטי')+sg(
-    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">🕐</div>'+
+    '<div class="si"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'+
     '<div><div class="si-t">גיבוי כל שעה</div><div class="si-d">'+nextBk+'</div></div></div>'+
     '<button class="stog '+(bkInterval?'on':'off')+'" onclick="toggleAutoBackup(this)" style="flex-shrink:0;"></button></div>'+
     '<div class="si" onclick="requireAuth(()=>{runBackup(true);setTimeout(()=>openSub(\'data\'),1200);})" style="cursor:pointer;">'+
-    '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">💾</div>'+
+    '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></div>'+
     '<div><div class="si-t">גבה עכשיו</div><div class="si-d">'+lastBkTxt+'</div></div></div>'+chev+'</div>'
   )+
   sh('📦 גיבויים שמורים ('+backups.length+')')+
@@ -2810,7 +3113,7 @@ function pgData(){
       const n=Object.keys(b.data||{}).length;
       const isAuto=b.auto;
       return '<div class="si">'+
-        '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,'+(isAuto?'#6366f1,#4338ca':'#f59e0b,#d97706')+');">'+(isAuto?'🔄':'👤')+'</div>'+
+        '<div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,'+(isAuto?'#6366f1,#4338ca':'#f59e0b,#d97706')+'">'+( isAuto?_ico.backup:_ico.save)+'</div>'+
         '<div><div class="si-t">'+dt+'</div>'+
         '<div class="si-d">'+(isAuto?'אוטומטי':'ידני')+' · '+n+" צ'קליסטים"+'</div></div></div>'+
         '<div style="display:flex;gap:5px;">'+
@@ -2821,9 +3124,9 @@ function pgData(){
     '<div style="text-align:center;padding:24px;color:var(--t3);font-size:.8rem;">אין גיבויים. לחץ "גבה עכשיו" להתחיל.</div>'
   )+
   sh('ייצוא')+sg(
-    si('📊','linear-gradient(135deg,#22c55e,#15803d)',"ייצא הכל CSV","כל הצ'קליסטים",chev,'requireAuth(exportAllCSV)')
+    si(_ico.csv,'linear-gradient(135deg,#22c55e,#15803d)',"ייצא הכל CSV","כל הצ'קליסטים",chev,'requireAuth(exportAllCSV)')
   )+sh('ניקוי')+'<div style="padding:0 14px 14px;">'+
-  '<button class="danger-btn" onclick="if(confirm(\'למחוק נתונים מקומיים?\')){{localStorage.clear();toast(\'✅ נמחק\');}}">🗑️ נקה אחסון מקומי</button>'+
+  '<button class="danger-btn" onclick="if(confirm(\'למחוק נתונים מקומיים?\')){localStorage.clear();toast(\'✅ נמחק\');}">🗑️ נקה אחסון מקומי</button>'+
   '</div>';
 }
 
@@ -2879,8 +3182,8 @@ function pgAdmin(){
     '<button onclick="deleteCl(\''+id+'\');openSub(\'admin\');" style="background:var(--fail-d);color:var(--fail);border:none;border-radius:8px;padding:5px 12px;font-size:.72rem;font-weight:800;cursor:pointer;">מחק</button></div>'
   ).join('')):'<div style="padding:20px;text-align:center;color:var(--t3);">אין צ\'קליסטים</div>')+
   sh('פעולות מסוכנות')+'<div style="padding:0 14px;">'+
-  '<button class="danger-btn" onclick="if(confirm(\'למחוק היסטוריה?\')){{localStorage.removeItem(\'cx_login_hist\');toast(\'✅ נמחק\');}}">🗑️ מחק היסטוריית כניסות</button>'+
-  '<button class="danger-btn" onclick="if(prompt(\'סיסמה:\')==\'electra1234\'){{if(confirm(\'לאפס הכל?\')){{localStorage.clear();location.reload();}}}}">⚠️ איפוס מלא</button>'+
+  '<button class="danger-btn" onclick="if(confirm(\'למחוק היסטוריה?\')){localStorage.removeItem(\'cx_login_hist\');toast(\'✅ נמחק\');}">🗑️ מחק היסטוריית כניסות</button>'+
+  '<button class="danger-btn" onclick="if(prompt(\'סיסמה:\')==\'electra1234\'){if(confirm(\'לאפס הכל?\')){localStorage.clear();location.reload();}}">⚠️ איפוס מלא</button>'+
   '</div>';
 }
 
@@ -2992,7 +3295,7 @@ body{font-family:'Heebo',Arial,sans-serif;direction:rtl;background:#f0f4f8;color
 .sec{font-size:.72rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid #e2e8f0;}
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:14px;}
 .print-btn{position:fixed;bottom:20px;right:20px;background:#05111f;color:#fff;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.25);}
-.back-btn{position:fixed;bottom:20px;left:20px;background:#f59e0b;color:#05111f;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,.4);display:flex;align-items:center;gap:8px;}
+.back-btn{position:fixed;bottom:20px;left:20px;background:#f59e0b;color:#05111f;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,.4);}
 
 /* ── ENHANCED ITEM DESIGN ── */
 .item{border-left:3.5px solid transparent;transition:border-color .2s,box-shadow .2s;}
@@ -3008,7 +3311,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;ove
 </head>
 <body>
 <button class="print-btn no-print" onclick="window.print()">🖨 שמור PDF</button>
-<button class="back-btn no-print" onclick="history.back()">← חזרה לצ'קליסט</button>
+<button class="back-btn no-print" onclick="window.close()">← חזרה לצ'קליסט</button>
 <div class="wrap">
 
 <div class="header">
@@ -3048,47 +3351,35 @@ ${notes?`<div class="sec">הערות כלליות</div><div style="background:#f
 <div style="text-align:center;margin-top:16px;font-size:.65rem;color:#cbd5e1;">Electra CX Quality Control | ${panel} | ${fdate}</div>
 </div></body></html>`;
 
-  // Open report — blob in same tab so browser back button works; print dialog = Save PDF
-  try {
-    const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    // Navigate current tab → browser back button returns to app
-    location.href = url;
-    toast('✅ הדוח נפתח — לחץ שמור PDF');
-  } catch(e) {
-    const win = window.open('','_blank');
+  try{
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const win=window.open(url,'_blank');
+    if(!win)throw new Error('blocked');
+    setTimeout(()=>URL.revokeObjectURL(url),20000);
+    toast('✅ הדוח נפתח');
+  }catch(e){
+    const win=window.open('','_blank');
     if(!win){toast('⚠️ אפשר חלונות קופצים בדפדפן');return;}
-    win.document.write(html); win.document.close();
+    win.document.write(html);win.document.close();
     toast('✅ הדוח נפתח');
   }
 }
-
-// ════════════════════════════════════════
-// SHARE CHECKLIST
-// ════════════════════════════════════════
 function shareChecklist(){
-  if(!CID){toast('אין צ\u05f3קליסט פעיל');return;}
-  const panel=document.getElementById('f-panel')?.value||'צ\u05f3קליסט';
+  if(!CID){toast('אין צ׳קליסט פעיל');return;}
+  const panel=document.getElementById('f-panel')?.value||'צ׳קליסט';
   const url=location.origin+location.pathname+'?cl='+CID;
-  if(navigator.share){
-    navigator.share({title:'Electra CX — '+panel,url}).catch(()=>{});
-  } else {
-    navigator.clipboard?.writeText(url).then(()=>toast('🔗 הקישור הועתק')).catch(()=>{
-      prompt('העתק קישור:',url);
-    });
-  }
+  if(navigator.share){navigator.share({title:'Electra CX — '+panel,url}).catch(()=>{});}
+  else{navigator.clipboard?.writeText(url).then(()=>toast('🔗 הקישור הועתק')).catch(()=>prompt('העתק קישור:',url));}
 }
 
-// ════════════════════════════════════════
-// SEND ALL ISSUES EMAIL
-// ════════════════════════════════════════
 function sendAllIssues(){
   if(!isAuthed){toast('🔒 נדרשת הרשאת מנהל');return;}
   const panel=document.getElementById('f-panel')?.value||'לוח';
   const insp=document.getElementById('f-insp')?.value||'';
   const fdate=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');
   let body='שלום,\n\nסיכום Issues פתוחים לפרויקט: '+panel+'\nתאריך: '+fdate+'\nבודק: '+insp+'\n\n';
-  let emails=new Set();let count=0;
+  const emails=new Set();let count=0;
   for(let i=1;i<=31;i++){
     const cont=document.getElementById('iss'+i);if(!cont)continue;
     cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
@@ -3101,8 +3392,7 @@ function sendAllIssues(){
       const prio=issuePriority[i]?.[n]||'med';
       const prioTxt=prio==='high'?'🔴 גבוהה':prio==='med'?'🟡 בינונית':'🟢 נמוכה';
       const sec=ITEMS.find(x=>x.id===i)?.t||'';
-      body+='━━━━━━━━━━━━━━\n';
-      body+='Issue #'+(++count)+' | סעיף '+i+' | '+prioTxt+'\n';
+      body+='━━━━━━━━━━\nIssue #'+(++count)+' | סעיף '+i+' | '+prioTxt+'\n';
       body+='סעיף: '+sec+'\n';
       if(desc)body+='ממצא: '+desc+'\n';
       if(person)body+='אחראי: '+person+'\n';
@@ -3113,9 +3403,504 @@ function sendAllIssues(){
   if(count===0){toast('אין Issues פתוחים לשליחה');return;}
   if(settings.notifyEmail)emails.add(settings.notifyEmail);
   const to=[...emails].join(',');
-  const sub=encodeURIComponent('[Electra CX] '+count+' Issues פתוחים — '+panel);
-  window.location.href='mailto:'+to+'?subject='+sub+'&body='+encodeURIComponent(body);
+  window.location.href='mailto:'+to+'?subject='+encodeURIComponent('[Electra CX] '+count+' Issues פתוחים — '+panel)+'&body='+encodeURIComponent(body);
   toast('📧 פותח לקוח מייל...');
+}
+
+
+
+
+// ════════════════════════════════════════
+// PANEL SCAN — AI vision auto-fill
+// ════════════════════════════════════════
+async function scanPanelStep1(inp){
+  if(!inp.files?.length)return;
+  const file=inp.files[0]; inp.value='';
+
+  // Show preview
+  const dataUrl=await new Promise(res=>{
+    const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(file);
+  });
+  const prevEl=document.getElementById('scan-preview-s1');
+  const imgEl=document.getElementById('scan-img-s1');
+  if(prevEl&&imgEl){imgEl.src=dataUrl;prevEl.style.display='block';}
+
+  window._pendingScanImage={dataUrl,mediaType:file.type||'image/jpeg'};
+
+  // Open scanner in new tab — escapes content:// restriction
+  const scanHtml=_buildScanPage(dataUrl, file.type||'image/jpeg');
+  const blob=new Blob([scanHtml],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_ecx_scanner','width=420,height=620');
+  if(!win){ toast('⚠️ אפשר חלונות קופצים'); return; }
+
+  // Listen for result via postMessage
+  const listener=(e)=>{
+    try{
+      const d=typeof e.data==='string'?JSON.parse(e.data):e.data;
+      if(d&&d.type==='ECX_SCAN'){
+        window.removeEventListener('message',listener);
+        URL.revokeObjectURL(url);
+        try{win.close();}catch(ex){}
+        _applyPanelScanResult(d.data);
+      }
+    }catch(ex){}
+  };
+  window.addEventListener('message',listener);
+}
+
+function _buildScanPage(dataUrl, mediaType){
+  const b64=dataUrl.split(',')[1];
+  return `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI קורא שלט</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:16px;gap:12px;}
+.logo{text-align:center;font-size:.8rem;font-weight:700;color:#f59e0b;letter-spacing:.05em;padding:4px 0;}
+img{width:100%;max-height:150px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.08);}
+.field label{display:block;font-size:.68rem;font-weight:700;color:#64748b;margin-bottom:5px;text-align:right;}
+.field input{width:100%;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:11px 12px;color:#f1f5f9;font-size:.92rem;direction:rtl;text-align:right;font-family:inherit;transition:border-color .15s;}
+.field input:focus{outline:none;border-color:#f59e0b;}
+.field input.filled{border-color:#22c55e;background:#0f2817;}
+.status{text-align:center;font-size:.78rem;padding:8px;border-radius:8px;min-height:36px;display:flex;align-items:center;justify-content:center;}
+.status.loading{background:rgba(124,58,237,.15);color:#a78bfa;}
+.status.ok{background:rgba(34,197,94,.12);color:#22c55e;}
+.status.err{background:rgba(239,68,68,.12);color:#f87171;}
+.btn{width:100%;padding:14px;border-radius:13px;border:none;font-size:.95rem;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-scan{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.3);}
+.btn-ok{background:linear-gradient(135deg,#f59e0b,#d97706);color:#111;box-shadow:0 4px 16px rgba(245,158,11,.3);}
+
+
+/* ═══ PREMIUM UPGRADES v4 ═══ */
+
+/* Glass morphism cards */
+.cl-card{
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(8px);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.07);
+  border:1px solid rgba(255,255,255,.8);
+  position:relative;overflow:hidden;
+  transition:box-shadow .25s,transform .18s;cursor:pointer;
+}
+.cl-card:active{transform:scale(.982);box-shadow:0 2px 12px rgba(0,0,0,.1);}
+.cl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));opacity:0;transition:opacity .2s;}
+.cl-card.in-progress::before{opacity:1;}
+
+/* New CL button — premium */
+.new-cl-card{
+  display:flex;align-items:center;gap:13px;
+  background:linear-gradient(135deg,#081e38 0%,#0d2845 100%);
+  border:1px solid rgba(245,166,35,.2);
+  border-bottom:2.5px solid var(--gold);
+  border-radius:18px;padding:16px;
+  margin:14px 14px 6px;cursor:pointer;
+  text-align:right;transition:all .2s;
+  box-shadow:0 4px 24px rgba(245,166,35,.1),0 1px 3px rgba(0,0,0,.2);
+}
+.new-cl-card:active{transform:scale(.975);}
+.new-cl-icon-wrap{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px var(--gold-glow);}
+.new-cl-title{font-size:.88rem;font-weight:800;color:#fff;}
+
+/* Section divider */
+.sec-hd{
+  background:linear-gradient(135deg,var(--bg-deep) 0%,#081d36 100%);
+  padding:11px 16px;display:flex;align-items:center;gap:9px;
+  margin:12px 0 4px;border-radius:12px;
+  border-right:none;border-left:none;
+  position:relative;overflow:hidden;
+}
+.sec-hd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),var(--gold2));}
+
+/* Checklist item */
+.it{
+  background:#fff;border-radius:12px;
+  margin:3px 0;border:1.5px solid rgba(15,23,42,.06);
+  transition:all .2s;overflow:hidden;position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.it.pfn-p{border-color:rgba(16,185,129,.2);background:rgba(240,253,244,.6);}
+.it.pfn-f{border-color:rgba(239,68,68,.18);background:rgba(254,242,242,.5);}
+.it.pfn-n{border-color:rgba(203,213,225,.4);}
+
+/* PFN buttons */
+.pfn{
+  display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:10px;
+  font-size:.85rem;transition:all .18s;
+  flex-shrink:0;cursor:pointer;border:none;
+}
+.pfn:active{transform:scale(.88);}
+.pfn.p{background:var(--ok-d);border:1.5px solid rgba(16,185,129,.3);}
+.pfn.f{background:var(--fail-d);border:1.5px solid rgba(239,68,68,.3);}
+.pfn.n{background:var(--surf2);border:1.5px solid var(--border2);}
+
+/* Progress bar shimmer */
+.h-prog{height:5px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden;}
+.h-prog-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
+.h-prog-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 1.8s infinite;}
+
+/* Issue cards */
+.iss-card{
+  background:#fff;border-radius:14px;
+  padding:14px 15px;margin:6px 14px;
+  border:1px solid rgba(15,23,42,.07);
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+  transition:all .2s;cursor:pointer;
+}
+.iss-card:active{transform:scale(.985);}
+
+/* Toast upgrade */
+.toast{
+  position:fixed;bottom:calc(var(--tab-h) + var(--safe-b) + 14px);
+  left:50%;transform:translateX(-50%);
+  background:rgba(15,23,42,.92);
+  color:#fff;padding:11px 20px;border-radius:24px;
+  font-size:.8rem;font-weight:600;z-index:8000;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+  white-space:nowrap;animation:toa .2s ease;
+  pointer-events:none;border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(12px);
+  transition:opacity .3s;
+}
+
+/* Auth pill upgrade */
+.auth-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:6px 11px;
+  cursor:pointer;transition:all .18s;
+}
+.auth-pill:active{background:rgba(255,255,255,.14);}
+
+/* Scan button in modal */
+#scan-btn-s1{
+  background:linear-gradient(135deg,#1d4ed8,#2563eb) !important;
+  border:none !important;
+  box-shadow:0 4px 20px rgba(37,99,235,.35) !important;
+  transition:all .2s !important;
+}
+#scan-btn-s1:active{transform:scale(.97) !important;}
+
+/* Step buttons */
+#new-step1 button[onclick="newClStep2()"]{
+  background:linear-gradient(135deg,var(--bg-deep),#0d2845);
+  border:1px solid var(--gold-border);
+  border-bottom:2px solid var(--gold);
+}
+
+/* Chips */
+.chip{
+  background:rgba(255,255,255,.9);
+  border:1.5px solid rgba(15,23,42,.09);
+  color:var(--t3);border-radius:20px;
+  padding:7px 14px;font-size:.72rem;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  white-space:nowrap;transition:all .18s;
+}
+.chip:active{transform:scale(.94);}
+.chip.on{
+  background:var(--bg-deep);
+  color:var(--gold);
+  border-color:var(--gold-border);
+  box-shadow:0 2px 14px var(--gold-glow);
+}
+
+/* Dash cards */
+.dash-kpi{
+  background:rgba(255,255,255,.95);
+  border-radius:16px;padding:16px;
+  border:1px solid rgba(15,23,42,.07);
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+}
+
+/* Smooth page transitions */
+.sc.on{animation:scup .22s cubic-bezier(.4,0,.2,1) both;}
+@keyframes scup{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Home stat KPIs */
+.kpi-n{font-size:1.6rem;font-weight:900;line-height:1;letter-spacing:-1px;}
+.kpi-l{font-size:.55rem;color:rgba(255,255,255,.45);letter-spacing:.5px;margin-top:2px;}
+
+/* Floating action glow */
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,.4);}50%{box-shadow:0 0 0 8px rgba(245,166,35,.0);}}
+
+
+/* ═══ NEW FEATURES ═══ */
+
+/* Swipe-to-reveal on checklist items */
+.it-wrap{position:relative;overflow:hidden;border-radius:var(--r2);margin:3px 0;}
+.it-action{position:absolute;right:0;top:0;bottom:0;width:70px;display:flex;align-items:center;justify-content:center;background:var(--fail);border-radius:0 var(--r2) var(--r2) 0;color:#fff;font-size:.72rem;font-weight:800;transform:translateX(100%);transition:transform .2s;}
+.it-action.show{transform:translateX(0);}
+
+/* Quick stats bar in checklist */
+.cl-stats-bar{display:flex;gap:0;background:var(--bg-deep);border-radius:12px;margin:0 14px 8px;overflow:hidden;height:42px;}
+.cl-stat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-left:1px solid rgba(255,255,255,.06);cursor:pointer;transition:background .15s;}
+.cl-stat:last-child{border-left:none;}
+.cl-stat:active{background:rgba(255,255,255,.06);}
+.cl-stat-n{font-size:.9rem;font-weight:900;color:#fff;line-height:1;}
+.cl-stat-l{font-size:.5rem;color:rgba(255,255,255,.4);letter-spacing:.3px;text-transform:uppercase;}
+
+/* Item completion animation */
+@keyframes checkPop{0%{transform:scale(1);}40%{transform:scale(1.15);}100%{transform:scale(1);}}
+.pfn.just-passed{animation:checkPop .25s ease;}
+
+/* Progress ring */
+.prog-ring{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.prog-ring svg{transform:rotate(-90deg);}
+.prog-ring-txt{position:absolute;font-size:.6rem;font-weight:900;color:#fff;}
+
+/* Search highlight */
+.hl{background:rgba(245,166,35,.25);border-radius:2px;padding:0 1px;}
+
+/* Notes field */
+.notes-fab{position:fixed;bottom:calc(var(--tab-h)+var(--safe-b)+16px);left:16px;width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px var(--gold-glow);z-index:500;transition:all .2s;}
+.notes-fab.show{display:flex;}
+.notes-fab:active{transform:scale(.92);}
+
+/* Dark overlay for modals */
+.modal-bg{position:fixed;inset:0;background:rgba(5,17,31,.7);z-index:900;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal-bg.show{display:flex;}
+
+/* Score badge */
+.score-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:800;}
+.score-badge.excellent{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.2);}
+.score-badge.good{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.2);}
+.score-badge.needs-work{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+.score-badge.fail{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
+
+</style>
+</head>
+<body>
+<div class="logo">⚡ ELECTRA CX — קורא שלט</div>
+<img id="img" src="${dataUrl}" alt="שלט">
+<div class="field"><label>שם הלוח</label><input id="pname" placeholder="ממתין לזיהוי..."></div>
+<div class="field"><label>מס' עבודה</label><input id="pnum" placeholder="ממתין לזיהוי..."></div>
+<div class="field"><label>שם יצרן</label><input id="mfr" placeholder="ממתין לזיהוי..."></div>
+<div class="status loading" id="st">⏳ לוחץ "קרא שלט" לזיהוי...</div>
+<button class="btn btn-scan" id="btn-scan" onclick="analyze()">🤖 קרא שלט אוטומטית</button>
+<button class="btn btn-ok" onclick="send()">✓ אשר ומלא בטופס</button>
+<script>
+async function analyze(){
+  const st=document.getElementById('st');
+  const btn=document.getElementById('btn-scan');
+  btn.disabled=true;
+  st.className='status loading';st.textContent='⏳ AI קורא את השלט...';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:250,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'${mediaType}',data:'${b64}'}},
+          {type:'text',text:'זהו שלט של לוח חשמל בישראל. קרא בדיוק את הערכים הכתובים ליד: "שם הלוח:", "שם היצרן:", "מס עבודה:" (או "מספר עבודה:"). החזר JSON בלבד ללא backticks:\n{"panel_name":"200A-L1-MDPU-CB-110","panel_number":"95-6280-26","manufacturer":"ארדן קצנשטיין הנדסה"}'}
+        ]}]
+      })
+    });
+    const d=await resp.json();
+    if(!resp.ok)throw new Error(d.error?.message||'שגיאה '+resp.status);
+    let raw=(d.content?.[0]?.text||'{}').replace(/[\`]{3}[\\w]*/g,'').replace(/[\`]{3}/g,'').trim();
+    // find JSON in response
+    const m=raw.match(/\\{[\\s\\S]*\\}/);
+    const info=JSON.parse(m?m[0]:raw);
+    const fill=(id,val)=>{if(!val)return;const e=document.getElementById(id);if(e){e.value=val;e.className='filled';}};
+    fill('pname',info.panel_name);
+    fill('pnum', info.panel_number);
+    fill('mfr',  info.manufacturer);
+    st.className='status ok';st.textContent='✅ זוהה בהצלחה! בדוק ואשר.';
+  }catch(e){
+    st.className='status err';st.textContent='⚠️ '+e.message;
+  }
+  btn.disabled=false;
+}
+function send(){
+  const data={type:'ECX_SCAN',data:{
+    panel_name:document.getElementById('pname').value,
+    panel_number:document.getElementById('pnum').value,
+    manufacturer:document.getElementById('mfr').value,
+    inspector:'',project:'',location:'',date:''
+  }};
+  window.opener?.postMessage(JSON.stringify(data),'*');
+  window.close();
+}
+// Auto-analyze on load
+window.onload=()=>setTimeout(analyze,400);
+<\/script>
+</body>
+</html>`;
+}
+
+function _applyPanelScanResult(info){
+  const setF=(id,val)=>{
+    if(!val||!String(val).trim())return;
+    const e=document.getElementById(id);
+    if(e){e.value=String(val).trim();e.style.borderColor='#22c55e';}
+  };
+  setF('new-name',  info.panel_name);
+  setF('new-pnum',  info.panel_number);
+  setF('new-mfr',   info.manufacturer);
+  setF('new-insp',  info.inspector);
+  setF('new-proj',  info.project);
+  setF('new-loc',   info.location);
+  window._scanResult=info;
+  const n=Object.values(info).filter(v=>v&&String(v).trim()).length;
+  toast('✅ '+n+' שדות זוהו ומולאו!');
+}
+
+async function _ocrFallback(){return null;}
+function _parseOCRLines(){return {};}
+
+
+async function scanPanel(inp){
+  if(!inp.files?.length)return;
+  const file=inp.files[0];
+  inp.value='';
+
+  // Show preview
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('scan-preview');
+    const img=document.getElementById('scan-img');
+    if(prev&&img){img.src=e.target.result;prev.style.display='block';}
+  };
+  reader.readAsDataURL(file);
+
+  // Show spinner
+  const spinner=document.getElementById('scan-spinner');
+  const btn=document.getElementById('scan-btn');
+  if(spinner)spinner.style.display='inline';
+  if(btn)btn.style.borderColor='rgba(245,158,11,.6)';
+
+  // Convert to base64
+  const b64=await new Promise(res=>{
+    const r2=new FileReader();
+    r2.onload=e=>res(e.target.result.split(',')[1]);
+    r2.readAsDataURL(file);
+  });
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:400,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
+            {type:'text',text:`אתה מומחה לוחות חשמל. נתח את תמונת לוח החשמל הזה וחלץ את הפרטים הבאים בפורמט JSON בלבד (ללא טקסט נוסף):
+{
+  "panel_name": "שם הלוח כפי שמופיע על גבי הלוח (מספר, סוג, ייעוד)",
+  "panel_number": "מספר הלוח או מספר עבודה אם מופיע",
+  "manufacturer": "שם יצרן מתוך לוגו או תווית (Schneider/ABB/Siemens/Legrand/Eaton וכו')",
+  "notes": "פרטים נוספים רלוונטיים שמופיעים"
+}
+אם פרט מסוים לא מופיע - השאר "".`}
+          ]
+        }]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'{}';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const info=JSON.parse(clean);
+    if(info.panel_name){
+      const ep=document.getElementById('new-panel');if(ep)ep.value=info.panel_name;
+      // Also sync checklist name if empty
+      const en=document.getElementById('new-name');if(en&&!en.value)en.value=info.panel_name;
+    }
+    if(info.panel_number){const e=document.getElementById('new-pnum');if(e)e.value=info.panel_number;}
+    if(info.manufacturer){const e=document.getElementById('new-mfr');if(e)e.value=info.manufacturer;}
+    toast('✅ לוח זוהה אוטומטית!');
+    if(btn)btn.style.borderColor='rgba(34,197,94,.6)';
+  }catch(err){
+    console.error(err);
+    toast('⚠️ לא ניתן לנתח — מלא ידנית');
+    if(btn)btn.style.borderColor='rgba(239,68,68,.5)';
+  }finally{
+    if(spinner)spinner.style.display='none';
+  }
+}
+
+
+// ════════════════════════════════════════
+// FEATURE: Score badge helper
+// ════════════════════════════════════════
+function getScoreBadge(pct){
+  if(pct>=95)return '<span class="score-badge excellent">⭐ מצוין</span>';
+  if(pct>=80)return '<span class="score-badge good">✓ טוב</span>';
+  if(pct>=60)return '<span class="score-badge needs-work">△ לשיפור</span>';
+  return '<span class="score-badge fail">✗ נכשל</span>';
+}
+
+// ════════════════════════════════════════
+// FEATURE: Keyboard shortcuts P/F/N
+// ════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  const focused=document.querySelector('.it:focus-within');
+  if(!focused)return;
+  const id=focused.dataset.id;const n=focused.dataset.n;
+  if(!id)return;
+  if(e.key==='p'||e.key==='P'){e.preventDefault();const btn=focused.querySelector('.pfn.p');if(btn)btn.click();}
+  if(e.key==='f'||e.key==='F'){e.preventDefault();const btn=focused.querySelector('.pfn.f');if(btn)btn.click();}
+  if(e.key==='n'||e.key==='N'){e.preventDefault();const btn=focused.querySelector('.pfn.n');if(btn)btn.click();}
+});
+
+// ════════════════════════════════════════
+// FEATURE: Double-tap item to quick-pass
+// ════════════════════════════════════════
+let _lastTap=0,_lastEl=null;
+document.addEventListener('touchend',e=>{
+  const it=e.target.closest('.it-inner');
+  if(!it)return;
+  const now=Date.now();
+  if(_lastEl===it&&now-_lastTap<300){
+    // Double tap — quick pass
+    const btn=it.querySelector('.pfn.p');
+    if(btn&&!btn.classList.contains('on'))btn.click();
+    e.preventDefault();
+  }
+  _lastTap=now;_lastEl=it;
+},{passive:false});
+
+// ════════════════════════════════════════
+// FEATURE: Copy checklist link to clipboard
+// ════════════════════════════════════════
+function copyClLink(){
+  if(!CID){toast('⚠️ לא נבחר צ\u05f3קליסט');return;}
+  const url=location.href.split('?')[0]+'?cl='+CID;
+  navigator.clipboard?.writeText(url).then(()=>toast('🔗 קישור הועתק!')).catch(()=>toast('⚠️ לא ניתן להעתיק'));
+}
+
+// ════════════════════════════════════════
+// FEATURE: Quick stats update in cl header
+// ════════════════════════════════════════
+function updateQuickStats(){
+  let p=0,f=0,n=0,tot=0;
+  document.querySelectorAll('.pfn.on').forEach(btn=>{
+    if(btn.classList.contains('p'))p++;
+    else if(btn.classList.contains('f'))f++;
+    else if(btn.classList.contains('n'))n++;
+    tot++;
+  });
+  const qp=document.getElementById('qs-p');const qf=document.getElementById('qs-f');
+  const qn=document.getElementById('qs-n');const qt=document.getElementById('qs-t');
+  if(qp)qp.textContent=p;if(qf)qf.textContent=f;if(qn)qn.textContent=n;if(qt)qt.textContent=tot;
 }
 
 function emailPDF(panel,fdate){
@@ -3165,6 +3950,58 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(settings.autoBackup!==false)setTimeout(startAutoBackup,8000);
   }
 });
+
+// ════════ BACK NAVIGATION ════════
+// Simple stack: push on every screen open, pop on back press.
+// At home → block exit (re-push guard).
+
+const _S = [];   // navigation stack of screen names
+
+function _push(name) {
+  _S.push(name);
+  history.pushState({s: name}, '');   // real entry
+  history.pushState({s: '__g__'}, ''); // guard on top — so popstate fires before browser exits
+}
+
+function _doBack() {
+  if (_S.length === 0) return;          // nothing to do
+  _S.pop();                             // discard current screen
+  const prev = _S[_S.length - 1];
+
+  if (!prev || prev === 'home') {
+    // Reached home
+    _S.length = 0; _S.push('home');
+    const pg = document.getElementById('iss-page');
+    if (pg) { pg.classList.remove('open'); delete pg.dataset.fromItem; }
+    goHome();
+    // Re-add guard so next back press stays here
+    history.pushState({s: '__g__'}, '');
+    return;
+  }
+
+  // Navigate to prev screen
+  const pg = document.getElementById('iss-page');
+  if (prev.startsWith('tab:')) {
+    if (pg) { pg.classList.remove('open'); delete pg.dataset.fromItem; }
+    switchTab(prev.slice(4));
+  } else if (prev.startsWith('item:')) {
+    if (pg) delete pg.dataset.fromItem;
+    openItemIssuesPage(parseInt(prev.slice(5)));
+  } else if (prev.startsWith('issue:')) {
+    const [,id,n] = prev.split(':');
+    openIssuePage(parseInt(id), parseInt(n));
+  }
+  history.pushState({s: '__g__'}, '');  // guard on top of restored state
+}
+
+window.addEventListener('popstate', _doBack);
+
+// Seed on load
+document.addEventListener('DOMContentLoaded', () => {
+  _S.push('home');
+  history.replaceState({s: 'home'}, '');
+  history.pushState({s: '__g__'}, '');  // guard
+});
 </script>
 
 <!-- ══ SETTINGS MAIN PAGE ══ -->
@@ -3173,7 +4010,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     <button class="sett-nav-back" onclick="closeSettings()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>חזור
     </button>
-    <div class="sett-nav-title">⚙️ הגדרות</div>
+    <div class="sett-nav-title" style="display:flex;align-items:center;gap:7px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>הגדרות</div>
     <div style="width:60px;"></div>
   </div>
   <!-- hero KPIs bar -->
@@ -3187,25 +4024,25 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="sett-body">
     <div class="sett-sec-hdr">פרופיל</div>
     <div class="sett-grp">
-      <div class="si" onclick="openSub('profile')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#2979ff,#1565c0);">👤</div><div><div class="si-t">פרופיל משתמש</div><div class="si-d" id="sp-profile-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      <div class="si" onclick="openSub('security')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#f59e0b,#d97706);">🔐</div><div><div class="si-t">אבטחה והרשאות</div><div class="si-d">סיסמה · הרשאות מנהל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('profile')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#2979ff,#1565c0);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div><div><div class="si-t">פרופיל משתמש</div><div class="si-d" id="sp-profile-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('security')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="si-t">אבטחה והרשאות</div><div class="si-d">סיסמה · הרשאות מנהל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     </div>
     <div class="sett-sec-hdr">עבודה ובדיקה</div>
     <div class="sett-grp">
-      <div class="si" onclick="openSub('checklist')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);">✅</div><div><div class="si-t">הגדרות צ'קליסט</div><div class="si-d">ויברציה, Issue, גלילה</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      <div class="si" onclick="openSub('contacts')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">👥</div><div><div class="si-t">אנשי קשר</div><div class="si-d" id="sp-contacts-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      <div class="si" onclick="openSub('notifications')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">🔔</div><div><div class="si-t">התראות ומיילים</div><div class="si-d" id="sp-notif-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('checklist')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div><div class="si-t">הגדרות צ'קליסט</div><div class="si-d">ויברציה, Issue, גלילה</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('contacts')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="si-t">אנשי קשר</div><div class="si-d" id="sp-contacts-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('notifications')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#ef4444,#b91c1c);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div><div class="si-t">התראות ומיילים</div><div class="si-d" id="sp-notif-d">טוען...</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     </div>
     <div class="sett-sec-hdr">מראה ושפה</div>
     <div class="sett-grp">
-      <div class="si" onclick="openSub('appearance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">🎨</div><div><div class="si-t">מראה ועיצוב</div><div class="si-d">צבעים · גופן · גודל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      <div class="si" onclick="openSub('accessibility')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);">♿</div><div><div class="si-t">נגישות</div><div class="si-d">גופן, ניגודיות, אנימציות</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('appearance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div><div><div class="si-t">מראה ועיצוב</div><div class="si-d">צבעים · גופן · גודל</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('accessibility')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#10b981,#047857);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div><div class="si-t">נגישות</div><div class="si-d">גופן, ניגודיות, אנימציות</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     </div>
     <div class="sett-sec-hdr">נתונים ומערכת</div>
     <div class="sett-grp">
-      <div class="si" onclick="openSub('data')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);">💾</div><div><div class="si-t">נתונים וגיבוי</div><div class="si-d" id="sp-data-d">Firebase · גיבוי אוטומטי</div></div></div><div class="si-r"><span id="sp-bk-badge" style="background:rgba(139,92,246,.12);color:#8b5cf6;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;display:none;"></span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('data')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#6366f1,#4338ca);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><div><div class="si-t">נתונים וגיבוי</div><div class="si-d" id="sp-data-d">Firebase · גיבוי אוטומטי</div></div></div><div class="si-r"><span id="sp-bk-badge" style="background:rgba(139,92,246,.12);color:#8b5cf6;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;display:none;"></span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
       <div class="si" onclick="openSub('history')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#78716c,#44403c);">📋</div><div><div class="si-t">היסטוריית כניסות</div><div class="si-d" id="sp-hist-d">טוען...</div></div></div><div class="si-r"><span id="sp-hist-badge" style="background:rgba(41,121,255,.1);color:#2979ff;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:8px;">0</span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      <div class="si" onclick="openSub('performance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#64748b,#334155);">⚙️</div><div><div class="si-t">מערכת וביצועים</div><div class="si-d">חיבור · מסך · מכשיר</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      <div class="si" onclick="openSub('performance')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#64748b,#334155);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div><div><div class="si-t">מערכת וביצועים</div><div class="si-d">חיבור · מסך · מכשיר</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
       <div class="si" onclick="openSub('about')"><div class="si-l"><div class="si-ico" style="background:linear-gradient(135deg,#05111f,#0c1f3a);">⚡</div><div><div class="si-t">אודות Electra CX</div><div class="si-d">גרסה 3.0 · Firebase · PWA</div></div></div><div class="si-r"><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     </div>
     <div id="sp-admin-sec" style="display:none;">
