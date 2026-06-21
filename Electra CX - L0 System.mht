@@ -248,8 +248,43 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .iss-bar{display:none;background:var(--card);border-radius:var(--r);padding:12px 15px;margin:0 14px 8px;border:1px solid rgba(239,68,68,.2);box-shadow:var(--sh);cursor:pointer;align-items:center;justify-content:space-between;}
 .iss-bar.show{display:flex;}
 
-/* BANNER */
-.section-banner{background:linear-gradient(90deg,var(--bg-deep),#0e2a4a);color:rgba(255,255,255,.85);padding:11px 16px;border-radius:12px;margin:18px 14px 8px;font-size:.75rem;font-weight:800;display:flex;align-items:center;gap:7px;border-left:3px solid var(--gold);}
+/* BANNER — chapter headers redesigned */
+.banner{
+  margin:22px 14px 10px;
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+}
+.banner-inner{
+  background:linear-gradient(135deg,var(--bg-deep) 0%,#0e2a4a 100%);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;
+  position:relative;overflow:hidden;
+}
+.banner-inner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(245,158,11,.12) 0%,transparent 60%);
+  pointer-events:none;
+}
+.banner-num{
+  font-size:.6rem;font-weight:900;color:var(--gold);
+  background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);
+  border-radius:8px;padding:4px 8px;
+  font-family:'JetBrains Mono',monospace;letter-spacing:1px;
+  flex-shrink:0;
+}
+.banner-label{
+  font-size:.85rem;font-weight:800;color:#fff;
+  letter-spacing:-.2px;font-family:'Plus Jakarta Sans','Heebo',sans-serif;
+}
+.banner-line{
+  position:absolute;right:0;top:0;width:3px;height:100%;
+  background:linear-gradient(180deg,var(--gold),var(--gold2));
+  border-radius:0 14px 14px 0;
+}
+.bdot{display:none;}/* legacy — unused */
 
 /* ITEM */
 .item{background:var(--card);border-radius:var(--r);padding:14px;margin:0 14px 6px;border:1px solid var(--border);box-shadow:var(--sh);transition:border-right .2s;}
@@ -261,6 +296,8 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .item-txt{font-size:.86rem;font-weight:600;line-height:1.5;color:var(--t1);flex:1;font-family:'Heebo','Inter',sans-serif;}
 .ibtn{background:transparent;color:var(--t3);border:1.5px solid var(--border);padding:5px 11px;border-radius:20px;font-size:.62rem;font-weight:800;cursor:pointer;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;font-family:'Heebo',inherit;}
 .ibtn.hot{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.06));color:var(--fail);border-color:rgba(239,68,68,.4);}
+.ibtn.iss-wait{background:rgba(249,115,22,.1)!important;color:var(--warn)!important;border-color:rgba(249,115,22,.3)!important;}
+.ibtn.iss-closed{background:rgba(34,197,94,.1)!important;color:var(--ok)!important;border-color:rgba(34,197,94,.3)!important;}
 .ibtn:disabled{opacity:.38;cursor:not-allowed;}
 .pfn-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px;}
 .pfn{padding:12px 6px;border:2px solid var(--border);background:var(--card2);border-radius:12px;font-weight:800;font-size:.76rem;cursor:pointer;font-family:'Heebo','Inter',inherit;text-align:center;transition:all .18s;letter-spacing:.2px;}
@@ -398,7 +435,80 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .tog.off{background:rgba(6,16,30,.18);}
 .sett-section{font-size:.64rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:14px 0 6px;margin-top:4px;}
 
-/* FLOAT */
+/* ISSUE FULL PAGE — MODERN REDESIGN */
+.iss-page{position:fixed;inset:0;background:#0d1b2e;z-index:8000;display:none;flex-direction:column;overflow:hidden;}
+.iss-page.open{display:flex;animation:scup .22s ease both;}
+.iss-page-nav{background:linear-gradient(160deg,#05111f,#0a1f38);padding-top:env(safe-area-inset-top,0px);padding-bottom:16px;padding-left:16px;padding-right:16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(245,158,11,.12);}
+.iss-page-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 40px;background:#f0f4f8;}
+.iss-page-title{font-size:.52rem;font-weight:800;letter-spacing:3px;color:var(--gold);text-transform:uppercase;opacity:.8;}
+.iss-page-name{font-size:1rem;font-weight:900;color:#fff;margin-top:2px;letter-spacing:-.3px;}
+
+/* SECTION CARD */
+.ip-section-card{background:linear-gradient(135deg,#05111f,#0c2240);border-radius:16px;padding:16px 18px;margin-bottom:14px;border:1px solid rgba(255,255,255,.07);}
+.ip-sec-badge{font-size:.55rem;font-weight:800;color:rgba(245,158,11,.7);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+.ip-sec-name{font-size:.88rem;color:#fff;font-weight:700;line-height:1.5;}
+
+/* 2-col ROW */
+.ip-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.ip-card{background:#fff;border-radius:14px;padding:14px;border:1px solid rgba(6,16,30,.07);box-shadow:0 1px 4px rgba(6,16,30,.06);}
+.ip-card-lbl{font-size:.56rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+
+/* STATUS BUTTON */
+.ip-status-btn{width:100%;border:none;border-radius:10px;padding:12px 8px;font-size:.8rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;}
+.ip-status-btn.open{background:rgba(239,68,68,.1);color:#ef4444;border:1.5px solid rgba(239,68,68,.2);}
+.ip-status-btn.waiting{background:rgba(249,115,22,.1);color:#f97316;border:1.5px solid rgba(249,115,22,.2);}
+.ip-status-btn.closed{background:rgba(34,197,94,.1);color:#22c55e;border:1.5px solid rgba(34,197,94,.2);}
+.ip-status-btn:active{transform:scale(.97);}
+
+/* PRIORITY */
+.ip-prio-row{display:flex;gap:4px;}
+.ip-prio-btn{flex:1;background:rgba(6,16,30,.04);border:1.5px solid rgba(6,16,30,.08);border-radius:9px;padding:9px 2px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .15s;color:var(--t3);}
+.ip-prio-btn span{font-size:.55rem;font-weight:700;}
+.ip-prio-btn.active{border-color:currentColor;opacity:1;transform:scale(1.04);font-weight:900;}
+.ip-prio-display{font-size:.82rem;font-weight:800;padding:10px 4px;}
+
+/* CATEGORIES */
+.ip-block{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px;border:1px solid rgba(6,16,30,.07);box-shadow:0 1px 4px rgba(6,16,30,.06);}
+.ip-block-lbl{font-size:.56rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.ip-cats{display:flex;flex-wrap:wrap;gap:6px;}
+.ip-cat{background:rgba(6,16,30,.04);color:#64748b;border:1.5px solid rgba(6,16,30,.08);border-radius:20px;padding:7px 15px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.ip-cat.sel{background:rgba(41,121,255,.1);color:#2979ff;border-color:rgba(41,121,255,.3);}
+
+/* CONTACTS GRID */
+.ip-contacts-grid{display:flex;flex-direction:column;gap:8px;}
+.ip-contact-card{display:flex;align-items:center;gap:11px;background:rgba(6,16,30,.03);border:1.5px solid rgba(6,16,30,.07);border-radius:12px;padding:11px 13px;cursor:pointer;font-family:inherit;width:100%;text-align:right;transition:all .18s;}
+.ip-contact-card.sel{background:rgba(41,121,255,.07);border-color:rgba(41,121,255,.28);}
+.ip-contact-card:active{transform:scale(.98);}
+.ip-contact-avatar{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2979ff,#1565c0);color:#fff;font-size:.82rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ip-contact-info{flex:1;min-width:0;}
+.ip-contact-name{font-size:.83rem;font-weight:700;color:#0f172a;}
+.ip-contact-email{font-size:.65rem;color:#94a3b8;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ip-contact-check{width:22px;height:22px;border-radius:50%;background:rgba(41,121,255,.12);color:#2979ff;font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .15s;}
+.ip-contact-card.sel .ip-contact-check{opacity:1;}
+
+/* FIELD GROUP */
+.ip-field-group{display:flex;flex-direction:column;gap:0;}
+.ip-field{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(6,16,30,.05);}
+.ip-field:last-child{border-bottom:none;padding-bottom:2px;}
+.ip-field-icon{width:32px;height:32px;border-radius:9px;background:rgba(41,121,255,.07);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0;margin-top:1px;}
+.ip-field-inner{flex:1;min-width:0;}
+.ip-field-lbl{font-size:.57rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.ip-input{width:100%;border:none;outline:none;background:transparent;font-size:.86rem;font-family:inherit;color:#0f172a;padding:0;}
+.ip-input::placeholder{color:#cbd5e1;}
+.ip-textarea{width:100%;border:none;outline:none;background:transparent;font-size:.82rem;font-family:inherit;color:#0f172a;resize:none;min-height:64px;line-height:1.65;}
+.ip-textarea::placeholder{color:#cbd5e1;}
+
+/* PHOTOS */
+.ip-photos-wrap{display:flex;flex-direction:column;gap:10px;}
+.ip-photo-btns{display:flex;gap:8px;}
+.ip-photo-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(41,121,255,.08);color:#2979ff;border:1.5px solid rgba(41,121,255,.2);border-radius:12px;padding:12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.ip-photo-btn-sec{background:rgba(6,16,30,.04);color:#64748b;border-color:rgba(6,16,30,.1);}
+
+/* ACTION BUTTONS */
+.ip-wait-btn{width:100%;background:rgba(249,115,22,.1);color:#f97316;border:1.5px solid rgba(249,115,22,.25);border-radius:14px;padding:15px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ip-confirm-btn{width:100%;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:14px;padding:17px;font-size:.9rem;font-weight:900;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 6px 20px rgba(22,163,74,.28);letter-spacing:-.2px;margin-bottom:10px;}
+.ip-confirm-btn:active{transform:scale(.98);}
+
 #fi{position:fixed;top:43%;left:0;background:rgba(5,17,31,.7);border-radius:0 10px 10px 0;z-index:400;display:none;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:10px 6px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-left:none;}
 #fi.show{display:flex;}
 #fi-n{background:var(--fail);color:#fff;font-size:.52rem;font-weight:900;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
@@ -449,39 +559,50 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .clx-btn-del{background:var(--fail-d);color:var(--fail);border-color:rgba(239,68,68,.2);}
 
 /* ══ SETTINGS APP ══ */
-.sett-page{display:none;position:fixed;inset:0;background:var(--surf,#f0f4f8);z-index:5000;flex-direction:column;overflow:hidden;}
-.sett-page.open{display:flex;animation:scup .2s ease both;}
-.sett-nav{background:var(--bg-deep,#05111f);height:calc(56px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:12px;padding-left:16px;padding-right:16px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);}
-.sett-nav-back{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.85);border-radius:8px;padding:7px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;}
-.sett-nav-title{flex:1;font-size:.85rem;font-weight:800;color:#fff;text-align:center;}
-.sett-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,20px);}
-.sett-sec-hdr{padding:20px 16px 7px;font-size:.6rem;font-weight:800;color:var(--t3,#8fa3bc);text-transform:uppercase;letter-spacing:1.2px;}
-.sett-grp{background:var(--card,#fff);border-radius:14px;margin:0 14px 12px;overflow:hidden;border:1px solid var(--border,rgba(6,16,30,.07));box-shadow:var(--sh,0 1px 3px rgba(6,16,30,.05),0 4px 14px rgba(6,16,30,.07));}
-.si{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border,rgba(6,16,30,.07));cursor:pointer;min-height:54px;gap:12px;}
-.si:last-child{border-bottom:none;}
-.si:active{background:var(--card2,#f8fafc);}
+.sett-page{display:none;position:fixed;inset:0;background:#f1f5f9;z-index:5000;flex-direction:column;overflow:hidden;}
+.sett-page.open{display:flex;animation:scup .22s ease both;}
+/* NAV */
+.sett-nav{background:linear-gradient(150deg,#05111f 0%,#091e3a 100%);padding-top:calc(env(safe-area-inset-top,0px) + 4px);display:flex;align-items:center;gap:12px;padding-left:16px;padding-right:16px;padding-bottom:0;flex-shrink:0;position:relative;}
+.sett-nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent 0%,rgba(245,158,11,.5) 50%,transparent 100%);}
+.sett-nav-back{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.85);border-radius:9px;padding:8px 14px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all .15s;}
+.sett-nav-back:active{background:rgba(255,255,255,.18);}
+.sett-nav-title{flex:1;font-size:.92rem;font-weight:800;color:#fff;text-align:center;letter-spacing:-.2px;font-family:'Heebo','Inter',sans-serif;}
+/* HERO */
+.sett-hero{background:linear-gradient(150deg,#05111f 0%,#091e3a 100%);padding:18px 18px 32px;flex-shrink:0;}
+.sett-hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sett-hero-kpi{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 8px;text-align:center;backdrop-filter:blur(4px);}
+.sett-hero-n{font-size:1.5rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
+.sett-hero-l{font-size:.57rem;color:rgba(255,255,255,.38);margin-top:4px;text-transform:uppercase;letter-spacing:.6px;font-family:'Heebo','Inter',sans-serif;}
+/* BODY */
+.sett-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,20px);margin-top:-16px;border-radius:20px 20px 0 0;background:#f1f5f9;position:relative;}
+/* SECTION HEADERS */
+.sett-sec-hdr{padding:24px 18px 9px;font-size:.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1.8px;font-family:'Heebo','Inter',sans-serif;}
+.sett-grp{background:#fff;border-radius:18px;margin:0 14px 10px;overflow:hidden;border:1px solid rgba(6,16,30,.06);box-shadow:0 1px 4px rgba(6,16,30,.04),0 4px 16px rgba(6,16,30,.05);}
+.si{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid rgba(6,16,30,.055);cursor:pointer;min-height:58px;gap:12px;transition:background .12s;}
+.si:last-child{border-bottom:none;border-radius:0 0 18px 18px;}
+.si:active{background:#f8fafc;}
 .si-l{display:flex;align-items:center;gap:13px;flex:1;min-width:0;}
-.si-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.si-t{font-size:.85rem;font-weight:600;color:var(--t1,#0f172a);}
-.si-d{font-size:.7rem;color:var(--t3,#8fa3bc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
-.si-r{display:flex;align-items:center;gap:6px;flex-shrink:0;color:var(--t4,#b8c6d9);}
-.sett-sub{display:none;position:fixed;inset:0;background:var(--surf,#f0f4f8);z-index:5100;flex-direction:column;overflow:hidden;}
+.si-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.si-t{font-size:.87rem;font-weight:700;color:#0f172a;font-family:'Heebo','Inter',sans-serif;}
+.si-d{font-size:.71rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;font-family:'Heebo','Inter',sans-serif;}
+.si-r{display:flex;align-items:center;gap:6px;flex-shrink:0;color:var(--t4);}
+.sett-sub{display:none;position:fixed;inset:0;background:#f1f5f9;z-index:5100;flex-direction:column;overflow:hidden;}
 .sett-sub.open{display:flex;animation:slideInR .22s ease both;}
 @keyframes slideInR{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 .sett-sub-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,20px);}
-.stog{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
-.stog::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.25);transition:left .2s;}
-.stog.on{background:var(--ok,#22c55e);}
+.stog{width:50px;height:30px;border-radius:15px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
+.stog::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:left .2s;}
+.stog.on{background:#22c55e;}
 .stog.on::after{left:23px;}
-.stog.off{background:#d1d5db;}
-.chev{color:var(--t4,#b8c6d9);}
-.hist-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border,rgba(6,16,30,.07));}
+.stog.off{background:#e2e8f0;}
+.chev{color:#cbd5e1;}
+.hist-item{display:flex;align-items:center;gap:13px;padding:14px 16px;border-bottom:1px solid rgba(6,16,30,.055);}
 .hist-item:last-child{border-bottom:none;}
-.hist-ico{width:40px;height:40px;border-radius:11px;background:rgba(41,121,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.hist-ico{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#eff6ff,#dbeafe);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;}
 .hist-info{flex:1;}
-.hist-dev{font-size:.82rem;font-weight:700;color:var(--t1,#0f172a);}
-.hist-time{font-size:.7rem;color:var(--t3,#8fa3bc);margin-top:2px;}
-.danger-btn{width:100%;background:var(--fail-d,rgba(239,68,68,.1));color:var(--fail,#ef4444);border:1.5px solid rgba(239,68,68,.2);border-radius:12px;padding:13px;font-size:.84rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.hist-dev{font-size:.84rem;font-weight:700;color:#0f172a;font-family:'Heebo','Inter',sans-serif;}
+.hist-time{font-size:.71rem;color:#94a3b8;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.danger-btn{width:100%;background:#fff;color:#ef4444;border:1.5px solid rgba(239,68,68,.2);border-radius:14px;padding:14px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Heebo','Inter',sans-serif;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;}
 .sett-slider{width:100%;height:4px;accent-color:#2979ff;cursor:pointer;}
 
 
@@ -715,18 +836,14 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 <!-- ═══ DASHBOARD ═══ -->
 <div id="sc-dash" class="sc">
-  <div style="padding:16px 14px 10px;">
-    <div style="font-size:1.5rem;font-weight:900;color:var(--t1);margin-bottom:14px;letter-spacing:-.5px;">סיכום בדיקה</div>
+  <div style="background:linear-gradient(160deg,var(--bg-deep),var(--bg-mid));padding:16px 16px 20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 0% 120%,rgba(41,121,255,.15),transparent);pointer-events:none;"></div>
+    <div style="font-size:.58rem;color:var(--gold);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px;position:relative;">Electra CX · L0</div>
+    <div style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.3px;position:relative;">סיכום בדיקה</div>
   </div>
-  <div style="padding:0 14px 8px;">
-    <div class="dash-kpi-grid" id="dash-kpis"></div>
+  <div style="padding:14px 14px 80px;" id="dash-main">
+    <div class="empty" style="padding:40px 20px;"><div class="empty-ico">📊</div><div class="empty-t">טוען נתונים...</div></div>
   </div>
-  <div class="card"><div class="clabel">התקדמות לפי פרק</div><div id="dash-chs"></div></div>
-  <div class="card" id="d-fail" style="display:none;"><div class="clabel" style="color:var(--fail);">Failed — דורש טיפול</div><div id="d-fail-list"></div></div>
-  <div class="card" id="d-na" style="display:none;"><div class="clabel">N/A</div><div id="d-na-list"></div></div>
-  <div class="card" id="d-open-card" style="display:none;"><div class="clabel" style="color:var(--fail);">Issues פתוחים / ממתינים</div><div id="d-open-list"></div></div>
-  <div class="card"><div class="clabel">יומן פעילות</div><div id="d-log"></div></div>
-  <div style="height:20px;"></div>
 </div>
 
 </div><!-- content -->
@@ -755,6 +872,24 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 </div>
 
 </div><!-- app -->
+
+<!-- ISSUE FULL PAGE -->
+<div class="iss-page" id="iss-page">
+  <div class="iss-page-nav">
+    <button class="nav-back" onclick="closeIssuePage()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.85);border-radius:9px;padding:8px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      חזור
+    </button>
+    <div style="text-align:center;">
+      <div class="iss-page-title">ISSUE</div>
+      <div class="iss-page-name" id="iss-page-name">—</div>
+    </div>
+    <div style="width:70px;display:flex;justify-content:flex-end;">
+      <span id="iss-page-pill"></span>
+    </div>
+  </div>
+  <div class="iss-page-body" id="iss-page-body"></div>
+</div>
 
 <!-- FLOAT -->
 <div id="fi" onclick="switchTab('issues')">
@@ -862,7 +997,15 @@ function buildItems(){
   if(list.childElementCount>0)return;
   let lastC=0;
   ITEMS.forEach(item=>{
-    if(item.c!==lastC){lastC=item.c;const b=document.createElement('div');b.className='banner';b.innerHTML='<div class="bdot"></div>'+CH[item.c];list.appendChild(b);}
+    if(item.c!==lastC){
+      lastC=item.c;
+      const b=document.createElement('div');
+      b.className='banner';
+      const chNum='חלק '+item.c;
+      const chTitle=CH[item.c].replace('חלק '+item.c+': ','');
+      b.innerHTML='<div class="banner-inner"><div class="banner-line"></div><div class="banner-num">'+chNum+'</div><div class="banner-label">'+chTitle+'</div></div>';
+      list.appendChild(b);
+    }
     const d=document.createElement('div');d.className='item';d.id='ic'+item.id;
     const tools=item.isDate?
       '<input type="date" class="idate" id="note'+item.id+'" onchange="schedSave()" style="margin-top:4px;">':
@@ -904,9 +1047,8 @@ function buildItems(){
         '</div>'+
         '<div class="file-list" id="fl'+item.id+'"></div>'+
       '</div>'+
-      '<div class="iss-p" id="isp'+item.id+'">'+
+      '<div class="iss-p" id="isp'+item.id+'" style="display:none!important;">'+
         '<div id="iss'+item.id+'"></div>'+
-        '<button class="add-iss" onclick="addIss('+item.id+')">+ הוסף Issue</button>'+
       '</div>';
     list.appendChild(d);
   });
@@ -993,7 +1135,7 @@ function addIss(itemId,data={}){
   issueCnt[itemId]++;
   const idx=issueCnt[itemId];
   const st=data.status||'open';
-  const prio=data.prio||'med';
+  const prio=data.priority||data.prio||'med';
   if(!issuePriority[itemId])issuePriority[itemId]={};
   issuePriority[itemId][idx]=prio;
   const bl=document.createElement('div');
@@ -1005,34 +1147,38 @@ function addIss(itemId,data={}){
   bl.innerHTML=
     '<div class="iss-top">'+
       '<span class="iss-num">Issue #'+idx+'</span>'+
-      '<div style="display:flex;gap:5px;">'+
+      '<div style="display:flex;gap:5px;align-items:center;">'+
         '<button class="iss-st '+(st==='closed'?'closed':st==='waiting'?'waiting':'open')+'" id="ist-'+itemId+'-'+idx+'" data-s="'+st+'" onclick="cycleIssStatus('+itemId+','+idx+',this)">'+
           (st==='closed'?'✓ סגור':st==='waiting'?'⏳ ממתין':'⚠ פתוח')+
         '</button>'+
-        '<button class="iss-del" onclick="requireAuth(()=>delIss('+itemId+','+idx+'))">✕</button>'+
+        // Delete only for admins
+        '<button class="iss-del" id="idel-'+itemId+'-'+idx+'" onclick="requireAuth(()=>delIss('+itemId+','+idx+'))" style="'+(isAuthed?'':'display:none;')+'">✕</button>'+
       '</div>'+
     '</div>'+
-    '<div class="prio-sel">'+
+    '<div class="prio-sel" id="psel-'+itemId+'-'+idx+'" style="'+(isAuthed?'':'display:none;')+'">'+
       '<button class="prio-btn'+(prio==='high'?' sel-h':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'high\',this))">🔴 גבוהה</button>'+
       '<button class="prio-btn'+(prio==='med'?' sel-m':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'med\',this))">🟡 בינונית</button>'+
       '<button class="prio-btn'+(prio==='low'?' sel-l':'')+'" onclick="requireAuth(()=>setPrio('+itemId+','+idx+',\'low\',this))">🟢 נמוכה</button>'+
     '</div>'+
-    '<div class="cpills">'+cats.map(c=>'<button class="cpill'+(selCats.includes(c)?' sel':'')+'" onclick="requireAuth(()=>this.classList.toggle(\'sel\'));schedSave();">'+c+'</button>').join('')+'</div>'+
-    '<input class="ii" id="ip-'+itemId+'-'+idx+'" placeholder="שם אחראי..." value="'+(data.person||'')+'" oninput="requireAuth(()=>{});schedSave();" '+(isAuthed?'':'disabled')+'>'+
+    '<div class="cpills" id="cpills-'+itemId+'-'+idx+'" style="'+(isAuthed?'':'display:none;')+'">'+cats.map(c=>'<button class="cpill'+(selCats.includes(c)?' sel':'')+'" onclick="requireAuth(()=>this.classList.toggle(\'sel\'));schedSave();">'+c+'</button>').join('')+'</div>'+
+    '<input class="ii" id="ip-'+itemId+'-'+idx+'" placeholder="שם אחראי..." value="'+(data.person||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
     '<input class="ii" id="ie-'+itemId+'-'+idx+'" type="email" placeholder="מייל..." value="'+(data.email||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
-    '<input class="ii" id="id-'+itemId+'-'+idx+'" placeholder="תיאור הממצא..." value="'+(data.desc||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
-    '<textarea class="ita" id="iact-'+itemId+'-'+idx+'" placeholder="פעולה נדרשת..." oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
-      (data.action||'')+'</textarea>'+
+    '<input class="ii" id="id-'+itemId+'-'+idx+'" placeholder="תיאור..." value="'+(data.desc||'')+'" oninput="schedSave();" '+(isAuthed?'':'disabled')+'>'+
+    (isAuthed?'<textarea class="ita" id="iact-'+itemId+'-'+idx+'" placeholder="פעולה נדרשת..." oninput="schedSave();">'+(data.action||'')+'</textarea>':'')+
     '<div class="iss-ph" id="ibp-'+itemId+'-'+idx+'"></div>'+
-    '<label class="iph-add" style="'+(isAuthed?'':'display:none;')+'">📷 הוסף תמונה<input type="file" accept="image/*" multiple style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+')"></label>'+
-    '<button class="wait-btn" style="'+(isAuthed?'display:none;':'')+'" onclick="setIssWaiting('+itemId+','+idx+')">⏳ סמן כממתין לאישור</button>'+
-    '<button class="create-iss-btn" id="cib-'+itemId+'-'+idx+'" onclick="requireAuth(()=>confirmIss('+itemId+','+idx+'))"'+(data.confirmed?'style="display:none;"':'')+'>✅ צור Issue</button>';
-  // restore issue photos back into state + DOM
+    // Guests can add photo
+    '<label class="iph-add" style="margin-bottom:6px;">📷 הוסף תמונה<input type="file" accept="image/*" multiple style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+')"></label>'+
+    // Guests: only "waiting" button. Admins: create issue button
+    (!isAuthed
+      ? '<button class="wait-btn" onclick="setIssWaiting('+itemId+','+idx+')" style="'+(st!=='open'?'display:none;':'')+'">⏳ סמן כממתין לאישור</button>'
+      : '<button class="create-iss-btn" id="cib-'+itemId+'-'+idx+'" onclick="confirmIss('+itemId+','+idx+')"'+(data.confirmed?' style="display:none;"':'')+'>✅ צור Issue</button>'
+    );
+  // restore issue photos
   if(data.photos?.length){
     if(!issuePhotos[itemId])issuePhotos[itemId]={};
     if(!issuePhotos[itemId][idx])issuePhotos[itemId][idx]=[];
     const row=document.getElementById('ibp-'+itemId+'-'+idx);
-    data.photos.forEach((p)=>{
+    data.photos.forEach(p=>{
       if(!p)return;
       const url=typeof p==='string'?p:(p.url||null);
       if(!url)return;
@@ -1042,9 +1188,253 @@ function addIss(itemId,data={}){
   }
   cont.appendChild(bl);
   document.getElementById('isb'+itemId)?.classList.add('hot');
+  // iss-p stays hidden — issues shown only in dedicated page
   updIssBar();
+  // ── Open as dedicated full-screen page (request 1)
+  if(!data.desc&&!data.person)openIssuePage(itemId,idx);
 }
 
+function openIssuePage(itemId,idx){
+  const pg=document.getElementById('iss-page');if(!pg)return;
+  const bl=document.getElementById('ib-'+itemId+'-'+idx);if(!bl)return;
+  pg.dataset.fromItem=itemId;
+  const secName=ITEMS.find(x=>x.id===itemId)?.t||'סעיף '+itemId;
+  const issNum=document.getElementById('iss-page-name');
+  if(issNum)issNum.textContent='Issue #'+idx;
+  const pill=document.getElementById('iss-page-pill');
+  if(pill){pill.textContent='סעיף '+itemId;pill.style.cssText='background:rgba(245,158,11,.15);color:var(--gold);font-size:.62rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(245,158,11,.25);';}
+
+  const st=document.getElementById('ist-'+itemId+'-'+idx)?.dataset.s||'open';
+  const prio=issuePriority[itemId]?.[idx]||'med';
+  const cats=['חיבורים','תיעוד','ציוד','בטיחות','תקשורת','אחר'];
+  const selCats=[...bl.querySelectorAll('.cpill.sel')].map(b=>b.textContent);
+  const curPerson=document.getElementById('ip-'+itemId+'-'+idx)?.value||'';
+  const curEmail=document.getElementById('ie-'+itemId+'-'+idx)?.value||'';
+  const curDesc=document.getElementById('id-'+itemId+'-'+idx)?.value||'';
+  const curAction=document.getElementById('iact-'+itemId+'-'+idx)?.value||'';
+
+  const stColor=st==='closed'?'#22c55e':st==='waiting'?'#f97316':'#ef4444';
+  const stBg=st==='closed'?'rgba(34,197,94,.12)':st==='waiting'?'rgba(249,115,22,.12)':'rgba(239,68,68,.12)';
+  const stLabel=st==='closed'?'✓ סגור':st==='waiting'?'⏳ ממתין':'⚠️ פתוח';
+  const prioColor=prio==='high'?'#ef4444':prio==='med'?'#f59e0b':'#22c55e';
+  const prioLabel=prio==='high'?'🔴 גבוהה':prio==='med'?'🟡 בינונית':'🟢 נמוכה';
+
+  const body=document.getElementById('iss-page-body');
+  body.innerHTML=
+
+
+
+  // ── STATUS + PRIORITY row ──
+  '<div class="ip-row2">'+
+    '<div class="ip-card">'+
+      '<div class="ip-card-lbl">סטטוס</div>'+
+      '<button class="ip-status-btn '+(st)+'" id="ipst-'+itemId+'-'+idx+'" data-s="'+st+'"'+
+        ' onclick="cycleIssStatus('+itemId+','+idx+');syncIssPageSt(\''+itemId+'\','+idx+')">'+
+        stLabel+
+      '</button>'+
+    '</div>'+
+    '<div class="ip-card">'+
+      '<div class="ip-card-lbl">עדיפות</div>'+
+      (isAuthed?
+        '<div class="ip-prio-row">'+
+          '<button class="ip-prio-btn'+(prio==='high'?' active':'')+'" style="--pc:#ef4444;" onclick="requireAuth(()=>setPrioPage(\''+itemId+'\','+idx+',\'high\',this))">🔴<span>גבוהה</span></button>'+
+          '<button class="ip-prio-btn'+(prio==='med'?' active':'')+'" style="--pc:#f59e0b;" onclick="requireAuth(()=>setPrioPage(\''+itemId+'\','+idx+',\'med\',this))">🟡<span>בינונית</span></button>'+
+          '<button class="ip-prio-btn'+(prio==='low'?' active':'')+'" style="--pc:#22c55e;" onclick="requireAuth(()=>setPrioPage(\''+itemId+'\','+idx+',\'low\',this))">🟢<span>נמוכה</span></button>'+
+        '</div>'
+      :'<div class="ip-prio-display" style="color:'+prioColor+';">'+prioLabel+'</div>')+
+    '</div>'+
+  '</div>'+
+
+  // ── CATEGORIES ──
+  (isAuthed?
+    '<div class="ip-block">'+
+      '<div class="ip-block-lbl">קטגוריה</div>'+
+      '<div class="ip-cats">'+cats.map(c=>
+        '<button class="ip-cat'+(selCats.includes(c)?' sel':'')+'" onclick="this.classList.toggle(\'sel\');syncIssPageCats(\''+itemId+'\','+idx+')">'+c+'</button>'
+      ).join('')+'</div>'+
+    '</div>'
+  :'')+
+
+  // ── CONTACT PICKER ──
+  (contacts.filter(c=>c.name).length>0&&isAuthed?
+    '<div class="ip-block">'+
+      '<div class="ip-block-lbl">שייך לאיש קשר</div>'+
+      '<div class="ip-contacts-grid" id="icp-'+itemId+'-'+idx+'">'+
+        contacts.filter(c=>c.name).map(c=>{
+          const isSel=curPerson===c.name;
+          const initials=c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+          return '<button class="ip-contact-card'+(isSel?' sel':'')+'" onclick="pickIssContact(\''+itemId+'\','+idx+',\''+c.name.replace(/'/g,"\\'")+'\',\''+( c.email||'').replace(/'/g,"\\'")+'\')">'+
+            '<div class="ip-contact-avatar">'+initials+'</div>'+
+            '<div class="ip-contact-info">'+
+              '<div class="ip-contact-name">'+c.name+'</div>'+
+              (c.email?'<div class="ip-contact-email">'+c.email+'</div>':'')+
+            '</div>'+
+            '<div class="ip-contact-check">'+(isSel?'✓':'')+'</div>'+
+          '</button>';
+        }).join('')+
+      '</div>'+
+    '</div>'
+  :'')+
+
+  // ── FIELDS ──
+  '<div class="ip-block">'+
+    '<div class="ip-block-lbl">פרטי הממצא</div>'+
+    '<div class="ip-field-group">'+
+      '<div class="ip-field">'+
+        '<div class="ip-field-icon">👤</div>'+
+        '<div class="ip-field-inner">'+
+          '<div class="ip-field-lbl">שם אחראי</div>'+
+          '<input class="ip-input" id="ipp-'+itemId+'-'+idx+'" value="'+curPerson+'" placeholder="ישראל ישראלי" oninput="syncIssField(\'ip\',\''+itemId+'\','+idx+',this.value)" '+(isAuthed?'':'disabled')+'>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ip-field">'+
+        '<div class="ip-field-icon">✉️</div>'+
+        '<div class="ip-field-inner">'+
+          '<div class="ip-field-lbl">מייל</div>'+
+          '<input class="ip-input" type="email" id="iep-'+itemId+'-'+idx+'" value="'+curEmail+'" placeholder="email@example.com" oninput="syncIssField(\'ie\',\''+itemId+'\','+idx+',this.value)" '+(isAuthed?'':'disabled')+'>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+
+  '<div class="ip-block">'+
+    '<div class="ip-field">'+
+      '<div class="ip-field-icon">📋</div>'+
+      '<div class="ip-field-inner">'+
+        '<div class="ip-field-lbl">תיאור הממצא</div>'+
+        '<textarea class="ip-textarea" id="idp-'+itemId+'-'+idx+'" placeholder="פרט את הממצא בצורה ברורה..." oninput="syncIssField(\'id\',\''+itemId+'\','+idx+',this.value)">'+curDesc+'</textarea>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+
+  (isAuthed?
+    '<div class="ip-block">'+
+      '<div class="ip-field">'+
+        '<div class="ip-field-icon">🔧</div>'+
+        '<div class="ip-field-inner">'+
+          '<div class="ip-field-lbl">פעולה מתקנת</div>'+
+          '<textarea class="ip-textarea" id="iactp-'+itemId+'-'+idx+'" placeholder="פרט את הפעולות הנדרשות לתיקון..." oninput="syncIssField(\'iact\',\''+itemId+'\','+idx+',this.value)">'+curAction+'</textarea>'+
+        '</div>'+
+      '</div>'+
+    '</div>'
+  :'')+
+
+  // ── PHOTOS ──
+  '<div class="ip-block">'+
+    '<div class="ip-block-lbl">📷 תמונות</div>'+
+    '<div class="ip-photos-wrap">'+
+      '<div class="thumb-row" id="iph-page-'+itemId+'-'+idx+'"></div>'+
+      '<div class="ip-photo-btns">'+
+        '<label class="ip-photo-btn">'+
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'+
+          'מצלמה'+
+          '<input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+');syncIssPhotosToPage('+itemId+','+idx+')">'+
+        '</label>'+
+        '<label class="ip-photo-btn ip-photo-btn-sec">'+
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'+
+          'גלריה'+
+          '<input type="file" accept="image/*" multiple style="display:none;" onchange="addIssPhoto(this,'+itemId+','+idx+');syncIssPhotosToPage('+itemId+','+idx+')">'+
+        '</label>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+
+  // ── ACTION BUTTONS ──
+  (!isAuthed&&st==='open'?
+    '<button class="ip-wait-btn" onclick="setIssWaiting('+itemId+','+idx+');syncIssPageSt(\''+itemId+'\','+idx+')">⏳ סמן כממתין לאישור</button>'
+  :'')+
+
+  (isAuthed?
+    '<button class="ip-confirm-btn" id="cibp-'+itemId+'-'+idx+'" onclick="confirmIss('+itemId+','+idx+');this.style.display=\'none\';"'+
+    (bl.dataset.confirmed==='1'?' style="display:none;"':'')+'>'+
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'+
+      'צור Issue ושמור'+
+    '</button>'
+  :'')+
+
+  '<div style="height:20px;"></div>';
+
+  // Restore photos
+  (issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url).forEach((p,pi)=>{
+    const row=document.getElementById('iph-page-'+itemId+'-'+idx);
+    if(row&&!row.querySelector('[data-pi="'+pi+'"]')){
+      const t=mkThumb(p.url,itemId,idx,'iss');t.dataset.pi=pi;row.appendChild(t);
+    }
+  });
+
+  pg.classList.add('open');
+  body.scrollTop=0;
+}
+
+function closeIssuePage(){
+  const pg=document.getElementById('iss-page');
+  if(!pg)return;
+  // If we were viewing a single issue and there's a parent itemId, go back to item list
+  const fromItem=pg.dataset.fromItem;
+  pg.classList.remove('open');
+  if(fromItem){
+    delete pg.dataset.fromItem;
+    setTimeout(()=>openItemIssuesPage(parseInt(fromItem)),50);
+    return;
+  }
+  schedSave();
+}
+
+function syncIssField(prefix,itemId,idx,val){
+  const el=document.getElementById(prefix+'-'+itemId+'-'+idx);if(el)el.value=val;
+  schedSave();
+}
+function syncIssPageSt(itemId,idx){
+  const pgBtn=document.getElementById('ipst-'+itemId+'-'+idx);
+  const clBtn=document.getElementById('ist-'+itemId+'-'+idx);
+  if(pgBtn&&clBtn){
+    pgBtn.className='iss-st '+clBtn.className.replace('iss-st ','').replace(' ip-st-btn','')+' ip-st-btn';
+    pgBtn.dataset.s=clBtn.dataset.s;pgBtn.textContent=clBtn.textContent;
+  }
+  // Hide waiting button if no longer open
+  const wBtn=document.querySelector('#iss-page-body .wait-btn');
+  if(wBtn)wBtn.style.display=(clBtn?.dataset.s==='open'?'':'none');
+}
+function syncIssPageCats(itemId,idx){
+  const pageCats=[...document.querySelectorAll('#iss-page-body .cpill.sel')].map(b=>b.textContent);
+  const clPills=document.querySelectorAll('#cpills-'+itemId+'-'+idx+' .cpill');
+  clPills.forEach(b=>{b.classList.toggle('sel',pageCats.includes(b.textContent));});
+  schedSave();
+}
+function setPrioPage(itemId,idx,prio,btn){
+  if(!issuePriority[itemId])issuePriority[itemId]={};
+  issuePriority[itemId][idx]=prio;
+  // Update ip-prio-btn active state in the issue page
+  const row=btn.closest('.ip-prio-row');
+  if(row){
+    row.querySelectorAll('.ip-prio-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  // Also sync the hidden iss-block prio buttons if they exist
+  const old_row=document.querySelector('#ib-'+itemId+'-'+idx+' .prio-sel');
+  if(old_row){old_row.querySelectorAll('.prio-btn').forEach(b=>b.className='prio-btn');old_row.querySelector('.prio-btn:nth-child('+(prio==='high'?1:prio==='med'?2:3)+')')?.classList.add(prio==='high'?'sel-h':prio==='med'?'sel-m':'sel-l');}
+  schedSave();
+}
+function syncIssPhotosToPage(itemId,idx){
+  const row=document.getElementById('iph-page-'+itemId+'-'+idx);if(!row)return;
+  row.innerHTML='';
+  (issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url).forEach((p,pi)=>{
+    const t=mkThumb(p.url,itemId,idx,'iss');t.dataset.pi=pi;row.appendChild(t);
+  });
+}
+function pickIssContact(itemId,idx,name,email){
+  // Update hidden fields
+  syncIssField('ip',itemId,idx,name);
+  syncIssField('ie',itemId,idx,email);
+  // Update visible page inputs
+  const pInp=document.getElementById('ipp-'+itemId+'-'+idx);if(pInp)pInp.value=name;
+  const eInp=document.getElementById('iep-'+itemId+'-'+idx);if(eInp)eInp.value=email;
+  // Highlight selected pill
+  document.querySelectorAll('#icp-'+itemId+'-'+idx+' .contact-pill').forEach(b=>{
+    b.classList.toggle('sel',b.textContent.includes(name));
+  });
+  schedSave();
+}
 function setPrio(itemId,idx,prio,btn){
   if(!issuePriority[itemId])issuePriority[itemId]={};issuePriority[itemId][idx]=prio;
   const row=btn.closest('.prio-sel');if(row){row.querySelectorAll('.prio-btn').forEach(b=>b.className='prio-btn');btn.classList.add(prio==='high'?'sel-h':prio==='med'?'sel-m':'sel-l');}
@@ -1054,7 +1444,7 @@ function setPrio(itemId,idx,prio,btn){
 function delIss(itemId,idx){
   document.getElementById('ib-'+itemId+'-'+idx)?.remove();
   const cont=document.getElementById('iss'+itemId);
-  if(!cont?.children.length){document.getElementById('isb'+itemId)?.classList.remove('hot');document.getElementById('isp'+itemId).style.display='none';}
+  if(!cont?.children.length){document.getElementById('isb'+itemId)?.classList.remove('hot');}
   updIssBar();schedSave();
 }
 
@@ -1096,7 +1486,34 @@ function createIss(itemId,idx){
 
 function updIssBar(){
   let open=0,closed=0,waiting=0;
-  for(let i=1;i<=31;i++){const cont=document.getElementById('iss'+i);if(!cont)continue;cont.querySelectorAll('.iss-block').forEach(bl=>{if(bl.dataset.confirmed!=='1')return;const s=bl.querySelector('.iss-st')?.dataset.s;if(s==='closed')closed++;else if(s==='waiting')waiting++;else open++;});}
+  for(let i=1;i<=31;i++){
+    const cont=document.getElementById('iss'+i);if(!cont)continue;
+    let iOpen=0,iWait=0,iClosed=0;
+    cont.querySelectorAll('.iss-block').forEach(bl=>{
+      if(bl.dataset.confirmed!=='1')return;
+      const s=bl.querySelector('.iss-st')?.dataset.s;
+      if(s==='closed'){closed++;iClosed++;}
+      else if(s==='waiting'){waiting++;iWait++;}
+      else{open++;iOpen++;}
+    });
+    // Update per-item ISSUE button
+    const isb=document.getElementById('isb'+i);
+    if(isb){
+      const tot=iOpen+iWait+iClosed;
+      if(tot===0){
+        isb.classList.remove('hot','iss-wait','iss-closed');
+        isb.textContent='ISSUE';
+      } else {
+        isb.classList.add('hot');
+        // color by worst status
+        if(iOpen>0){isb.classList.remove('iss-wait','iss-closed');}
+        else if(iWait>0){isb.classList.add('iss-wait');isb.classList.remove('iss-closed');}
+        else{isb.classList.add('iss-closed');isb.classList.remove('iss-wait');}
+        const label=iOpen>0?'⚠️':iWait>0?'⏳':'✓';
+        isb.textContent=label+' '+tot;
+      }
+    }
+  }
   const bar=document.getElementById('iss-bar');const ob=document.getElementById('ib-open');const wb=document.getElementById('ib-wait');const cb=document.getElementById('ib-closed');const fi=document.getElementById('fi');const fin=document.getElementById('fi-n');const tot=open+closed+waiting;
   if(bar)bar.classList.toggle('show',tot>0);
   if(ob){ob.style.display=open>0?'inline-block':'none';ob.textContent='⚠️ '+open+' פתוח';}
@@ -1104,9 +1521,13 @@ function updIssBar(){
   if(cb){cb.style.display=closed>0?'inline-block':'none';cb.textContent='✓ '+closed+' סגור';}
   if(fi)fi.classList.toggle('show',(open+waiting)>0);if(fin)fin.textContent=(open+waiting)||'';
   const tib=document.getElementById('tab-ib');if(tib){tib.classList.toggle('show',(open+waiting)>0);tib.textContent=(open+waiting)||'';}
-  // send-all btn: show only when admin + in-progress + open issues
   const sab=document.getElementById('send-all-btn');
   if(sab)sab.classList.toggle('show',isAuthed&&STATUS==='in-progress'&&(open+waiting)>0);
+  // Refresh item issues page if open
+  const pg=document.getElementById('iss-page');
+  if(pg&&pg.classList.contains('open')&&pg.dataset.itemId&&!pg.dataset.fromItem){
+    renderItemIssuesPage(parseInt(pg.dataset.itemId));
+  }
 }
 
 function setIssWaiting(itemId,idx){
@@ -1162,7 +1583,70 @@ function syncName(){
 
 function logAct(txt,ico='📌'){actLog.unshift({txt,ico,time:new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),date:new Date().toLocaleDateString('he-IL')});if(actLog.length>30)actLog.pop();}
 
-function toggleIssPan(id){const p=document.getElementById('isp'+id);const o=p.style.display==='block';p.style.display=o?'none':'block';if(!o&&!document.getElementById('iss'+id).children.length)addIss(id);updIssBar();}
+function toggleIssPan(id){
+  openItemIssuesPage(id);
+}
+
+function openItemIssuesPage(itemId){
+  const pg=document.getElementById('iss-page');if(!pg)return;
+  const secName=ITEMS.find(x=>x.id===itemId)?.t||'סעיף '+itemId;
+  const issNum=document.getElementById('iss-page-name');
+  if(issNum)issNum.textContent='סעיף '+itemId;
+  const pill=document.getElementById('iss-page-pill');
+  if(pill){pill.textContent=secName.length>24?secName.slice(0,22)+'…':secName;pill.style.cssText='background:rgba(245,158,11,.15);color:var(--gold);font-size:.6rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(245,158,11,.25);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;';}
+  renderItemIssuesPage(itemId);
+  pg.classList.add('open');
+  pg.dataset.itemId=itemId;
+}
+
+function renderItemIssuesPage(itemId){
+  const body=document.getElementById('iss-page-body');if(!body)return;
+  const cont=document.getElementById('iss'+itemId);
+  const blocks=cont?[...cont.querySelectorAll('.iss-block')]:[];
+  let html='';
+  if(blocks.length===0){
+    html='<div style="text-align:center;padding:48px 16px;color:#94a3b8;"><div style="font-size:2.2rem;margin-bottom:12px;">📋</div><div style="font-size:.88rem;font-weight:600;color:#64748b;">אין Issues לסעיף זה</div><div style="font-size:.75rem;margin-top:6px;">לחץ על הכפתור למטה להוספה</div></div>';
+  } else {
+    blocks.forEach((bl,bi)=>{
+      const idx=bi+1;
+      const st=document.getElementById('ist-'+itemId+'-'+idx)?.dataset.s||'open';
+      const prio=issuePriority[itemId]?.[idx]||'med';
+      const desc=document.getElementById('id-'+itemId+'-'+idx)?.value||'';
+      const person=document.getElementById('ip-'+itemId+'-'+idx)?.value||'';
+      const confirmed=bl.dataset.confirmed==='1';
+      const stColor=st==='closed'?'#22c55e':st==='waiting'?'#f97316':'#ef4444';
+      const stBg=st==='closed'?'rgba(34,197,94,.1)':st==='waiting'?'rgba(249,115,22,.1)':'rgba(239,68,68,.1)';
+      const stLabel=st==='closed'?'✓ סגור':st==='waiting'?'⏳ ממתין':'⚠️ פתוח';
+      const prioColor=prio==='high'?'#ef4444':prio==='med'?'#f59e0b':'#22c55e';
+      const prioLabel=prio==='high'?'גבוהה':prio==='med'?'בינונית':'נמוכה';
+      const photos=(issuePhotos[itemId]?.[idx]||[]).filter(p=>p?.url);
+      html+=`<div style="background:#fff;border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;" onclick="openIssuePage(${itemId},${idx})">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:11px;background:${stBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;">${st==='closed'?'✅':st==='waiting'?'⏳':'⚠️'}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span style="font-size:.72rem;font-weight:800;color:#94a3b8;font-family:'JetBrains Mono',monospace;">#${idx}</span>
+              <span style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${stBg};color:${stColor};">${stLabel}</span>
+              <span style="font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(0,0,0,.04);color:${prioColor};">${prioLabel}</span>
+              ${confirmed?'':'<span style="font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:20px;background:rgba(100,116,139,.1);color:#64748b;">טיוטה</span>'}
+            </div>
+            <div style="font-size:.82rem;color:#1e293b;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${desc||'(ללא פירוט)'}</div>
+            ${person?`<div style="font-size:.7rem;color:#94a3b8;margin-top:2px;">👤 ${person}</div>`:''}
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        ${photos.length?`<div style="padding:0 16px 12px;display:flex;gap:6px;">${photos.slice(0,3).map(p=>`<img src="${p.url}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,.08);">`).join('')}${photos.length>3?`<div style="width:48px;height:48px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#64748b;">+${photos.length-3}</div>`:''}
+        </div>`:''}
+      </div>`;
+    });
+  }
+  // Add Issue button at bottom
+  html+=`<button onclick="requireAuth(()=>{addIss(${itemId});closeIssuePage();setTimeout(()=>openIssuePage(${itemId},issueCnt[${itemId}]),80);})" style="width:100%;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:16px;padding:16px;color:#fff;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(245,158,11,.35);">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    הוסף Issue חדש
+  </button>`;
+  body.innerHTML=html;
+}
 
 function setPFN(btn,id){
   const row=btn.parentElement;const wasOn=btn.classList.contains('on');
@@ -1171,7 +1655,7 @@ function setPFN(btn,id){
   const el=document.getElementById('ic'+id);
   if(el){el.classList.remove('p','f','n');if(!wasOn){if(btn.classList.contains('p'))el.classList.add('p');else if(btn.classList.contains('f'))el.classList.add('f');else if(btn.classList.contains('n'))el.classList.add('n');}}
   if(settings.vibrateOnPFN&&navigator.vibrate)navigator.vibrate(25);
-  if(!wasOn&&btn.classList.contains('f')&&settings.autoOpenIssue)setTimeout(()=>{const p=document.getElementById('isp'+id);if(p&&p.style.display!=='block')toggleIssPan(id);},200);
+  if(!wasOn&&btn.classList.contains('f')&&settings.autoOpenIssue)setTimeout(()=>openItemIssuesPage(id),200);
   logAct('סעיף '+id+': '+(wasOn?'ביטול':(btn.classList.contains('p')?'Passed':btn.classList.contains('f')?'Failed':'N/A')),btn.classList.contains('p')?'✅':btn.classList.contains('f')?'❌':'—');
   updHeroProg();schedSave();
 }
@@ -1364,27 +1848,132 @@ function renderDash(){
     else if(el.querySelector('.pfn.n.on')){na++;byCh[ch].na++;naItems.push(i);}
     else unset++;
     const cont=document.getElementById('iss'+i);
-    if(cont)cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const s=bl.querySelector('.iss-st')?.dataset.s;const n=bi+1;if(s==='closed')closed++;else if(s==='waiting'){waiting++;openList.push({i,n,s});}else{open++;openList.push({i,n,s});}});
+    if(cont)cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
+      const s=bl.querySelector('.iss-st')?.dataset.s;const n=bi+1;
+      if(s==='closed')closed++;else if(s==='waiting'){waiting++;openList.push({i,n,s});}else{open++;openList.push({i,n,s});}
+    });
   }
-  const pct=31-na>0?Math.round((p+f)/(31-na)*100):0;
-  document.getElementById('dash-main').innerHTML=
-    '<div class="drow"><div class="dico" style="background:var(--ok-d);">✅</div><div style="flex:1;"><div class="dlbl">Passed</div><div class="dval" style="color:var(--ok2);">'+p+'</div></div><div style="font-size:.68rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+Math.round(p/31*100)+'%</div></div>'+
-    '<div class="drow"><div class="dico" style="background:var(--fail-d);">❌</div><div style="flex:1;"><div class="dlbl">Failed</div><div class="dval" style="color:var(--fail2);">'+f+'</div></div><div style="font-size:.68rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+Math.round(f/31*100)+'%</div></div>'+
-    '<div class="drow"><div class="dico" style="background:rgba(6,16,30,.05);">—</div><div style="flex:1;"><div class="dlbl">N/A</div><div class="dval" style="color:var(--t3);">'+na+'</div></div></div>'+
-    '<div class="drow"><div class="dico" style="background:var(--warn-d);">⏳</div><div style="flex:1;"><div class="dlbl">ממתינים לסימון</div><div class="dval" style="color:var(--warn2);">'+unset+'</div></div></div>'+
-    '<div class="drow"><div class="dico" style="background:var(--fail-d);">⚠️</div><div style="flex:1;"><div class="dlbl">Issues פתוחים</div><div class="dval" style="color:var(--fail2);">'+open+'</div></div></div>'+
-    '<div class="drow"><div class="dico" style="background:var(--purple-d);">⏳</div><div style="flex:1;"><div class="dlbl">ממתין לאישור</div><div class="dval" style="color:var(--purple2);">'+waiting+'</div></div></div>'+
-    '<div class="drow"><div class="dico" style="background:var(--ok-d);">🔒</div><div style="flex:1;"><div class="dlbl">Issues סגורים</div><div class="dval" style="color:var(--ok2);">'+closed+'</div></div></div>'+
-    '<div class="drow" style="border-bottom:none;"><div class="dico" style="background:var(--blue-d);">📊</div><div style="flex:1;"><div class="dlbl">השלמה ללא N/A</div><div class="dval" style="color:var(--blue);">'+pct+'%</div></div></div>';
-  const dc=document.getElementById('dash-chs');dc.innerHTML='';
-  [2,3,4].forEach(c=>{const ch=byCh[c];const noNA=ch.tot-ch.na;const p2=noNA>0?Math.round(ch.p/noNA*100):0;dc.innerHTML+='<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:5px;"><span style="font-weight:700;color:var(--t2);">'+CH[c].replace('חלק '+c+': ','')+'</span><span style="font-family:\'JetBrains Mono\',monospace;color:var(--t3);">'+ch.p+'P · '+ch.f+'F · '+p2+'%</span></div><div class="ch-prog"><div class="ch-prog-f"><div style="background:var(--ok2);width:'+Math.round(ch.p/ch.tot*100)+'%;height:100%;"></div><div style="background:var(--fail2);width:'+Math.round(ch.f/ch.tot*100)+'%;height:100%;"></div></div></div></div>';});
-  const dfc=document.getElementById('d-fail');const dfl=document.getElementById('d-fail-list');
-  if(failItems.length){dfc.style.display='block';dfl.innerHTML=failItems.map(i=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:.81rem;display:flex;gap:7px;cursor:pointer;" onclick="switchTab(\'cl\');setTimeout(()=>document.getElementById(\'ic'+i+'\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'}),350);"><span class="item-num">'+i+'</span>'+(ITEMS.find(x=>x.id===i)?.t||'')+'</div>').join('');}else dfc.style.display='none';
-  const dnc=document.getElementById('d-na');const dnl=document.getElementById('d-na-list');
-  if(naItems.length){dnc.style.display='block';dnl.innerHTML=naItems.map(i=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:.81rem;color:var(--t2);display:flex;gap:7px;"><span class="item-num">'+i+'</span>'+(ITEMS.find(x=>x.id===i)?.t||'')+'</div>').join('');}else dnc.style.display='none';
-  const doc=document.getElementById('d-open-card');const dol=document.getElementById('d-open-list');
-  if(openList.length){doc.style.display='block';dol.innerHTML=openList.map(({i,n,s})=>{const person=document.getElementById('ip-'+i+'-'+n)?.value||'—';const desc=(document.getElementById('id-'+i+'-'+n)?.value||'').substring(0,50);const prio=issuePriority[i]?.[n]||'med';const prioIco=prio==='high'?'🔴':prio==='med'?'🟡':'🟢';const stLbl=s==='waiting'?'⏳ ממתין':'⚠️ פתוח';return'<div style="padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="switchTab(\'cl\');setTimeout(()=>document.getElementById(\'ic'+i+'\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'}),350);"><div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span style="font-size:.68rem;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+prioIco+' סעיף '+i+' #'+n+' — '+stLbl+'</span><span style="font-size:.68rem;color:var(--t2);">👤 '+person+'</span></div><div style="font-size:.78rem;color:var(--t2);">'+desc+(desc.length>=50?'...':'')+'</div></div>';}).join('');}else doc.style.display='none';
-  const dl=document.getElementById('d-log');if(dl){if(actLog.length){dl.innerHTML=actLog.slice(0,10).map(l=>'<div class="log-item"><div class="log-dot"></div><div><div style="font-size:.79rem;color:var(--t2);">'+l.ico+' '+l.txt+'</div><div style="font-size:.62rem;color:var(--t3);margin-top:1px;font-family:\'JetBrains Mono\',monospace;">'+l.date+' · '+l.time+'</div></div></div>').join('');}else dl.innerHTML='<div style="font-size:.78rem;color:var(--t3);text-align:center;padding:14px;">אין פעילות</div>';}
+  const eff=Math.max(31-na,1);
+  const pct=Math.round(p/eff*100);
+  const pctAll=Math.round((p+f+na)/31*100);
+  const panel=document.getElementById('f-panel')?.value||'—';
+  const proj=document.getElementById('f-proj')?.value||'';
+  const insp=document.getElementById('f-insp')?.value||'—';
+  const fdate=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');
+
+  let html=
+    // ── Header card (like PDF report)
+    '<div style="background:linear-gradient(135deg,var(--bg-deep) 0%,#0e2240 100%);border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;">'+
+    '<div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(245,158,11,.12),transparent 70%);"></div>'+
+    '<div style="font-size:.55rem;color:var(--gold);font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;">L0 Inspection Report</div>'+
+    '<div style="font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:3px;letter-spacing:-.3px;">'+panel+'</div>'+
+    (proj?'<div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-bottom:10px;">'+proj+'</div>':'')+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">'+
+    (insp!=='—'?'<span style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:.65rem;color:rgba(255,255,255,.65);">👤 '+insp+'</span>':'')+
+    '<span style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:.65rem;color:rgba(255,255,255,.65);">📅 '+fdate+'</span>'+
+    '</div></div>'+
+
+    // ── Main stats 3-col
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">'+
+      mkStatCard('✓','Passed',p,'#22c55e','rgba(34,197,94,.1)','rgba(34,197,94,.15)')+
+      mkStatCard('✗','Failed',f,'#ef4444','rgba(239,68,68,.1)','rgba(239,68,68,.15)')+
+      mkStatCard('—','N/A',na,'#94a3b8','rgba(6,16,30,.04)','rgba(6,16,30,.08)')+
+    '</div>'+
+
+    // ── Issues 2-col
+    '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">'+
+      mkStatCard('⚠','פתוחים',open,'#ef4444','rgba(239,68,68,.08)','rgba(239,68,68,.12)')+
+      mkStatCard('⏳','ממתינים',waiting,'#a855f7','rgba(168,85,247,.08)','rgba(168,85,247,.12)')+
+      mkStatCard('✓','סגורים',closed,'#22c55e','rgba(34,197,94,.08)','rgba(34,197,94,.12)')+
+      mkStatCard('○','לא סומן',unset,'#f97316','rgba(249,115,22,.08)','rgba(249,115,22,.12)')+
+    '</div>'+
+
+    // ── Completion bar
+    '<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid rgba(6,16,30,.07);box-shadow:0 1px 3px rgba(6,16,30,.05);">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'+
+    '<span style="font-size:.78rem;font-weight:700;color:#334155;">השלמה (ללא N/A)</span>'+
+    '<span style="font-size:1.4rem;font-weight:900;color:#2979ff;font-family:\'JetBrains Mono\',monospace;line-height:1;">'+pct+'%</span>'+
+    '</div>'+
+    '<div style="height:10px;background:rgba(6,16,30,.06);border-radius:10px;overflow:hidden;display:flex;">'+
+    '<div style="width:'+Math.round(p/Math.max(eff,1)*100)+'%;background:linear-gradient(90deg,#22c55e,#86efac);border-radius:10px 0 0 10px;transition:width .6s ease;"></div>'+
+    (f>0?'<div style="width:'+Math.round(f/Math.max(eff,1)*100)+'%;background:#ef4444;"></div>':'')+
+    '</div>'+
+    '<div style="display:flex;gap:12px;margin-top:8px;">'+
+    '<span style="font-size:.62rem;color:#22c55e;font-weight:700;">●  '+p+' Passed</span>'+
+    '<span style="font-size:.62rem;color:#ef4444;font-weight:700;">●  '+f+' Failed</span>'+
+    '<span style="font-size:.62rem;color:#94a3b8;font-weight:700;">●  '+na+' N/A</span>'+
+    '</div></div>'+
+
+    // ── Chapter breakdown
+    '<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid rgba(6,16,30,.07);box-shadow:0 1px 3px rgba(6,16,30,.05);">'+
+    '<div style="font-size:.65rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">התקדמות לפי פרק</div>'+
+    [2,3,4].map(c=>{
+      const ch=byCh[c];const ne=Math.max(ch.tot-ch.na,1);const p2=Math.round(ch.p/ne*100);
+      return '<div style="margin-bottom:13px;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'+
+        '<span style="font-size:.76rem;font-weight:700;color:#334155;">'+CH[c].replace('חלק '+c+': ','')+'</span>'+
+        '<span style="font-size:.7rem;font-weight:800;color:#2979ff;font-family:\'JetBrains Mono\',monospace;">'+p2+'%</span>'+
+        '</div>'+
+        '<div style="height:7px;background:rgba(6,16,30,.06);border-radius:7px;overflow:hidden;display:flex;">'+
+        '<div style="width:'+Math.round(ch.p/Math.max(ch.tot,1)*100)+'%;background:#22c55e;"></div>'+
+        '<div style="width:'+Math.round(ch.f/Math.max(ch.tot,1)*100)+'%;background:#ef4444;"></div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;margin-top:4px;font-size:.6rem;color:#94a3b8;font-weight:600;">'+
+        '<span>'+ch.p+' Passed</span><span>'+ch.f+' Failed</span><span>'+ch.na+' N/A</span>'+
+        '</div></div>';
+    }).join('')+
+    '</div>';
+
+  // ── Failed items list
+  if(failItems.length){
+    html+='<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid rgba(239,68,68,.2);box-shadow:0 1px 3px rgba(6,16,30,.05);">'+
+    '<div style="font-size:.65rem;font-weight:800;color:#ef4444;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">⚠ Failed — דורש טיפול</div>'+
+    failItems.map(i=>'<div style="padding:9px 0;border-bottom:1px solid rgba(6,16,30,.06);font-size:.81rem;display:flex;gap:8px;align-items:center;cursor:pointer;" onclick="switchTab(\'cl\');setTimeout(()=>document.getElementById(\'ic'+i+'\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'}),350);">'+
+      '<span class="item-num">'+i+'</span><span style="color:#334155;flex:1;">'+( ITEMS.find(x=>x.id===i)?.t||'')+'</span>'+
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>').join('')+
+    '</div>';
+  }
+
+  // ── Open issues list
+  if(openList.length){
+    html+='<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;border:1.5px solid rgba(239,68,68,.18);box-shadow:0 1px 3px rgba(6,16,30,.05);">'+
+    '<div style="font-size:.65rem;font-weight:800;color:#ef4444;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Issues פתוחים / ממתינים</div>'+
+    openList.map(({i,n,s})=>{
+      const person=document.getElementById('ip-'+i+'-'+n)?.value||'—';
+      const desc=(document.getElementById('id-'+i+'-'+n)?.value||'').substring(0,55);
+      const prio=issuePriority[i]?.[n]||'med';
+      const prioC=prio==='high'?'#ef4444':prio==='med'?'#f97316':'#22c55e';
+      const stC=s==='waiting'?'#a855f7':'#ef4444';
+      const stL=s==='waiting'?'⏳ ממתין':'⚠ פתוח';
+      return '<div style="padding:10px 0;border-bottom:1px solid rgba(6,16,30,.06);cursor:pointer;" onclick="switchTab(\'cl\');setTimeout(()=>document.getElementById(\'ic'+i+'\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'}),350);">'+
+        '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'+
+        '<span style="font-size:.62rem;font-family:\'JetBrains Mono\',monospace;color:'+stC+';font-weight:700;">'+stL+' · סעיף '+i+'</span>'+
+        '<span style="font-size:.62rem;color:#64748b;">●<span style="color:'+prioC+';">  '+( prio==='high'?'גבוהה':prio==='med'?'בינונית':'נמוכה')+'</span></span>'+
+        '</div>'+
+        '<div style="font-size:.78rem;color:#334155;margin-bottom:2px;">'+desc+(desc.length>=55?'...':'')+'</div>'+
+        '<div style="font-size:.65rem;color:#94a3b8;">👤 '+person+'</div>'+
+        '</div>';
+    }).join('')+
+    '</div>';
+  }
+
+  // ── Activity log
+  if(actLog.length){
+    html+='<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid rgba(6,16,30,.07);box-shadow:0 1px 3px rgba(6,16,30,.05);">'+
+    '<div style="font-size:.65rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">יומן פעילות</div>'+
+    actLog.slice(0,8).map(l=>'<div class="log-item"><div class="log-dot"></div><div><div style="font-size:.79rem;color:#334155;">'+l.ico+' '+l.txt+'</div><div style="font-size:.62rem;color:#94a3b8;margin-top:1px;font-family:\'JetBrains Mono\',monospace;">'+l.date+' · '+l.time+'</div></div></div>').join('')+
+    '</div>';
+  }
+
+  const dm=document.getElementById('dash-main');
+  if(dm)dm.innerHTML=html;
+}
+
+function mkStatCard(ico,lbl,val,col,bg){
+  return '<div style="background:'+bg+';border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(6,16,30,.06);">'+
+    '<div style="font-size:1.4rem;font-weight:900;color:'+col+';font-family:\'JetBrains Mono\',monospace;line-height:1;">'+val+'</div>'+
+    '<div style="font-size:.6rem;color:var(--t3);margin-top:3px;font-weight:700;">'+ico+' '+lbl+'</div>'+
+  '</div>';
 }
 
 function doCSV(){
@@ -1602,7 +2191,7 @@ function renderHome(){
     const cl=allCls[id];
     const[sbg,sc,sl]=cl.status==='completed'?['var(--ok-d)','var(--ok)','הושלם ✓']:cl.status==='in-progress'?['var(--warn-d)','var(--warn)','בתהליך']:['rgba(6,16,30,.05)','var(--t3)','לא התחיל'];
     const stripe=cl.status==='completed'?'var(--ok)':cl.status==='in-progress'?'var(--warn)':'rgba(6,16,30,.1)';
-    const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,pct=Math.round((p+f)/tot*100);
+    const p=cl.passed||0,f=cl.failed||0,tot=cl.total||31,na=cl.na||0,eff=Math.max(tot-na,1),pct=Math.round(p/eff*100);
     const oi=cl.openIssues||0,ci=cl.closedIssues||0,wi=cl.waitingIssues||0;
     const card=document.createElement('div');card.className='clc';card.id='clc-'+id;
     const stLabel=cl.status==='completed'?'הושלם ✓':cl.status==='in-progress'?'בתהליך ⏳':'טרם התחיל';
@@ -1624,13 +2213,14 @@ function renderHome(){
             (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'')+
           '</div>'+
         '</div>'+
-        '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/tot*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/tot*100)+'%;"></div></div></div>'+
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">'+
+        '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/eff*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/eff*100)+'%;"></div></div></div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;">'+
+          '<span style="font-size:.78rem;font-weight:900;color:var(--t1);">'+pct+'%</span>'+
+          '<span style="font-size:.62rem;color:var(--t3);">'+(na?'Passed (ללא N/A)':'Passed')+'</span>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">'+
           '<div class="cnums"><span class="cn-p">✓ '+p+'</span><span class="cn-f">✗ '+f+'</span>'+(na?'<span style="color:var(--t3);">N/A '+na+'</span>':'')+' <span class="cn-r">— '+(tot-p-f-na)+'</span></div>'+
-          '<div style="display:flex;align-items:center;gap:5px;">'+
-            '<span style="font-size:.65rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">'+pct+'%</span>'+
-            '<svg class="clc-chev" id="chev-'+id+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'+
-          '</div>'+
+          '<svg class="clc-chev" id="chev-'+id+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'+
         '</div>'+
       '</div>'+
       // ── EXPAND BODY (hidden until toggled) ──
@@ -1785,6 +2375,14 @@ function showSettings(){
   if(bb){bb.textContent=bks.length+' גיבויים';bb.style.display=bks.length?'inline':'none';}
   const dd=document.getElementById('sp-data-d');
   if(dd){const lb=bks[0];dd.textContent=lb?'גיבוי אחרון: '+new Date(lb.ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+' '+new Date(lb.ts).toLocaleDateString('he-IL'):'לא בוצע גיבוי עדיין';}
+  // KPI hero bar
+  const clCount=Object.keys(allCls).length;
+  const cCount=contacts.filter(c=>c.name).length;
+  let openIss=0;
+  for(let i=1;i<=31;i++){const c=document.getElementById('iss'+i);if(!c)continue;c.querySelectorAll('.iss-block').forEach(bl=>{if(bl.dataset.confirmed==='1'&&(bl.querySelector('.iss-st')?.dataset.s||'open')==='open')openIss++;});}
+  const skCls=document.getElementById('sk-cls');if(skCls)skCls.textContent=clCount||Object.keys(allCls).length||'—';
+  const skC=document.getElementById('sk-contacts');if(skC)skC.textContent=cCount;
+  const skI=document.getElementById('sk-issues');if(skI)skI.textContent=openIss;
   pg.classList.add('open');
 }
 function closeSettings(){document.getElementById('sett-page')?.classList.remove('open');}
@@ -2403,8 +3001,16 @@ document.addEventListener('DOMContentLoaded',()=>{
     <button class="sett-nav-back" onclick="closeSettings()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>חזור
     </button>
-    <div class="sett-nav-title">הגדרות</div>
+    <div class="sett-nav-title">⚙️ הגדרות</div>
     <div style="width:60px;"></div>
+  </div>
+  <!-- hero KPIs bar -->
+  <div class="sett-hero">
+    <div class="sett-hero-grid" id="sett-kpi-grid">
+      <div class="sett-hero-kpi"><div class="sett-hero-n" id="sk-cls">—</div><div class="sett-hero-l">צ׳קליסטים</div></div>
+      <div class="sett-hero-kpi"><div class="sett-hero-n" id="sk-contacts">—</div><div class="sett-hero-l">אנשי קשר</div></div>
+      <div class="sett-hero-kpi"><div class="sett-hero-n" id="sk-issues">—</div><div class="sett-hero-l">Issues פתוחים</div></div>
+    </div>
   </div>
   <div class="sett-body">
     <div class="sett-sec-hdr">פרופיל</div>
