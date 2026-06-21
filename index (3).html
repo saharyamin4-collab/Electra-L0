@@ -322,7 +322,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .item.f{border-right:4px solid var(--fail);}
 .item.n{border-right:4px solid var(--t3);}
 .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
-.item-num{font-size:.6rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--blue-accent),#1565c0);padding:3px 8px;border-radius:7px;flex-shrink:0;margin-top:1px;font-family:'JetBrains Mono',monospace;box-shadow:0 1px 4px rgba(41,121,255,.3);}
+.item-num{font-size:.68rem;font-weight:800;color:var(--t3);min-width:22px;padding-top:1px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
 .item-txt{font-size:.86rem;font-weight:600;line-height:1.5;color:var(--t1);flex:1;font-family:'Heebo','Inter',sans-serif;}
 .ibtn{background:transparent;color:var(--t3);border:1.5px solid var(--border);padding:5px 11px;border-radius:20px;font-size:.62rem;font-weight:800;cursor:pointer;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;font-family:'Heebo',inherit;}
 .ibtn.hot{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.06));color:var(--fail);border-color:rgba(239,68,68,.4);}
@@ -845,7 +845,13 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
   <div id="cl-list"></div>
 
-  <div class="section-banner">חלק 5 — אישורי נציגים</div>
+  <div class="banner">
+    <div class="banner-inner">
+      <div class="banner-line"></div>
+      <div class="banner-num">חלק 5</div>
+      <div class="banner-label">אישורי נציגים</div>
+    </div>
+  </div>
   <div class="card"><div id="sig-wrap"></div></div>
 
   <div class="card">
@@ -997,6 +1003,61 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
       <div id="scan-preview-s1" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;max-height:110px;border:1px solid rgba(96,165,250,.2);">
         <img id="scan-img-s1" style="width:100%;max-height:110px;object-fit:cover;display:block;">
       </div>
+      <!-- Panel type selector -->
+      <div style="margin-bottom:14px;">
+        <div style="font-size:.68rem;font-weight:700;color:#94a3b8;margin-bottom:8px;text-align:right;">סוג הלוח</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <button id="type-mn" onclick="selectPanelType('mn')" style="padding:12px 8px;border-radius:12px;border:2px solid var(--gold);background:linear-gradient(135deg,#0a1f38,#0d2845);color:var(--gold);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;">
+            <div style="font-size:1.1rem;margin-bottom:4px;">⚡</div>
+            לוח מ"נ
+            <div style="font-size:.62rem;color:rgba(245,166,35,.6);margin-top:2px;">מתח נמוך</div>
+          </button>
+          <button id="type-mg" onclick="selectPanelType('mg')" style="padding:12px 8px;border-radius:12px;border:2px solid var(--border2);background:var(--card2);color:var(--t3);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;">
+            <div style="margin-bottom:6px;display:flex;justify-content:center;">
+              <svg width="38" height="42" viewBox="0 0 38 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Main pole -->
+                <rect x="17.5" y="10" width="3" height="32" rx="1.5" fill="currentColor"/>
+                <!-- Top crossarm -->
+                <rect x="4" y="10" width="30" height="2.5" rx="1.2" fill="currentColor"/>
+                <!-- Middle crossarm -->
+                <rect x="8" y="20" width="22" height="2" rx="1" fill="currentColor" opacity=".85"/>
+                <!-- Diagonal braces top left -->
+                <line x1="19" y1="13" x2="5" y2="10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <!-- Diagonal braces top right -->
+                <line x1="19" y1="13" x2="33" y2="10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <!-- Diagonal braces mid -->
+                <line x1="19" y1="15" x2="9" y2="20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".7"/>
+                <line x1="19" y1="15" x2="29" y2="20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".7"/>
+                <!-- Insulators top (3) - glass disc shape -->
+                <ellipse cx="5.5" cy="10" rx="2" ry="3" fill="currentColor" opacity=".9"/>
+                <line x1="5.5" y1="7.5" x2="5.5" y2="13" stroke="currentColor" stroke-width=".6" opacity=".4"/>
+                <ellipse cx="19" cy="10" rx="2" ry="3" fill="currentColor" opacity=".9"/>
+                <line x1="19" y1="7.5" x2="19" y2="13" stroke="currentColor" stroke-width=".6" opacity=".4"/>
+                <ellipse cx="32.5" cy="10" rx="2" ry="3" fill="currentColor" opacity=".9"/>
+                <line x1="32.5" y1="7.5" x2="32.5" y2="13" stroke="currentColor" stroke-width=".6" opacity=".4"/>
+                <!-- Insulators middle (2) -->
+                <ellipse cx="9.5" cy="20" rx="1.6" ry="2.4" fill="currentColor" opacity=".8"/>
+                <ellipse cx="28.5" cy="20" rx="1.6" ry="2.4" fill="currentColor" opacity=".8"/>
+                <!-- Wires from top insulators -->
+                <path d="M5.5 13 Q3 18 1 22" stroke="currentColor" stroke-width="1" fill="none" opacity=".6"/>
+                <path d="M32.5 13 Q35 18 37 22" stroke="currentColor" stroke-width="1" fill="none" opacity=".6"/>
+                <!-- Wires mid -->
+                <path d="M9.5 22.4 Q6 26 3 28" stroke="currentColor" stroke-width=".8" fill="none" opacity=".45"/>
+                <path d="M28.5 22.4 Q32 26 35 28" stroke="currentColor" stroke-width=".8" fill="none" opacity=".45"/>
+                <!-- Transformer box -->
+                <rect x="23" y="27" width="11" height="9" rx="1.5" fill="currentColor" opacity=".55"/>
+                <line x1="28.5" y1="27" x2="28.5" y2="36" stroke="currentColor" stroke-width=".8" opacity=".35"/>
+                <line x1="23" y1="31" x2="34" y2="31" stroke="currentColor" stroke-width=".6" opacity=".25"/>
+                <!-- Ground lines at base -->
+                <line x1="15" y1="42" x2="23" y2="42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+                <line x1="16.5" y1="44" x2="21.5" y2="44" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".3"/>
+              </svg>
+            </div>
+            לוח מ"ג
+            <div style="font-size:.62rem;color:var(--t4);margin-top:2px;">מתח גבוה</div>
+          </button>
+        </div>
+      </div>
       <div class="field"><label>שם הלוח / צ'קליסט *</label><input type="text" id="new-name" class="ii" style="margin:0;" placeholder="200A-L1-MSB..."></div>
       <div class="field"><label>בודק</label><input type="text" id="new-insp" class="ii" style="margin:0;" placeholder="שם הבודק"></div>
       <div class="field"><label>פרויקט</label><input type="text" id="new-proj" class="ii" style="margin:0;" placeholder="שם הפרויקט"></div>
@@ -1060,9 +1121,9 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 // CONSTANTS
 // ════════════════════════════════════════
 const ADMIN_PASS='electra1234';
-const ITEMS=[
+// ── מ"נ — לוח מתח נמוך (ברירת מחדל) ──
+const ITEMS_MN=[
   {c:2,id:1,t:"רישום שם הלוח והתאמתו הפיזית"},
-  // id:2 removed — date already in checklist header
   {c:2,id:3,t:"ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן"},
   {c:2,id:4,t:"ודא התאמת מספר סידורי של הפריט לטופס הבדיקה"},
   {c:2,id:5,t:"צלם תווית הציוד כולל דגם ומספר סידורי"},
@@ -1093,7 +1154,68 @@ const ITEMS=[
   {c:4,id:30,t:"בצע טריפ במפסק הזנה לשנאי — ודא הקפצת מפסק בלוח"},
   {c:4,id:31,t:"ודא כי אין נושאים פתוחים (Punch List) המשפיעים על המשך"}
 ];
-const CH={2:"חלק 2: בדיקות חזותיות",3:"חלק 3: בדיקות פונקציונאליות",4:"חלק 4: הזנות כפולות ופיקוד"};
+
+// ── מ"ג — לוח מתח גבוה ──
+const ITEMS_MG=[
+  // חלק 2: בדיקות חזותיות (12 סעיפים)
+  {c:2,id:1, t:"רישום שם הלוח והתאמתו הפיזית"},
+  {c:2,id:2, t:"ודא קבלת טופס בדיקת לוח מלא וחתום של היצרן"},
+  {c:2,id:3, t:"ודא התאמת מספר סידורי של הפריט לטופס הבדיקה"},
+  {c:2,id:4, t:"צלם תווית הציוד כולל דגם ומספר סידורי"},
+  {c:2,id:5, t:"ודא קבלת טופס בדיקות קלט/פלט (I/O) ל-BMS"},
+  {c:2,id:6, t:"ודא יישום לקחים והערות מבדיקות קודמות"},
+  {c:2,id:7, t:"רשום גרסת תוכנית לפיה נבדק הלוח וודא שהיא עדכנית"},
+  {c:2,id:8, t:"ודא התאמת מראה הלוח לתוכנית — שילוט, מפסקים, מימיקה"},
+  {c:2,id:9, t:"ודא התאמת ערכי זרם, כניסות כבילה, חיזוק גידים וחוצצים"},
+  {c:2,id:10,t:"בדוק התאמת הכבילה לכמות החיבורים בפסי הצבירה"},
+  {c:2,id:11,t:"ודא התאמת מספר הקטבים (3/4) במערכות ההחלפה"},
+  {c:2,id:12,t:"וידוא קיום ותאימות נורות סימון לכלל מקורות ההזנה"},
+  // חלק 3: בדיקות פונקציונאליות (6 סעיפים)
+  {c:3,id:13,t:"בדוק תפעול מפסקים מהכפתורים — מקומי וחיצוני"},
+  {c:3,id:14,t:'בדוק פעולת מפסק למצב טריפ ע"י לחצן טריפ מכני'},
+  {c:3,id:15,t:'בדוק פעולת מפסקים למצב טריפ ע"י פקודות חיצוניות (EPO)'},
+  {c:3,id:16,t:"בדוק נקודות קלט/פלט נוספות שאינן לבקרת מבנה"},
+  {c:3,id:17,t:"בדוק תפקוד מפסקי פחת, ושלול הצלבה בין פסי אפס"},
+  {c:3,id:18,t:"בדוק תפקוד ותאימות נורות סימון ומכשירי מדידה"},
+  // חלק 4: בדיקות פונקציונאליות - לוחות מתח גבוה (13 סעיפים)
+  {c:4,id:19,t:"בדוק פתיחה וסגירה ידנית וחשמלית של כלל המפסקים לרבות מקרי הארקה"},
+  {c:4,id:20,t:"ודא חיווי תקין מממסורות הסימון ומכשירי מדידה"},
+  {c:4,id:21,t:"בדוק הגנות קשת חשמלית וקבלת חיווי מתאים במספר ההגנה"},
+  {c:4,id:22,t:"בדוק תקינות הלוח תחת הזנה משני מקורות"},
+  {c:4,id:23,t:"נתק מקור ראשי וודא מעבר למקור משני"},
+  {c:4,id:24,t:"חבר מקור הזנה ראשי וודא המשך הזנה ממקור משני"},
+  {c:4,id:25,t:"נתק מקור הזנה משני וודא מעבר למקור ראשי"},
+  {c:4,id:26,t:"חבר מקור הזנה משני וודא המשך הזנה ממקור ראשי"},
+  {c:4,id:27,t:"נתק שתי מקורות הזנה בו — זמנית / החזר מקור משני וודא חזרת מתח ללוח / החזר מקור ראשי וודא המשך הזנה ממקור משני"},
+  {c:4,id:28,t:'בצע בדיקות אל מול תפ"מ הגנרטורים — נדרש נציג חברת הגנרטורים'},
+  {c:4,id:29,t:"ודא רציפות תפקוד הלוח בהיעדר פיקוד - כל הזנה בנפרד"},
+  {c:4,id:30,t:"ודא רציפות תפקוד הלוח בהיעדר שתי ההזנות — עבודה על מצברים"},
+  {c:4,id:31,t:'בצע "טריפ" במפסק הזנה לשנאי/לוח — ודא הקפצת מפסק בלוח מ"ג'}
+];
+
+// Active items — set by panel type, default MN
+let PANEL_TYPE='mn';
+let ITEMS=ITEMS_MN;
+
+function selectPanelType(type){
+  PANEL_TYPE=type;
+  ITEMS=type==='mg'?ITEMS_MG:ITEMS_MN;
+  // Update button styles
+  const mn=document.getElementById('type-mn');
+  const mg=document.getElementById('type-mg');
+  if(mn&&mg){
+    if(type==='mn'){
+      mn.style.cssText='padding:12px 8px;border-radius:12px;border:2px solid var(--gold);background:linear-gradient(135deg,#0a1f38,#0d2845);color:var(--gold);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;';
+      mg.style.cssText='padding:12px 8px;border-radius:12px;border:2px solid var(--border2);background:var(--card2);color:var(--t3);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;';
+    } else {
+      mg.style.cssText='padding:12px 8px;border-radius:12px;border:2px solid var(--blue);background:linear-gradient(135deg,#0a1f38,#0d2845);color:var(--blue2);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;';
+      mn.style.cssText='padding:12px 8px;border-radius:12px;border:2px solid var(--border2);background:var(--card2);color:var(--t3);font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;';
+    }
+  }
+}
+const CH_MN={2:"חלק 2: בדיקות חזותיות",3:"חלק 3: בדיקות פונקציונאליות",4:"חלק 4: הזנות כפולות ופיקוד"};
+const CH_MG={2:"חלק 2: בדיקות חזותיות",3:"חלק 3: בדיקות פונקציונאליות",4:"בדיקות פונקציונאליות - לוחות מתח גבוה"};
+const CH=()=>PANEL_TYPE==='mg'?CH_MG:CH_MN;
 const SIG_ROLES=["נציג CX ELECTRA","נציג ההסמכה","נציג היצרן","נציג המזמין"];
 
 // ════════════════════════════════════════
@@ -1118,85 +1240,105 @@ function toast(msg,dur=2800){
 
 function buildItems(){
   const list=document.getElementById('cl-list');
-  if(list.childElementCount>0)return;
+  list.innerHTML=''; // always rebuild for correct panel type
   let lastC=0;
+  let seqNum=0;
+  const PFX=PANEL_TYPE==='mg'?'g':''; // DOM prefix to avoid MN/MG ID collision
   ITEMS.forEach(item=>{
+    seqNum++;
+    const did=PFX+item.id; // DOM id suffix
     if(item.c!==lastC){
       lastC=item.c;
       const b=document.createElement('div');
       b.className='banner';
-      const chNum='חלק '+item.c;
-      const chTitle=CH[item.c].replace('חלק '+item.c+': ','');
+      const chLabels={2:'חלק 2',3:'חלק 3',4:'חלק 4',5:'חלק 4.1'};
+      const chNum=chLabels[item.c]||('חלק '+item.c);
+      const chData=CH()[item.c]||'';
+      const chTitle=chData.replace(/^חלק [\d.]+[: ]+/,'');
       b.innerHTML='<div class="banner-inner"><div class="banner-line"></div><div class="banner-num">'+chNum+'</div><div class="banner-label">'+chTitle+'</div></div>';
       list.appendChild(b);
     }
-    const d=document.createElement('div');d.className='item';d.id='ic'+item.id;
+    const d=document.createElement('div');d.className='item';d.id='ic'+did;d.dataset.seq=seqNum;
     const tools=item.isDate?
-      '<input type="date" class="idate" id="note'+item.id+'" onchange="schedSave()" style="margin-top:4px;">':
+      '<input type="date" class="idate" id="note'+did+'" onchange="schedSave()" style="margin-top:4px;">':
       '<div class="tools">'+
-        '<button class="tool" onclick="toggleNote('+item.id+')" style="position:relative;">'+
-          '<svg id="ni'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'+
-          '<span id="nd'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);">✓</span>'+
+        '<button class="tool" onclick="toggleNote('+did+')" style="position:relative;">'+
+          '<svg id="ni'+did+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'+
+          '<span id="nd'+did+'" class="tbadge2" style="display:none;background:var(--blue-accent);">✓</span>'+
         '</button>'+
-        '<button class="tool" onclick="togglePhoto('+item.id+')" style="position:relative;">'+
-          '<svg id="ci'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'+
-          '<span id="cb'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
+        '<button class="tool" onclick="togglePhoto('+did+')" style="position:relative;">'+
+          '<svg id="ci'+did+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'+
+          '<span id="cb'+did+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
         '</button>'+
         '<label class="tool" style="position:relative;cursor:pointer;" title="צרף קובץ">'+
-          '<svg id="fi'+item.id+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>'+
-          '<span id="fb'+item.id+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
-          '<input type="file" multiple style="display:none;" onchange="requireAuth(()=>addFile(this,'+item.id+'))">'+
+          '<svg id="fi'+did+'" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>'+
+          '<span id="fb'+did+'" class="tbadge2" style="display:none;background:var(--blue-accent);"></span>'+
+          '<input type="file" multiple style="display:none;" onchange="requireAuth(()=>addFile(this,'+did+'))">'+
         '</label>'+
       '</div>'+
-      '<div class="note-p" id="np'+item.id+'"><textarea id="note'+item.id+'" placeholder="הוסף הערה..." oninput="noteChg('+item.id+')"></textarea></div>';
+      '<div class="note-p" id="np'+did+'"><textarea id="note'+did+'" placeholder="הוסף הערה..." oninput="noteChg('+did+')"></textarea></div>';
     d.innerHTML=
       '<div class="item-top">'+
         '<div style="display:flex;gap:7px;align-items:flex-start;flex:1;">'+
-          '<span class="item-num">'+item.id+'</span>'+
+          '<span class="item-num">'+seqNum+'</span>'+
           '<span class="item-txt">'+item.t+'</span>'+
         '</div>'+
-        '<button class="ibtn" id="isb'+item.id+'" onclick="requireAuth(()=>toggleIssPan('+item.id+'))">ISSUE</button>'+
+        '<button class="ibtn" id="isb'+did+'" onclick="requireAuth(()=>toggleIssPan('+did+'))">ISSUE</button>'+
       '</div>'+
       '<div class="pfn-row">'+
-        '<button class="pfn p" onclick="requireAuth(()=>setPFN(this,'+item.id+'))">✔ Passed</button>'+
-        '<button class="pfn f" onclick="requireAuth(()=>setPFN(this,'+item.id+'))">✘ Failed</button>'+
-        '<button class="pfn n" onclick="requireAuth(()=>setPFN(this,'+item.id+'))">N/A</button>'+
+        '<button class="pfn p" onclick="requireAuth(()=>setPFN(this,'+did+'))">✔ Passed</button>'+
+        '<button class="pfn f" onclick="requireAuth(()=>setPFN(this,'+did+'))">✘ Failed</button>'+
+        '<button class="pfn n" onclick="requireAuth(()=>setPFN(this,'+did+'))">N/A</button>'+
       '</div>'+
       tools+
-      '<div class="photo-p" id="pp'+item.id+'">'+
-        '<div class="thumb-row" id="pt'+item.id+'"></div>'+
+      '<div class="photo-p" id="pp'+did+'">'+
+        '<div class="thumb-row" id="pt'+did+'"></div>'+
         '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+
-          '<label class="addph" style="background:var(--blue);color:#fff;">📷 מצלמה<input type="file" accept="image/*" capture="environment" style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+item.id+'))"></label>'+
-          '<label class="addph" style="background:var(--blue-d);color:var(--blue);">🖼 גלריה<input type="file" accept="image/*" multiple style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+item.id+'))"></label>'+
+          '<label class="addph" style="background:var(--blue);color:#fff;">📷 מצלמה<input type="file" accept="image/*" capture="environment" style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+did+'))"></label>'+
+          '<label class="addph" style="background:var(--blue-d);color:var(--blue);">🖼 גלריה<input type="file" accept="image/*" multiple style="display:none;" onchange="requireAuth(()=>addPhoto(this,'+did+'))"></label>'+
         '</div>'+
-        '<div class="file-list" id="fl'+item.id+'"></div>'+
+        '<div class="file-list" id="fl'+did+'"></div>'+
       '</div>'+
-      '<div class="iss-p" id="isp'+item.id+'" style="display:none!important;">'+
-        '<div id="iss'+item.id+'"></div>'+
+      '<div class="iss-p" id="isp'+did+'" style="display:none!important;">'+
+        '<div id="iss'+did+'"></div>'+
       '</div>';
     list.appendChild(d);
   });
   const sw=document.getElementById('sig-wrap');
+  sw.innerHTML=''; // clear before rebuilding to prevent duplicates
   SIG_ROLES.forEach((r,i)=>{const f=document.createElement('div');f.className='field';f.innerHTML='<label>'+r+'</label><input type="text" id="sig'+i+'" oninput="schedSave()">';sw.appendChild(f);});
 }
 
 function collect(){
   const data={v:11,ts:Date.now(),status:STATUS,panel:document.getElementById('f-panel')?.value||'',pnum:document.getElementById('f-num')?.value||'',proj:document.getElementById('f-proj')?.value||'',loc:document.getElementById('f-loc')?.value||'',insp:document.getElementById('f-insp')?.value||'',mfr:document.getElementById('f-mfr')?.value||'',fdate:document.getElementById('f-date')?.value||'',notes:document.getElementById('f-notes')?.value||'',sigs:[],items:{},actLog,priority:issuePriority};
   for(let i=0;i<5;i++){const e=document.getElementById('sig'+i);data.sigs.push(e?e.value:'');}
-  for(let i=1;i<=31;i++){
-    const el=document.getElementById('ic'+i);if(!el)continue;
+  const _PFX=PANEL_TYPE==='mg'?'g':'';
+  ITEMS.forEach(item=>{
+    const i=item.id; const did=_PFX+i;
+    const el=document.getElementById('ic'+did);if(!el)return;
     let s='X';if(el.querySelector('.pfn.p.on'))s='P';else if(el.querySelector('.pfn.f.on'))s='F';else if(el.querySelector('.pfn.n.on'))s='N';
-    const note=document.getElementById('note'+i)?.value||'';
+    const note=document.getElementById('note'+did)?.value||'';
     const issues=[];
     const cont=document.getElementById('iss'+i);
     if(cont){cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const n=bi+1;const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s||'open';const prio=issuePriority[i]?.[n]||'med';const photos=(issuePhotos[i]?.[n]||[]).filter(p=>p&&(p.url||typeof p==='string')).map(p=>typeof p==='string'?{url:p}:p);const confirmed=bl.dataset.confirmed==='1';issues.push({person:document.getElementById('ip-'+i+'-'+n)?.value||'',email:document.getElementById('ie-'+i+'-'+n)?.value||'',desc:document.getElementById('id-'+i+'-'+n)?.value||'',action:document.getElementById('iact-'+i+'-'+n)?.value||'',status:st,priority:prio,photos,confirmed});});}
     data.items['i'+i]={s,note,issues};
-  }
+  });
   return data;
 }
 
 function apply(data){
   if(!data)return;
+  // Restore panel type — priority: saved data > saved meta > KEEP current (don't reset!)
+  if(data._panelType){
+    PANEL_TYPE=data._panelType;
+    ITEMS=PANEL_TYPE==='mg'?ITEMS_MG:ITEMS_MN;
+  } else if(allCls[CID]?.panelType){
+    PANEL_TYPE=allCls[CID].panelType;
+    ITEMS=PANEL_TYPE==='mg'?ITEMS_MG:ITEMS_MN;
+  }
+  // else: keep whatever PANEL_TYPE was set by selectPanelType() — do NOT reset to mn
+  // Rebuild checklist DOM with correct items
+  buildItems();
   setSt(data.status||'not-started');
   const set=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.value=v;};
   set('f-panel',data.panel);syncName();set('f-num',data.pnum);set('f-proj',data.proj);set('f-loc',data.loc);set('f-insp',data.insp);set('f-mfr',data.mfr);set('f-date',data.fdate);set('f-notes',data.notes);
@@ -1219,7 +1361,8 @@ function apply(data){
     if(item.issues?.length)item.issues.forEach(iss=>{if(iss)addIss(i,iss);});
   }
   updIssBar();updHeroProg();applyAuthState();
-  for(let i=1;i<=31;i++){(id=>{db.ref('checklists/'+CID+'/photos/item'+id).once('value').then(s=>{const ph=s.val();if(!ph)return;const arr=Array.isArray(ph)?ph:Object.values(ph);itemPhotos[id]=arr;const row=document.getElementById('pt'+id);if(row)arr.forEach((p,idx)=>{if(p?.url&&!document.getElementById('th-'+id+'-'+idx)){const t=mkThumb(p.url,id,idx,'item');t.id='th-'+id+'-'+idx;row.appendChild(t);}});updCB(id);}).catch(()=>{})})(i);}
+  const _PHPFX=PANEL_TYPE==='mg'?'g':'';
+  ITEMS.forEach(item=>{const id=item.id;(did=>{db.ref('checklists/'+CID+'/photos/item'+id).once('value').then(s=>{const ph=s.val();if(!ph)return;const arr=Array.isArray(ph)?ph:Object.values(ph);itemPhotos[id]=arr;const row=document.getElementById('pt'+did);if(row)arr.forEach((p,pidx)=>{if(p?.url&&!document.getElementById('th-'+id+'-'+pidx)){const t=mkThumb(p.url,id,pidx,'item');t.id='th-'+id+'-'+pidx;row.appendChild(t);}});updCB(did);}).catch(()=>{})})(_PHPFX+id);});
 }
 
 function updMetaFor(id,data){
@@ -1232,20 +1375,24 @@ function updMetaFor(id,data){
 function updMeta(data){updMetaFor(CID,data);}
 
 function resetCl(){
-  for(let i=1;i<=31;i++){
-    const el=document.getElementById('ic'+i);if(!el)continue;
+  // buildItems() is called from apply() after panel type is known
+  // Here just clear whatever is currently rendered
+  const _RPFX=PANEL_TYPE==='mg'?'g':'';
+  ITEMS.forEach(item=>{
+    const rdid=_RPFX+item.id;
+    const el=document.getElementById('ic'+rdid);if(!el)return;
     el.querySelectorAll('.pfn').forEach(b=>b.classList.remove('on'));el.classList.remove('p','f','n');
-    const n=document.getElementById('note'+i);if(n)n.value='';
-    const np=document.getElementById('np'+i);if(np)np.style.display='none';
-    document.getElementById('ni'+i)?.setAttribute('stroke','#94a3b8');
-    const nd=document.getElementById('nd'+i);if(nd)nd.style.display='none';
-    const cont=document.getElementById('iss'+i);if(cont){cont.innerHTML='';issueCnt[i]=0;}
-    const isp=document.getElementById('isp'+i);if(isp)isp.style.display='none';
-    document.getElementById('isb'+i)?.classList.remove('hot');
-    const pt=document.getElementById('pt'+i);if(pt)pt.innerHTML='';
-    updCB(i);
-    const pp=document.getElementById('pp'+i);if(pp)pp.style.display='none';
-  }
+    const n=document.getElementById('note'+rdid);if(n)n.value='';
+    const np=document.getElementById('np'+rdid);if(np)np.style.display='none';
+    document.getElementById('ni'+rdid)?.setAttribute('stroke','#94a3b8');
+    const nd=document.getElementById('nd'+rdid);if(nd)nd.style.display='none';
+    const cont=document.getElementById('iss'+rdid);if(cont){cont.innerHTML='';issueCnt[item.id]=0;}
+    const isp=document.getElementById('isp'+rdid);if(isp)isp.style.display='none';
+    document.getElementById('isb'+rdid)?.classList.remove('hot');
+    const pt=document.getElementById('pt'+rdid);if(pt)pt.innerHTML='';
+    updCB(rdid);
+    const pp=document.getElementById('pp'+rdid);if(pp)pp.style.display='none';
+  });
   itemPhotos={};issuePhotos={};actLog=[];issuePriority={};
   ['f-panel','f-num','f-proj','f-loc','f-insp','f-mfr','f-date','f-notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   for(let i=0;i<5;i++){const e=document.getElementById('sig'+i);if(e)e.value='';}
@@ -1656,8 +1803,10 @@ function createIss(itemId,idx){
 
 function updIssBar(){
   let open=0,closed=0,waiting=0;
-  for(let i=1;i<=31;i++){
-    const cont=document.getElementById('iss'+i);if(!cont)continue;
+  const _IPFX=PANEL_TYPE==='mg'?'g':'';
+  ITEMS.forEach(item=>{
+    const i=item.id; const did=_IPFX+i;
+    const cont=document.getElementById('iss'+did);if(!cont)return;
     let iOpen=0,iWait=0,iClosed=0;
     cont.querySelectorAll('.iss-block').forEach(bl=>{
       if(bl.dataset.confirmed!=='1')return;
@@ -1667,7 +1816,7 @@ function updIssBar(){
       else{open++;iOpen++;}
     });
     // Update per-item ISSUE button
-    const isb=document.getElementById('isb'+i);
+    const isb=document.getElementById('isb'+did);
     if(isb){
       const tot=iOpen+iWait+iClosed;
       if(tot===0){
@@ -1683,7 +1832,7 @@ function updIssBar(){
         isb.textContent=label+' '+tot;
       }
     }
-  }
+  });
   const bar=document.getElementById('iss-bar');const ob=document.getElementById('ib-open');const wb=document.getElementById('ib-wait');const cb=document.getElementById('ib-closed');const fi=document.getElementById('fi');const fin=document.getElementById('fi-n');const tot=open+closed+waiting;
   if(bar)bar.classList.toggle('show',tot>0);
   if(ob){ob.style.display=open>0?'inline-block':'none';ob.textContent='⚠️ '+open+' פתוח';}
@@ -1833,10 +1982,17 @@ function setPFN(btn,id){
 
 function updHeroProg(){
   let p=0,f=0,na=0;
-  for(let i=1;i<=31;i++){const el=document.getElementById('ic'+i);if(!el)continue;if(el.querySelector('.pfn.p.on'))p++;else if(el.querySelector('.pfn.f.on'))f++;else if(el.querySelector('.pfn.n.on'))na++;}
-  document.getElementById('h-prog').style.width=Math.round((p+f)/31*100)+'%';
+  const _PFX=PANEL_TYPE==='mg'?'g':'';
+  const total=ITEMS.length;
+  ITEMS.forEach(it=>{
+    const el=document.getElementById('ic'+_PFX+it.id);if(!el)return;
+    if(el.querySelector('.pfn.p.on'))p++;
+    else if(el.querySelector('.pfn.f.on'))f++;
+    else if(el.querySelector('.pfn.n.on'))na++;
+  });
+  document.getElementById('h-prog').style.width=Math.round((p+f)/total*100)+'%';
   document.getElementById('cst-p').textContent=p;document.getElementById('cst-f').textContent=f;
-  document.getElementById('cst-n').textContent=na;document.getElementById('cst-r').textContent=31-p-f-na;
+  document.getElementById('cst-n').textContent=na;document.getElementById('cst-r').textContent=total-p-f-na;
 }
 
 function toggleNote(id){const p=document.getElementById('np'+id);const o=p.style.display==='block';p.style.display=o?'none':'block';if(!o)document.getElementById('note'+id)?.focus();}
@@ -2177,7 +2333,7 @@ function renderDash(){
       const ch=byCh[c];const ne=Math.max(ch.tot-ch.na,1);const p2=Math.round(ch.p/ne*100);
       return '<div style="margin-bottom:13px;">'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'+
-        '<span style="font-size:.76rem;font-weight:700;color:#334155;">'+CH[c].replace('חלק '+c+': ','')+'</span>'+
+        '<span style="font-size:.76rem;font-weight:700;color:#334155;">'+CH()[c].replace('חלק '+c+': ','')+'</span>'+
         '<span style="font-size:.7rem;font-weight:800;color:#2979ff;font-family:\'JetBrains Mono\',monospace;">'+p2+'%</span>'+
         '</div>'+
         '<div style="height:7px;background:rgba(6,16,30,.06);border-radius:7px;overflow:hidden;display:flex;">'+
@@ -2246,7 +2402,7 @@ function doCSV(){
   const panel=document.getElementById('f-panel')?.value||'לא צוין';const proj=document.getElementById('f-proj')?.value||'';const insp=document.getElementById('f-insp')?.value||'';const fdate=document.getElementById('f-date')?.value||'';
   let csv='\uFEFF'+'דוח בדיקת עדות L0\nלוח,'+panel+'\nפרויקט,'+proj+'\nבודק,'+insp+'\nתאריך,'+(fdate||new Date().toLocaleDateString('he-IL'))+'\n\n';
   csv+='מס,פרק,סעיף,סטטוס,הערה,Issues,פתוחים,ממתינים,סגורים\n';
-  for(let i=1;i<=31;i++){const el=document.getElementById('ic'+i);if(!el)continue;let s='לא סומן';if(el.querySelector('.pfn.p.on'))s='Passed';else if(el.querySelector('.pfn.f.on'))s='Failed';else if(el.querySelector('.pfn.n.on'))s='N/A';const note=(document.getElementById('note'+i)?.value||'').replace(/"/g,"'").replace(/\n/g,' ');const item=ITEMS.find(x=>x.id===i);const cont=document.getElementById('iss'+i);let io=0,iw=0,ic=0;if(cont)cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const n=bi+1;const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s;if(st==='closed')ic++;else if(st==='waiting')iw++;else io++;});csv+=i+',"'+(CH[item?.c]||'')+'","'+(item?.t||'')+'",'+s+',"'+note+'",'+(io+iw+ic||'')+(','+(io||''))+','+(iw||'')+','+(ic||'')+'\n';}
+  for(let i=1;i<=31;i++){const el=document.getElementById('ic'+i);if(!el)continue;let s='לא סומן';if(el.querySelector('.pfn.p.on'))s='Passed';else if(el.querySelector('.pfn.f.on'))s='Failed';else if(el.querySelector('.pfn.n.on'))s='N/A';const note=(document.getElementById('note'+i)?.value||'').replace(/"/g,"'").replace(/\n/g,' ');const item=ITEMS.find(x=>x.id===i);const cont=document.getElementById('iss'+i);let io=0,iw=0,ic=0;if(cont)cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{const n=bi+1;const st=document.getElementById('ist-'+i+'-'+n)?.dataset.s;if(st==='closed')ic++;else if(st==='waiting')iw++;else io++;});csv+=i+',"'+(CH()[item?.c]||'')+'","'+(item?.t||'')+'",'+s+',"'+note+'",'+(io+iw+ic||'')+(','+(io||''))+','+(iw||'')+','+(ic||'')+'\n';}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='L0_'+panel.replace(/[^\w\u0590-\u05FF]/g,'_')+'.csv';a.click();toast('✅ CSV יוצא');
 }
 
@@ -2276,7 +2432,7 @@ function toggleClSearch(){
   setTimeout(()=>document.getElementById('cl-sinp')?.focus(),80);
 }
 
-function filterItems(q){const lq=q.toLowerCase();ITEMS.forEach(item=>{const el=document.getElementById('ic'+item.id);if(!el)return;const match=!q||item.t.toLowerCase().includes(lq)||(document.getElementById('note'+item.id)?.value||'').toLowerCase().includes(lq);el.style.display=match?'':'none';});document.querySelectorAll('#cl-list .banner').forEach(b=>b.style.display=!q?'':'none');}
+function filterItems(q){const lq=q.toLowerCase();const _FPFX=PANEL_TYPE==='mg'?'g':'';ITEMS.forEach(item=>{const el=document.getElementById('ic'+_FPFX+item.id);if(!el)return;const match=!q||item.t.toLowerCase().includes(lq)||(document.getElementById('note'+item.id)?.value||'').toLowerCase().includes(lq);el.style.display=match?'':'none';});document.querySelectorAll('#cl-list .banner').forEach(b=>b.style.display=!q?'':'none');}
 
 // ════════════════════════════════════════
 // AUTH
@@ -2359,7 +2515,10 @@ function goHome(){
 // ════════════════════════════════════════
 function enterCl(id, prefill){
   document.getElementById('sc-home').classList.remove('on');
-  CID=id; resetCl(); switchTab('cl');
+  CID=id;
+  // Build items FIRST with current PANEL_TYPE (set by selectPanelType before enterCl)
+  buildItems();
+  resetCl(); switchTab('cl');
   const content=document.querySelector('.content');
   if(content)content.scrollTop=0;
   window.scrollTo(0,0);
@@ -2600,6 +2759,7 @@ function newClStep2(){
   if(sc.location){const e=document.getElementById('new-loc');if(e&&!e.value)e.value=sc.location;}
   if(sc.date){const e=document.getElementById('new-date');if(e&&!e.value)e.value=sc.date;}
   window._scanResult=null;
+  // Keep PANEL_TYPE as selected — don't reset here!
   // Copy scan preview to step2
   const img1=document.getElementById('scan-img-s1');
   const img2=document.getElementById('scan-img');
@@ -2633,10 +2793,18 @@ function confirmNewCl(){
   const pnum=document.getElementById('new-pnum')?.value.trim()||'';
   const mfr=document.getElementById('new-mfr')?.value.trim()||'';
   const fdate=document.getElementById('new-date')?.value||new Date().toISOString().split('T')[0];
+  // Set global ITEMS to match selected type before building
+  ITEMS=PANEL_TYPE==='mg'?ITEMS_MG:ITEMS_MN;
   closeNewCl();const id='cl_'+Date.now();
   // Checklist name = panel name
-  const meta={title:panelVal,proj,insp,loc,pnum,mfr,status:'not-started',created:new Date().toLocaleDateString('he-IL'),fdate,passed:0,failed:0,na:0,total:31,openIssues:0,closedIssues:0,waitingIssues:0};
+  const panelType=PANEL_TYPE||'mn';
+  const total=ITEMS.length;
+  const meta={title:panelVal,proj,insp,loc,pnum,mfr,panelType,status:'not-started',created:new Date().toLocaleDateString('he-IL'),fdate,passed:0,failed:0,na:0,total,openIssues:0,closedIssues:0,waitingIssues:0};
   allCls[id]=meta;db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});
+  // Save initial data with _panelType so apply() knows the type even before first save
+  const initData={_panelType:panelType,v:11,ts:Date.now(),status:'not-started',items:{}};
+  try{localStorage.setItem('cl_'+id,JSON.stringify(initData));}catch(e){}
+  db.ref('checklists/'+id+'/data').set(initData).catch(()=>{});
   openCl(id,{panel:panelVal,pnum,mfr,proj,loc,insp,fdate});
 }
 document.getElementById('pin-inp')?.addEventListener('keydown',e=>{if(e.key==='Enter')doAuth();});
@@ -3211,12 +3379,12 @@ function exportPDF(){
   const done=(p+f+na);const pct=done>0?Math.round(p/done*100):0;
 
   // Items table
-  const CH={2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'חלק 4 — הזנות כפולות ופיקוד'};
+  const CH=PANEL_TYPE==='mg'?{2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'בדיקות פונקציונאליות - לוחות מתח גבוה'}:{2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'חלק 4 — הזנות כפולות ופיקוד'};
   let lastCh=0,itemRows='';
   for(let i=1;i<=31;i++){
     const el=document.getElementById('ic'+i);if(!el)continue;
     const item=ITEMS.find(x=>x.id===i);const ch=item?.c||2;
-    if(ch!==lastCh){lastCh=ch;itemRows+=`<tr><td colspan="3" style="background:#05111f;color:#f59e0b;font-weight:800;font-size:.78rem;padding:8px 14px;">${CH[ch]||''}</td></tr>`;}
+    if(ch!==lastCh){lastCh=ch;itemRows+=`<tr><td colspan="3" style="background:#05111f;color:#f59e0b;font-weight:800;font-size:.78rem;padding:8px 14px;">${CH()[ch]||''}</td></tr>`;}
     let stLabel='—',stColor='#94a3b8',stBg='#f8fafc';
     if(el.querySelector('.pfn.p.on')){stLabel='✓ Passed';stColor='#16a34a';stBg='#f0fdf4';}
     else if(el.querySelector('.pfn.f.on')){stLabel='✗ Failed';stColor='#dc2626';stBg='#fef2f2';}
