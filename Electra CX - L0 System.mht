@@ -1825,13 +1825,106 @@ function renderIssues(){
       const prioLabel=prio==='high'?'<span class="prio-badge pb-h">🔴 גבוהה</span>':prio==='low'?'<span class="prio-badge pb-l">🟢 נמוכה</span>':'';
       const stCls=st==='closed'?' closed':st==='waiting'?' waiting':'';
       const stBadge=st==='closed'?'<span class="ich ich-c">✓ סגור</span>':st==='waiting'?'<span class="ich ich-w">⏳ ממתין</span>':'<span class="ich ich-o">⚠️ פתוח</span>';
+
+      // Photos
+      const phImgs=Array.from(bl.querySelectorAll('.iss-ph img'));
+
       const card=document.createElement('div');card.className='iss-card'+stCls;
-      card.onclick=()=>window.open(location.pathname+'?cl='+id,'_blank');
-      card.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:.64rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">סעיף '+i+' · #'+n+'</span>'+prioLabel+'</div>'+stBadge+'</div>'+(person?'<div style="font-size:.8rem;font-weight:700;color:var(--navy);margin-bottom:4px;">👤 '+person+(email?' <span style="font-weight:500;color:var(--t3);font-size:.72rem;">('+email+')</span>':'')+'</div>':'')+'<div style="font-size:.77rem;color:var(--t2);line-height:1.45;margin-bottom:'+(action?'5':'0')+'px;">'+(desc||'<span style="color:var(--t3)">ללא פירוט</span>')+'</div>'+(action?'<div style="font-size:.72rem;color:var(--t3);margin-top:4px;">🔧 '+action+'</div>':'')+'<div style="font-size:.64rem;color:var(--t3);margin-top:6px;font-family:\'JetBrains Mono\',monospace;">'+sec.substring(0,55)+(sec.length>55?'...':'')+'</div>';
+      card.onclick=e=>{if(e.target.closest('button')||e.target.tagName==='IMG')return;window.open(location.pathname+'?cl='+CID,'_blank');};
+
+      // Build innerHTML for text parts
+      card.innerHTML=
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">'+
+          '<div style="display:flex;align-items:center;gap:5px;">'+
+            '<span style="font-size:.64rem;font-weight:700;color:var(--t3);font-family:\'JetBrains Mono\',monospace;">סעיף '+i+' · #'+n+'</span>'+prioLabel+
+          '</div>'+stBadge+
+        '</div>'+
+        (person?'<div style="font-size:.8rem;font-weight:700;color:var(--navy);margin-bottom:4px;">👤 '+person+(email?' <span style="font-weight:500;color:var(--t3);font-size:.72rem;">('+email+')</span>':'')+'</div>':'')+
+        '<div style="font-size:.77rem;color:var(--t2);line-height:1.45;margin-bottom:'+(action?'5':'0')+'px;">'+(desc||'<span style="color:var(--t3)">ללא פירוט</span>')+'</div>'+
+        (action?'<div style="font-size:.72rem;color:var(--t3);margin-top:4px;">🔧 '+action+'</div>':'')+
+        '<div style="font-size:.64rem;color:var(--t3);margin-top:6px;font-family:\'JetBrains Mono\',monospace;">'+sec.substring(0,55)+(sec.length>55?'...':'')+'</div>';
+
+      // Photos row
+      if(phImgs.length){
+        const phRow=document.createElement('div');
+        phRow.style.cssText='display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;';
+        phImgs.forEach(img=>{
+          const thumb=document.createElement('img');
+          thumb.src=img.src;
+          thumb.style.cssText='width:64px;height:48px;object-fit:cover;border-radius:7px;border:1px solid var(--border);cursor:zoom-in;';
+          thumb.onclick=e=>{e.stopPropagation();openImgViewer(img.src);};
+          phRow.appendChild(thumb);
+        });
+        card.appendChild(phRow);
+      }
+
+      // Action buttons row
+      if(st!=='closed'){
+        const btnRow=document.createElement('div');
+        btnRow.style.cssText='display:flex;gap:8px;margin-top:10px;';
+
+        // Viewer: "Mark as waiting" button (non-admin, open only)
+        if(!isAuthed&&st==='open'){
+          const wBtn=document.createElement('button');
+          wBtn.style.cssText='flex:1;background:rgba(251,146,60,.12);color:#f97316;border:1.5px solid rgba(251,146,60,.3);border-radius:10px;padding:9px 6px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;';
+          wBtn.textContent='⏳ ממתין לאישור';
+          wBtn.onclick=e=>{e.stopPropagation();changeIssStatusGlobal(i,n,'waiting',card,btnRow);};
+          btnRow.appendChild(wBtn);
+        }
+
+        // Admin: "Close issue" button
+        if(isAuthed){
+          const cBtn=document.createElement('button');
+          cBtn.style.cssText='flex:1;background:rgba(34,197,94,.12);color:#16a34a;border:1.5px solid rgba(34,197,94,.3);border-radius:10px;padding:9px 6px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;';
+          cBtn.textContent='✓ סגור Issue';
+          cBtn.onclick=e=>{e.stopPropagation();changeIssStatusGlobal(i,n,'closed',card,btnRow);};
+          btnRow.appendChild(cBtn);
+
+          // Admin: "Mark waiting" if open
+          if(st==='open'){
+            const wBtn2=document.createElement('button');
+            wBtn2.style.cssText='flex:1;background:rgba(251,146,60,.12);color:#f97316;border:1.5px solid rgba(251,146,60,.3);border-radius:10px;padding:9px 6px;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;';
+            wBtn2.textContent='⏳ ממתין';
+            wBtn2.onclick=e=>{e.stopPropagation();changeIssStatusGlobal(i,n,'waiting',card,btnRow);};
+            btnRow.appendChild(wBtn2);
+          }
+        }
+
+        if(btnRow.children.length)card.appendChild(btnRow);
+      }
+
       list.appendChild(card);
     });
   }
   if(!any)list.innerHTML='<div class="empty" style="padding:28px;"><div class="empty-ico" style="font-size:2rem;">✅</div><div class="empty-t">אין Issues</div></div>';
+}
+
+function changeIssStatusGlobal(itemId,idx,newStatus,card,btnRow){
+  const stEl=document.getElementById('ist-'+itemId+'-'+idx);
+  if(!stEl){toast('⚠️ לא נמצא Issue');return;}
+  stEl.dataset.s=newStatus;
+  stEl.className='iss-st '+(newStatus==='closed'?'closed':newStatus==='waiting'?'waiting':'');
+  stEl.textContent=newStatus==='closed'?'✓ סגור':newStatus==='waiting'?'⏳ ממתין':'⚠️ פתוח';
+  const bl=document.getElementById('ib-'+itemId+'-'+idx);
+  if(bl){bl.classList.remove('closed','waiting');if(newStatus!=='open')bl.classList.add(newStatus);}
+  schedSave();
+  const label=newStatus==='closed'?'סגור ✓':newStatus==='waiting'?'ממתין ⏳':'פתוח';
+  toast('✅ Issue #'+idx+' עודכן → '+label);
+  logAct('Issue #'+idx+' סעיף '+itemId+' → '+label,(newStatus==='closed'?'✅':'⏳'));
+  setTimeout(()=>renderIssues(),300);
+}
+
+function openImgViewer(src){
+  document.getElementById('img-viewer-ov')?.remove();
+  const ov=document.createElement('div');
+  ov.id='img-viewer-ov';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  ov.onclick=()=>ov.remove();
+  const img=document.createElement('img');
+  img.src=src;
+  img.style.cssText='max-width:95vw;max-height:90vh;object-fit:contain;border-radius:10px;';
+  ov.appendChild(img);
+  document.body.appendChild(ov);
 }
 
 function setIF(f,btn){issF=f;document.querySelectorAll('[id^=if-]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderIssues();}
@@ -2088,12 +2181,6 @@ function goHome(){
     '<span class="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div>'+
     '<button class="nico" onclick="showSettings()">⚙️</button>';
 }
-function leaveChecklist(){
-  if(CID)forceSave();CID=null;
-  goHome();loadHome();
-}
-
-
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
 // ════════════════════════════════════════
