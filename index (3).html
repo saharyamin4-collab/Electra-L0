@@ -1224,11 +1224,22 @@ function openIssuePage(itemId,idx){
 
 
 
+  // ── VIEWER BANNER (non-admin) ──
+  (!isAuthed?
+    '<div style="background:rgba(41,121,255,.08);border:1px solid rgba(41,121,255,.18);border-radius:12px;padding:10px 14px;margin:12px 14px 4px;display:flex;align-items:center;gap:10px;">'+
+      '<span style="font-size:1rem;">👁️</span>'+
+      '<div>'+
+        '<div style="font-size:.75rem;font-weight:800;color:#2979ff;">מצב צפייה</div>'+
+        '<div style="font-size:.67rem;color:#64748b;margin-top:1px;">ניתן לצרף תמונות בלבד · לעריכה נדרשת כניסת מנהל</div>'+
+      '</div>'+
+    '</div>'
+  :'')+
+
   // ── STATUS + PRIORITY row ──
   '<div class="ip-row2">'+
     '<div class="ip-card">'+
       '<div class="ip-card-lbl">סטטוס</div>'+
-      '<button class="ip-status-btn '+(st)+'" id="ipst-'+itemId+'-'+idx+'" data-s="'+st+'"'+
+      '<button class="ip-status-btn '+(st)+'"'+(isAuthed?'':' disabled style="cursor:default;opacity:.85;"')+' id="ipst-'+itemId+'-'+idx+'" data-s="'+st+'"'+
         ' onclick="cycleIssStatus('+itemId+','+idx+');syncIssPageSt(\''+itemId+'\','+idx+')">'+
         stLabel+
       '</button>'+
@@ -1302,7 +1313,7 @@ function openIssuePage(itemId,idx){
       '<div class="ip-field-icon">📋</div>'+
       '<div class="ip-field-inner">'+
         '<div class="ip-field-lbl">תיאור הממצא</div>'+
-        '<textarea class="ip-textarea" id="idp-'+itemId+'-'+idx+'" placeholder="פרט את הממצא בצורה ברורה..." oninput="syncIssField(\'id\',\''+itemId+'\','+idx+',this.value)">'+curDesc+'</textarea>'+
+        '<textarea class="ip-textarea" id="idp-'+itemId+'-'+idx+'" placeholder="פרט את הממצא בצורה ברורה..." oninput="syncIssField(\'id\',\''+itemId+'\','+idx+',this.value)" '+(isAuthed?'':'disabled style="opacity:.7;background:#f8fafc;color:var(--t2);cursor:default;"')+'>'+curDesc+'</textarea>'+
       '</div>'+
     '</div>'+
   '</div>'+
@@ -1827,10 +1838,16 @@ function renderIssues(){
       const stBadge=st==='closed'?'<span class="ich ich-c">✓ סגור</span>':st==='waiting'?'<span class="ich ich-w">⏳ ממתין</span>':'<span class="ich ich-o">⚠️ פתוח</span>';
 
       // Photos
-      const phImgs=Array.from(bl.querySelectorAll('.iss-ph img'));
+      // Photos from issuePhotos state
+      const phArr=(issuePhotos[i]?.[n]||[]).filter(p=>p&&p.url);
 
       const card=document.createElement('div');card.className='iss-card'+stCls;
-      card.onclick=e=>{if(e.target.closest('button')||e.target.tagName==='IMG')return;window.open(location.pathname+'?cl='+CID,'_blank');};
+      // Click on card → open the Issue page directly
+      card.onclick=e=>{
+        if(e.target.closest('button')||e.target.tagName==='IMG')return;
+        switchTab('cl');
+        setTimeout(()=>{ openItemIssuesPage(i); setTimeout(()=>openIssuePage(i,n),200); },250);
+      };
 
       // Build innerHTML for text parts
       card.innerHTML=
@@ -1844,15 +1861,15 @@ function renderIssues(){
         (action?'<div style="font-size:.72rem;color:var(--t3);margin-top:4px;">🔧 '+action+'</div>':'')+
         '<div style="font-size:.64rem;color:var(--t3);margin-top:6px;font-family:\'JetBrains Mono\',monospace;">'+sec.substring(0,55)+(sec.length>55?'...':'')+'</div>';
 
-      // Photos row
-      if(phImgs.length){
+      // Photos row from state
+      if(phArr.length){
         const phRow=document.createElement('div');
-        phRow.style.cssText='display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;';
-        phImgs.forEach(img=>{
+        phRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);';
+        phArr.forEach(p=>{
           const thumb=document.createElement('img');
-          thumb.src=img.src;
-          thumb.style.cssText='width:64px;height:48px;object-fit:cover;border-radius:7px;border:1px solid var(--border);cursor:zoom-in;';
-          thumb.onclick=e=>{e.stopPropagation();openImgViewer(img.src);};
+          thumb.src=p.url;
+          thumb.style.cssText='width:72px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:zoom-in;box-shadow:0 1px 4px rgba(0,0,0,.08);';
+          thumb.onclick=e=>{e.stopPropagation();openLB(p.url);};
           phRow.appendChild(thumb);
         });
         card.appendChild(phRow);
@@ -2927,7 +2944,8 @@ function exportPDF(){
       const desc=document.getElementById('id-'+i+'-'+n)?.value||'';
       const action=document.getElementById('iact-'+i+'-'+n)?.value||'';
       const cats=Array.from(bl.querySelectorAll('.cpill.sel')).map(c=>c.textContent).join(', ');
-      const photos=Array.from(bl.querySelectorAll('.iss-ph img')).map(img=>`<img src="${img.src}" style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">`).join('');
+      const issPhArr=(issuePhotos[i]?.[n]||[]).filter(p=>p&&p.url);
+      const photos=issPhArr.map(p=>`<img src="${p.url}" style="width:160px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.1);">`).join('');
       if(st!=='closed')openIss++;else closedIss++;
       issHtml+=`<div style="border:1px solid #e2e8f0;border-right:4px solid ${prioColor};border-radius:10px;padding:14px;margin-bottom:12px;page-break-inside:avoid;background:#fff;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
@@ -2941,7 +2959,7 @@ function exportPDF(){
         ${desc?`<div style="font-size:.8rem;margin-bottom:5px;"><strong>ממצא:</strong> ${desc}</div>`:''}
         ${action?`<div style="font-size:.8rem;margin-bottom:5px;"><strong>פעולה נדרשת:</strong> ${action}</div>`:''}
         ${person?`<div style="font-size:.75rem;color:#64748b;margin-bottom:5px;">👤 ${person}${email2?' · '+email2:''}</div>`:''}
-        ${photos?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">${photos}</div>`:''}
+        ${issPhArr&&issPhArr.length?`<div style="margin-top:10px;"><div style="font-size:.65rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📷 תמונות (${issPhArr.length})</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${photos}</div></div>`:''}
       </div>`;
     });
   }
@@ -2974,6 +2992,7 @@ body{font-family:'Heebo',Arial,sans-serif;direction:rtl;background:#f0f4f8;color
 .sec{font-size:.72rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid #e2e8f0;}
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:14px;}
 .print-btn{position:fixed;bottom:20px;right:20px;background:#05111f;color:#fff;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+.back-btn{position:fixed;bottom:20px;left:20px;background:#f59e0b;color:#05111f;border:none;padding:12px 22px;border-radius:50px;font-family:'Heebo',Arial,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,.4);display:flex;align-items:center;gap:8px;}
 
 /* ── ENHANCED ITEM DESIGN ── */
 .item{border-left:3.5px solid transparent;transition:border-color .2s,box-shadow .2s;}
@@ -2988,7 +3007,8 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;ove
 </style>
 </head>
 <body>
-<button class="print-btn no-print" onclick="window.print()">🖨 הדפס / שמור PDF</button>
+<button class="print-btn no-print" onclick="window.print()">🖨 שמור PDF</button>
+<button class="back-btn no-print" onclick="window.close()">← חזרה לצ'קליסט</button>
 <div class="wrap">
 
 <div class="header">
@@ -3028,10 +3048,31 @@ ${notes?`<div class="sec">הערות כלליות</div><div style="background:#f
 <div style="text-align:center;margin-top:16px;font-size:.65rem;color:#cbd5e1;">Electra CX Quality Control | ${panel} | ${fdate}</div>
 </div></body></html>`;
 
-  const win=window.open('','_blank');
-  if(!win){toast('⚠️ אפשר חלונות קופצים בדפדפן');return;}
-  win.document.write(html);win.document.close();
-  toast('✅ הדוח נפתח — לחץ הדפס לשמירה כ-PDF');
+  // Save as HTML file (mobile: open + print to PDF / desktop: download)
+  try {
+    const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const fname = 'L0_' + (panel||'report').replace(/[^\w\u0590-\u05FF]/g,'_') + '.html';
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(isMobile){
+      // On mobile: download the file, then user can open & share as PDF
+      const a = document.createElement('a');
+      a.href = url; a.download = fname;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(url), 8000);
+      toast('\u2705 \u05e7\u05d5\u05d1\u05e5 \u05e0\u05e9\u05de\u05e8 \u2014 \u05e4\u05ea\u05d7 \u05d0\u05d5\u05ea\u05d5 \u05d5\u05d4\u05d3\u05e4\u05e1 \u05dc-PDF');
+    } else {
+      const win = window.open(url, '_blank');
+      if(!win) throw new Error('blocked');
+      setTimeout(()=>URL.revokeObjectURL(url), 15000);
+      toast('\u2705 \u05d4\u05d3\u05d5\u05d7 \u05e0\u05e4\u05ea\u05d7 \u2014 \u05dc\u05d7\u05e5 \u05d4\u05d3\u05e4\u05e1 \u05dc\u05e9\u05de\u05d9\u05e8\u05d4 \u05db\u05e1-PDF');
+    }
+  } catch(e) {
+    const win = window.open('','_blank');
+    if(!win){toast('\u26a0\ufe0f \u05d0\u05e4\u05e9\u05e8 \u05d7\u05dc\u05d5\u05e0\u05d5\u05ea \u05e7\u05d5\u05e4\u05e6\u05d9\u05dd \u05d1\u05d3\u05e4\u05d3\u05e4\u05df');return;}
+    win.document.write(html); win.document.close();
+    toast('\u2705 \u05d4\u05d3\u05d5\u05d7 \u05e0\u05e4\u05ea\u05d7');
+  }
 }
 function emailPDF(panel,fdate){
   const emails=contacts.filter(c=>c.email).map(c=>c.email).join(',');
