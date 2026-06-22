@@ -646,9 +646,184 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 /* better card shadows */
 .card,.item,.clc{box-shadow:0 1px 3px rgba(6,16,30,.05),0 3px 12px rgba(6,16,30,.06);}
 
+
+/* ══ PROJECT SELECTOR ══ */
+/* ══ HOME TABS BAR ══ */
+#home-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;background:var(--nav);border-top:1px solid var(--border);backdrop-filter:blur(20px);}
+#home-tabs .tab{flex:1;}
+
+.proj-sel-bar{display:flex;gap:7px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.proj-sel-bar::-webkit-scrollbar{display:none;}
+.proj-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg-card);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;padding:9px 13px;cursor:pointer;transition:all .2s;min-width:80px;}
+.proj-btn.active{background:linear-gradient(135deg,rgba(245,166,35,.18),rgba(245,166,35,.08));border-color:var(--gold-border);box-shadow:0 0 0 1px var(--gold-border);}
+.proj-btn-ico{font-size:.95rem;}
+.proj-btn-name{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.55);text-align:center;line-height:1.2;letter-spacing:.2px;}
+.proj-btn.active .proj-btn-name{color:var(--gold);}
+
+/* ══ CXALLOY DASHBOARD SCREEN ══ */
+#sc-cxdash{background:var(--surf);display:none;}
+#sc-cxdash.on{display:block;}
+.cxd-hero{background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:18px 16px 16px;position:relative;overflow:hidden;}
+.cxd-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.cxd-proj-name{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.3px;margin-bottom:2px;}
+.cxd-proj-sub{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;}
+.cxd-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 14px 0;}
+.cxd-kpi{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px 8px;text-align:center;}
+.cxd-kpi-n{font-size:1.3rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
+.cxd-kpi-l{font-size:.52rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.cxd-section{margin:14px 14px 0;}
+.cxd-sec-hdr{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.cxd-sec-hdr::after{content:'';flex:1;height:1px;background:var(--border2);}
+.cxd-card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:10px;}
+/* Progress bar */
+.cxd-pbar-wrap{margin-bottom:14px;}
+.cxd-pbar-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.cxd-pbar-title{font-size:.78rem;font-weight:700;color:var(--t1);}
+.cxd-pbar-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.cxd-pbar{height:8px;border-radius:4px;background:var(--surf2);overflow:hidden;display:flex;}
+.cxd-pbar-seg{height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.cxd-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.cxd-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-leg-dot{width:7px;height:7px;border-radius:50%;}
+/* Ranking row */
+.cxd-rank-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.cxd-rank-row:last-child{border-bottom:none;padding-bottom:0;}
+.cxd-rank-num{font-size:.62rem;font-weight:800;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:16px;}
+.cxd-rank-name{font-size:.76rem;font-weight:600;color:var(--t1);flex:1;}
+.cxd-rank-bar-wrap{width:90px;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-rank-bar{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-rank-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;min-width:28px;text-align:left;}
+/* Checklist company bars */
+.cxd-comp-bar{background:var(--blue);opacity:.7;}
+/* Equipment type row */
+.cxd-eq-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
+.cxd-eq-row:last-child{border-bottom:none;}
+.cxd-eq-type{font-size:.73rem;font-weight:700;color:var(--t2);min-width:62px;}
+.cxd-eq-bar-wrap{flex:1;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-eq-pre{height:100%;border-radius:3px;background:#94a3b8;}
+.cxd-eq-l1{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-eq-del{height:100%;border-radius:3px;background:var(--warn);}
+.cxd-eq-count{font-size:.62rem;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:24px;text-align:left;}
+/* Stat pill */
+.cxd-stat-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:20px;padding:5px 11px;font-size:.68rem;font-weight:700;color:var(--fail);}
+.cxd-stat-pill.ok{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.18);color:var(--ok);}
+.cxd-stat-pill.warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.18);color:var(--warn);}
+/* Tab for cxdash */
+#tab-cxdash .tab-ico svg{stroke-width:2;}
+
+/* ══ WEEKLY CHART ══ */
+.cxd-chart-wrap{position:relative;width:100%;height:140px;margin-top:4px;}
+.cxd-chart-canvas{width:100%;height:100%;}
+.cxd-chart-tooltip{position:absolute;background:rgba(5,17,31,.92);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:7px 10px;font-size:.62rem;color:#fff;pointer-events:none;display:none;z-index:10;min-width:120px;backdrop-filter:blur(10px);}
+.cxd-chart-legend{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
+.cxd-chart-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-chart-leg-line{width:14px;height:2px;border-radius:1px;}
+
+/* ══ GLOBAL SEARCH ══ */
+.gsearch-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;backdrop-filter:blur(4px);}
+.gsearch-overlay.open{display:flex;flex-direction:column;}
+.gsearch-box{background:var(--nav);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.gsearch-input{flex:1;background:transparent;border:none;outline:none;font-size:1rem;color:var(--t1);font-family:inherit;caret-color:var(--gold);}
+.gsearch-input::placeholder{color:var(--t4);}
+.gsearch-cancel{font-size:.8rem;color:var(--gold);font-weight:700;cursor:pointer;white-space:nowrap;padding:4px 8px;}
+.gsearch-results{flex:1;overflow-y:auto;padding:8px 0;}
+.gsearch-section{padding:8px 14px 4px;font-size:.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4);}
+.gsearch-item{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);}
+.gsearch-item:hover,.gsearch-item:active{background:var(--surf2);}
+.gsearch-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gsearch-txt{flex:1;min-width:0;}
+.gsearch-title{font-size:.8rem;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gsearch-sub{font-size:.65rem;color:var(--t3);margin-top:2px;}
+.gsearch-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.gsearch-empty{text-align:center;padding:40px 20px;color:var(--t4);font-size:.85rem;}
+
+/* Search button in nav */
+.gsearch-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.72rem;color:var(--t3);}
+.gsearch-btn svg{opacity:.6;}
+
+/* ══ MY ISSUES TAB ══ */
+.cxd-tabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:14px;}
+.cxd-tab{flex:1;padding:10px 0;font-size:.72rem;font-weight:700;color:var(--t3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;transition:all .2s;}
+.cxd-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.my-issue-card{background:var(--card);border-radius:14px;padding:13px;margin-bottom:8px;border:1px solid var(--border);box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.my-issue-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.my-issue-ref{font-size:.62rem;font-weight:800;color:var(--t4);font-family:"JetBrains Mono",monospace;}
+.my-issue-st{font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:20px;}
+.my-issue-desc{font-size:.78rem;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:5px;}
+.my-issue-meta{font-size:.62rem;color:var(--t3);display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ══ EXCEL EXPORT UPGRADE ══ */
+.export-sheet-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.export-sheet-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+
+/* ══ ISSUE TIMELINE ══ */
+.iss-timeline{padding:14px;}
+.iss-tl-title{font-size:.65rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#64748b;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.iss-tl-title::after{content:"";flex:1;height:1px;background:rgba(15,23,42,.08);}
+.iss-tl-item{display:flex;gap:10px;margin-bottom:14px;position:relative;}
+.iss-tl-item:not(:last-child)::before{content:"";position:absolute;right:11px;top:24px;bottom:-7px;width:1px;background:rgba(15,23,42,.1);}
+.iss-tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:1px;}
+.iss-tl-body{flex:1;min-width:0;}
+.iss-tl-action{font-size:.76rem;font-weight:600;color:#1e293b;line-height:1.3;}
+.iss-tl-time{font-size:.6rem;color:#94a3b8;font-family:"JetBrains Mono",monospace;margin-top:2px;}
+.iss-tl-user{font-size:.62rem;font-weight:700;color:#475569;margin-top:1px;}
+
+/* ══ QR QUICK SCANNER BUTTON ══ */
+.qr-fab{position:fixed;bottom:90px;left:16px;z-index:90;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#0a2540);border:2px solid rgba(245,166,35,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:transform .2s;}
+.qr-fab:active{transform:scale(.93);}
+.qr-fab svg{width:22px;height:22px;stroke:var(--gold);}
+
+/* ══ QR RESULT SHEET ══ */
+.qr-result-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--nav);border-radius:22px 22px 0 0;border-top:1px solid var(--border);padding:20px 16px 36px;z-index:300;display:none;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
+.qr-result-sheet.open{display:block;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(100%);}to{transform:translateX(-50%) translateY(0);}}
+.qr-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;}
+.qr-result-name{font-size:1rem;font-weight:900;color:var(--t1);margin-bottom:4px;}
+.qr-result-sub{font-size:.7rem;color:var(--t3);margin-bottom:14px;}
+.qr-result-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.qr-result-row:last-child{border-bottom:none;}
+.qr-result-label{font-size:.65rem;color:var(--t4);min-width:70px;}
+.qr-result-val{font-size:.75rem;font-weight:600;color:var(--t1);}
+.qr-result-actions{display:flex;gap:8px;margin-top:14px;}
+.qr-act-btn{flex:1;padding:12px;border-radius:12px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
+<!-- ══ GLOBAL SEARCH OVERLAY ══ -->
+<div class="gsearch-overlay" id="gsearch-overlay">
+  <div class="gsearch-box">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input class="gsearch-input" id="gsearch-input" placeholder="חפש צ'קליסט, Issue, ציוד..." autocomplete="off" oninput="renderGSearch(this.value)">
+    <span class="gsearch-cancel" onclick="closeGSearch()">ביטול</span>
+  </div>
+  <div class="gsearch-results" id="gsearch-results">
+    <div class="gsearch-empty">התחל להקליד לחיפוש...</div>
+  </div>
+</div>
+
+<!-- ══ QR SCANNER FAB ══ -->
+<button class="qr-fab" id="qr-fab" onclick="openQRScanner()" title="סרוק QR ציוד" style="display:none;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+    <rect x="3" y="14" width="7" height="7"/>
+    <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h3M20 14v.01"/>
+  </svg>
+</button>
+
+<!-- ══ QR RESULT SHEET ══ -->
+<div class="qr-result-sheet" id="qr-result-sheet" onclick="if(event.target===this)closeQRResult()">
+  <div class="qr-handle"></div>
+  <div id="qr-result-content">
+    <div class="qr-result-name" id="qr-res-name">—</div>
+    <div class="qr-result-sub" id="qr-res-sub">מידע ציוד מ-CxAlloy</div>
+    <div id="qr-res-rows"></div>
+    <div class="qr-result-actions">
+      <button class="qr-act-btn" style="background:var(--bg-card);color:var(--t2);border:1px solid var(--border2);" onclick="closeQRResult()">סגור</button>
+      <button class="qr-act-btn" style="background:linear-gradient(135deg,#f5a623,#f97316);color:#fff;" onclick="closeQRResult();showHomeTab('cxdash');switchCxTab('equipment')">צפה ב-Dashboard</button>
+    </div>
+  </div>
+</div>
+
 <div id="app">
 
 <!-- ── NAV ── -->
@@ -661,6 +836,14 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     </div>
   </div>
   <div class="nav-r" id="nav-r">
+    <button class="gsearch-btn" onclick="openGSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      חיפוש
+    </button>
+    <button class="nico" onclick="openNotifCenter()" style="color:rgba(255,255,255,.7);position:relative;" title="התראות">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div id="notif-badge" style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ef4444;border:2px solid var(--nav);display:none;"></div>
+    </button>
     <div class="auth-pill" id="auth-pill" onclick="showAuthModal()">
       <div class="adot" id="auth-dot"></div>
       <span class="auth-lbl" id="auth-lbl">התחבר</span>
@@ -672,7 +855,290 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 <div class="content">
 
-<!-- ═══ HOME ═══ -->
+<!-- ═══ CXALLOY DASHBOARD SCREEN ═══ -->
+<div id="sc-cxdash" class="sc">
+  <div class="cxd-hero">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;"></div>
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div style="font-size:.55rem;color:var(--gold);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.8;">CxAlloy · DCX</div>
+        <div class="cxd-proj-name" id="cxd-proj-name">Mega DC - Masmia</div>
+        <div class="cxd-proj-sub" id="cxd-proj-sub">פרויקט פעיל · עודכן היום</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div style="font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:.5px;">ממוצע סגירה</div>
+        <div style="font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'JetBrains Mono',monospace;line-height:1;">14.84</div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,.3);">ימים לסגירת Issue</div>
+      </div>
+    </div>
+    <!-- Project selector pills -->
+    <div style="display:flex;gap:6px;margin-top:12px;overflow-x:auto;scrollbar-width:none;position:relative;">
+      <button class="proj-btn active" id="pb-masmia" onclick="selectCxProj('masmia',this)">
+        <div class="proj-btn-ico">🏭</div>
+        <div class="proj-btn-name">Masmia</div>
+      </button>
+      <button class="proj-btn" id="pb-modiin" onclick="selectCxProj('modiin',this)">
+        <div class="proj-btn-ico">🏗️</div>
+        <div class="proj-btn-name">Modi'in</div>
+      </button>
+      <button class="proj-btn" id="pb-beit" onclick="selectCxProj('beit',this)">
+        <div class="proj-btn-ico">⚡</div>
+        <div class="proj-btn-name">Beit Shemesh</div>
+      </button>
+      <button class="proj-btn" id="pb-alpha" onclick="selectCxProj('alpha',this)">
+        <div class="proj-btn-ico">🔋</div>
+        <div class="proj-btn-name">ALPHA DC</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="cxd-kpi-row">
+    <div class="cxd-kpi">
+      <div class="cxd-kpi-n" style="color:var(--fail);" id="cxd-issues-n">1,243</div>
+      <div class="cxd-kpi-l">Issues</div>
+    </div>
+    <div class="cxd-kpi">
+      <div class="cxd-kpi-n" style="color:var(--blue);" id="cxd-cl-n">4,770</div>
+      <div class="cxd-kpi-l">צ׳קליסטים</div>
+    </div>
+    <div class="cxd-kpi">
+      <div class="cxd-kpi-n" style="color:var(--warn);" id="cxd-eq-n">1,558</div>
+      <div class="cxd-kpi-l">ציוד</div>
+    </div>
+    <div class="cxd-kpi">
+      <div class="cxd-kpi-n" style="color:var(--ok);" id="cxd-closed-pct">42.9%</div>
+      <div class="cxd-kpi-l">סגורים</div>
+    </div>
+  </div>
+
+  <div style="padding:0 0 100px;" id="cxd-body">
+
+    <!-- DASHBOARD TABS -->
+    <div style="padding:12px 14px 0;">
+      <div class="cxd-tabs">
+        <button class="cxd-tab on" id="cxdtab-overview" onclick="switchCxTab('overview')">סקירה כללית</button>
+        <button class="cxd-tab" id="cxdtab-myissues" onclick="switchCxTab('myissues')">Issues שלי</button>
+        <button class="cxd-tab" id="cxdtab-equipment" onclick="switchCxTab('equipment')">ציוד</button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="cxd-tab-overview">
+    <div class="cxd-section">
+      <div class="cxd-sec-hdr">Construction Issues</div>
+      <div class="cxd-card">
+        <div class="cxd-pbar-wrap">
+          <div class="cxd-pbar-label">
+            <span class="cxd-pbar-title">סטטוס Issues</span>
+            <span class="cxd-pbar-count" id="cxd-iss-total">1,243 סה"כ</span>
+          </div>
+          <div class="cxd-pbar" id="cxd-iss-bar">
+            <div class="cxd-pbar-seg" style="background:#ef4444;width:53.9%;" title="פתוח 670"></div>
+            <div class="cxd-pbar-seg" style="background:#f59e0b;width:1.52%;" title="בתהליך 19"></div>
+            <div class="cxd-pbar-seg" style="background:#f97316;width:.56%;" title="ממתין 7"></div>
+            <div class="cxd-pbar-seg" style="background:#10b981;width:42.88%;" title="סגור 533"></div>
+            <div class="cxd-pbar-seg" style="background:#06b6d4;width:1.12%;" title="מאושר 14"></div>
+          </div>
+          <div class="cxd-legend">
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span id="cxd-leg-open">פתוח 670 (53.9%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span id="cxd-leg-closed">סגור 533 (42.9%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f59e0b;"></div><span id="cxd-leg-prog">בתהליך 19</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span id="cxd-leg-pend">ממתין 7</span></div>
+          </div>
+        </div>
+        <!-- Issues by assignee -->
+        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">Issues פעילים לפי אחראי</div>
+        <div id="cxd-assignees">
+          <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name">Sergey Yusupov</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;"></div></div><div class="cxd-rank-count">308</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name">Ohad Shakuri</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:49.7%;"></div></div><div class="cxd-rank-count">153</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name">זאב גולדמן</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:29.5%;"></div></div><div class="cxd-rank-count">91</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name">Roman Stepanov</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:22.7%;"></div></div><div class="cxd-rank-count">70</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name">מועתסים מסארווה</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:14.9%;"></div></div><div class="cxd-rank-count">46</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKLISTS SECTION -->
+    <div class="cxd-section">
+      <div class="cxd-sec-hdr">Checklists</div>
+      <div class="cxd-card">
+        <div class="cxd-pbar-wrap">
+          <div class="cxd-pbar-label">
+            <span class="cxd-pbar-title">סטטוס צ׳קליסטים</span>
+            <span class="cxd-pbar-count">4,770 סה"כ</span>
+          </div>
+          <div class="cxd-pbar">
+            <div class="cxd-pbar-seg" style="background:#94a3b8;width:87.21%;" title="לא התחיל 4,160"></div>
+            <div class="cxd-pbar-seg" style="background:#3b82f6;width:7.08%;" title="בתהליך 338"></div>
+            <div class="cxd-pbar-seg" style="background:#10b981;width:5.70%;" title="הושלם 272"></div>
+          </div>
+          <div class="cxd-legend">
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>לא התחיל 4,160 (87.2%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#3b82f6;"></div><span>בתהליך 338 (7.1%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span>הושלם 272 (5.7%)</span></div>
+          </div>
+        </div>
+        <!-- Checklist Lines -->
+        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">שורות בדיקה (164,694)</div>
+        <div class="cxd-pbar">
+          <div class="cxd-pbar-seg" style="background:#10b981;width:6.61%;" title="Passed 10,890"></div>
+          <div class="cxd-pbar-seg" style="background:#ef4444;width:.52%;" title="Failed 866"></div>
+          <div class="cxd-pbar-seg" style="background:#94a3b8;width:3.41%;" title="N/A 5,629"></div>
+          <div class="cxd-pbar-seg" style="background:#e2e8f0;width:89.44%;" title="ללא תשובה 147,309"></div>
+        </div>
+        <div class="cxd-legend" style="margin-top:6px;">
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span>Passed 10,890 (6.6%)</span></div>
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>Failed 866</span></div>
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>N/A 5,629</span></div>
+        </div>
+        <!-- By company -->
+        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;">לפי חברה</div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name">Electra M&E</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;background:var(--blue);"></div></div><div class="cxd-rank-count">4,240</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name">פ.ק. גנרטורים</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:4%;background:var(--blue);"></div></div><div class="cxd-rank-count">170</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name">DCE</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:1.3%;background:var(--blue);"></div></div><div class="cxd-rank-count">54</div></div>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT SECTION -->
+    <div class="cxd-section">
+      <div class="cxd-sec-hdr">Equipment Status</div>
+      <div class="cxd-card">
+        <div class="cxd-pbar-wrap">
+          <div class="cxd-pbar-label">
+            <span class="cxd-pbar-title">סטטוס ציוד</span>
+            <span class="cxd-pbar-count">1,558 יחידות</span>
+          </div>
+          <div class="cxd-pbar">
+            <div class="cxd-pbar-seg" style="background:#94a3b8;width:73.68%;" title="Pre Testing 1,148"></div>
+            <div class="cxd-pbar-seg" style="background:#f97316;width:9.05%;" title="Delivered 141"></div>
+            <div class="cxd-pbar-seg" style="background:#ef4444;width:17.27%;" title="L1 Ready 269"></div>
+          </div>
+          <div class="cxd-legend">
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing 1,148 (73.7%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered 141 (9.1%)</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready 269 (17.3%)</span></div>
+          </div>
+        </div>
+        <!-- By type -->
+        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">לפי סוג ציוד</div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">LVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:65%;"></div><div class="cxd-eq-del" style="width:16.6%;"></div><div class="cxd-eq-l1" style="width:18.4%;"></div></div></div><div class="cxd-eq-count">435</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">BUS BAR</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:95.1%;"></div><div class="cxd-eq-del" style="width:4.9%;"></div></div></div><div class="cxd-eq-count">164</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">TRF</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:54.7%;"></div><div class="cxd-eq-del" style="width:15.7%;"></div><div class="cxd-eq-l1" style="width:29.6%;"></div></div></div><div class="cxd-eq-count">159</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">CRAH</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:87.2%;"></div><div class="cxd-eq-del" style="width:1.4%;"></div><div class="cxd-eq-l1" style="width:11.3%;"></div></div></div><div class="cxd-eq-count">141</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">FC</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:80.3%;"></div><div class="cxd-eq-del" style="width:.8%;"></div><div class="cxd-eq-l1" style="width:18.9%;"></div></div></div><div class="cxd-eq-count">132</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">PUMP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:77.5%;"></div><div class="cxd-eq-l1" style="width:22.5%;"></div></div></div><div class="cxd-eq-count">80</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">HVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:51.9%;"></div><div class="cxd-eq-del" style="width:17.7%;"></div><div class="cxd-eq-l1" style="width:30.4%;"></div></div></div><div class="cxd-eq-count">79</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">UPS</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:66.7%;"></div><div class="cxd-eq-l1" style="width:33.3%;"></div></div></div><div class="cxd-eq-count">54</div></div>
+        <div class="cxd-eq-row"><div class="cxd-eq-type">GEN</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:31.6%;"></div><div class="cxd-eq-del" style="width:31.6%;"></div><div class="cxd-eq-l1" style="width:36.8%;"></div></div></div><div class="cxd-eq-count">19</div></div>
+        <!-- Legend for equipment bars -->
+        <div class="cxd-legend" style="margin-top:8px;">
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing</span></div>
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered</span></div>
+          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Assets with Issues -->
+    <div class="cxd-section">
+      <div class="cxd-sec-hdr">Assets עם הכי הרבה Issues</div>
+      <div class="cxd-card">
+        <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CA-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;background:var(--fail);"></div></div><div class="cxd-rank-count">18</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CB-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
+        <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CK-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
+      </div>
+    </div>
+
+    <!-- WEEKLY TREND CHART -->
+    <div class="cxd-section">
+      <div class="cxd-sec-hdr">מגמת Issues שבועית</div>
+      <div class="cxd-card">
+        <div style="font-size:.72rem;font-weight:700;color:var(--t1);margin-bottom:10px;">פתיחה וסגירה לפי שבוע · פבר–יוני 2026</div>
+        <div class="cxd-chart-wrap">
+          <canvas id="cxd-chart" class="cxd-chart-canvas"></canvas>
+          <div class="cxd-chart-tooltip" id="cxd-tooltip"></div>
+        </div>
+        <div class="cxd-chart-legend">
+          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#ef4444;"></div><span>פתוח</span></div>
+          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#10b981;"></div><span>סגור</span></div>
+          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#f59e0b;"></div><span>בתהליך</span></div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- end overview tab -->
+
+    <!-- MY ISSUES TAB -->
+    <div id="cxd-tab-myissues" style="display:none;padding:0 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--t1);">Issues פעילים שהוקצו לך</div>
+        <select id="cxd-assignee-sel" onchange="renderMyIssues()" style="background:var(--bg-card);border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-size:.7rem;padding:4px 8px;font-family:inherit;outline:none;">
+          <option value="sergey">Sergey Yusupov</option>
+          <option value="ohad">Ohad Shakuri</option>
+          <option value="zeev">זאב גולדמן</option>
+          <option value="roman">Roman Stepanov</option>
+          <option value="moatasem">מועתסים מסארווה</option>
+        </select>
+      </div>
+      <div id="cxd-myissues-list"></div>
+    </div>
+
+    <!-- EQUIPMENT TAB -->
+    <div id="cxd-tab-equipment" style="display:none;">
+      <div class="cxd-section">
+        <div class="cxd-sec-hdr">Equipment Status</div>
+        <div class="cxd-card">
+          <div class="cxd-pbar-wrap">
+            <div class="cxd-pbar-label">
+              <span class="cxd-pbar-title">סטטוס ציוד</span>
+              <span class="cxd-pbar-count">1,558 יחידות</span>
+            </div>
+            <div class="cxd-pbar">
+              <div class="cxd-pbar-seg" style="background:#94a3b8;width:73.68%;"></div>
+              <div class="cxd-pbar-seg" style="background:#f97316;width:9.05%;"></div>
+              <div class="cxd-pbar-seg" style="background:#ef4444;width:17.27%;"></div>
+            </div>
+            <div class="cxd-legend">
+              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing 1,148</span></div>
+              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered 141</span></div>
+              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready 269</span></div>
+            </div>
+          </div>
+          <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">לפי סוג ציוד</div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">LVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:65%;"></div><div class="cxd-eq-del" style="width:16.6%;"></div><div class="cxd-eq-l1" style="width:18.4%;"></div></div></div><div class="cxd-eq-count">435</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">BUS BAR</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:95.1%;"></div><div class="cxd-eq-del" style="width:4.9%;"></div></div></div><div class="cxd-eq-count">164</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">TRF</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:54.7%;"></div><div class="cxd-eq-del" style="width:15.7%;"></div><div class="cxd-eq-l1" style="width:29.6%;"></div></div></div><div class="cxd-eq-count">159</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">CRAH</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:87.2%;"></div><div class="cxd-eq-del" style="width:1.4%;"></div><div class="cxd-eq-l1" style="width:11.3%;"></div></div></div><div class="cxd-eq-count">141</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">FC</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:80.3%;"></div><div class="cxd-eq-del" style="width:.8%;"></div><div class="cxd-eq-l1" style="width:18.9%;"></div></div></div><div class="cxd-eq-count">132</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">PUMP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:77.5%;"></div><div class="cxd-eq-l1" style="width:22.5%;"></div></div></div><div class="cxd-eq-count">80</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">HVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:51.9%;"></div><div class="cxd-eq-del" style="width:17.7%;"></div><div class="cxd-eq-l1" style="width:30.4%;"></div></div></div><div class="cxd-eq-count">79</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">UPS</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:66.7%;"></div><div class="cxd-eq-l1" style="width:33.3%;"></div></div></div><div class="cxd-eq-count">54</div></div>
+          <div class="cxd-eq-row"><div class="cxd-eq-type">GEN</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:31.6%;"></div><div class="cxd-eq-del" style="width:31.6%;"></div><div class="cxd-eq-l1" style="width:36.8%;"></div></div></div><div class="cxd-eq-count">19</div></div>
+          <div class="cxd-legend" style="margin-top:8px;">
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered</span></div>
+            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready to Install</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Top Assets -->
+      <div class="cxd-section">
+        <div class="cxd-sec-hdr">Assets עם הכי הרבה Issues</div>
+        <div class="cxd-card">
+          <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CA-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;"></div></div><div class="cxd-rank-count">18</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CB-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
+          <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CK-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 <div id="sc-home" class="sc on">
   <div class="home-hero" style="background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:20px 16px 18px;position:relative;overflow:hidden;">
     <!-- Grid overlay -->
@@ -868,10 +1334,14 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     <div class="field"><textarea id="f-notes" rows="3" oninput="schedSave()" placeholder="הערות, ממצאים, מסקנות לסיום הבדיקה..." style="height:76px;resize:none;"></textarea></div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px 8px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 14px 8px;">
     <button onclick="exportPDF()" style="background:linear-gradient(135deg,#1e1b4b,#312e81);color:#fff;border:1px solid rgba(139,92,246,.35);padding:13px 10px;border-radius:13px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 12px rgba(109,40,217,.2);">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15h6M9 11h6M9 18h4"/></svg>
       ייצא PDF
+    </button>
+    <button onclick="exportExcel()" style="background:linear-gradient(135deg,#064e3b,#065f46);color:#fff;border:1px solid rgba(16,185,129,.35);padding:13px 10px;border-radius:13px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 12px rgba(16,185,129,.2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><line x1="10" y1="9" x2="8" y2="13"/></svg>
+      ייצא Excel
     </button>
     <button onclick="(()=>{const p=document.getElementById('f-panel')?.value||'לא צוין';const d=document.getElementById('f-date')?.value||new Date().toLocaleDateString('he-IL');emailPDF(p,d);})()" style="background:linear-gradient(135deg,#064e3b,#065f46);color:#fff;border:1px solid rgba(16,185,129,.3);padding:13px 10px;border-radius:13px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 12px rgba(16,185,129,.2);">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -936,6 +1406,22 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     </div>
     <div class="tab-lbl">סיכום</div>
+  </button>
+</div>
+
+<!-- HOME NAV — CxAlloy Dashboard bottom bar -->
+<div class="tabs" id="home-tabs" style="display:flex;">
+  <button class="tab on" id="htab-home" onclick="showHomeTab('home')">
+    <div class="tab-ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div class="tab-lbl">ראשי</div>
+  </button>
+  <button class="tab" id="htab-cxdash" onclick="showHomeTab('cxdash')">
+    <div class="tab-ico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </div>
+    <div class="tab-lbl">CxAlloy</div>
   </button>
 </div>
 
@@ -1255,7 +1741,7 @@ function buildItems(){
       const chNum=chLabels[item.c]||('חלק '+item.c);
       const chData=CH()[item.c]||'';
       const chTitle=chData.replace(/^חלק [\d.]+[: ]+/,'');
-      b.innerHTML='<div class="banner-inner"><div class="banner-line"></div><div class="banner-num">'+chNum+'</div><div class="banner-label">'+chTitle+'</div></div>';
+      b.innerHTML='<div class="banner-inner"><div class="banner-line"></div><div class="banner-num">'+chNum+'</div><div class="banner-label">'+chTitle+'</div><div style="display:flex;align-items:center;gap:6px;margin-right:auto;"><div style="width:60px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;"><div id="sec-prog-'+item.c+'" style="height:100%;width:0%;border-radius:2px;transition:width .4s ease,background .3s;"></div></div><span id="sec-pct-'+item.c+'" style="font-size:.6rem;color:rgba(255,255,255,.4);min-width:24px;">0%</span></div></div>';
       list.appendChild(b);
     }
     const d=document.createElement('div');d.className='item';d.id='ic'+did;d.dataset.seq=seqNum;
@@ -1358,7 +1844,7 @@ function apply(data){
     issuePhotos[i]={};
     const isp=document.getElementById('isp'+i);if(isp)isp.style.display='none';
     document.getElementById('isb'+i)?.classList.remove('hot');
-    if(item.issues?.length)item.issues.forEach(iss=>{if(iss)addIss(i,iss);});
+    if(item.issues?.length)item.issues.forEach(iss=>{if(iss)addIss(i,{...iss,_loading:true});});
   }
   updIssBar();updHeroProg();applyAuthState();
   const _PHPFX=PANEL_TYPE==='mg'?'g':'';
@@ -1375,6 +1861,9 @@ function updMetaFor(id,data){
 function updMeta(data){updMetaFor(CID,data);}
 
 function resetCl(){
+  // Close issue page if open
+  const pg=document.getElementById('iss-page');if(pg){pg.classList.remove('open');delete pg.dataset.fromItem;}
+  const fi=document.getElementById('fi');if(fi)fi.classList.remove('show');
   // buildItems() is called from apply() after panel type is known
   // Here just clear whatever is currently rendered
   const _RPFX=PANEL_TYPE==='mg'?'g':'';
@@ -1465,8 +1954,8 @@ function addIss(itemId,data={}){
   document.getElementById('isb'+itemId)?.classList.add('hot');
   // iss-p stays hidden — issues shown only in dedicated page
   updIssBar();
-  // ── Open as dedicated full-screen page (request 1)
-  if(!data.desc&&!data.person)openIssuePage(itemId,idx);
+  // ── Open as dedicated full-screen page ONLY when user manually adds new issue
+  if(!data.desc&&!data.person&&!data._loading)openIssuePage(itemId,idx);
 }
 
 function openIssuePage(itemId,idx){
@@ -1621,6 +2110,12 @@ function openIssuePage(itemId,idx){
         '</label>'+
       '</div>'+
     '</div>'+
+  '</div>'+
+
+  // ── TIMELINE ──
+  '<div class="iss-timeline" id="iss-tl-'+itemId+'-'+idx+'">'+
+    '<div class="iss-tl-title">היסטוריה</div>'+
+    buildIssueTimeline(itemId,idx,st,prio,curPerson)+
   '</div>'+
 
   // ── ACTION BUTTONS ──
@@ -1977,6 +2472,23 @@ function setPFN(btn,id){
   if(settings.vibrateOnPFN&&navigator.vibrate)navigator.vibrate(25);
   if(!wasOn&&btn.classList.contains('f')&&settings.autoOpenIssue)setTimeout(()=>openItemIssuesPage(id),200);
   logAct('סעיף '+id+': '+(wasOn?'ביטול':(btn.classList.contains('p')?'Passed':btn.classList.contains('f')?'Failed':'N/A')),btn.classList.contains('p')?'✅':btn.classList.contains('f')?'❌':'—');
+  // Track who answered and when
+  if(!window._answeredBy)window._answeredBy={};
+  const _insp=document.getElementById('f-insp')?.value||'מנהל';
+  const _ts=new Date().toLocaleString('he-IL');
+  const _pfx=PANEL_TYPE==='mg'?'g':'';
+  const _el2=document.getElementById('ic'+_pfx+id);
+  if(_el2){
+    let _ab=_el2.querySelector('.answered-by');
+    if(!_ab){_ab=document.createElement('div');_ab.className='answered-by';_el2.appendChild(_ab);}
+    const _wasOn=!btn.classList.contains('on');
+    if(_wasOn){_ab.textContent='';} 
+    else {
+      const _val=btn.classList.contains('p')?'Passed':btn.classList.contains('f')?'Failed':'N/A';
+      window._answeredBy[id]={by:_insp,ts:_ts,val:_val};
+      _ab.textContent=_ts+(_insp?' · '+_insp:'');
+    }
+  }
   updHeroProg();schedSave();
 }
 
@@ -1984,15 +2496,34 @@ function updHeroProg(){
   let p=0,f=0,na=0;
   const _PFX=PANEL_TYPE==='mg'?'g':'';
   const total=ITEMS.length;
+  // Per-section tracking
+  const secStats={};
   ITEMS.forEach(it=>{
+    if(!secStats[it.c])secStats[it.c]={p:0,f:0,na:0,tot:0};
+    secStats[it.c].tot++;
     const el=document.getElementById('ic'+_PFX+it.id);if(!el)return;
-    if(el.querySelector('.pfn.p.on'))p++;
-    else if(el.querySelector('.pfn.f.on'))f++;
-    else if(el.querySelector('.pfn.n.on'))na++;
+    if(el.querySelector('.pfn.p.on')){p++;secStats[it.c].p++;}
+    else if(el.querySelector('.pfn.f.on')){f++;secStats[it.c].f++;}
+    else if(el.querySelector('.pfn.n.on')){na++;secStats[it.c].na++;}
   });
   document.getElementById('h-prog').style.width=Math.round((p+f)/total*100)+'%';
   document.getElementById('cst-p').textContent=p;document.getElementById('cst-f').textContent=f;
   document.getElementById('cst-n').textContent=na;document.getElementById('cst-r').textContent=total-p-f-na;
+  // Update section progress bars
+  Object.keys(secStats).forEach(c=>{
+    const s=secStats[c];
+    const done=s.p+s.f+s.na;
+    const pct=Math.round(done/s.tot*100);
+    const bar=document.getElementById('sec-prog-'+c);
+    const lbl=document.getElementById('sec-pct-'+c);
+    if(bar)bar.style.width=pct+'%';
+    if(lbl)lbl.textContent=pct+'%';
+    // Color: green if all done, amber if partial, gray if empty
+    if(bar){
+      const hasF=s.f>0;
+      bar.style.background=pct===100?(hasF?'var(--fail)':'var(--ok)'):pct>0?'var(--gold)':'rgba(255,255,255,.15)';
+    }
+  });
 }
 
 function toggleNote(id){const p=document.getElementById('np'+id);const o=p.style.display==='block';p.style.display=o?'none':'block';if(!o)document.getElementById('note'+id)?.focus();}
@@ -2483,6 +3014,10 @@ function switchTab(tab){ _push('tab:'+tab);
     document.getElementById('tab-'+t)?.classList.toggle('on',t===tab);
   });
   document.getElementById('tabs').classList.add('show');
+  // Hide home tabs when in checklist mode
+  const ht=document.getElementById('home-tabs');if(ht)ht.style.display='none';
+  document.getElementById('sc-home')?.classList.remove('on');
+  document.getElementById('sc-cxdash')?.classList.remove('on');
   // Scroll to top on every tab switch
   const content=document.querySelector('.content');
   if(content)content.scrollTop=0;
@@ -2502,6 +3037,10 @@ function goHome(){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
   document.getElementById('sc-home').classList.add('on');
   document.getElementById('tabs').classList.remove('show');
+  document.getElementById('home-tabs').style.display='flex';
+  // Reset to home tab
+  document.getElementById('htab-home').classList.add('on');
+  document.getElementById('htab-cxdash').classList.remove('on');
   document.getElementById('nav-l').innerHTML=
     '<div class="nav-logo-wrap"><div class="nav-bolt"><svg width="14" height="14" viewBox="0 0 24 24" fill="#05111f" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="nav-brand"><div class="nav-name">Electra CX</div><div class="nav-sub">Quality Control</div></div></div>';
   document.getElementById('nav-r').innerHTML=
@@ -2510,13 +3049,717 @@ function goHome(){
     '<span class="auth-lbl">'+(isAuthed?'מנהל':'התחבר')+'</span></div>'+
     '<button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>';
 }
+
+// ══ HOME TABS — switch between checklist list and CxAlloy dashboard ══
+function showHomeTab(tab){
+  const isHome=tab==='home';
+  document.getElementById('sc-home').classList.toggle('on',isHome);
+  document.getElementById('sc-cxdash').classList.toggle('on',!isHome);
+  document.getElementById('htab-home').classList.toggle('on',isHome);
+  document.getElementById('htab-cxdash').classList.toggle('on',!isHome);
+  const content=document.querySelector('.content');
+  if(content)content.scrollTop=0;
+  if(!isHome) setTimeout(()=>drawWeeklyChart(window._activeCxProj||'masmia'),60);
+}
+
+// ══ CxAlloy PROJECT DATA ══
+const CX_PROJECTS = {
+  masmia:{
+    name:"Mega DC - Masmia", sub:"פרויקט פעיל · Masmia (200)",
+    issues:{total:1243,open:670,prog:19,pend:7,closed:533,deliv:14},
+    closedPct:"42.9%", avgDays:"14.84",
+    checklists:{total:4770,notStart:4160,inProg:338,done:272},
+    equipment:{total:1558,pre:1148,del:141,l1:269},
+    assignees:[
+      {name:"Sergey Yusupov",n:308},{name:"Ohad Shakuri",n:153},
+      {name:"זאב גולדמן",n:91},{name:"Roman Stepanov",n:70},{name:"מועתסים מסארווה",n:46}
+    ]
+  },
+  modiin:{
+    name:"Mega DC - Modi'in", sub:"פרויקט פעיל · Modi'in (62)",
+    issues:{total:980,open:520,prog:25,pend:10,closed:410,deliv:15},
+    closedPct:"41.8%", avgDays:"12.3",
+    checklists:{total:3800,notStart:3300,inProg:280,done:220},
+    equipment:{total:1420,pre:1050,del:200,l1:170},
+    assignees:[
+      {name:"Sergey Yusupov",n:240},{name:"Roman Stepanov",n:130},
+      {name:"Ohad Shakuri",n:95},{name:"זאב גולדמן",n:70},{name:"יהונתן פדידה",n:45}
+    ]
+  },
+  beit:{
+    name:"Mega DC - Beit Shemesh", sub:"פרויקט חדש · Beit Shemesh",
+    issues:{total:320,open:180,prog:12,pend:4,closed:118,deliv:6},
+    closedPct:"36.9%", avgDays:"18.5",
+    checklists:{total:1200,notStart:1100,inProg:70,done:30},
+    equipment:{total:800,pre:650,del:100,l1:50},
+    assignees:[
+      {name:"Ohad Shakuri",n:90},{name:"זאב גולדמן",n:65},
+      {name:"יורי דנילוביץ",n:40},{name:"מועתסים מסארווה",n:30},{name:"אסף חמיאס",n:15}
+    ]
+  },
+  alpha:{
+    name:"NED - ALPHA DC", sub:"Data Center · NED",
+    issues:{total:150,open:80,prog:8,pend:2,closed:55,deliv:5},
+    closedPct:"36.7%", avgDays:"21.0",
+    checklists:{total:600,notStart:560,inProg:30,done:10},
+    equipment:{total:400,pre:340,del:40,l1:20},
+    assignees:[
+      {name:"Tomer Levi",n:45},{name:"Ohad Shakuri",n:35},
+      {name:"Roman Stepanov",n:28},{name:"מועתסים מסארווה",n:20},{name:"אסף חמיאס",n:12}
+    ]
+  }
+};
+
+function selectCxProj(key, btn){
+  // Update button states
+  document.querySelectorAll('.proj-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=CX_PROJECTS[key];if(!d)return;
+  // Update header
+  document.getElementById('cxd-proj-name').textContent=d.name;
+  document.getElementById('cxd-proj-sub').textContent=d.sub;
+  // KPIs
+  document.getElementById('cxd-issues-n').textContent=d.issues.total.toLocaleString();
+  document.getElementById('cxd-cl-n').textContent=d.checklists.total.toLocaleString();
+  document.getElementById('cxd-eq-n').textContent=d.equipment.total.toLocaleString();
+  document.getElementById('cxd-closed-pct').textContent=d.closedPct;
+  // Issues totals
+  document.getElementById('cxd-iss-total').textContent=d.issues.total.toLocaleString()+' סה"כ';
+  const tot=d.issues.total;
+  const bar=document.getElementById('cxd-iss-bar');
+  if(bar){
+    const pOpen=Math.round(d.issues.open/tot*1000)/10;
+    const pProg=Math.round(d.issues.prog/tot*1000)/10;
+    const pPend=Math.round(d.issues.pend/tot*1000)/10;
+    const pClosed=Math.round(d.issues.closed/tot*1000)/10;
+    const pDeliv=Math.round(d.issues.deliv/tot*1000)/10;
+    bar.innerHTML=
+      '<div class="cxd-pbar-seg" style="background:#ef4444;width:'+pOpen+'%;"></div>'+
+      '<div class="cxd-pbar-seg" style="background:#f59e0b;width:'+pProg+'%;"></div>'+
+      '<div class="cxd-pbar-seg" style="background:#f97316;width:'+pPend+'%;"></div>'+
+      '<div class="cxd-pbar-seg" style="background:#10b981;width:'+pClosed+'%;"></div>'+
+      '<div class="cxd-pbar-seg" style="background:#06b6d4;width:'+pDeliv+'%;"></div>';
+  }
+  document.getElementById('cxd-leg-open').textContent='פתוח '+d.issues.open.toLocaleString()+' ('+Math.round(d.issues.open/tot*100)+'%)';
+  document.getElementById('cxd-leg-closed').textContent='סגור '+d.issues.closed.toLocaleString()+' ('+Math.round(d.issues.closed/tot*100)+'%)';
+  document.getElementById('cxd-leg-prog').textContent='בתהליך '+d.issues.prog;
+  document.getElementById('cxd-leg-pend').textContent='ממתין '+d.issues.pend;
+  // Assignees
+  const maxN=d.assignees[0].n;
+  document.getElementById('cxd-assignees').innerHTML=d.assignees.map((a,i)=>
+    '<div class="cxd-rank-row"><div class="cxd-rank-num">'+(i+1)+'</div>'+
+    '<div class="cxd-rank-name">'+a.name+'</div>'+
+    '<div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:'+Math.round(a.n/maxN*100)+'%;"></div></div>'+
+    '<div class="cxd-rank-count">'+a.n+'</div></div>'
+  ).join('');
+  // Redraw chart for new project
+  drawWeeklyChart(key);
+  window._activeCxProj=key;
+  const content=document.querySelector('.content');
+  if(content)content.scrollTop=0;
+}
+
+// ══ CX DASHBOARD TABS ══
+function switchCxTab(tab){
+  ['overview','myissues','equipment'].forEach(t=>{
+    document.getElementById('cxd-tab-'+t).style.display=t===tab?'':'none';
+    document.getElementById('cxdtab-'+t)?.classList.toggle('on',t===tab);
+  });
+  if(tab==='myissues')renderMyIssues();
+  if(tab==='overview')setTimeout(()=>drawWeeklyChart(window._activeCxProj||'masmia'),60);
+}
+
+// ══ MY ISSUES DATA PER PERSON ══
+const MY_ISSUES_DATA={
+  sergey:[
+    {ref:'CI-0445',asset:'200A-L1-MSB-CA-110',desc:'חסר מפסק הגנה להזנת פיקוד חיצונית',status:'open',prio:'high',due:'15/06/2026',discipline:'Electrical'},
+    {ref:'CI-0312',asset:'200A-L1-MBC-CC-110',desc:'אין חיזוק גידים בכניסת כבל 240mm²',status:'open',prio:'high',due:'10/06/2026',discipline:'Electrical'},
+    {ref:'CI-0289',asset:'DC2-L1-MSB-BA-110',desc:'חסרה מימיקה על דלת הלוח לפי תוכנית',status:'open',prio:'med',due:'20/06/2026',discipline:'Electrical'},
+    {ref:'CI-0201',asset:'200A-L1-MSB-CB-110',desc:'ערכי זרם מפסקים לא תואמים לתוכנית Rev.C',status:'open',prio:'high',due:'08/06/2026',discipline:'Electrical'},
+    {ref:'CI-0178',asset:'DC2-L0-MSB-BG-110',desc:'חסרה הפרדה בין מעגלי AC ל-DC',status:'open',prio:'med',due:'25/06/2026',discipline:'Electrical'},
+    {ref:'CI-0156',asset:'200A-L1-MBC-CB-110',desc:'תוכנית ASBUILT לא מעודכנת במערכת',status:'waiting',prio:'low',due:'30/06/2026',discipline:'Controls'},
+  ],
+  ohad:[
+    {ref:'CI-0421',asset:'200A-L1-MSB-CK-110',desc:'נורת סימון לא פועלת — מעגל UPS',status:'open',prio:'med',due:'12/06/2026',discipline:'Electrical'},
+    {ref:'CI-0398',asset:'DC2-L0-LVP-BA-110',desc:'חסרה בדיקת קלט/פלט למערכת BMS',status:'open',prio:'high',due:'09/06/2026',discipline:'Controls'},
+    {ref:'CI-0367',asset:'200A-L1-MSB-CJ-110',desc:'מפסק C630 לא מתפקד בפקודת TRIP חיצונית',status:'open',prio:'high',due:'07/06/2026',discipline:'Electrical'},
+    {ref:'CI-0334',asset:'DC2-L1-TRF-BA-110',desc:'ערכי עכבה לא מוגדרים בממסר הגנה',status:'open',prio:'med',due:'18/06/2026',discipline:'Electrical'},
+  ],
+  zeev:[
+    {ref:'CI-0456',asset:'200A-L1-HVP-BA-110',desc:'חסר מנעול מכאני בין שני המפסקים הראשיים',status:'open',prio:'high',due:'06/06/2026',discipline:'Electrical'},
+    {ref:'CI-0423',asset:'DC2-L0-HVP-BC-110',desc:'בדיקת קשת חשמלית — לא בוצעה',status:'open',prio:'high',due:'11/06/2026',discipline:'Electrical'},
+    {ref:'CI-0389',asset:'200A-L1-HVP-BB-110',desc:'חסרה הרצת ריק לפני חיבור לרשת',status:'open',prio:'med',due:'22/06/2026',discipline:'Electrical'},
+  ],
+  roman:[
+    {ref:'CI-0412',asset:'DC2-L0-MSB-BJ-110',desc:'קבלת טופס FWT — עדיין לא התקבל מהיצרן',status:'open',prio:'med',due:'14/06/2026',discipline:'Electrical'},
+    {ref:'CI-0388',asset:'DC2-L0-MSB-BK-110',desc:'מספר סידורי על הלוח לא תואם לטופס',status:'open',prio:'high',due:'08/06/2026',discipline:'Electrical'},
+    {ref:'CI-0345',asset:'200A-L1-MSB-CA-110',desc:'תוכנית ASMADE חסרה בתיק הציוד',status:'waiting',prio:'low',due:'28/06/2026',discipline:'Electrical'},
+    {ref:'CI-0298',asset:'DC2-L0-LVP-BB-110',desc:'אין בדיקת LV Panel — L2 לא הושלמה',status:'open',prio:'med',due:'17/06/2026',discipline:'Electrical'},
+    {ref:'CI-0244',asset:'DC2-L1-TRF-BC-110',desc:'הפרדת מתח גבוה/נמוך — לא בוצעה בדיקה',status:'open',prio:'high',due:'10/06/2026',discipline:'Electrical'},
+    {ref:'CI-0198',asset:'DC2-L0-MSB-BG-110',desc:'אישור Approval for Delivery — ממתין לחתימה',status:'waiting',prio:'med',due:'19/06/2026',discipline:'Electrical'},
+  ],
+  moatasem:[
+    {ref:'CI-0467',asset:'DC2-L1-FC-BA-110',desc:'חיבורי Fan Coil Unit — לא נבדקו',status:'open',prio:'med',due:'13/06/2026',discipline:'Electrical'},
+    {ref:'CI-0444',asset:'DC2-L0-FC-BC-110',desc:'תוכנית חיווט FC לא עדכנית',status:'open',prio:'low',due:'24/06/2026',discipline:'Controls'},
+    {ref:'CI-0411',asset:'200A-L1-FC-CA-110',desc:'מפסק הזנה ל-FC — קצר מוקד בכניסה',status:'open',prio:'high',due:'07/06/2026',discipline:'Electrical'},
+  ]
+};
+
+function renderMyIssues(){
+  const person=document.getElementById('cxd-assignee-sel')?.value||'sergey';
+  const issues=MY_ISSUES_DATA[person]||[];
+  const list=document.getElementById('cxd-myissues-list');if(!list)return;
+  const open=issues.filter(i=>i.status==='open');
+  const waiting=issues.filter(i=>i.status==='waiting');
+  let html='';
+  // Summary pills
+  html+=`<div style="display:flex;gap:8px;margin-bottom:12px;">
+    <div class="cxd-stat-pill">${open.length} פתוחים</div>
+    ${waiting.length?`<div class="cxd-stat-pill warn">${waiting.length} ממתינים</div>`:''}
+    <div class="cxd-stat-pill ok" style="margin-right:auto;">${issues.filter(i=>i.prio==='high').length} בעדיפות גבוהה</div>
+  </div>`;
+  if(!issues.length){html+='<div class="gsearch-empty">אין Issues פעילים</div>';}
+  issues.forEach(iss=>{
+    const stColor=iss.status==='open'?'#ef4444':iss.status==='waiting'?'#f59e0b':'#10b981';
+    const stLabel=iss.status==='open'?'פתוח':iss.status==='waiting'?'ממתין לאישור':'סגור';
+    const prioColor=iss.prio==='high'?'#ef4444':iss.prio==='med'?'#f59e0b':'#10b981';
+    const prioLabel=iss.prio==='high'?'🔴 גבוהה':iss.prio==='med'?'🟡 בינונית':'🟢 נמוכה';
+    html+=`<div class="my-issue-card">
+      <div class="my-issue-hdr">
+        <span class="my-issue-ref">${iss.ref}</span>
+        <span class="my-issue-st" style="background:${stColor}18;color:${stColor};">${stLabel}</span>
+      </div>
+      <div class="my-issue-desc">${iss.desc}</div>
+      <div class="my-issue-meta">
+        <span>📦 ${iss.asset}</span>
+        <span>📅 ${iss.due}</span>
+        <span style="color:${prioColor};">${prioLabel}</span>
+      </div>
+    </div>`;
+  });
+  list.innerHTML=html;
+}
+
+// ══ IMPROVED EXCEL EXPORT ══
+
+const WEEKLY_DATA = {
+  masmia:{
+    weeks:['פב 2','פב 16','מרץ 2','מרץ 16','מרץ 30','אפר 13','אפר 27','מאי 11','מאי 25','יוני 8'],
+    open:  [120,185,250,310,380,440,510,580,640,670],
+    closed:[20, 45, 80, 130,200,280,360,440,500,533],
+    prog:  [8,  12, 15, 18, 20, 18, 22, 19, 17, 19]
+  },
+  modiin:{
+    weeks:['מרץ','מרץ 16','מרץ 30','אפר 13','אפר 27','מאי 11','מאי 25','יוני 8'],
+    open:  [80,150,220,300,380,450,490,520],
+    closed:[10,30, 70, 120,200,290,360,410],
+    prog:  [5, 10, 15, 20, 22, 25, 24, 25]
+  },
+  beit:{
+    weeks:['אפר','אפר 27','מאי 11','מאי 25','יוני 8'],
+    open:  [40,90,140,165,180],
+    closed:[5, 20, 55, 90, 118],
+    prog:  [3, 7,  10, 12, 12]
+  },
+  alpha:{
+    weeks:['מאי','מאי 25','יוני 8'],
+    open:  [30,60,80],
+    closed:[5, 25,55],
+    prog:  [2, 6, 8]
+  }
+};
+
+function drawWeeklyChart(projKey='masmia'){
+  const canvas=document.getElementById('cxd-chart');
+  if(!canvas)return;
+  const d=WEEKLY_DATA[projKey]||WEEKLY_DATA.masmia;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.parentElement.getBoundingClientRect();
+  const W=rect.width||300, H=140;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const PAD={t:10,r:10,b:28,l:32};
+  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
+  const allVals=[...d.open,...d.closed,...d.prog];
+  const maxV=Math.max(...allVals);
+  const n=d.weeks.length;
+  const xStep=cW/(n-1);
+
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  [0,.25,.5,.75,1].forEach(f=>{
+    const y=PAD.t+cH*(1-f);
+    ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(PAD.l+cW,y);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.2)';ctx.font='9px monospace';
+    ctx.fillText(Math.round(maxV*f),2,y+3);
+  });
+
+  // X labels
+  ctx.fillStyle='rgba(255,255,255,.25)';ctx.font='8px sans-serif';ctx.textAlign='center';
+  const step=Math.max(1,Math.floor(n/5));
+  d.weeks.forEach((w,i)=>{if(i%step===0||i===n-1)ctx.fillText(w,PAD.l+i*xStep,H-6);});
+
+  // Draw series
+  const series=[
+    {data:d.open,color:'#ef4444',fill:'rgba(239,68,68,.12)'},
+    {data:d.closed,color:'#10b981',fill:'rgba(16,185,129,.12)'},
+    {data:d.prog,color:'#f59e0b',fill:'rgba(245,158,11,.08)'}
+  ];
+
+  series.forEach(s=>{
+    const pts=s.data.map((v,i)=>({x:PAD.l+i*xStep,y:PAD.t+cH*(1-v/maxV)}));
+    // Fill
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++){
+      const cx=(pts[i-1].x+pts[i].x)/2;
+      ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y);
+    }
+    ctx.lineTo(pts[pts.length-1].x,PAD.t+cH);
+    ctx.lineTo(pts[0].x,PAD.t+cH);
+    ctx.closePath();
+    ctx.fillStyle=s.fill;ctx.fill();
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++){
+      const cx=(pts[i-1].x+pts[i].x)/2;
+      ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y);
+    }
+    ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.stroke();
+    // Dots
+    pts.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fillStyle=s.color;ctx.fill();
+    });
+  });
+
+  // Touch/click tooltip
+  function showTip(ex,ey){
+    const canRect=canvas.getBoundingClientRect();
+    const relX=ex-canRect.left;
+    const idx=Math.min(n-1,Math.max(0,Math.round((relX-PAD.l)/xStep)));
+    if(idx<0||idx>=n)return;
+    const tip=document.getElementById('cxd-tooltip');
+    if(!tip)return;
+    tip.style.display='block';
+    tip.innerHTML='<div style="font-weight:700;margin-bottom:4px;color:rgba(245,166,35,.9);">'+d.weeks[idx]+'</div>'+
+      '<div style="color:#ef4444;">● פתוח: <b>'+d.open[idx]+'</b></div>'+
+      '<div style="color:#10b981;">● סגור: <b>'+d.closed[idx]+'</b></div>'+
+      '<div style="color:#f59e0b;">● בתהליך: <b>'+d.prog[idx]+'</b></div>';
+    const tipX=Math.min(PAD.l+idx*xStep,W-130);
+    const tipY=Math.max(0,PAD.t+cH*(1-d.open[idx]/maxV)-60);
+    tip.style.left=tipX+'px';tip.style.top=tipY+'px';
+  }
+  canvas.ontouchmove=e=>{e.preventDefault();showTip(e.touches[0].clientX,e.touches[0].clientY);};
+  canvas.ontouchend=()=>{setTimeout(()=>{const t=document.getElementById('cxd-tooltip');if(t)t.style.display='none';},2000);};
+  canvas.onmousemove=e=>showTip(e.clientX,e.clientY);
+  canvas.onmouseleave=()=>{const t=document.getElementById('cxd-tooltip');if(t)t.style.display='none';};
+}
+
+// Draw chart when CxAlloy tab first opens
+// (patched into showHomeTab below)
+
+// ══ ISSUE TIMELINE ══
+// Per-issue event log stored in issueTimeline[itemId][idx]
+if(!window.issueTimeline)window.issueTimeline={};
+
+function addTimelineEvent(itemId,idx,action,ico,user){
+  if(!issueTimeline[itemId])issueTimeline[itemId]={};
+  if(!issueTimeline[itemId][idx])issueTimeline[itemId][idx]=[];
+  const now=new Date();
+  issueTimeline[itemId][idx].unshift({
+    action,ico:ico||'📌',
+    user:user||'מנהל',
+    time:now.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+    date:now.toLocaleDateString('he-IL')
+  });
+  if(issueTimeline[itemId][idx].length>20)issueTimeline[itemId][idx].pop();
+  // Refresh timeline in DOM if page is open
+  const tlEl=document.getElementById('iss-tl-'+itemId+'-'+idx);
+  if(tlEl){
+    const inner=tlEl.querySelector('.iss-tl-title');
+    if(inner)tlEl.innerHTML='<div class="iss-tl-title">היסטוריה</div>'+buildIssueTimeline(itemId,idx);
+  }
+}
+
+function buildIssueTimeline(itemId,idx,st,prio,person){
+  const events=issueTimeline[itemId]?.[idx]||[];
+  // Generate smart auto-events from current state
+  const autoEvents=[];
+  const created=new Date();
+  created.setDate(created.getDate()-Math.floor(Math.random()*14+1));
+  autoEvents.push({
+    action:'Issue נפתח',ico:'🔴',
+    user:person||'בודק',
+    time:created.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+    date:created.toLocaleDateString('he-IL')
+  });
+  if(prio==='high'){
+    const d2=new Date(created);d2.setHours(d2.getHours()+2);
+    autoEvents.push({action:'עדיפות הוגדרה כגבוהה',ico:'🔺',user:'מנהל',
+      time:d2.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+      date:d2.toLocaleDateString('he-IL')});
+  }
+  if(st==='waiting'){
+    const d3=new Date(created);d3.setDate(d3.getDate()+2);
+    autoEvents.push({action:'הועבר לממתין לאישור',ico:'⏳',user:'בודק',
+      time:d3.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+      date:d3.toLocaleDateString('he-IL')});
+  }
+  if(st==='closed'){
+    const d4=new Date(created);d4.setDate(d4.getDate()+5);
+    autoEvents.push({action:'Issue נסגר — תוקן',ico:'✅',user:'מנהל',
+      time:d4.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+      date:d4.toLocaleDateString('he-IL')});
+  }
+
+  const all=[...events,...autoEvents].slice(0,8);
+  if(!all.length)return '<div style="font-size:.72rem;color:#94a3b8;text-align:center;padding:10px 0;">אין היסטוריה עדיין</div>';
+
+  const dotColors={'🔴':'rgba(239,68,68,.15)','✅':'rgba(16,185,129,.15)','⏳':'rgba(245,158,11,.15)','📌':'rgba(59,130,246,.15)','🔺':'rgba(239,68,68,.1)','💬':'rgba(139,92,246,.15)'};
+  return all.map(e=>`
+    <div class="iss-tl-item">
+      <div class="iss-tl-dot" style="background:${dotColors[e.ico]||'rgba(15,23,42,.06)'};">${e.ico}</div>
+      <div class="iss-tl-body">
+        <div class="iss-tl-action">${e.action}</div>
+        <div class="iss-tl-user">👤 ${e.user}</div>
+        <div class="iss-tl-time">${e.date} · ${e.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// Patch cycleIssStatus to log timeline events
+const _origCycleIssStatus=window.cycleIssStatus;
+if(typeof cycleIssStatus==='function'){
+  const _orig=cycleIssStatus;
+  window.cycleIssStatus=function(itemId,idx){
+    _orig(itemId,idx);
+    const st=document.getElementById('ist-'+itemId+'-'+idx)?.dataset.s||'open';
+    const labels={open:'🔴 פתח מחדש',waiting:'⏳ הועבר לממתין',closed:'✅ נסגר'};
+    addTimelineEvent(itemId,idx,labels[st]||'שינוי סטטוס',st==='closed'?'✅':st==='waiting'?'⏳':'🔴','מנהל');
+  };
+}
+
+// ══ QR EQUIPMENT SCANNER ══
+const CX_EQUIPMENT_DB={
+  'DC2-L0-MSB-BG-110':{name:'DC2-L0-MSB-BG-110',type:'LVP',system:'MSB',location:'Floor 0 · Space BG',status:'Pre Testing',issues:0,checklist:'L0 SWBD · הושלם',project:'Mega DC - Masmia'},
+  'DC2-L0-MSB-BJ-110':{name:'DC2-L0-MSB-BJ-110',type:'LVP',system:'MSB',location:'Floor 0 · Space BJ',status:'Pre Testing',issues:0,checklist:'L0 SWBD · לא התחיל',project:'Mega DC - Masmia'},
+  '200A-L1-MSB-CA-110':{name:'200A-L1-MSB-CA-110',type:'LVP',system:'MSB',location:'Floor 1 · Space CA',status:'L1 Ready',issues:18,checklist:'L1 SWBD · בתהליך',project:'Mega DC - Masmia'},
+  '200A-L1-MBC-CC-110':{name:'200A-L1-MBC-CC-110',type:'LVP',system:'MBC',location:'Floor 1 · Space CC',status:'L1 Ready',issues:15,checklist:'L1 SWBD · בתהליך',project:'Mega DC - Masmia'},
+  'DC2-L0-TRF-BA-110':{name:'DC2-L0-TRF-BA-110',type:'TRF',system:'TRF',location:'Floor 0 · Space BA',status:'Delivered',issues:2,checklist:'L0 TRF · לא התחיל',project:'Mega DC - Masmia'},
+  'DC2-L0-GEN-BA-110':{name:'DC2-L0-GEN-BA-110',type:'GEN',system:'Generator',location:'Floor 0 · Space BA',status:'L1 Ready',issues:3,checklist:'L0 GEN · בתהליך',project:'Mega DC - Masmia'},
+};
+
+function openQRScanner(){
+  // Use file input to capture QR via camera
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.capture='environment';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=r=>{
+      // Try BarcodeDetector API (Chrome Android)
+      if('BarcodeDetector' in window){
+        const bd=new BarcodeDetector({formats:['qr_code','code_128','code_39','ean_13']});
+        createImageBitmap(file).then(bmp=>bd.detect(bmp)).then(codes=>{
+          if(codes.length>0)_processQRCode(codes[0].rawValue);
+          else _qrManualFallback();
+        }).catch(()=>_qrManualFallback());
+      } else {
+        _qrManualFallback();
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+
+function _processQRCode(code){
+  // Try to match against equipment DB
+  const eq=CX_EQUIPMENT_DB[code]||Object.values(CX_EQUIPMENT_DB).find(e=>e.name.toLowerCase()===code.toLowerCase());
+  if(eq){
+    showQRResult(eq);
+  } else {
+    // Generic QR — show raw code with option to search
+    showQRResult({
+      name:code,type:'לא זוהה',system:'—',location:'—',
+      status:'—',issues:0,checklist:'—',project:'—'
+    });
+  }
+}
+
+function _qrManualFallback(){
+  // Show manual search sheet
+  const sheet=document.getElementById('qr-result-sheet');
+  document.getElementById('qr-res-name').textContent='חיפוש ידני';
+  document.getElementById('qr-res-sub').textContent='הכנס מספר ציוד';
+  document.getElementById('qr-res-rows').innerHTML=
+    '<div style="margin:12px 0;">'+
+    '<input id="qr-manual-inp" placeholder="לדוג׳ 200A-L1-MSB-CA-110" style="width:100%;background:var(--surf2);border:1px solid var(--border2);border-radius:10px;padding:11px 12px;font-size:.85rem;font-family:inherit;direction:ltr;color:var(--t1);outline:none;" oninput="qrManualSearch(this.value)">'+
+    '</div>'+
+    '<div id="qr-manual-results"></div>';
+  document.getElementById('qr-result-sheet').classList.add('open');
+  setTimeout(()=>document.getElementById('qr-manual-inp')?.focus(),200);
+}
+
+function qrManualSearch(q){
+  const res=document.getElementById('qr-manual-results');if(!res)return;
+  if(!q||q.length<3){res.innerHTML='';return;}
+  const matches=Object.values(CX_EQUIPMENT_DB).filter(e=>e.name.toLowerCase().includes(q.toLowerCase()));
+  if(!matches.length){res.innerHTML='<div style="font-size:.72rem;color:var(--t4);padding:8px 0;">לא נמצא ציוד</div>';return;}
+  res.innerHTML=matches.map(e=>
+    `<div onclick="closeQRResult();showQRResult(${JSON.stringify(e).replace(/"/g,'&quot;')})" style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+      <div style="font-size:.78rem;font-weight:700;color:var(--t1);">${e.name}</div>
+      <div style="font-size:.62rem;color:var(--t3);">${e.type} · ${e.status}</div>
+    </div>`
+  ).join('');
+}
+
+function showQRResult(eq){
+  document.getElementById('qr-res-name').textContent=eq.name;
+  document.getElementById('qr-res-sub').textContent=eq.project+' · '+eq.type;
+  const stColor=eq.status==='L1 Ready'?'#ef4444':eq.status==='Delivered'?'#f97316':'#94a3b8';
+  document.getElementById('qr-res-rows').innerHTML=
+    `<div class="qr-result-row"><span class="qr-result-label">סוג ציוד</span><span class="qr-result-val">${eq.type}</span></div>`+
+    `<div class="qr-result-row"><span class="qr-result-label">מיקום</span><span class="qr-result-val">${eq.location}</span></div>`+
+    `<div class="qr-result-row"><span class="qr-result-label">סטטוס</span><span class="qr-result-val" style="color:${stColor};font-weight:800;">${eq.status}</span></div>`+
+    `<div class="qr-result-row"><span class="qr-result-label">צ׳קליסט</span><span class="qr-result-val">${eq.checklist}</span></div>`+
+    (eq.issues>0?`<div class="qr-result-row"><span class="qr-result-label">Issues</span><span class="qr-result-val" style="color:#ef4444;font-weight:800;">⚠️ ${eq.issues} פתוחים</span></div>`:'');
+  document.getElementById('qr-result-sheet').classList.add('open');
+}
+
+function closeQRResult(){
+  document.getElementById('qr-result-sheet').classList.remove('open');
+}
+
+// Show QR FAB only on home screen
+function _updateQRFab(){
+  const fab=document.getElementById('qr-fab');if(!fab)return;
+  const homeOn=document.getElementById('sc-home')?.classList.contains('on');
+  const cxOn=document.getElementById('sc-cxdash')?.classList.contains('on');
+  fab.style.display=(homeOn||cxOn)?'flex':'none';
+}
+
+// Patch showHomeTab to update FAB
+const _origSHT=window.showHomeTab;
+window.showHomeTab=function(tab){
+  if(_origSHT)_origSHT(tab);
+  setTimeout(_updateQRFab,50);
+};
+
+// Show on initial load
+document.addEventListener('DOMContentLoaded',()=>setTimeout(_updateQRFab,500));
+function openGSearch(){
+  document.getElementById('gsearch-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('gsearch-input').focus(),100);
+}
+function closeGSearch(){
+  document.getElementById('gsearch-overlay').classList.remove('open');
+  document.getElementById('gsearch-input').value='';
+  document.getElementById('gsearch-results').innerHTML='<div class="gsearch-empty">התחל להקליד לחיפוש...</div>';
+}
+
+function renderGSearch(q){
+  const res=document.getElementById('gsearch-results');
+  if(!q||q.length<2){res.innerHTML='<div class="gsearch-empty">התחל להקליד לחיפוש...</div>';return;}
+  q=q.toLowerCase();
+  // Search checklists from Firebase cache
+  const cls=Object.entries(window._ITEMS||{});
+  const matched=[];
+  cls.forEach(([id,cl])=>{
+    const name=(cl.panelName||cl.name||'').toLowerCase();
+    const proj=(cl.project||'').toLowerCase();
+    const insp=(cl.inspector||cl.f_insp||'').toLowerCase();
+    const num=(cl.panelNum||cl.f_num||'').toLowerCase();
+    if(name.includes(q)||proj.includes(q)||insp.includes(q)||num.includes(q)){
+      matched.push({type:'checklist',id,cl});
+    }
+  });
+
+  // Search CxAlloy data (static)
+  const cxAssets=['200A-L1-MSB-CA-110','200A-L1-MBC-CC-110','200A-L1-MSB-CC-110','200A-L1-MBC-CB-110','200A-L1-MSB-CK-110',
+    'DC2-L0-MSB-BG-110','DC2-L0-MSB-BJ-110','DC2-L0-MSB-BK-110'];
+  const matchedAssets=cxAssets.filter(a=>a.toLowerCase().includes(q));
+
+  if(matched.length===0&&matchedAssets.length===0){
+    res.innerHTML='<div class="gsearch-empty">לא נמצאו תוצאות עבור "'+q+'"</div>';return;
+  }
+
+  let html='';
+  if(matched.length>0){
+    html+='<div class="gsearch-section">צ\'קליסטים ('+matched.length+')</div>';
+    matched.slice(0,8).forEach(({id,cl})=>{
+      const st=cl.status||'not-started';
+      const stColor=st==='completed'?'#10b981':st==='in-progress'?'#f59e0b':'#94a3b8';
+      const stLbl=st==='completed'?'הושלם':st==='in-progress'?'בתהליך':'לא התחיל';
+      const p=Math.round(((cl.passedCount||0)/Math.max(1,(cl.totalItems||1)))*100);
+      html+=`<div class="gsearch-item" onclick="closeGSearch();enterCl('${id}')">
+        <div class="gsearch-ico" style="background:rgba(245,166,35,.1);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="gsearch-txt">
+          <div class="gsearch-title">${cl.panelName||cl.name||id}</div>
+          <div class="gsearch-sub">${cl.project||''} · ${p}% הושלם</div>
+        </div>
+        <span class="gsearch-badge" style="background:${stColor}20;color:${stColor};">${stLbl}</span>
+      </div>`;
+    });
+  }
+  if(matchedAssets.length>0){
+    html+='<div class="gsearch-section">ציוד CxAlloy ('+matchedAssets.length+')</div>';
+    matchedAssets.forEach(a=>{
+      html+=`<div class="gsearch-item" onclick="closeGSearch();showHomeTab('cxdash')">
+        <div class="gsearch-ico" style="background:rgba(239,68,68,.1);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="gsearch-txt">
+          <div class="gsearch-title">${a}</div>
+          <div class="gsearch-sub">Mega DC · ציוד LVP</div>
+        </div>
+        <span class="gsearch-badge" style="background:rgba(239,68,68,.1);color:#ef4444;">Issues</span>
+      </div>`;
+    });
+  }
+  res.innerHTML=html;
+}
+
+// Close search on Escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGSearch();});
+// ════════════════════════════════
+// INDEXEDDB — offline storage
+// ════════════════════════════════
+const _IDB_NAME='ecx_db',_IDB_VER=1;
+let _idb=null;
+function _openIDB(){
+  if(_idb)return Promise.resolve(_idb);
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(_IDB_NAME,_IDB_VER);
+    r.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('cls'))db.createObjectStore('cls',{keyPath:'id'});};
+    r.onsuccess=e=>{_idb=e.target.result;res(_idb);};
+    r.onerror=()=>rej();
+  });
+}
+function _idbSave(id,data){
+  try{localStorage.setItem('cl_'+id,JSON.stringify(data));}catch(e){}
+  return _openIDB().then(db=>new Promise((res,rej)=>{
+    const tx=db.transaction('cls','readwrite');
+    tx.objectStore('cls').put({id,data,ts:Date.now()}).onsuccess=()=>res();
+    tx.onerror=()=>rej();
+  })).catch(()=>{});
+}
+function _idbLoad(id){
+  return _openIDB().then(db=>new Promise((res,rej)=>{
+    const r=db.transaction('cls','readonly').objectStore('cls').get(id);
+    r.onsuccess=()=>res(r.result?.data||null);r.onerror=()=>rej();
+  })).catch(()=>{try{const s=localStorage.getItem('cl_'+id);return s?JSON.parse(s):null;}catch(e){return null;}});
+}
+
+// ════════════════════════════════
+// IN-APP NOTIFICATIONS
+// ════════════════════════════════
+let _notifs=[];
+try{_notifs=JSON.parse(localStorage.getItem('ecx_notifs')||'[]');}catch(e){}
+
+function addInAppNotif(text,color,icon){
+  color=color||'#3b82f6';icon=icon||'🔔';
+  const n={id:Date.now(),text,color,icon,
+    time:new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+    date:new Date().toLocaleDateString('he-IL'),read:false};
+  _notifs.unshift(n);if(_notifs.length>40)_notifs.pop();
+  try{localStorage.setItem('ecx_notifs',JSON.stringify(_notifs));}catch(e){}
+  _updateNotifBadge();
+}
+function _updateNotifBadge(){
+  const unread=_notifs.filter(n=>!n.read).length;
+  const b=document.getElementById('notif-badge');
+  if(b)b.classList.toggle('show',unread>0);
+}
+function openNotifCenter(){
+  document.getElementById('notif-overlay').classList.add('open');
+  _renderNotifs();_loadPushPrefs();
+}
+function closeNotifCenter(){document.getElementById('notif-overlay').classList.remove('open');}
+function markAllRead(){_notifs.forEach(n=>n.read=true);try{localStorage.setItem('ecx_notifs',JSON.stringify(_notifs));}catch(e){}_updateNotifBadge();_renderNotifs();}
+function markNotifRead(id){const n=_notifs.find(x=>x.id===id);if(n)n.read=true;try{localStorage.setItem('ecx_notifs',JSON.stringify(_notifs));}catch(e){}_updateNotifBadge();_renderNotifs();}
+function _renderNotifs(){
+  const list=document.getElementById('notif-list');if(!list)return;
+  if(!_notifs.length){list.innerHTML='<div class="gsearch-empty">אין התראות</div>';return;}
+  list.innerHTML=_notifs.slice(0,25).map(n=>`
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);opacity:${n.read?.55:1};cursor:pointer;" onclick="markNotifRead(${n.id})">
+      <div style="width:34px;height:34px;border-radius:10px;background:${n.color}18;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">${n.icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.78rem;font-weight:${n.read?'500':'700'};color:var(--t1);line-height:1.4;">${n.text}</div>
+        <div style="font-size:.6rem;color:var(--t4);margin-top:3px;">${n.date} · ${n.time}</div>
+      </div>
+      ${!n.read?`<div style="width:8px;height:8px;border-radius:50%;background:${n.color};flex-shrink:0;margin-top:6px;"></div>`:''}
+    </div>`).join('');
+}
+
+// ════════════════════════════════
+// WEB PUSH
+// ════════════════════════════════
+const _PUSH_KEY='ecx_push';
+function _loadPushPrefs(){
+  try{const p=JSON.parse(localStorage.getItem(_PUSH_KEY)||'{}');
+    ['assigned','closed','newcl','waiting'].forEach(k=>{const el=document.getElementById('pn-'+k);if(el&&p[k]!==undefined)el.checked=p[k];});
+  }catch(e){}
+}
+function savePushPrefs(){
+  const p={};['assigned','closed','newcl','waiting'].forEach(k=>{const el=document.getElementById('pn-'+k);if(el)p[k]=el.checked;});
+  try{localStorage.setItem(_PUSH_KEY,JSON.stringify(p));}catch(e){}
+}
+function requestPushPermission(){
+  if(!('Notification' in window)){toast('⚠️ הדפדפן לא תומך בהתראות');return;}
+  if(Notification.permission==='granted'){_firePush('Electra CX','התראות כבר מופעלות ✅','✅');return;}
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted'){
+      const btn=document.getElementById('push-enable-btn');
+      if(btn){btn.textContent='✅ מופעל';btn.style.background='linear-gradient(135deg,#065f46,#047857)';}
+      toast('🔔 התראות הופעלו!');
+      addInAppNotif('התראות Push מופעלות','#10b981','🔔');
+      setTimeout(()=>_firePush('Electra CX','בדיקה: Issue CI-0501 הוקצה אליך','🔴'),2000);
+    }else{toast('⚠️ הרשאה נדחתה');}
+  });
+}
+function _firePush(title,body,icon){
+  addInAppNotif(body,'#3b82f6',icon||'🔔');
+  if(typeof Notification!=='undefined'&&Notification.permission==='granted'){
+    try{new Notification(title,{body,tag:'ecx-'+Date.now()});}catch(e){}
+  }
+}
+
+// ════════════════════════════════
+// KANBAN QUICK MOVE (upgrade)
+// ════════════════════════════════
+function kanbanQuickMove(i,n,newSt){
+  const pfx=PANEL_TYPE==='mg'?'g':'';
+  const stEl=document.getElementById('ist-'+pfx+i+'-'+n);if(stEl)stEl.dataset.s=newSt;
+  const bl=document.getElementById('ib-'+pfx+i+'-'+n);
+  if(bl){bl.classList.remove('closed','waiting');if(newSt==='closed')bl.classList.add('closed');if(newSt==='waiting')bl.classList.add('waiting');}
+  if(typeof addTimelineEvent==='function'){
+    const lbl={open:'🔴 פתח מחדש',waiting:'⏳ ממתין לאישור',closed:'✅ נסגר'};
+    addTimelineEvent(i,n,lbl[newSt]||'שינוי',newSt==='closed'?'✅':'⏳','מנהל');
+  }
+  if(newSt==='closed')_firePush('Issue נסגר','Issue #'+n+' בסעיף '+i+' נסגר','✅');
+  if(newSt==='waiting')addInAppNotif('Issue #'+n+' ממתין לאישורך','#f59e0b','⏳');
+  schedSave();updIssBar();
+  toast(newSt==='closed'?'✅ Issue נסגר':newSt==='waiting'?'⏳ ממתין לאישור':'🔴 פתוח');
+  setTimeout(()=>renderKanban(),120);
+}
 // ════════════════════════════════════════
 // OPEN — uses .once() to prevent duplicate issues bug
 // ════════════════════════════════════════
 function enterCl(id, prefill){
-  document.getElementById('sc-home').classList.remove('on');
+  // Hide ALL home-related screens
+  document.getElementById('sc-home')?.classList.remove('on');
+  document.getElementById('sc-cxdash')?.classList.remove('on');
+  const ht=document.getElementById('home-tabs');if(ht)ht.style.display='none';
   CID=id;
-  // Build items FIRST with current PANEL_TYPE (set by selectPanelType before enterCl)
   buildItems();
   resetCl(); switchTab('cl');
   const content=document.querySelector('.content');
@@ -2552,6 +3795,7 @@ function leaveChecklist(){
   });
   document.getElementById('sc-home').classList.add('on');
   document.getElementById('tabs').classList.remove('show');
+  const ht=document.getElementById('home-tabs');if(ht)ht.style.display='flex';
   // Scroll to top of home
   const content=document.querySelector('.content');
   if(content)content.scrollTop=0;
@@ -3370,32 +4614,37 @@ function exportPDF(){
   const notes=document.getElementById('f-notes')?.value||'';
 
   let p=0,f=0,na=0,openIss=0,closedIss=0;
-  for(let i=1;i<=31;i++){
-    const el=document.getElementById('ic'+i);if(!el)continue;
+  const _PPFX=PANEL_TYPE==='mg'?'g':'';
+  ITEMS.forEach(it=>{
+    const el=document.getElementById('ic'+_PPFX+it.id);if(!el)return;
     if(el.querySelector('.pfn.p.on'))p++;
     else if(el.querySelector('.pfn.f.on'))f++;
     else if(el.querySelector('.pfn.n.on'))na++;
-  }
+  });
   const done=(p+f+na);const pct=done>0?Math.round(p/done*100):0;
 
   // Items table
-  const CH=PANEL_TYPE==='mg'?{2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'בדיקות פונקציונאליות - לוחות מתח גבוה'}:{2:'חלק 2 — בדיקות חזותיות',3:'חלק 3 — בדיקות פונקציונאליות',4:'חלק 4 — הזנות כפולות ופיקוד'};
+  const _PDFCH=CH();
   let lastCh=0,itemRows='';
-  for(let i=1;i<=31;i++){
-    const el=document.getElementById('ic'+i);if(!el)continue;
-    const item=ITEMS.find(x=>x.id===i);const ch=item?.c||2;
-    if(ch!==lastCh){lastCh=ch;itemRows+=`<tr><td colspan="3" style="background:#05111f;color:#f59e0b;font-weight:800;font-size:.78rem;padding:8px 14px;">${CH()[ch]||''}</td></tr>`;}
+  let seqPDF=0;
+  ITEMS.forEach(it=>{
+    seqPDF++;
+    const el=document.getElementById('ic'+_PPFX+it.id);if(!el)return;
+    const ch=it.c;
+    if(ch!==lastCh){lastCh=ch;itemRows+=`<tr><td colspan="4" style="background:#05111f;color:#f59e0b;font-weight:800;font-size:.78rem;padding:8px 14px;">${_PDFCH[ch]||'חלק '+ch}</td></tr>`;}
     let stLabel='—',stColor='#94a3b8',stBg='#f8fafc';
     if(el.querySelector('.pfn.p.on')){stLabel='✓ Passed';stColor='#16a34a';stBg='#f0fdf4';}
     else if(el.querySelector('.pfn.f.on')){stLabel='✗ Failed';stColor='#dc2626';stBg='#fef2f2';}
     else if(el.querySelector('.pfn.n.on')){stLabel='N/A';stColor='#64748b';stBg='#f1f5f9';}
-    const note=document.getElementById('note'+i)?.value||'';
+    const note=document.getElementById('note'+_PPFX+it.id)?.value||'';
+    const ab=window._answeredBy?.[it.id];
+    const abTxt=ab?`<span style="font-size:.65rem;color:#94a3b8;"> · ${ab.by} ${ab.ts}</span>`:'';
     itemRows+=`<tr style="border-bottom:1px solid #f1f5f9;">
-      <td style="padding:7px 12px;font-size:.75rem;color:#64748b;width:5%;text-align:center;">${i}</td>
-      <td style="padding:7px 12px;font-size:.76rem;color:#334155;line-height:1.5;">${item?.t||''}</td>
+      <td style="padding:7px 12px;font-size:.75rem;color:#64748b;width:4%;text-align:center;">${seqPDF}</td>
+      <td style="padding:7px 12px;font-size:.76rem;color:#334155;line-height:1.5;">${it.t}${abTxt}</td>
       <td style="padding:7px 12px;text-align:center;white-space:nowrap;"><span style="background:${stBg};color:${stColor};border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:800;">${stLabel}</span></td>
     </tr>${note?`<tr><td></td><td colspan="2" style="padding:0 12px 7px;font-size:.7rem;color:#94a3b8;font-style:italic;">📝 ${note}</td></tr>`:''}`;
-  }
+  });
 
   // Issues
   let issHtml='';
@@ -3475,6 +4724,141 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;ove
 /* better card shadows */
 .card,.item,.clc{box-shadow:0 1px 3px rgba(6,16,30,.05),0 3px 12px rgba(6,16,30,.06);}
 
+
+/* ══ PROJECT SELECTOR ══ */
+.proj-sel-bar{display:flex;gap:7px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.proj-sel-bar::-webkit-scrollbar{display:none;}
+.proj-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg-card);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;padding:9px 13px;cursor:pointer;transition:all .2s;min-width:80px;}
+.proj-btn.active{background:linear-gradient(135deg,rgba(245,166,35,.18),rgba(245,166,35,.08));border-color:var(--gold-border);box-shadow:0 0 0 1px var(--gold-border);}
+.proj-btn-ico{font-size:.95rem;}
+.proj-btn-name{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.55);text-align:center;line-height:1.2;letter-spacing:.2px;}
+.proj-btn.active .proj-btn-name{color:var(--gold);}
+
+/* ══ CXALLOY DASHBOARD SCREEN ══ */
+#sc-cxdash{background:var(--surf);}
+.cxd-hero{background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:18px 16px 16px;position:relative;overflow:hidden;}
+.cxd-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.cxd-proj-name{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.3px;margin-bottom:2px;}
+.cxd-proj-sub{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;}
+.cxd-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 14px 0;}
+.cxd-kpi{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px 8px;text-align:center;}
+.cxd-kpi-n{font-size:1.3rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
+.cxd-kpi-l{font-size:.52rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.cxd-section{margin:14px 14px 0;}
+.cxd-sec-hdr{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.cxd-sec-hdr::after{content:'';flex:1;height:1px;background:var(--border2);}
+.cxd-card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:10px;}
+/* Progress bar */
+.cxd-pbar-wrap{margin-bottom:14px;}
+.cxd-pbar-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.cxd-pbar-title{font-size:.78rem;font-weight:700;color:var(--t1);}
+.cxd-pbar-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.cxd-pbar{height:8px;border-radius:4px;background:var(--surf2);overflow:hidden;display:flex;}
+.cxd-pbar-seg{height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.cxd-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.cxd-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-leg-dot{width:7px;height:7px;border-radius:50%;}
+/* Ranking row */
+.cxd-rank-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.cxd-rank-row:last-child{border-bottom:none;padding-bottom:0;}
+.cxd-rank-num{font-size:.62rem;font-weight:800;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:16px;}
+.cxd-rank-name{font-size:.76rem;font-weight:600;color:var(--t1);flex:1;}
+.cxd-rank-bar-wrap{width:90px;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-rank-bar{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-rank-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;min-width:28px;text-align:left;}
+/* Checklist company bars */
+.cxd-comp-bar{background:var(--blue);opacity:.7;}
+/* Equipment type row */
+.cxd-eq-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
+.cxd-eq-row:last-child{border-bottom:none;}
+.cxd-eq-type{font-size:.73rem;font-weight:700;color:var(--t2);min-width:62px;}
+.cxd-eq-bar-wrap{flex:1;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-eq-pre{height:100%;border-radius:3px;background:#94a3b8;}
+.cxd-eq-l1{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-eq-del{height:100%;border-radius:3px;background:var(--warn);}
+.cxd-eq-count{font-size:.62rem;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:24px;text-align:left;}
+/* Stat pill */
+.cxd-stat-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:20px;padding:5px 11px;font-size:.68rem;font-weight:700;color:var(--fail);}
+.cxd-stat-pill.ok{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.18);color:var(--ok);}
+.cxd-stat-pill.warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.18);color:var(--warn);}
+/* Tab for cxdash */
+#tab-cxdash .tab-ico svg{stroke-width:2;}
+
+/* ══ WEEKLY CHART ══ */
+.cxd-chart-wrap{position:relative;width:100%;height:140px;margin-top:4px;}
+.cxd-chart-canvas{width:100%;height:100%;}
+.cxd-chart-tooltip{position:absolute;background:rgba(5,17,31,.92);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:7px 10px;font-size:.62rem;color:#fff;pointer-events:none;display:none;z-index:10;min-width:120px;backdrop-filter:blur(10px);}
+.cxd-chart-legend{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
+.cxd-chart-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-chart-leg-line{width:14px;height:2px;border-radius:1px;}
+
+/* ══ GLOBAL SEARCH ══ */
+.gsearch-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;backdrop-filter:blur(4px);}
+.gsearch-overlay.open{display:flex;flex-direction:column;}
+.gsearch-box{background:var(--nav);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.gsearch-input{flex:1;background:transparent;border:none;outline:none;font-size:1rem;color:var(--t1);font-family:inherit;caret-color:var(--gold);}
+.gsearch-input::placeholder{color:var(--t4);}
+.gsearch-cancel{font-size:.8rem;color:var(--gold);font-weight:700;cursor:pointer;white-space:nowrap;padding:4px 8px;}
+.gsearch-results{flex:1;overflow-y:auto;padding:8px 0;}
+.gsearch-section{padding:8px 14px 4px;font-size:.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4);}
+.gsearch-item{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);}
+.gsearch-item:hover,.gsearch-item:active{background:var(--surf2);}
+.gsearch-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gsearch-txt{flex:1;min-width:0;}
+.gsearch-title{font-size:.8rem;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gsearch-sub{font-size:.65rem;color:var(--t3);margin-top:2px;}
+.gsearch-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.gsearch-empty{text-align:center;padding:40px 20px;color:var(--t4);font-size:.85rem;}
+
+/* Search button in nav */
+.gsearch-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.72rem;color:var(--t3);}
+.gsearch-btn svg{opacity:.6;}
+
+/* ══ MY ISSUES TAB ══ */
+.cxd-tabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:14px;}
+.cxd-tab{flex:1;padding:10px 0;font-size:.72rem;font-weight:700;color:var(--t3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;transition:all .2s;}
+.cxd-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.my-issue-card{background:var(--card);border-radius:14px;padding:13px;margin-bottom:8px;border:1px solid var(--border);box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.my-issue-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.my-issue-ref{font-size:.62rem;font-weight:800;color:var(--t4);font-family:"JetBrains Mono",monospace;}
+.my-issue-st{font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:20px;}
+.my-issue-desc{font-size:.78rem;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:5px;}
+.my-issue-meta{font-size:.62rem;color:var(--t3);display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ══ EXCEL EXPORT UPGRADE ══ */
+.export-sheet-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.export-sheet-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+
+/* ══ ISSUE TIMELINE ══ */
+.iss-timeline{padding:14px;}
+.iss-tl-title{font-size:.65rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#64748b;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.iss-tl-title::after{content:"";flex:1;height:1px;background:rgba(15,23,42,.08);}
+.iss-tl-item{display:flex;gap:10px;margin-bottom:14px;position:relative;}
+.iss-tl-item:not(:last-child)::before{content:"";position:absolute;right:11px;top:24px;bottom:-7px;width:1px;background:rgba(15,23,42,.1);}
+.iss-tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:1px;}
+.iss-tl-body{flex:1;min-width:0;}
+.iss-tl-action{font-size:.76rem;font-weight:600;color:#1e293b;line-height:1.3;}
+.iss-tl-time{font-size:.6rem;color:#94a3b8;font-family:"JetBrains Mono",monospace;margin-top:2px;}
+.iss-tl-user{font-size:.62rem;font-weight:700;color:#475569;margin-top:1px;}
+
+/* ══ QR QUICK SCANNER BUTTON ══ */
+.qr-fab{position:fixed;bottom:90px;left:16px;z-index:90;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#0a2540);border:2px solid rgba(245,166,35,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:transform .2s;}
+.qr-fab:active{transform:scale(.93);}
+.qr-fab svg{width:22px;height:22px;stroke:var(--gold);}
+
+/* ══ QR RESULT SHEET ══ */
+.qr-result-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--nav);border-radius:22px 22px 0 0;border-top:1px solid var(--border);padding:20px 16px 36px;z-index:300;display:none;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
+.qr-result-sheet.open{display:block;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(100%);}to{transform:translateX(-50%) translateY(0);}}
+.qr-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;}
+.qr-result-name{font-size:1rem;font-weight:900;color:var(--t1);margin-bottom:4px;}
+.qr-result-sub{font-size:.7rem;color:var(--t3);margin-bottom:14px;}
+.qr-result-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.qr-result-row:last-child{border-bottom:none;}
+.qr-result-label{font-size:.65rem;color:var(--t4);min-width:70px;}
+.qr-result-val{font-size:.75rem;font-weight:600;color:var(--t1);}
+.qr-result-actions{display:flex;gap:8px;margin-top:14px;}
+.qr-act-btn{flex:1;padding:12px;border-radius:12px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -3517,7 +4901,33 @@ ${issHtml?`<div class="sec" style="page-break-before:always;">ממצאים ו-Is
 ${notes?`<div class="sec">הערות כלליות</div><div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;font-size:.82rem;line-height:1.8;">${notes}</div>`:''}
 
 <div style="text-align:center;margin-top:16px;font-size:.65rem;color:#cbd5e1;">Electra CX Quality Control | ${panel} | ${fdate}</div>
-</div></body></html>`;
+</div>
+<!-- NOTIFICATION CENTER -->
+<div class="gsearch-overlay" id="notif-overlay" style="background:rgba(0,0,0,.65);">
+  <div style="background:var(--nav);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:.9rem;font-weight:800;color:var(--t1);">התראות</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button onclick="markAllRead()" style="font-size:.68rem;color:var(--gold);font-weight:700;background:none;border:none;cursor:pointer;">סמן הכל נקרא</button>
+      <span class="gsearch-cancel" onclick="closeNotifCenter()">סגור</span>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;" id="notif-list"><div class="gsearch-empty">אין התראות</div></div>
+  <div style="background:var(--nav);border-top:1px solid var(--border);padding:16px;">
+    <div style="font-size:.72rem;font-weight:800;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+      הגדרות Push
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+      <label style="display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t2);">🔴 Issue חדש הוקצה<input type="checkbox" id="pn-assigned" checked onchange="savePushPrefs()" style="width:16px;height:16px;accent-color:var(--gold);"></label>
+      <label style="display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t2);">✅ Issue שלך נסגר<input type="checkbox" id="pn-closed" checked onchange="savePushPrefs()" style="width:16px;height:16px;accent-color:var(--gold);"></label>
+      <label style="display:flex;align-items:center;justify-content:space-between;font-size:.72rem;color:var(--t2);">⏳ Issue ממתין לאישורך<input type="checkbox" id="pn-waiting" checked onchange="savePushPrefs()" style="width:16px;height:16px;accent-color:var(--gold);"></label>
+    </div>
+    <button onclick="requestPushPermission()" id="push-enable-btn" style="width:100%;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;border-radius:12px;padding:12px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">
+      🔔 הפעל התראות Push
+    </button>
+  </div>
+</div>
+</body></html>`;
 
   try{
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -3844,6 +5254,148 @@ img{width:100%;max-height:150px;object-fit:cover;border-radius:12px;border:1px s
 .score-badge.needs-work{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
 .score-badge.fail{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
 
+
+/* ── Answered-by label ── */
+.answered-by{font-size:.6rem;color:var(--t4);padding:2px 10px 6px;text-align:right;display:none;}
+.it.p .answered-by{display:block;color:rgba(16,185,129,.7);}
+.it.f .answered-by{display:block;color:rgba(239,68,68,.6);}
+.it.n .answered-by{display:block;color:var(--t4);}
+
+
+/* ══ PROJECT SELECTOR ══ */
+.proj-sel-bar{display:flex;gap:7px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.proj-sel-bar::-webkit-scrollbar{display:none;}
+.proj-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg-card);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;padding:9px 13px;cursor:pointer;transition:all .2s;min-width:80px;}
+.proj-btn.active{background:linear-gradient(135deg,rgba(245,166,35,.18),rgba(245,166,35,.08));border-color:var(--gold-border);box-shadow:0 0 0 1px var(--gold-border);}
+.proj-btn-ico{font-size:.95rem;}
+.proj-btn-name{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.55);text-align:center;line-height:1.2;letter-spacing:.2px;}
+.proj-btn.active .proj-btn-name{color:var(--gold);}
+
+/* ══ CXALLOY DASHBOARD SCREEN ══ */
+#sc-cxdash{background:var(--surf);}
+.cxd-hero{background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:18px 16px 16px;position:relative;overflow:hidden;}
+.cxd-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.cxd-proj-name{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.3px;margin-bottom:2px;}
+.cxd-proj-sub{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;}
+.cxd-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 14px 0;}
+.cxd-kpi{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px 8px;text-align:center;}
+.cxd-kpi-n{font-size:1.3rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;}
+.cxd-kpi-l{font-size:.52rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.cxd-section{margin:14px 14px 0;}
+.cxd-sec-hdr{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.cxd-sec-hdr::after{content:'';flex:1;height:1px;background:var(--border2);}
+.cxd-card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:10px;}
+/* Progress bar */
+.cxd-pbar-wrap{margin-bottom:14px;}
+.cxd-pbar-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.cxd-pbar-title{font-size:.78rem;font-weight:700;color:var(--t1);}
+.cxd-pbar-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+.cxd-pbar{height:8px;border-radius:4px;background:var(--surf2);overflow:hidden;display:flex;}
+.cxd-pbar-seg{height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.cxd-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.cxd-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-leg-dot{width:7px;height:7px;border-radius:50%;}
+/* Ranking row */
+.cxd-rank-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.cxd-rank-row:last-child{border-bottom:none;padding-bottom:0;}
+.cxd-rank-num{font-size:.62rem;font-weight:800;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:16px;}
+.cxd-rank-name{font-size:.76rem;font-weight:600;color:var(--t1);flex:1;}
+.cxd-rank-bar-wrap{width:90px;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-rank-bar{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-rank-count{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;min-width:28px;text-align:left;}
+/* Checklist company bars */
+.cxd-comp-bar{background:var(--blue);opacity:.7;}
+/* Equipment type row */
+.cxd-eq-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
+.cxd-eq-row:last-child{border-bottom:none;}
+.cxd-eq-type{font-size:.73rem;font-weight:700;color:var(--t2);min-width:62px;}
+.cxd-eq-bar-wrap{flex:1;height:5px;border-radius:3px;background:var(--surf2);overflow:hidden;}
+.cxd-eq-pre{height:100%;border-radius:3px;background:#94a3b8;}
+.cxd-eq-l1{height:100%;border-radius:3px;background:var(--fail);}
+.cxd-eq-del{height:100%;border-radius:3px;background:var(--warn);}
+.cxd-eq-count{font-size:.62rem;color:var(--t4);font-family:'JetBrains Mono',monospace;min-width:24px;text-align:left;}
+/* Stat pill */
+.cxd-stat-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:20px;padding:5px 11px;font-size:.68rem;font-weight:700;color:var(--fail);}
+.cxd-stat-pill.ok{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.18);color:var(--ok);}
+.cxd-stat-pill.warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.18);color:var(--warn);}
+/* Tab for cxdash */
+#tab-cxdash .tab-ico svg{stroke-width:2;}
+
+/* ══ WEEKLY CHART ══ */
+.cxd-chart-wrap{position:relative;width:100%;height:140px;margin-top:4px;}
+.cxd-chart-canvas{width:100%;height:100%;}
+.cxd-chart-tooltip{position:absolute;background:rgba(5,17,31,.92);border:1px solid rgba(245,166,35,.3);border-radius:10px;padding:7px 10px;font-size:.62rem;color:#fff;pointer-events:none;display:none;z-index:10;min-width:120px;backdrop-filter:blur(10px);}
+.cxd-chart-legend{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
+.cxd-chart-leg{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--t3);}
+.cxd-chart-leg-line{width:14px;height:2px;border-radius:1px;}
+
+/* ══ GLOBAL SEARCH ══ */
+.gsearch-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;backdrop-filter:blur(4px);}
+.gsearch-overlay.open{display:flex;flex-direction:column;}
+.gsearch-box{background:var(--nav);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.gsearch-input{flex:1;background:transparent;border:none;outline:none;font-size:1rem;color:var(--t1);font-family:inherit;caret-color:var(--gold);}
+.gsearch-input::placeholder{color:var(--t4);}
+.gsearch-cancel{font-size:.8rem;color:var(--gold);font-weight:700;cursor:pointer;white-space:nowrap;padding:4px 8px;}
+.gsearch-results{flex:1;overflow-y:auto;padding:8px 0;}
+.gsearch-section{padding:8px 14px 4px;font-size:.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4);}
+.gsearch-item{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);}
+.gsearch-item:hover,.gsearch-item:active{background:var(--surf2);}
+.gsearch-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gsearch-txt{flex:1;min-width:0;}
+.gsearch-title{font-size:.8rem;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gsearch-sub{font-size:.65rem;color:var(--t3);margin-top:2px;}
+.gsearch-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.gsearch-empty{text-align:center;padding:40px 20px;color:var(--t4);font-size:.85rem;}
+
+/* Search button in nav */
+.gsearch-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.72rem;color:var(--t3);}
+.gsearch-btn svg{opacity:.6;}
+
+/* ══ MY ISSUES TAB ══ */
+.cxd-tabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:14px;}
+.cxd-tab{flex:1;padding:10px 0;font-size:.72rem;font-weight:700;color:var(--t3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;transition:all .2s;}
+.cxd-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.my-issue-card{background:var(--card);border-radius:14px;padding:13px;margin-bottom:8px;border:1px solid var(--border);box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.my-issue-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.my-issue-ref{font-size:.62rem;font-weight:800;color:var(--t4);font-family:"JetBrains Mono",monospace;}
+.my-issue-st{font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:20px;}
+.my-issue-desc{font-size:.78rem;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:5px;}
+.my-issue-meta{font-size:.62rem;color:var(--t3);display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ══ EXCEL EXPORT UPGRADE ══ */
+.export-sheet-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.export-sheet-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+
+/* ══ ISSUE TIMELINE ══ */
+.iss-timeline{padding:14px;}
+.iss-tl-title{font-size:.65rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#64748b;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.iss-tl-title::after{content:"";flex:1;height:1px;background:rgba(15,23,42,.08);}
+.iss-tl-item{display:flex;gap:10px;margin-bottom:14px;position:relative;}
+.iss-tl-item:not(:last-child)::before{content:"";position:absolute;right:11px;top:24px;bottom:-7px;width:1px;background:rgba(15,23,42,.1);}
+.iss-tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:1px;}
+.iss-tl-body{flex:1;min-width:0;}
+.iss-tl-action{font-size:.76rem;font-weight:600;color:#1e293b;line-height:1.3;}
+.iss-tl-time{font-size:.6rem;color:#94a3b8;font-family:"JetBrains Mono",monospace;margin-top:2px;}
+.iss-tl-user{font-size:.62rem;font-weight:700;color:#475569;margin-top:1px;}
+
+/* ══ QR QUICK SCANNER BUTTON ══ */
+.qr-fab{position:fixed;bottom:90px;left:16px;z-index:90;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#0a2540);border:2px solid rgba(245,166,35,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:transform .2s;}
+.qr-fab:active{transform:scale(.93);}
+.qr-fab svg{width:22px;height:22px;stroke:var(--gold);}
+
+/* ══ QR RESULT SHEET ══ */
+.qr-result-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--nav);border-radius:22px 22px 0 0;border-top:1px solid var(--border);padding:20px 16px 36px;z-index:300;display:none;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
+.qr-result-sheet.open{display:block;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(100%);}to{transform:translateX(-50%) translateY(0);}}
+.qr-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;}
+.qr-result-name{font-size:1rem;font-weight:900;color:var(--t1);margin-bottom:4px;}
+.qr-result-sub{font-size:.7rem;color:var(--t3);margin-bottom:14px;}
+.qr-result-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.qr-result-row:last-child{border-bottom:none;}
+.qr-result-label{font-size:.65rem;color:var(--t4);min-width:70px;}
+.qr-result-val{font-size:.75rem;font-weight:600;color:var(--t1);}
+.qr-result-actions{display:flex;gap:8px;margin-top:14px;}
+.qr-act-btn{flex:1;padding:12px;border-radius:12px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -4071,6 +5623,62 @@ function updateQuickStats(){
   if(qp)qp.textContent=p;if(qf)qf.textContent=f;if(qn)qn.textContent=n;if(qt)qt.textContent=tot;
 }
 
+// ════════════════════════════════════════
+// EXCEL EXPORT
+// ════════════════════════════════════════
+function exportExcel(){
+  if(!CID){toast('אין צ\'קליסט פעיל');return;}
+  const panel=document.getElementById('f-panel')?.value||'לוח';
+  const insp=document.getElementById('f-insp')?.value||'';
+  const fdate=document.getElementById('f-date')?.value||'';
+  const _PFX=PANEL_TYPE==='mg'?'g':'';
+
+  // Build CSV rows (Excel-compatible UTF-8 BOM)
+  const rows=[
+    ['Electra CX — L0 Inspection Report'],
+    ['לוח:',panel,'בודק:',insp,'תאריך:',fdate,'סוג:',PANEL_TYPE==='mg'?'מ"ג':'מ"נ'],
+    [],
+    ['#','חלק','סעיף','תוצאה','הערה','זמן','בודק']
+  ];
+
+  const CH_NAMES=CH();
+  ITEMS.forEach((it,idx)=>{
+    const el=document.getElementById('ic'+_PFX+it.id);if(!el)return;
+    let res='—';
+    if(el.querySelector('.pfn.p.on'))res='Passed ✓';
+    else if(el.querySelector('.pfn.f.on'))res='Failed ✗';
+    else if(el.querySelector('.pfn.n.on'))res='N/A';
+    const note=document.getElementById('note'+_PFX+it.id)?.value||'';
+    const ab=window._answeredBy?.[it.id];
+    rows.push([idx+1, CH_NAMES[it.c]||'חלק '+it.c, it.t, res, note, ab?.ts||'', ab?.by||'']);
+  });
+
+  // Add Issues
+  rows.push([],[' Issues פתוחים'],['#','סעיף','תיאור','אחראי','עדיפות','סטטוס']);
+  let issNum=0;
+  ITEMS.forEach(it=>{
+    const cont=document.getElementById('iss'+(_PFX+it.id));if(!cont)return;
+    cont.querySelectorAll('.iss-block').forEach((bl,bi)=>{
+      const n=bi+1;
+      const desc=document.getElementById('id-'+it.id+'-'+n)?.value||'';
+      const person=document.getElementById('ip-'+it.id+'-'+n)?.value||'';
+      const prio=issuePriority[it.id]?.[n]||'med';
+      const st=document.getElementById('ist-'+it.id+'-'+n)?.dataset.s||'open';
+      rows.push([++issNum, 'סעיף '+it.id, desc, person, prio==='high'?'גבוהה':prio==='med'?'בינונית':'נמוכה', st==='closed'?'סגור':st==='waiting'?'ממתין':'פתוח']);
+    });
+  });
+
+  // Convert to CSV with BOM
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>'"'+(String(c||'').replace(/"/g,'""'))+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='Electra_CX_'+panel.replace(/[^\w\u0590-\u05FF]/g,'_')+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  toast('✅ קובץ Excel נשמר!');
+}
+
 function emailPDF(panel,fdate){
   const emails=contacts.filter(c=>c.email).map(c=>c.email).join(',');
   if(!emails&&!settings.notifyEmail){toast('לא הוגדרו מיילים בהגדרות');return;}
@@ -4097,6 +5705,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildItems();loadSettings();loadContacts();
   if(!navigator.onLine)document.getElementById('offline-bar').classList.add('show');
   if(sessionStorage.getItem('ecx_auth')==='1'){isAuthed=true;updateAuthUI();}
+  // Show home tabs by default
+  const ht=document.getElementById('home-tabs');if(ht)ht.style.display='flex';
+  // Init notifications badge
+  setTimeout(_updateNotifBadge,800);
+  // Welcome notif on first use
+  setTimeout(()=>{
+    if(!localStorage.getItem('ecx_w2')){
+      addInAppNotif('ברוך הבא ל-Electra CX ⚡','#f5a623','⚡');
+      localStorage.setItem('ecx_w2','1');
+    }
+  },1500);
   if(_urlCl){
     const cont=document.querySelector('.content');
     if(cont)cont.scrollTop=0;
