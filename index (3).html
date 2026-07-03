@@ -90,7 +90,7 @@ html{height:100%;text-size-adjust:none;}
 body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var(--surf);color:var(--t1);-webkit-font-smoothing:antialiased;overscroll-behavior:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;}
 
 /* ── APP SHELL ── */
-#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;box-shadow:0 0 60px rgba(0,0,0,.25);}
+#app{display:flex;flex-direction:column;height:100%;max-width:100%;margin:0 auto;position:relative;box-shadow:0 0 60px rgba(0,0,0,.25);}
 
 /* ── NAVBAR ── */
 .nav{background:var(--bg-deep);height:calc(var(--nav-h)+var(--safe-t));padding-top:var(--safe-t);display:flex;align-items:center;justify-content:space-between;padding-left:16px;padding-right:16px;flex-shrink:0;position:relative;z-index:300;border-bottom:1px solid rgba(255,255,255,.04);}
@@ -129,8 +129,8 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 .tabs{background:var(--bg-deep);height:calc(var(--tab-h)+var(--safe-b));padding-bottom:var(--safe-b);display:none;align-items:flex-start;justify-content:space-around;padding-top:10px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.06);backdrop-filter:blur(12px);}
 .tabs.show{display:flex;}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 12px;min-width:52px;position:relative;transition:opacity .2s;}
-.tab-ico{color:rgba(255,255,255,.28);transition:color .2s;}
-.tab-lbl{font-size:.56rem;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.3px;transition:color .2s;}
+.tab-ico{color:rgba(255,255,255,.65);transition:color .2s;}
+.tab-lbl{font-size:.56rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.3px;transition:color .2s;}
 .tab.on .tab-ico{color:var(--gold);filter:drop-shadow(0 0 6px var(--gold-glow));}
 .tab.on .tab-lbl{color:var(--gold);}
 .tab.on::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--gold);border-radius:0 0 2px 2px;}
@@ -649,7 +649,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 
 /* ══ PROJECT SELECTOR ══ */
 /* ══ HOME TABS BAR ══ */
-#home-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;background:var(--nav);border-top:1px solid var(--border);backdrop-filter:blur(20px);}
+#home-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;background:#030d1a!important;border-top:1px solid rgba(255,255,255,.07)!important;backdrop-filter:blur(20px);}
 #home-tabs .tab{flex:1;}
 
 .proj-sel-bar{display:flex;gap:7px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;}
@@ -799,6 +799,14 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
   <div class="gsearch-results" id="gsearch-results">
     <div class="gsearch-empty">התחל להקליד לחיפוש...</div>
   </div>
+  </button>
+  <button class="tab" id="tab-files" onclick="switchTab('files')">
+    <div class="tab-ico" style="position:relative;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      <span id="tab-fb" class="tab-dot" style="display:none"></span>
+    </div>
+    <div class="tab-lbl">קבצים</div>
+  </button>
 </div>
 
 <!-- ══ QR SCANNER FAB ══ -->
@@ -815,7 +823,7 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
   <div class="qr-handle"></div>
   <div id="qr-result-content">
     <div class="qr-result-name" id="qr-res-name">—</div>
-    <div class="qr-result-sub" id="qr-res-sub">מידע ציוד מ-CxAlloy</div>
+    <div class="qr-result-sub" id="qr-res-sub">מידע ציוד מ-CxElectra</div>
     <div id="qr-res-rows"></div>
     <div class="qr-result-actions">
       <button class="qr-act-btn" style="background:var(--bg-card);color:var(--t2);border:1px solid var(--border2);" onclick="closeQRResult()">סגור</button>
@@ -836,19 +844,13 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     </div>
   </div>
   <div class="nav-r" id="nav-r">
-    <button class="gsearch-btn" onclick="openGSearch()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      חיפוש
-    </button>
-    <button class="nico" onclick="openNotifCenter()" style="color:rgba(255,255,255,.7);position:relative;" title="התראות">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      <div id="notif-badge" style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ef4444;border:2px solid var(--nav);display:none;"></div>
-    </button>
     <div class="auth-pill" id="auth-pill" onclick="showAuthModal()">
       <div class="adot" id="auth-dot"></div>
       <span class="auth-lbl" id="auth-lbl">התחבר</span>
     </div>
-    <button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+    <button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);" title="הגדרות">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
   </div>
 </div>
 <div class="offline-bar" id="offline-bar">📡 אין חיבור — עובד מקומית</div>
@@ -856,289 +858,66 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
 <div class="content">
 
 <!-- ═══ CXALLOY DASHBOARD SCREEN ═══ -->
-<div id="sc-cxdash" class="sc">
-  <div class="cxd-hero">
-    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;"></div>
-    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;">
-      <div>
-        <div style="font-size:.55rem;color:var(--gold);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.8;">CxAlloy · DCX</div>
-        <div class="cxd-proj-name" id="cxd-proj-name">Mega DC - Masmia</div>
-        <div class="cxd-proj-sub" id="cxd-proj-sub">פרויקט פעיל · עודכן היום</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-        <div style="font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:.5px;">ממוצע סגירה</div>
-        <div style="font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'JetBrains Mono',monospace;line-height:1;">14.84</div>
-        <div style="font-size:.55rem;color:rgba(255,255,255,.3);">ימים לסגירת Issue</div>
-      </div>
+<div id="sc-cxdash" class="sc" style="padding-bottom:calc(var(--tab-h) + var(--safe-b) + 12px)">
+
+  <!-- Hero -->
+  <div class="cxd-hero" style="position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+    <div style="position:relative">
+      <div style="font-size:.54rem;color:var(--gold);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px">CxElectra · פרויקטים</div>
+      <div style="font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1">בקרת <span style="color:var(--gold)">פרויקטים</span></div>
+      <div id="cxd-updated" style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:5px">מתעדכן...</div>
     </div>
-    <!-- Project selector pills -->
-    <div style="display:flex;gap:6px;margin-top:12px;overflow-x:auto;scrollbar-width:none;position:relative;">
-      <button class="proj-btn active" id="pb-masmia" onclick="selectCxProj('masmia',this)">
-        <div class="proj-btn-ico">🏭</div>
-        <div class="proj-btn-name">Masmia</div>
-      </button>
-      <button class="proj-btn" id="pb-modiin" onclick="selectCxProj('modiin',this)">
-        <div class="proj-btn-ico">🏗️</div>
-        <div class="proj-btn-name">Modi'in</div>
-      </button>
-      <button class="proj-btn" id="pb-beit" onclick="selectCxProj('beit',this)">
-        <div class="proj-btn-ico">⚡</div>
-        <div class="proj-btn-name">Beit Shemesh</div>
-      </button>
-      <button class="proj-btn" id="pb-alpha" onclick="selectCxProj('alpha',this)">
-        <div class="proj-btn-ico">🔋</div>
-        <div class="proj-btn-name">ALPHA DC</div>
-      </button>
+    <!-- Global KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)">
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="cxd-cl-n" style="font-size:1.4rem;font-weight:900;color:#fff;font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:3px">CL</div></div>
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="cxd-closed-pct" style="font-size:1.4rem;font-weight:900;color:var(--ok);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:3px">%הושלמו</div></div>
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="cxd-pass-n" style="font-size:1.4rem;font-weight:900;color:var(--ok);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:3px">Pass</div></div>
+      <div style="padding:10px 4px;text-align:center"><div id="cxd-issues-n" style="font-size:1.4rem;font-weight:900;color:var(--fail);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:3px">Issues</div></div>
     </div>
   </div>
 
-  <!-- KPI Row -->
-  <div class="cxd-kpi-row">
-    <div class="cxd-kpi">
-      <div class="cxd-kpi-n" style="color:var(--fail);" id="cxd-issues-n">1,243</div>
-      <div class="cxd-kpi-l">Issues</div>
-    </div>
-    <div class="cxd-kpi">
-      <div class="cxd-kpi-n" style="color:var(--blue);" id="cxd-cl-n">4,770</div>
-      <div class="cxd-kpi-l">צ׳קליסטים</div>
-    </div>
-    <div class="cxd-kpi">
-      <div class="cxd-kpi-n" style="color:var(--warn);" id="cxd-eq-n">1,558</div>
-      <div class="cxd-kpi-l">ציוד</div>
-    </div>
-    <div class="cxd-kpi">
-      <div class="cxd-kpi-n" style="color:var(--ok);" id="cxd-closed-pct">42.9%</div>
-      <div class="cxd-kpi-l">סגורים</div>
-    </div>
-  </div>
+  <!-- Body -->
+  <div style="background:var(--surface,#f1f5f9);padding:12px;min-height:100%">
 
-  <div style="padding:0 0 100px;" id="cxd-body">
+    <!-- Projects list header -->
+    <div id="cxd-proj-hdr2" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px">פרויקטים</div>
+      <button onclick="cxdAddProject()" style="font-size:.72rem;font-weight:700;color:var(--gold);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:20px;padding:5px 13px;cursor:pointer;font-family:inherit">+ פרויקט חדש</button>
+    </div>
 
-    <!-- DASHBOARD TABS -->
-    <div style="padding:12px 14px 0;">
-      <div class="cxd-tabs">
-        <button class="cxd-tab on" id="cxdtab-overview" onclick="switchCxTab('overview')">סקירה כללית</button>
-        <button class="cxd-tab" id="cxdtab-myissues" onclick="switchCxTab('myissues')">Issues שלי</button>
-        <button class="cxd-tab" id="cxdtab-equipment" onclick="switchCxTab('equipment')">ציוד</button>
+    <!-- Project cards -->
+    <div id="cxd-proj-cards" style="margin-bottom:16px"></div>
+
+    <!-- Selected project detail (hidden until project tapped) -->
+    <div id="cxd-proj-detail" style="display:none">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <button onclick="cxdCloseDetail()" style="background:none;border:none;cursor:pointer;color:var(--gold);font-size:1.1rem;line-height:1;padding:0">‹</button>
+        <div id="cxd-detail-title" style="font-size:1rem;font-weight:800;color:var(--t1,#0f172a)"></div>
       </div>
-    </div>
-
-    <!-- OVERVIEW TAB -->
-    <div id="cxd-tab-overview">
-    <div class="cxd-section">
-      <div class="cxd-sec-hdr">Construction Issues</div>
-      <div class="cxd-card">
-        <div class="cxd-pbar-wrap">
-          <div class="cxd-pbar-label">
-            <span class="cxd-pbar-title">סטטוס Issues</span>
-            <span class="cxd-pbar-count" id="cxd-iss-total">1,243 סה"כ</span>
-          </div>
-          <div class="cxd-pbar" id="cxd-iss-bar">
-            <div class="cxd-pbar-seg" style="background:#ef4444;width:53.9%;" title="פתוח 670"></div>
-            <div class="cxd-pbar-seg" style="background:#f59e0b;width:1.52%;" title="בתהליך 19"></div>
-            <div class="cxd-pbar-seg" style="background:#f97316;width:.56%;" title="ממתין 7"></div>
-            <div class="cxd-pbar-seg" style="background:#10b981;width:42.88%;" title="סגור 533"></div>
-            <div class="cxd-pbar-seg" style="background:#06b6d4;width:1.12%;" title="מאושר 14"></div>
-          </div>
-          <div class="cxd-legend">
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span id="cxd-leg-open">פתוח 670 (53.9%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span id="cxd-leg-closed">סגור 533 (42.9%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f59e0b;"></div><span id="cxd-leg-prog">בתהליך 19</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span id="cxd-leg-pend">ממתין 7</span></div>
-          </div>
-        </div>
-        <!-- Issues by assignee -->
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">Issues פעילים לפי אחראי</div>
-        <div id="cxd-assignees">
-          <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name">Sergey Yusupov</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;"></div></div><div class="cxd-rank-count">308</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name">Ohad Shakuri</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:49.7%;"></div></div><div class="cxd-rank-count">153</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name">זאב גולדמן</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:29.5%;"></div></div><div class="cxd-rank-count">91</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name">Roman Stepanov</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:22.7%;"></div></div><div class="cxd-rank-count">70</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name">מועתסים מסארווה</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:14.9%;"></div></div><div class="cxd-rank-count">46</div></div>
-        </div>
+      <!-- Detail summary cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div class="clc" style="padding:13px;cursor:default"><div id="cxd-d-done" style="font-size:1.8rem;font-weight:900;color:var(--ok);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">הושלמו</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="cxd-d-prog" style="font-size:1.8rem;font-weight:900;color:var(--warn);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">בתהליך</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="cxd-d-pass" style="font-size:1.8rem;font-weight:900;color:var(--ok);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">Pass</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="cxd-d-fail" style="font-size:1.8rem;font-weight:900;color:var(--fail);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">Fail</div></div>
       </div>
-    </div>
-
-    <!-- CHECKLISTS SECTION -->
-    <div class="cxd-section">
-      <div class="cxd-sec-hdr">Checklists</div>
-      <div class="cxd-card">
-        <div class="cxd-pbar-wrap">
-          <div class="cxd-pbar-label">
-            <span class="cxd-pbar-title">סטטוס צ׳קליסטים</span>
-            <span class="cxd-pbar-count">4,770 סה"כ</span>
-          </div>
-          <div class="cxd-pbar">
-            <div class="cxd-pbar-seg" style="background:#94a3b8;width:87.21%;" title="לא התחיל 4,160"></div>
-            <div class="cxd-pbar-seg" style="background:#3b82f6;width:7.08%;" title="בתהליך 338"></div>
-            <div class="cxd-pbar-seg" style="background:#10b981;width:5.70%;" title="הושלם 272"></div>
-          </div>
-          <div class="cxd-legend">
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>לא התחיל 4,160 (87.2%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#3b82f6;"></div><span>בתהליך 338 (7.1%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span>הושלם 272 (5.7%)</span></div>
-          </div>
-        </div>
-        <!-- Checklist Lines -->
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">שורות בדיקה (164,694)</div>
-        <div class="cxd-pbar">
-          <div class="cxd-pbar-seg" style="background:#10b981;width:6.61%;" title="Passed 10,890"></div>
-          <div class="cxd-pbar-seg" style="background:#ef4444;width:.52%;" title="Failed 866"></div>
-          <div class="cxd-pbar-seg" style="background:#94a3b8;width:3.41%;" title="N/A 5,629"></div>
-          <div class="cxd-pbar-seg" style="background:#e2e8f0;width:89.44%;" title="ללא תשובה 147,309"></div>
-        </div>
-        <div class="cxd-legend" style="margin-top:6px;">
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#10b981;"></div><span>Passed 10,890 (6.6%)</span></div>
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>Failed 866</span></div>
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>N/A 5,629</span></div>
-        </div>
-        <!-- By company -->
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px;">לפי חברה</div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name">Electra M&E</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;background:var(--blue);"></div></div><div class="cxd-rank-count">4,240</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name">פ.ק. גנרטורים</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:4%;background:var(--blue);"></div></div><div class="cxd-rank-count">170</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name">DCE</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:1.3%;background:var(--blue);"></div></div><div class="cxd-rank-count">54</div></div>
+      <!-- Progress bar -->
+      <div class="clc" style="padding:14px;cursor:default;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;font-weight:700;color:var(--t2,#1e293b);margin-bottom:7px"><span>התקדמות</span><span id="cxd-d-pct">0%</span></div>
+        <div style="height:10px;background:rgba(0,0,0,.07);border-radius:8px;overflow:hidden"><div id="cxd-d-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ok),#34d399);border-radius:8px;transition:width .6s"></div></div>
       </div>
-    </div>
-
-    <!-- EQUIPMENT SECTION -->
-    <div class="cxd-section">
-      <div class="cxd-sec-hdr">Equipment Status</div>
-      <div class="cxd-card">
-        <div class="cxd-pbar-wrap">
-          <div class="cxd-pbar-label">
-            <span class="cxd-pbar-title">סטטוס ציוד</span>
-            <span class="cxd-pbar-count">1,558 יחידות</span>
-          </div>
-          <div class="cxd-pbar">
-            <div class="cxd-pbar-seg" style="background:#94a3b8;width:73.68%;" title="Pre Testing 1,148"></div>
-            <div class="cxd-pbar-seg" style="background:#f97316;width:9.05%;" title="Delivered 141"></div>
-            <div class="cxd-pbar-seg" style="background:#ef4444;width:17.27%;" title="L1 Ready 269"></div>
-          </div>
-          <div class="cxd-legend">
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing 1,148 (73.7%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered 141 (9.1%)</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready 269 (17.3%)</span></div>
-          </div>
-        </div>
-        <!-- By type -->
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">לפי סוג ציוד</div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">LVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:65%;"></div><div class="cxd-eq-del" style="width:16.6%;"></div><div class="cxd-eq-l1" style="width:18.4%;"></div></div></div><div class="cxd-eq-count">435</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">BUS BAR</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:95.1%;"></div><div class="cxd-eq-del" style="width:4.9%;"></div></div></div><div class="cxd-eq-count">164</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">TRF</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:54.7%;"></div><div class="cxd-eq-del" style="width:15.7%;"></div><div class="cxd-eq-l1" style="width:29.6%;"></div></div></div><div class="cxd-eq-count">159</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">CRAH</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:87.2%;"></div><div class="cxd-eq-del" style="width:1.4%;"></div><div class="cxd-eq-l1" style="width:11.3%;"></div></div></div><div class="cxd-eq-count">141</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">FC</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:80.3%;"></div><div class="cxd-eq-del" style="width:.8%;"></div><div class="cxd-eq-l1" style="width:18.9%;"></div></div></div><div class="cxd-eq-count">132</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">PUMP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:77.5%;"></div><div class="cxd-eq-l1" style="width:22.5%;"></div></div></div><div class="cxd-eq-count">80</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">HVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:51.9%;"></div><div class="cxd-eq-del" style="width:17.7%;"></div><div class="cxd-eq-l1" style="width:30.4%;"></div></div></div><div class="cxd-eq-count">79</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">UPS</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:66.7%;"></div><div class="cxd-eq-l1" style="width:33.3%;"></div></div></div><div class="cxd-eq-count">54</div></div>
-        <div class="cxd-eq-row"><div class="cxd-eq-type">GEN</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:31.6%;"></div><div class="cxd-eq-del" style="width:31.6%;"></div><div class="cxd-eq-l1" style="width:36.8%;"></div></div></div><div class="cxd-eq-count">19</div></div>
-        <!-- Legend for equipment bars -->
-        <div class="cxd-legend" style="margin-top:8px;">
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing</span></div>
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered</span></div>
-          <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Top Assets with Issues -->
-    <div class="cxd-section">
-      <div class="cxd-sec-hdr">Assets עם הכי הרבה Issues</div>
-      <div class="cxd-card">
-        <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CA-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;background:var(--fail);"></div></div><div class="cxd-rank-count">18</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CB-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
-        <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CK-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;background:var(--fail);"></div></div><div class="cxd-rank-count">15</div></div>
-      </div>
-    </div>
-
-    <!-- WEEKLY TREND CHART -->
-    <div class="cxd-section">
-      <div class="cxd-sec-hdr">מגמת Issues שבועית</div>
-      <div class="cxd-card">
-        <div style="font-size:.72rem;font-weight:700;color:var(--t1);margin-bottom:10px;">פתיחה וסגירה לפי שבוע · פבר–יוני 2026</div>
-        <div class="cxd-chart-wrap">
-          <canvas id="cxd-chart" class="cxd-chart-canvas"></canvas>
-          <div class="cxd-chart-tooltip" id="cxd-tooltip"></div>
-        </div>
-        <div class="cxd-chart-legend">
-          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#ef4444;"></div><span>פתוח</span></div>
-          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#10b981;"></div><span>סגור</span></div>
-          <div class="cxd-chart-leg"><div class="cxd-chart-leg-line" style="background:#f59e0b;"></div><span>בתהליך</span></div>
-        </div>
-      </div>
-    </div>
-
-    </div><!-- end overview tab -->
-
-    <!-- MY ISSUES TAB -->
-    <div id="cxd-tab-myissues" style="display:none;padding:0 14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--t1);">Issues פעילים שהוקצו לך</div>
-        <select id="cxd-assignee-sel" onchange="renderMyIssues()" style="background:var(--bg-card);border:1px solid var(--border2);border-radius:8px;color:var(--t2);font-size:.7rem;padding:4px 8px;font-family:inherit;outline:none;">
-          <option value="sergey">Sergey Yusupov</option>
-          <option value="ohad">Ohad Shakuri</option>
-          <option value="zeev">זאב גולדמן</option>
-          <option value="roman">Roman Stepanov</option>
-          <option value="moatasem">מועתסים מסארווה</option>
-        </select>
-      </div>
-      <div id="cxd-myissues-list"></div>
-    </div>
-
-    <!-- EQUIPMENT TAB -->
-    <div id="cxd-tab-equipment" style="display:none;">
-      <div class="cxd-section">
-        <div class="cxd-sec-hdr">Equipment Status</div>
-        <div class="cxd-card">
-          <div class="cxd-pbar-wrap">
-            <div class="cxd-pbar-label">
-              <span class="cxd-pbar-title">סטטוס ציוד</span>
-              <span class="cxd-pbar-count">1,558 יחידות</span>
-            </div>
-            <div class="cxd-pbar">
-              <div class="cxd-pbar-seg" style="background:#94a3b8;width:73.68%;"></div>
-              <div class="cxd-pbar-seg" style="background:#f97316;width:9.05%;"></div>
-              <div class="cxd-pbar-seg" style="background:#ef4444;width:17.27%;"></div>
-            </div>
-            <div class="cxd-legend">
-              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing 1,148</span></div>
-              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered 141</span></div>
-              <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready 269</span></div>
-            </div>
-          </div>
-          <div style="font-size:.65rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;">לפי סוג ציוד</div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">LVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:65%;"></div><div class="cxd-eq-del" style="width:16.6%;"></div><div class="cxd-eq-l1" style="width:18.4%;"></div></div></div><div class="cxd-eq-count">435</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">BUS BAR</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:95.1%;"></div><div class="cxd-eq-del" style="width:4.9%;"></div></div></div><div class="cxd-eq-count">164</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">TRF</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:54.7%;"></div><div class="cxd-eq-del" style="width:15.7%;"></div><div class="cxd-eq-l1" style="width:29.6%;"></div></div></div><div class="cxd-eq-count">159</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">CRAH</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:87.2%;"></div><div class="cxd-eq-del" style="width:1.4%;"></div><div class="cxd-eq-l1" style="width:11.3%;"></div></div></div><div class="cxd-eq-count">141</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">FC</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:80.3%;"></div><div class="cxd-eq-del" style="width:.8%;"></div><div class="cxd-eq-l1" style="width:18.9%;"></div></div></div><div class="cxd-eq-count">132</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">PUMP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:77.5%;"></div><div class="cxd-eq-l1" style="width:22.5%;"></div></div></div><div class="cxd-eq-count">80</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">HVP</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:51.9%;"></div><div class="cxd-eq-del" style="width:17.7%;"></div><div class="cxd-eq-l1" style="width:30.4%;"></div></div></div><div class="cxd-eq-count">79</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">UPS</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:66.7%;"></div><div class="cxd-eq-l1" style="width:33.3%;"></div></div></div><div class="cxd-eq-count">54</div></div>
-          <div class="cxd-eq-row"><div class="cxd-eq-type">GEN</div><div class="cxd-eq-bar-wrap"><div style="display:flex;height:100%;"><div class="cxd-eq-pre" style="width:31.6%;"></div><div class="cxd-eq-del" style="width:31.6%;"></div><div class="cxd-eq-l1" style="width:36.8%;"></div></div></div><div class="cxd-eq-count">19</div></div>
-          <div class="cxd-legend" style="margin-top:8px;">
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#94a3b8;"></div><span>Pre Testing</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#f97316;"></div><span>Delivered</span></div>
-            <div class="cxd-leg"><div class="cxd-leg-dot" style="background:#ef4444;"></div><span>L1 Ready to Install</span></div>
-          </div>
-        </div>
-      </div>
-      <!-- Top Assets -->
-      <div class="cxd-section">
-        <div class="cxd-sec-hdr">Assets עם הכי הרבה Issues</div>
-        <div class="cxd-card">
-          <div class="cxd-rank-row"><div class="cxd-rank-num">1</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CA-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:100%;"></div></div><div class="cxd-rank-count">18</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">2</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">3</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CC-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">4</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MBC-CB-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
-          <div class="cxd-rank-row"><div class="cxd-rank-num">5</div><div class="cxd-rank-name" style="font-size:.68rem;">200A-L1-MSB-CK-110</div><div class="cxd-rank-bar-wrap"><div class="cxd-rank-bar" style="width:83.3%;"></div></div><div class="cxd-rank-count">15</div></div>
-        </div>
-      </div>
+      <!-- Issues bar -->
+      <div id="cxd-d-iss" class="clc" style="padding:14px;cursor:default;margin-bottom:12px"></div>
+      <!-- CL list of this project -->
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">צ׳קליסטים</div>
+      <div id="cxd-d-cls" style="margin-bottom:14px"></div>
     </div>
 
   </div>
 </div>
+
+
 <div id="sc-home" class="sc on">
   <div class="home-hero" style="background:linear-gradient(155deg,#030d1a 0%,#081d36 60%,#0a2540 100%);padding:20px 16px 18px;position:relative;overflow:hidden;">
     <!-- Grid overlay -->
@@ -1384,10 +1163,59 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
   </div>
 </div>
 
+
+
+<!-- ═══ FILES SCREEN ═══ -->
+<div class="sc" id="sc-files" style="padding-bottom:calc(var(--tab-h) + var(--safe-b) + 12px)">
+  <div class="cl-hero" style="padding-bottom:14px">
+    <div style="font-size:.54rem;color:var(--gold);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px">מסמכים · ATTACHMENTS</div>
+    <div id="files-cl-name" style="font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.5px">קבצים מצורפים</div>
+  </div>
+  <div style="background:var(--surface,#f1f5f9);padding:12px;min-height:100%">
+    <!-- Upload buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button onclick="clFilePick('any')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;background:rgba(59,130,246,.08);border:2px dashed rgba(59,130,246,.35);border-radius:14px;cursor:pointer;font-family:inherit">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+        <span style="font-size:.72rem;font-weight:700;color:#3b82f6">העלה קובץ</span>
+        <span style="font-size:.6rem;color:var(--t3)">PDF, Excel, Word...</span>
+      </button>
+      <button onclick="clFilePick('image')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;background:rgba(16,185,129,.08);border:2px dashed rgba(16,185,129,.35);border-radius:14px;cursor:pointer;font-family:inherit">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span style="font-size:.72rem;font-weight:700;color:#10b981">צלם / גלריה</span>
+        <span style="font-size:.6rem;color:var(--t3)">תמונה מהמצלמה</span>
+      </button>
+    </div>
+    <input type="file" id="cl-file-input" style="display:none" multiple onchange="clHandleFiles(this)">
+    <input type="file" id="cl-img-input" style="display:none" accept="image/*" capture="environment" onchange="clHandleFiles(this)">
+
+    <!-- Files list -->
+    <div style="font-size:.6rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px" id="files-count-lbl">קבצים מצורפים</div>
+    <div id="cl-files-list">
+      <div style="text-align:center;padding:40px 20px;color:var(--t3)">
+        <div style="font-size:2rem;margin-bottom:8px">📎</div>
+        <div style="font-size:.82rem;font-weight:600">אין קבצים מצורפים עדיין</div>
+        <div style="font-size:.7rem;margin-top:4px">לחץ "העלה קובץ" להוספה</div>
+      </div>
+    </div>
+    <!-- Upload progress -->
+    <div id="cl-upload-progress" style="display:none;position:fixed;bottom:calc(var(--tab-h) + var(--safe-b) + 16px);left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:var(--bg-deep,#030d1a);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+      <div style="display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:#fff;margin-bottom:8px">
+        <span id="cl-upload-name">מעלה...</span>
+        <span id="cl-upload-pct">0%</span>
+      </div>
+      <div style="height:6px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden">
+        <div id="cl-upload-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:6px;transition:width .2s"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 </div><!-- content -->
 
 <!-- ═══ TABS ═══ -->
-<div class="tabs" id="tabs">
+<div class="tabs" id="tabs" style="grid-template-columns:repeat(4,1fr)">
   <button class="tab" id="tab-cl" onclick="switchTab('cl')">
     <div class="tab-ico">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -1407,9 +1235,16 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     </div>
     <div class="tab-lbl">סיכום</div>
   </button>
+  <button class="tab" id="tab-files" onclick="switchTab('files')">
+    <div class="tab-ico" style="position:relative;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      <span id="tab-fb" class="tab-dot" style="display:none;background:#3b82f6"></span>
+    </div>
+    <div class="tab-lbl">קבצים</div>
+  </button>
 </div>
 
-<!-- HOME NAV — CxAlloy Dashboard bottom bar -->
+<!-- HOME NAV — CxElectra Dashboard bottom bar -->
 <div class="tabs" id="home-tabs" style="display:flex;">
   <button class="tab on" id="htab-home" onclick="showHomeTab('home')">
     <div class="tab-ico">
@@ -1421,7 +1256,15 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
     <div class="tab-ico">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     </div>
-    <div class="tab-lbl">CxAlloy</div>
+    <div class="tab-lbl">CxElectra</div>
+  </button>
+  <button class="tab" id="htab-mgr" onclick="showHomeTab('mgr')">
+    <div class="tab-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="tab-lbl">בקרה</div>
+  </button>
+  <button class="tab" id="htab-export" onclick="nedShowExportMenu()">
+    <div class="tab-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+    <div class="tab-lbl">יצוא</div>
   </button>
 </div>
 
@@ -1546,7 +1389,15 @@ body{height:100%;font-family:'Heebo','Inter',system-ui,sans-serif;background:var
       </div>
       <div class="field"><label>שם הלוח / צ'קליסט *</label><input type="text" id="new-name" class="ii" style="margin:0;" placeholder="200A-L1-MSB..."></div>
       <div class="field"><label>בודק</label><input type="text" id="new-insp" class="ii" style="margin:0;" placeholder="שם הבודק"></div>
-      <div class="field"><label>פרויקט</label><input type="text" id="new-proj" class="ii" style="margin:0;" placeholder="שם הפרויקט"></div>
+      <div class="field"><label>פרויקט <span style="color:var(--fail)">*</span></label>
+  <select id="new-proj" class="ii" style="margin:0;" onchange="nedProjSelectChange(this)">
+    <option value="">בחר פרויקט...</option>
+    <option value="NED DC" selected>NED DC</option>
+  </select>
+  <div id="new-proj-custom" style="display:none;margin-top:6px">
+    <input type="text" id="new-proj-custom-val" class="ii" style="margin:0;" placeholder="שם הפרויקט החדש...">
+  </div>
+</div>
       <div style="display:flex;gap:8px;margin-top:18px;">
         <button onclick="closeNewCl()" style="flex:1;background:var(--card2);color:var(--t2);border:none;padding:13px;border-radius:11px;font-weight:700;cursor:pointer;font-family:inherit;">ביטול</button>
         <button onclick="newClStep2()" style="flex:2;background:linear-gradient(135deg,var(--bg-mid),var(--bg-card));color:#fff;border:1px solid rgba(245,158,11,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:11px;font-weight:800;cursor:pointer;font-family:inherit;">הבא — פרטי ציוד →</button>
@@ -1855,7 +1706,7 @@ function updMetaFor(id,data){
   let p=0,f=0,na=0,open=0,closed=0,waiting=0;
   for(let i=1;i<=31;i++){const d=data.items?.['i'+i];if(!d)continue;if(d.s==='P')p++;else if(d.s==='F')f++;else if(d.s==='N')na++;if(d.issues)d.issues.forEach(iss=>{if(!iss?.desc)return;if(iss.status==='closed')closed++;else if(iss.status==='waiting')waiting++;else open++;});}
   const ex=allCls[id]||{};
-  const meta={title:data.panel||ex.title||'ללא שם',proj:data.proj||'',insp:data.insp||'',fdate:data.fdate||'',status:data.status||'not-started',passed:p,failed:f,na,total:31,openIssues:open,closedIssues:closed,waitingIssues:waiting,created:ex.created||new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL')};
+  const meta={title:data.panel||ex.title||'ללא שם',proj:data.proj||ex.proj||'',insp:data.insp||'',fdate:data.fdate||'',status:data.status||'not-started',passed:p,failed:f,na,total:31,openIssues:open,closedIssues:closed,waitingIssues:waiting,created:ex.created||new Date().toLocaleDateString('he-IL'),updated:new Date().toLocaleDateString('he-IL')};
   db.ref('checklists/'+id+'/meta').set(meta).catch(()=>{});allCls[id]=meta;
 }
 function updMeta(data){updMetaFor(CID,data);}
@@ -3009,10 +2860,11 @@ function applyAuthState(){
 // NAV / TABS
 // ════════════════════════════════════════
 function switchTab(tab){ _push('tab:'+tab);
-  ['cl','issues','dash'].forEach(t=>{
-    document.getElementById('sc-'+(t==='cl'?'cl':t==='issues'?'issues':'dash'))?.classList.toggle('on',t===tab);
+  ['cl','issues','dash','files'].forEach(t=>{
+    document.getElementById('sc-'+(t==='cl'?'cl':t==='issues'?'issues':t==='dash'?'dash':'files'))?.classList.toggle('on',t===tab);
     document.getElementById('tab-'+t)?.classList.toggle('on',t===tab);
   });
+  if(tab==='files'){ clRenderFiles(); var fn=document.getElementById('files-cl-name'); if(fn&&allCls[CID]) fn.textContent=allCls[CID].title||'קבצים'; }
   document.getElementById('tabs').classList.add('show');
   // Hide home tabs when in checklist mode
   const ht=document.getElementById('home-tabs');if(ht)ht.style.display='none';
@@ -3050,19 +2902,18 @@ function goHome(){
     '<button class="nico" onclick="showSettings()" style="color:rgba(255,255,255,.7);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>';
 }
 
-// ══ HOME TABS — switch between checklist list and CxAlloy dashboard ══
+// ══ HOME TABS — switch between checklist list and CxElectra dashboard ══
 function showHomeTab(tab){
-  const isHome=tab==='home';
-  document.getElementById('sc-home').classList.toggle('on',isHome);
-  document.getElementById('sc-cxdash').classList.toggle('on',!isHome);
-  document.getElementById('htab-home').classList.toggle('on',isHome);
-  document.getElementById('htab-cxdash').classList.toggle('on',!isHome);
-  const content=document.querySelector('.content');
-  if(content)content.scrollTop=0;
-  if(!isHome) setTimeout(()=>drawWeeklyChart(window._activeCxProj||'masmia'),60);
+  ['sc-home','sc-cxdash','sc-mgr'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('on');});
+  ['htab-home','htab-cxdash','htab-mgr'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('on');});
+  var sc=document.getElementById('sc-'+tab);if(sc)sc.classList.add('on');
+  var tb=document.getElementById('htab-'+tab);if(tb)tb.classList.add('on');
+  var content=document.querySelector('.content');if(content)content.scrollTop=0;
+  if(tab==='cxdash') setTimeout(function(){renderCxDash();},80);
+  if(tab==='mgr') setTimeout(function(){mgrRender();},80);
 }
 
-// ══ CxAlloy PROJECT DATA ══
+// ══ CxElectra PROJECT DATA ══
 const CX_PROJECTS = {
   masmia:{
     name:"Mega DC - Masmia", sub:"פרויקט פעיל · Masmia (200)",
@@ -3361,7 +3212,7 @@ function drawWeeklyChart(projKey='masmia'){
   canvas.onmouseleave=()=>{const t=document.getElementById('cxd-tooltip');if(t)t.style.display='none';};
 }
 
-// Draw chart when CxAlloy tab first opens
+// Draw chart when CxElectra tab first opens
 // (patched into showHomeTab below)
 
 // ══ ISSUE TIMELINE ══
@@ -3581,7 +3432,7 @@ function renderGSearch(q){
     }
   });
 
-  // Search CxAlloy data (static)
+  // Search CxElectra data (static)
   const cxAssets=['200A-L1-MSB-CA-110','200A-L1-MBC-CC-110','200A-L1-MSB-CC-110','200A-L1-MBC-CB-110','200A-L1-MSB-CK-110',
     'DC2-L0-MSB-BG-110','DC2-L0-MSB-BJ-110','DC2-L0-MSB-BK-110'];
   const matchedAssets=cxAssets.filter(a=>a.toLowerCase().includes(q));
@@ -3611,7 +3462,7 @@ function renderGSearch(q){
     });
   }
   if(matchedAssets.length>0){
-    html+='<div class="gsearch-section">ציוד CxAlloy ('+matchedAssets.length+')</div>';
+    html+='<div class="gsearch-section">ציוד CxElectra ('+matchedAssets.length+')</div>';
     matchedAssets.forEach(a=>{
       html+=`<div class="gsearch-item" onclick="closeGSearch();showHomeTab('cxdash')">
         <div class="gsearch-ico" style="background:rgba(239,68,68,.1);">
@@ -3830,7 +3681,7 @@ function _loadClData(id){
 // ════════════════════════════════════════
 // HOME
 // ════════════════════════════════════════
-function loadHome(){if(homeRef){homeRef.off();homeRef=null;}homeRef=db.ref('checklists');homeRef.on('value',s=>{allCls={};const v=s.val()||{};Object.keys(v).forEach(id=>{if(v[id].meta)allCls[id]=v[id].meta;});renderHome();});}
+function loadHome(){if(homeRef){homeRef.off();homeRef=null;}var _t=setTimeout(function(){renderHome();},2500);homeRef=db.ref('checklists');homeRef.on('value',function(s){clearTimeout(_t);allCls={};var v=s.val()||{};Object.keys(v).forEach(function(id){if(v[id].meta)allCls[id]=Object.assign({id:id},v[id].meta);});renderHome();renderCxDash();nedLoadProjects();nedMigrateProj();},function(){clearTimeout(_t);renderHome();});}
 function setF(btn,f){homeF=f;document.querySelectorAll('.chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderHome();}
 function showSort(){
   const ov=document.createElement('div');ov.className='modal-bg show';ov.onclick=e=>{if(e.target===ov)ov.remove();};
@@ -3886,6 +3737,7 @@ function renderHome(){
           '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">'+
             '<span class="sttag" style="background:'+sbg+';color:'+sc+';">'+sl+'</span>'+
             (isAuthed?'<button onclick="duplicateCl(\''+id+'\',event)" style="background:rgba(41,121,255,.1);color:var(--blue-accent);border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.72rem;font-weight:800;" title="שכפל">⧉</button>':'')+
+          '<button onclick="clOpenFilesForCard(\''+id+'\')" style="background:rgba(59,130,246,.1);color:#3b82f6;border:none;border-radius:var(--r4);width:26px;height:26px;cursor:pointer;font-size:.8rem;" title="קבצים מצורפים" id="fab-'+id+'">📎</button>'+
           '</div>'+
         '</div>'+
         '<div class="prog"><div class="prog-f"><div class="prog-p" style="width:'+Math.round(p/eff*100)+'%;"></div><div class="prog-fail" style="width:'+Math.round(f/eff*100)+'%;"></div></div></div>'+
@@ -3993,6 +3845,15 @@ function newCl(){
 function newClStep2(){
   const name=document.getElementById('new-name')?.value.trim();
   if(!name){document.getElementById('new-name').style.borderColor='var(--fail)';toast('⚠️ הכנס שם ללוח');return;}
+  const projSel=document.getElementById('new-proj');
+  let projVal=projSel?projSel.value:'';
+  if(projVal==='__new__'){projVal=(document.getElementById('new-proj-custom-val')||{value:''}).value.trim();}
+  if(!projVal){if(projSel)projSel.style.borderColor='var(--fail)';toast('⚠️ בחר פרויקט');return;}
+  if(projSel)projSel.style.borderColor='';
+  // Save chosen project back to select for future use
+  if(projSel&&projVal&&![...projSel.options].find(o=>o.value===projVal)){
+    const opt=document.createElement('option');opt.value=projVal;opt.text=projVal;projSel.insertBefore(opt,projSel.lastElementChild);
+  }
   // Pre-fill panel name from checklist name
   const panelInp=document.getElementById('new-panel');
   if(panelInp&&!panelInp.value)panelInp.value=name;
@@ -5854,5 +5715,881 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="sett-sub-body" id="sett-sub-body"></div>
 </div>
 
+
+<div id="sc-mgr" class="sc" style="padding-bottom:calc(var(--tab-h) + var(--safe-b) + 12px)">
+  <div class="cxd-hero" style="position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+    <div style="position:relative">
+      <div style="font-size:.54rem;color:var(--gold);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:5px">NED · ALPHA DC · שליטה ובקרה</div>
+      <div style="font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1">מרכז <span style="color:var(--gold)">בקרת</span> איכות</div>
+      <div id="mgr-date" style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:6px"></div>
+      <div style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:20px;padding:4px 11px;font-size:.65rem;font-weight:700;color:var(--ok)">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--ok);animation:mgr-pulse 2s infinite;flex-shrink:0"></span>
+        <span id="mgr-status-txt">מחבר...</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)">
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="mgr-k-cls" style="font-size:1.4rem;font-weight:900;color:#fff;font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-top:3px">CL</div></div>
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="mgr-k-pass" style="font-size:1.4rem;font-weight:900;color:var(--ok);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-top:3px">Pass</div></div>
+      <div style="padding:10px 4px;text-align:center;border-left:1px solid rgba(255,255,255,.07)"><div id="mgr-k-fail" style="font-size:1.4rem;font-weight:900;color:var(--fail);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-top:3px">Fail</div></div>
+      <div style="padding:10px 4px;text-align:center"><div id="mgr-k-iss" style="font-size:1.4rem;font-weight:900;color:var(--warn);font-family:monospace;line-height:1">-</div><div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-top:3px">Issues</div></div>
+    </div>
+  </div>
+  <div style="background:var(--surface,#f1f5f9);min-height:100%">
+    <div style="display:flex;overflow-x:auto;scrollbar-width:none;background:#030d1a;border-bottom:1px solid rgba(255,255,255,.07);padding:0 4px">
+      <button class="mgr-itab" id="mgr-itab-overview" onclick="mgrGoTab('overview')" style="flex-shrink:0;padding:12px 16px;font-size:.7rem;font-weight:700;color:var(--gold);background:none;border:none;border-bottom:2px solid var(--gold);cursor:pointer;font-family:inherit;white-space:nowrap">📊 סקירה</button>
+      <button class="mgr-itab" id="mgr-itab-cls"      onclick="mgrGoTab('cls')"      style="flex-shrink:0;padding:12px 16px;font-size:.7rem;font-weight:700;color:#aab4c8;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap">✅ צקליסטים</button>
+      <button class="mgr-itab" id="mgr-itab-issues"   onclick="mgrGoTab('issues')"   style="flex-shrink:0;padding:12px 16px;font-size:.7rem;font-weight:700;color:#aab4c8;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap">⚠️ Issues</button>
+      <button class="mgr-itab" id="mgr-itab-log"      onclick="mgrGoTab('log')"      style="flex-shrink:0;padding:12px 16px;font-size:.7rem;font-weight:700;color:#aab4c8;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap">📅 יומן</button>
+      <button class="mgr-itab" id="mgr-itab-contacts" onclick="mgrGoTab('contacts')" style="flex-shrink:0;padding:12px 16px;font-size:.7rem;font-weight:700;color:#aab4c8;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap">👥 אנשי קשר</button>
+    </div>
+    <div id="mgr-sc-overview" class="mgr-sc" style="display:block;padding:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div class="clc" style="padding:13px;cursor:default"><div id="mgr-done" style="font-size:1.8rem;font-weight:900;color:var(--ok);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">הושלמו</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="mgr-prog" style="font-size:1.8rem;font-weight:900;color:var(--warn);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">בתהליך</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="mgr-iopen" style="font-size:1.8rem;font-weight:900;color:var(--fail);font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">Issues פתוחים</div></div>
+        <div class="clc" style="padding:13px;cursor:default"><div id="mgr-iwait" style="font-size:1.8rem;font-weight:900;color:#8b5cf6;font-family:monospace">0</div><div style="font-size:.72rem;color:var(--t2,#1e293b);font-weight:600;margin-top:2px">ממתינים</div></div>
+      </div>
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">Issues</div>
+      <div id="mgr-iss-bar" class="clc" style="padding:14px;cursor:default;margin-bottom:14px"></div>
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">בודקים</div>
+      <div id="mgr-insp" class="clc" style="padding:12px 14px;cursor:default;margin-bottom:14px"></div>
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">עדכונים אחרונים</div>
+      <div id="mgr-recent" style="margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button onclick="nedExportExcel()" style="flex:1;padding:12px;background:var(--clc-bg,rgba(255,255,255,.9));border:1px solid var(--border,rgba(0,0,0,.08));border-radius:12px;font-size:.76rem;font-weight:700;color:var(--t2,#1e293b);cursor:pointer;font-family:inherit">📊 אקסל</button>
+        <button onclick="nedExportSummary()" style="flex:1;padding:12px;background:var(--clc-bg,rgba(255,255,255,.9));border:1px solid var(--border,rgba(0,0,0,.08));border-radius:12px;font-size:.76rem;font-weight:700;color:var(--t2,#1e293b);cursor:pointer;font-family:inherit">📄 דוח</button>
+      </div>
+    </div>
+    <div id="mgr-sc-cls" class="mgr-sc" style="display:none;padding:8px 0">
+      <div class="chips" style="padding:8px 12px">
+        <button class="chip on" id="mgr-chip-all"  onclick="mgrSetClChip('')">הכל</button>
+        <button class="chip"   id="mgr-chip-done" onclick="mgrSetClChip('done')">הושלם</button>
+        <button class="chip"   id="mgr-chip-prog" onclick="mgrSetClChip('in-progress')">בתהליך</button>
+        <button class="chip"   id="mgr-chip-ns"   onclick="mgrSetClChip('not-started')">טרם</button>
+      </div>
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);padding:4px 14px 8px"><span id="mgr-cls-lbl">טוען...</span></div>
+      <div id="mgr-cls-list"></div>
+    </div>
+    <div id="mgr-sc-issues" class="mgr-sc" style="display:none;padding:8px 0">
+      <div class="chips" style="padding:8px 12px">
+        <button class="chip on" id="mgr-ichip-all"    onclick="mgrSetIssChip('')">הכל</button>
+        <button class="chip"   id="mgr-ichip-open"   onclick="mgrSetIssChip('open')">פתוח</button>
+        <button class="chip"   id="mgr-ichip-wait"   onclick="mgrSetIssChip('waiting')">ממתין</button>
+        <button class="chip"   id="mgr-ichip-closed" onclick="mgrSetIssChip('closed')">סגור</button>
+      </div>
+      <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);padding:4px 14px 8px"><span id="mgr-iss-lbl">טוען...</span></div>
+      <div id="mgr-iss-list" style="padding:0 12px"></div>
+    </div>
+    <div id="mgr-sc-log" class="mgr-sc" style="display:none;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px">יומן בדיקות</div>
+        <button onclick="mgrAddLogEntry()" style="font-size:.72rem;font-weight:700;color:var(--gold);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:20px;padding:5px 13px;cursor:pointer;font-family:inherit">+ הוסף</button>
+      </div>
+      <div class="clc" style="padding:12px;cursor:default;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <button onclick="mgrLogPrevWeek()" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:1.3rem;padding:4px 8px">&#8249;</button>
+          <div id="mgr-log-week-label" style="font-size:.78rem;font-weight:700;color:var(--t1,#0f172a)"></div>
+          <button onclick="mgrLogNextWeek()" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:1.3rem;padding:4px 8px">&#8250;</button>
+        </div>
+        <div id="mgr-log-week" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center"></div>
+      </div>
+      <div id="mgr-log-list"></div>
+    </div>
+    <div id="mgr-sc-contacts" class="mgr-sc" style="display:none;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div id="mgr-contacts-lbl" style="font-size:.6rem;font-weight:800;color:var(--t3,#475569);text-transform:uppercase;letter-spacing:1px">אנשי קשר</div>
+        <button onclick="mgrAddContact()" style="font-size:.72rem;font-weight:700;color:var(--gold);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:20px;padding:5px 13px;cursor:pointer;font-family:inherit">+ הוסף</button>
+      </div>
+      <div id="mgr-contacts"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ned-settings-panel" style="position:fixed;inset:0;z-index:2000;background:var(--bg-deep,#030d1a);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:calc(54px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0">
+    <button onclick="closeNedSettings()" style="font-size:.8rem;font-weight:700;color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit">&#8249; חזור</button>
+    <div style="font-size:.88rem;font-weight:800;color:#fff">הגדרות</div>
+    <div style="width:60px"></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px">
+    <div onclick="nedExportExcel()" style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;cursor:pointer;margin-bottom:8px">
+      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#15803d);display:flex;align-items:center;justify-content:center;flex-shrink:0">📊</div>
+      <div><div style="font-size:.86rem;font-weight:700;color:#fff">יצוא אקסל</div></div>
+    </div>
+    <div onclick="nedExportSummary()" style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;cursor:pointer">
+      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0">📄</div>
+      <div><div style="font-size:.86rem;font-weight:700;color:#fff">דוח סיכום</div></div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes mgr-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.clc-tag{font-size:.58rem;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.clc-tag.done{background:rgba(16,185,129,.12);color:var(--ok)}
+.clc-tag.prog{background:rgba(245,158,11,.12);color:var(--warn)}
+.clc-tag.ns{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+.clc-tag.fail{background:rgba(239,68,68,.12);color:var(--fail)}
+.clc-tag.wait{background:rgba(139,92,246,.12);color:#8b5cf6}
+</style>
+
+</script>
+<script>
+// ══ renderCxDash — from allCls only ══
+
+// ═══ CxElectra — Project Dashboard ═══
+var cxdActiveProj = null;
+
+function renderCxDash(){
+  var cls = Object.values(allCls||{});
+  var tot=cls.length, done=0, pass_=0, fail_=0, oi=0;
+  cls.forEach(function(x){
+    if(x.status==='done')done++;
+    pass_+=x.passed||0; fail_+=x.failed||0; oi+=x.openIssues||0;
+  });
+  var pct = tot?Math.round(done/tot*100):0;
+  function S(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  S('cxd-cl-n',tot); S('cxd-closed-pct',pct+'%'); S('cxd-pass-n',pass_); S('cxd-issues-n',oi);
+  S('cxd-updated','עודכן: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}));
+
+  // Build project cards
+  var projs = {};
+  cls.forEach(function(x){
+    var p = x.proj||'ללא פרויקט';
+    if(!projs[p]) projs[p]={name:p,tot:0,done:0,prog:0,pass:0,fail:0,oi:0,wi:0,ci:0};
+    projs[p].tot++;
+    if(x.status==='done') projs[p].done++;
+    else if(x.status==='in-progress') projs[p].prog++;
+    projs[p].pass+=x.passed||0; projs[p].fail+=x.failed||0;
+    projs[p].oi+=x.openIssues||0; projs[p].wi+=x.waitingIssues||0; projs[p].ci+=x.closedIssues||0;
+  });
+
+  var cards = document.getElementById('cxd-proj-cards');
+  if(!cards) return;
+  var projList = Object.values(projs).sort(function(a,b){return b.tot-a.tot;});
+
+  if(!projList.length){
+    cards.innerHTML='<div class="clc" style="padding:24px;text-align:center;cursor:default;color:var(--t3)">אין פרויקטים עדיין<br><span style="font-size:.72rem">פתח צ׳קליסט חדש עם שם פרויקט</span></div>';
+    return;
+  }
+
+  if(!projList.length){
+    cards.innerHTML='<div class="clc" style="padding:24px;text-align:center;cursor:default;color:var(--t3)">אין פרויקטים עדיין<br><span style="font-size:.72rem">פתח צקליסט חדש עם שם פרויקט</span></div>';
+    return;
+  }
+  cards.innerHTML='';
+  projList.forEach(function(p){
+    var pct2=p.tot?Math.round(p.done/p.tot*100):0;
+    var statusColor=pct2===100?'var(--ok)':p.prog>0?'var(--warn)':'var(--t4,#94a3b8)';
+    var div=document.createElement('div');
+    div.className='clc';
+    div.style.cssText='padding:16px;margin-bottom:10px;cursor:pointer;border-right:4px solid '+statusColor;
+    div.onclick=function(){ cxdOpenProject(p.name); };
+    div.innerHTML=
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:1rem;font-weight:800;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.name+'</div>'
+        +'<div style="font-size:.65rem;color:var(--t3);margin-top:3px">'
+          +p.tot+' CL &nbsp;<span style="color:var(--ok)">'+p.done+' הושלמו</span>'
+          +(p.prog?' &nbsp;<span style="color:var(--warn)">'+p.prog+' בתהליך</span>':'')
+          +(p.oi?'&nbsp; <span style="background:rgba(239,68,68,.12);color:var(--fail);border-radius:20px;padding:2px 8px;font-size:.6rem;font-weight:800">'+p.oi+' Issues</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div style="text-align:left;flex-shrink:0">'
+        +'<div style="font-size:1.4rem;font-weight:900;color:'+statusColor+';font-family:monospace;line-height:1">'+pct2+'%</div>'
+        +'<div style="font-size:.55rem;color:var(--t3)">הושלם</div>'
+      +'</div></div>'
+      +'<div style="height:6px;background:rgba(0,0,0,.07);border-radius:6px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct2+'%;background:'+statusColor+';transition:width .5s"></div>'
+      +'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:.62rem;font-family:monospace;margin-top:6px;color:var(--t3)">'
+        +'<span style="color:var(--ok)">Pass '+p.pass+'</span>'
+        +'<span style="color:var(--fail)">Fail '+p.fail+'</span>'
+        +'<span style="color:var(--t2);font-weight:700">פרט ›</span>'
+      +'</div>';
+    cards.appendChild(div);
+  });
+}
+
+function cxdOpenProject(projName){
+  cxdActiveProj = projName;
+  var cls = Object.values(allCls||{}).filter(function(x){return (x.proj||'ללא פרויקט')===projName;});
+  var tot=cls.length, done=0, prog=0, pass_=0, fail_=0;
+  var oi=0, wi=0, ci=0;
+  cls.forEach(function(x){
+    if(x.status==='done')done++;
+    else if(x.status==='in-progress')prog++;
+    pass_+=x.passed||0; fail_+=x.failed||0;
+    oi+=x.openIssues||0; wi+=x.waitingIssues||0; ci+=x.closedIssues||0;
+  });
+  var pct = tot?Math.round(done/tot*100):0;
+
+  function S(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  S('cxd-detail-title', projName);
+  S('cxd-d-done', done); S('cxd-d-prog', prog); S('cxd-d-pass', pass_); S('cxd-d-fail', fail_);
+  S('cxd-d-pct', pct+'%');
+  var bar = document.getElementById('cxd-d-bar');
+  if(bar) bar.style.width = pct+'%';
+
+  // Issues bar
+  var ib = document.getElementById('cxd-d-iss');
+  if(ib){
+    var ti=oi+wi+ci;
+    ib.innerHTML = ti>0
+      ?'<div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--t3);margin-bottom:6px"><span>Issues</span><span style="font-weight:700;color:var(--t2)">'+ti+' סהכ</span></div>'
+       +'<div style="height:8px;background:rgba(0,0,0,.07);border-radius:8px;overflow:hidden;display:flex;margin-bottom:7px">'
+       +'<div style="width:'+Math.round(oi/ti*100)+'%;background:var(--fail)"></div>'
+       +'<div style="width:'+Math.round(wi/ti*100)+'%;background:#8b5cf6"></div>'
+       +'<div style="width:'+Math.round(ci/ti*100)+'%;background:var(--ok)"></div></div>'
+       +'<div style="display:flex;gap:12px;font-size:.65rem">'
+       +'<span><b style="color:var(--fail)">'+oi+'</b> פתוח</span>'
+       +'<span><b style="color:#8b5cf6">'+wi+'</b> ממתין</span>'
+       +'<span><b style="color:var(--ok)">'+ci+'</b> סגור</span></div>'
+      :'<div style="color:var(--t3);font-size:.78rem;text-align:center;padding:4px">אין Issues בפרויקט זה</div>';
+  }
+
+  // CL list
+  var ll = document.getElementById('cxd-d-cls');
+  if(ll){
+    var sorted = cls.slice().sort(function(a,b){return (b.updated||'')>(a.updated||'')?1:-1;});
+    ll.innerHTML = sorted.map(function(x){
+      var sc=x.status==='done'?'var(--ok)':x.status==='in-progress'?'var(--warn)':'var(--t4,#94a3b8)';
+      var sl=x.status==='done'?'הושלם':x.status==='in-progress'?'בתהליך':'טרם';
+      var tc=x.status==='done'?'done':x.status==='in-progress'?'prog':'ns';
+      var pp=Math.min(100,Math.round(((x.passed||0)+(x.failed||0)+(x.na||0))/31*100));
+      return '<div class="clc" style="padding:13px;margin-bottom:8px;border-right:3px solid '+sc+'">'
+        +'<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:5px">'
+          +'<div style="flex:1;min-width:0"><div style="font-size:.9rem;font-weight:700;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(x.title||'ללא שם')+'</div>'
+          +'<div style="font-size:.62rem;color:var(--t3);margin-top:2px">'+(x.insp?'👷 '+x.insp:'')+(x.fdate?' · '+x.fdate:'')+'</div></div>'
+          +'<span class="clc-tag '+tc+'">'+sl+'</span>'
+        +'</div>'
+        +'<div style="height:4px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden;margin-bottom:5px"><div style="height:100%;width:'+pp+'%;background:'+sc+'"></div></div>'
+        +'<div style="display:flex;gap:8px;font-size:.64rem;font-family:monospace">'
+          +'<span style="color:var(--ok)">+ '+(x.passed||0)+'</span>'
+          +'<span style="color:var(--fail)">- '+(x.failed||0)+'</span>'
+          +'<span style="color:var(--t3)">N/A '+(x.na||0)+'</span>'
+          +(x.openIssues?'<span style="color:var(--fail);font-weight:700;margin-right:auto">! '+x.openIssues+'</span>':'')
+          +'<span style="color:var(--t3)">'+pp+'%</span>'
+        +'</div></div>';
+    }).join('') || '<div style="text-align:center;padding:30px;color:var(--t3)">אין צ׳קליסטים</div>';
+  }
+
+  // Show detail, hide project list
+  var cards = document.getElementById('cxd-proj-cards');
+  var detail = document.getElementById('cxd-proj-detail');
+  var addBtn = document.querySelector('[onclick="cxdAddProject()"]');
+  if(cards) cards.style.display='none';
+  var hdr2=document.getElementById('cxd-proj-hdr2');if(hdr2)hdr2.style.display='none';
+  if(detail) detail.style.display='block';
+  document.querySelector('#sc-cxdash .content-area, #sc-cxdash > div:last-child')?.scrollTo(0,0);
+}
+
+function cxdCloseDetail(){
+  cxdActiveProj = null;
+  var cards = document.getElementById('cxd-proj-cards');
+  var detail = document.getElementById('cxd-proj-detail');
+  var hdr = document.getElementById('cxd-proj-hdr');
+  if(cards){ cards.style.display=''; }
+  if(detail){ detail.style.display='none'; }
+  if(hdr){ hdr.style.display=''; }
+  // Restore header row
+  var hdrRow = document.getElementById('cxd-proj-hdr2');
+  if(hdrRow) hdrRow.style.display='';
+}
+
+function cxdAddProject(){
+  requireAuth(function(){
+    var bg=document.createElement('div'); bg.className='modal-bg';
+    bg.innerHTML='<div class="modal-box" style="max-width:360px">'
+      +'<div style="font-size:1rem;font-weight:800;margin-bottom:14px">פרויקט חדש</div>'
+      +'<div style="margin-bottom:14px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">שם הפרויקט</label>'
+        +'<input id="new-proj-name" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="NED DC, Alpha DC..."></div>'
+      +'<button onclick="cxdSaveProject(this)" style="width:100%;background:linear-gradient(135deg,var(--bg-card,#0a1f35),var(--bg-mid,#071525));color:#fff;border:1px solid rgba(245,166,35,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px">צור פרויקט</button>'
+      +'<button onclick="var b=this.closest(\".modal-bg\");if(b)b.remove()" style="width:100%;background:none;border:none;color:var(--t3);font-size:.8rem;cursor:pointer;font-family:inherit">ביטול</button>'
+    +'</div>';
+    bg.onclick=function(e){if(e.target===bg)bg.remove();};
+    document.body.appendChild(bg);
+    setTimeout(function(){bg.classList.add('show');document.getElementById('new-proj-name')?.focus();},10);
+  });
+}
+
+function cxdSaveProject(btn){
+  var name=(document.getElementById('new-proj-name')||{value:''}).value.trim();
+  if(!name){toast('חובה למלא שם פרויקט');return;}
+  // Store in Firebase
+  db.ref('ned_projects/'+name.replace(/[.#$/\[\]]/g,'_')).set({name:name,created:new Date().toISOString().slice(0,10)}).catch(function(){});
+  btn.closest('.modal-bg').remove();
+  // Add to new-CL dropdown
+  nedLoadProjects();
+  toast('פרויקט נוצר: '+name);
+  renderCxDash();
+}
+
+var mgrCurrentTab='overview',mgrClFilter='',mgrIssFilter='',mgrLogWeekOff=0,mgrLogEntries=[];
+function mgrGoTab(tab){
+  mgrCurrentTab=tab;
+  document.querySelectorAll('.mgr-sc').forEach(function(s){s.style.display='none';});
+  document.querySelectorAll('.mgr-itab').forEach(function(t){t.style.color='#aab4c8';t.style.borderBottomColor='transparent';});
+  var sc=document.getElementById('mgr-sc-'+tab);if(sc)sc.style.display='block';
+  var tb=document.getElementById('mgr-itab-'+tab);if(tb){tb.style.color='var(--gold)';tb.style.borderBottomColor='var(--gold)';}
+  if(tab==='overview'){mgrRenderOverview();}
+  else if(tab==='cls'){mgrRenderCls();}
+  else if(tab==='issues'){mgrRenderIssues();}
+  else if(tab==='log'){mgrRenderLog();}
+  else if(tab==='contacts'){mgrRenderContacts();}
+}
+function mgrRender(){
+  var cls=Object.values(allCls||{});
+  var tot=cls.length,done=0,prog=0,pass_=0,fail_=0,oi=0,wi=0;
+  cls.forEach(function(x){if(x.status==='done')done++;else if(x.status==='in-progress')prog++;pass_+=x.passed||0;fail_+=x.failed||0;oi+=x.openIssues||0;wi+=x.waitingIssues||0;});
+  function S(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  S('mgr-date',new Date().toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
+  S('mgr-k-cls',tot);S('mgr-k-pass',pass_);S('mgr-k-fail',fail_);S('mgr-k-iss',oi);
+  S('mgr-done',done);S('mgr-prog',prog);S('mgr-iopen',oi);S('mgr-iwait',wi);
+  var st=document.getElementById('mgr-status-txt');if(st)st.textContent=tot?done+'/'+tot+' הושלמו':'ממתין לנתונים';
+  mgrLoadLogFromFirebase();
+  mgrGoTab(mgrCurrentTab);
+}
+function mgrRenderOverview(){mgrRenderIssBar();mgrRenderInspectors();mgrRenderRecent();}
+function mgrRenderIssBar(){
+  var cls=Object.values(allCls||{});
+  var oi=cls.reduce(function(s,x){return s+(x.openIssues||0);},0);
+  var wi=cls.reduce(function(s,x){return s+(x.waitingIssues||0);},0);
+  var ci=cls.reduce(function(s,x){return s+(x.closedIssues||0);},0);
+  var el=document.getElementById('mgr-iss-bar');if(!el)return;
+  var ti=oi+wi+ci;
+  el.innerHTML=ti?'<div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--t3);margin-bottom:6px"><span>Issues</span><span style="font-weight:700;color:var(--t2)">'+ti+' סהכ</span></div>'
+    +'<div style="height:10px;background:rgba(0,0,0,.07);border-radius:8px;overflow:hidden;display:flex;margin-bottom:8px">'
+    +'<div style="width:'+Math.round(oi/ti*100)+'%;background:var(--fail)"></div>'
+    +'<div style="width:'+Math.round(wi/ti*100)+'%;background:#8b5cf6"></div>'
+    +'<div style="width:'+Math.round(ci/ti*100)+'%;background:var(--ok)"></div></div>'
+    +'<div style="display:flex;gap:14px;font-size:.65rem"><span><b style="color:var(--fail)">'+oi+'</b> פתוח</span><span><b style="color:#8b5cf6">'+wi+'</b> ממתין</span><span><b style="color:var(--ok)">'+ci+'</b> סגור</span></div>'
+    :'<div style="color:var(--t3);font-size:.78rem;text-align:center">אין Issues</div>';}
+function mgrRenderInspectors(){
+  var cls=Object.values(allCls||{});
+  var im={};cls.forEach(function(x){var n=x.insp||'לא ידוע';if(!im[n])im[n]={n:n,cls:0,pass:0,fail:0};im[n].cls++;im[n].pass+=x.passed||0;im[n].fail+=x.failed||0;});
+  var list=Object.values(im).sort(function(a,b){return b.cls-a.cls;});var mx=list.length?list[0].cls:1;
+  var el=document.getElementById('mgr-insp');if(!el)return;
+  el.innerHTML=list.map(function(a,i){var ini=a.n.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+    return '<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)">'
+      +'<div style="font-size:.6rem;color:var(--t3);width:14px;text-align:center">'+(i+1)+'</div>'
+      +'<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#fbbf24);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#030d1a;flex-shrink:0">'+ini+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.82rem;font-weight:700;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+a.n+'</div>'
+      +'<div style="font-size:.6rem;color:var(--t3)">'+a.cls+' CL · <span style="color:var(--ok)">'+a.pass+'</span> / <span style="color:var(--fail)">'+a.fail+'</span></div></div>'
+      +'<div style="width:64px;height:5px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.round(a.cls/mx*100)+'%;background:var(--gold)"></div></div></div>';
+  }).join('')||'<div style="color:var(--t3);font-size:.78rem;text-align:center;padding:12px">אין בודקים</div>';}
+function mgrRenderRecent(){
+  var cls=Object.values(allCls||{}).slice().sort(function(a,b){return (b.updated||'')>(a.updated||'')?1:-1;}).slice(0,5);
+  var el=document.getElementById('mgr-recent');if(!el)return;
+  if(!cls.length){el.innerHTML='<div class="clc" style="padding:20px;text-align:center;cursor:default;color:var(--t3)">אין נתונים</div>';return;}
+  el.innerHTML=cls.map(function(x){var sc=x.status==='done'?'var(--ok)':x.status==='in-progress'?'var(--warn)':'var(--t4,#94a3b8)';
+    var sl=x.status==='done'?'הושלם':x.status==='in-progress'?'בתהליך':'טרם';
+    var tc=x.status==='done'?'done':x.status==='in-progress'?'prog':'ns';
+    var pp=Math.min(100,Math.round(((x.passed||0)+(x.failed||0)+(x.na||0))/31*100));
+    return '<div class="clc" style="padding:13px;margin-bottom:8px;cursor:default;border-right:3px solid '+sc+'">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:5px">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.9rem;font-weight:700;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(x.title||'ללא שם')+'</div>'
+      +'<div style="font-size:.62rem;color:var(--t3);margin-top:2px">'+(x.insp?'👷 '+x.insp:'')+'</div></div>'
+      +'<span class="clc-tag '+tc+'">'+sl+'</span></div>'
+      +'<div style="height:4px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pp+'%;background:'+sc+'"></div></div></div>';
+  }).join('');}
+function mgrSetClChip(v){mgrClFilter=v;['all','done','prog','ns'].forEach(function(k){var e=document.getElementById('mgr-chip-'+k);if(e)e.classList.remove('on');});var mp={'':'all','done':'done','in-progress':'prog','not-started':'ns'};var e2=document.getElementById('mgr-chip-'+(mp[v]||'all'));if(e2)e2.classList.add('on');mgrRenderCls();}
+function mgrRenderCls(){
+  var list=Object.values(allCls||{}).filter(function(x){return !mgrClFilter||x.status===mgrClFilter;}).sort(function(a,b){return (b.updated||'')>(a.updated||'')?1:-1;});
+  var lbl=document.getElementById('mgr-cls-lbl');if(lbl)lbl.textContent=list.length+' צקליסטים';
+  var el=document.getElementById('mgr-cls-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t3)">אין צקליסטים</div>';return;}
+  el.innerHTML=list.map(function(x){var sc=x.status==='done'?'var(--ok)':x.status==='in-progress'?'var(--warn)':'var(--t4,#94a3b8)';
+    var sl=x.status==='done'?'הושלם':x.status==='in-progress'?'בתהליך':'טרם';
+    var tc=x.status==='done'?'done':x.status==='in-progress'?'prog':'ns';
+    var pp=Math.min(100,Math.round(((x.passed||0)+(x.failed||0)+(x.na||0))/31*100));
+    return '<div class="clc" style="margin:0 12px 8px;padding:13px;border-right:3px solid '+sc+'">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:5px">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.9rem;font-weight:700;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(x.title||'ללא שם')+'</div>'
+      +'<div style="font-size:.62rem;color:var(--t3);margin-top:2px">'+(x.insp?'👷 '+x.insp:'')+(x.fdate?' · '+x.fdate:'')+'</div></div>'
+      +'<span class="clc-tag '+tc+'">'+sl+'</span></div>'
+      +'<div style="height:4px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden;margin-bottom:5px"><div style="height:100%;width:'+pp+'%;background:'+sc+'"></div></div>'
+      +'<div style="display:flex;gap:8px;font-size:.64rem;font-family:monospace"><span style="color:var(--ok)">+ '+(x.passed||0)+'</span><span style="color:var(--fail)">- '+(x.failed||0)+'</span><span style="color:var(--t3)">N/A '+(x.na||0)+'</span><span style="color:var(--t3);margin-right:auto">/ 31</span><span style="font-weight:800;color:var(--t2,#1e293b)">'+pp+'%</span></div></div>';
+  }).join('');}
+function mgrSetIssChip(v){mgrIssFilter=v;['all','open','wait','closed'].forEach(function(k){var e=document.getElementById('mgr-ichip-'+k);if(e)e.classList.remove('on');});var mp={'':'all','open':'open','waiting':'wait','closed':'closed'};var e2=document.getElementById('mgr-ichip-'+(mp[v]||'all'));if(e2)e2.classList.add('on');mgrRenderIssues();}
+function mgrRenderIssues(){
+  var list=[];Object.values(allCls||{}).forEach(function(cl){if(!cl)return;for(var i=0;i<(cl.openIssues||0);i++)list.push({title:cl.title||'ללא שם',status:'open',insp:cl.insp||''});for(var j=0;j<(cl.waitingIssues||0);j++)list.push({title:cl.title||'ללא שם',status:'waiting',insp:cl.insp||''});});
+  if(mgrIssFilter)list=list.filter(function(x){return x.status===mgrIssFilter;});
+  var lbl=document.getElementById('mgr-iss-lbl');if(lbl)lbl.textContent=list.length+' Issues';
+  var el=document.getElementById('mgr-iss-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t3)">אין Issues</div>';return;}
+  el.innerHTML=list.map(function(x){var sc=x.status==='open'?'var(--fail)':'#8b5cf6';var sl=x.status==='open'?'פתוח':'ממתין';var tc=x.status==='open'?'fail':'wait';
+    return '<div class="clc" style="padding:13px;margin-bottom:8px;border-right:3px solid '+sc+'">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px"><div style="flex:1;min-width:0"><div style="font-size:.88rem;font-weight:700;color:var(--t1,#0f172a)">'+x.title+'</div>'
+      +(x.insp?'<div style="font-size:.62rem;color:var(--t3);margin-top:3px">👷 '+x.insp+'</div>':'')+'</div>'
+      +'<span class="clc-tag '+tc+'">'+sl+'</span></div></div>';
+  }).join('');}
+function mgrLoadLogFromFirebase(){db.ref('ned_log').once('value').then(function(s){var v=s.val();if(v&&Array.isArray(v))mgrLogEntries=v;else if(v)mgrLogEntries=Object.values(v);if(mgrCurrentTab==='log')mgrRenderLog();}).catch(function(){});}
+function mgrSaveLog(){db.ref('ned_log').set(mgrLogEntries).catch(function(){});}
+function mgrLogPrevWeek(){mgrLogWeekOff--;mgrRenderLog();}
+function mgrLogNextWeek(){mgrLogWeekOff++;mgrRenderLog();}
+function mgrRenderLog(){
+  var today=new Date(),ws=new Date(today);ws.setDate(today.getDate()-today.getDay()+mgrLogWeekOff*7);
+  var we=new Date(ws);we.setDate(ws.getDate()+6);
+  var lbl=document.getElementById('mgr-log-week-label');
+  if(lbl)lbl.textContent=ws.toLocaleDateString('he-IL',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('he-IL',{month:'short',day:'numeric',year:'numeric'});
+  var wg=document.getElementById('mgr-log-week');
+  if(wg){var days=['א','ב','ג','ד','ה','ו','ש'],h='';
+    for(var d=0;d<7;d++){var dd=new Date(ws);dd.setDate(ws.getDate()+d);var iso=dd.toISOString().slice(0,10);
+      var isT=iso===today.toISOString().slice(0,10),hasE=mgrLogEntries.some(function(e){return e.date===iso;});
+      h+='<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="font-size:.55rem;color:var(--t3)">'+days[d]+'</div>'
+        +'<div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;cursor:pointer;'
+        +(isT?'background:var(--gold);color:#030d1a;':hasE?'background:rgba(16,185,129,.15);color:var(--ok);border:1px solid var(--ok);':'color:var(--t3);')
+        +'" onclick="mgrAddLogEntry(\''+iso+'\')">'+dd.getDate()+'</div></div>';}
+    wg.innerHTML=h;}
+  var el=document.getElementById('mgr-log-list');if(!el)return;
+  var sorted=mgrLogEntries.slice().sort(function(a,b){return (b.date||'')>(a.date||'')?1:-1;});
+  if(!sorted.length){el.innerHTML='<div class="clc" style="padding:20px;text-align:center;cursor:default;color:var(--t3)">אין רשומות</div>';return;}
+  var dc={'inspection':'var(--gold)','meeting':'var(--blue,#3b82f6)','issue':'var(--fail)','completed':'var(--ok)'};
+  el.innerHTML=sorted.map(function(e,idx){var col=dc[e.type]||'var(--t3)';
+    return '<div class="clc" style="padding:13px;margin-bottom:8px;cursor:default">'
+      +'<div style="display:flex;align-items:flex-start;gap:10px"><div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;margin-top:5px"></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.88rem;font-weight:700;color:var(--t1,#0f172a)">'+(e.title||'ללא כותרת')+'</div>'
+      +(e.note?'<div style="font-size:.72rem;color:var(--t3);margin-top:3px">'+e.note+'</div>':'')
+      +'<div style="font-size:.62rem;color:var(--t3);margin-top:4px">'+e.date+(e.insp?' · 👷 '+e.insp:'')+'</div></div>'
+      +'<button onclick="mgrDelLog('+idx+')" style="background:rgba(239,68,68,.1);color:var(--fail);border:none;border-radius:8px;padding:4px 8px;font-size:.62rem;font-weight:700;cursor:pointer">הסר</button></div></div>';
+  }).join('');}
+function mgrDelLog(idx){mgrLogEntries.splice(idx,1);mgrSaveLog();mgrRenderLog();toast('הוסר');}
+function mgrAddLogEntry(dateStr){requireAuth(function(){
+  var bg=document.createElement('div');bg.className='modal-bg';
+  var h='<div class="modal-box" style="max-width:420px"><div style="font-size:1rem;font-weight:800;margin-bottom:14px">הוסף לוג</div>';
+  h+='<div style="margin-bottom:9px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">כותרת</label><input id="nl-title" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="תיאור הפעולה..."></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">';
+  h+='<div><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">סוג</label><select id="nl-type" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.82rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none"><option value="inspection">בדיקה</option><option value="meeting">ישיבה</option><option value="issue">Issue</option><option value="completed">הושלם</option></select></div>';
+  h+='<div><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">תאריך</label><input id="nl-date" type="date" value="'+(dateStr||new Date().toISOString().slice(0,10))+'" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.82rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none"></div></div>';
+  h+='<div style="margin-bottom:9px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">בודק</label><input id="nl-insp" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="שם הבודק..."></div>';
+  h+='<div style="margin-bottom:14px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">הערות</label><textarea id="nl-note" rows="2" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.82rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none;resize:none" placeholder="הערות..."></textarea></div>';
+  h+='<button onclick="mgrSaveLogEntry(this)" style="width:100%;background:linear-gradient(135deg,var(--bg-card,#0a1f35),var(--bg-mid,#071525));color:#fff;border:1px solid rgba(245,166,35,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px">שמור</button>';
+  h+='<button onclick="this.closest(\'.modal-bg\').remove()" style="width:100%;background:none;border:none;color:var(--t3);font-size:.8rem;cursor:pointer;font-family:inherit">ביטול</button></div>';
+  bg.innerHTML=h;bg.onclick=function(e){if(e.target===bg)bg.remove();};
+  document.body.appendChild(bg);setTimeout(function(){bg.classList.add('show');var t=document.getElementById('nl-title');if(t)t.focus();},10);});}
+function mgrSaveLogEntry(btn){var t=(document.getElementById('nl-title')||{value:''}).value.trim();if(!t){toast('חובה למלא כותרת');return;}mgrLogEntries.unshift({title:t,type:(document.getElementById('nl-type')||{value:'inspection'}).value,date:(document.getElementById('nl-date')||{value:new Date().toISOString().slice(0,10)}).value,insp:(document.getElementById('nl-insp')||{value:''}).value.trim(),note:(document.getElementById('nl-note')||{value:''}).value.trim(),ts:Date.now()});mgrSaveLog();btn.closest('.modal-bg').remove();mgrRenderLog();toast('נשמר');}
+function mgrRenderContacts(){
+  var lbl=document.getElementById('mgr-contacts-lbl');if(lbl)lbl.textContent=(contacts.length||0)+' אנשי קשר';
+  var el=document.getElementById('mgr-contacts');if(!el)return;
+  if(!contacts||!contacts.length){el.innerHTML='<div class="clc" style="padding:20px;text-align:center;cursor:default;color:var(--t3)">אין אנשי קשר</div>';return;}
+  el.innerHTML=contacts.map(function(x,i){if(!x||!x.name)return'';
+    var ini=x.name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+    return '<div class="clc" style="padding:12px 14px;margin-bottom:8px;cursor:default"><div style="display:flex;align-items:center;gap:10px">'
+      +'<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#fbbf24);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#030d1a;flex-shrink:0">'+ini+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.88rem;font-weight:700;color:var(--t1,#0f172a)">'+x.name+'</div>'
+      +'<div style="font-size:.65rem;color:var(--t3)">'+(x.role||'')+(x.role&&x.email?' · ':'')+( x.email||'')+'</div>'
+      +(x.phone?'<div style="font-size:.63rem;color:var(--blue,#3b82f6);margin-top:1px">'+x.phone+'</div>':'')+'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:4px">'
+      +(x.phone?'<a href="tel:'+x.phone+'" style="background:rgba(59,130,246,.1);color:var(--blue,#3b82f6);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:4px 9px;font-size:.62rem;font-weight:700;text-decoration:none">📞</a>':'')
+      +(x.email?'<a href="mailto:'+x.email+'" style="background:rgba(16,185,129,.08);color:var(--ok);border:1px solid rgba(16,185,129,.15);border-radius:8px;padding:4px 9px;font-size:.62rem;font-weight:700;text-decoration:none">✉️</a>':'')
+      +'</div><button onclick="mgrDelC('+i+')" style="background:rgba(239,68,68,.1);color:var(--fail);border:none;border-radius:8px;padding:5px 9px;font-size:.62rem;font-weight:700;cursor:pointer">הסר</button></div></div>';
+  }).join('');}
+function mgrAddContact(){requireAuth(function(){
+  var bg=document.createElement('div');bg.className='modal-bg';
+  var h='<div class="modal-box" style="max-width:400px"><div style="font-size:1rem;font-weight:800;margin-bottom:14px">הוסף איש קשר</div>';
+  h+='<div style="margin-bottom:9px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">שם מלא</label><input id="nc-name" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="ישראל ישראלי..."></div>';
+  h+='<div style="margin-bottom:9px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">תפקיד</label><input id="nc-role" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="מהנדס..."></div>';
+  h+='<div style="margin-bottom:9px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">מייל</label><input id="nc-email" type="email" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none;direction:ltr"></div>';
+  h+='<div style="margin-bottom:14px"><label style="font-size:.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:4px;color:var(--t3)">טלפון</label><input id="nc-phone" style="width:100%;padding:10px;border:1.5px solid rgba(255,255,255,.14);border-radius:10px;font-size:.87rem;font-family:inherit;background:var(--bg-card,#0a1f35);color:var(--t1,#fff);outline:none" placeholder="050-0000000"></div>';
+  h+='<button onclick="mgrSaveC(this)" style="width:100%;background:linear-gradient(135deg,var(--bg-card,#0a1f35),var(--bg-mid,#071525));color:#fff;border:1px solid rgba(245,166,35,.3);border-bottom:2px solid var(--gold);padding:13px;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px">שמור</button>';
+  h+='<button onclick="this.closest(\'.modal-bg\').remove()" style="width:100%;background:none;border:none;color:var(--t3);font-size:.8rem;cursor:pointer;font-family:inherit">ביטול</button></div>';
+  bg.innerHTML=h;bg.onclick=function(e){if(e.target===bg)bg.remove();};
+  document.body.appendChild(bg);setTimeout(function(){bg.classList.add('show');var n=document.getElementById('nc-name');if(n)n.focus();},10);});}
+function mgrSaveC(btn){var name=(document.getElementById('nc-name')||{value:''}).value.trim();if(!name){toast('חובה למלא שם');return;}contacts.push({name:name,role:(document.getElementById('nc-role')||{value:''}).value.trim(),email:(document.getElementById('nc-email')||{value:''}).value.trim(),phone:(document.getElementById('nc-phone')||{value:''}).value.trim()});db.ref('contacts').set(contacts).catch(function(){});btn.closest('.modal-bg').remove();mgrRenderContacts();toast('נוסף');}
+function mgrDelC(i){contacts.splice(i,1);db.ref('contacts').set(contacts).catch(function(){});mgrRenderContacts();toast('הוסר');}
+// Settings
+function openNedSettings(){var p=document.getElementById('ned-settings-panel');if(p)p.style.transform='translateX(0)';}
+function closeNedSettings(){var p=document.getElementById('ned-settings-panel');if(p)p.style.transform='translateX(100%)';}
+function nedExportExcel(){if(typeof XLSX==='undefined'){toast('XLSX לא נטען');return;}var wb=XLSX.utils.book_new();var clData=Object.values(allCls||{}).map(function(x){return{Name:x.title||'',Inspector:x.insp||'',Status:x.status||'',Pass:x.passed||0,Fail:x.failed||0,NA:x.na||0,Issues:x.openIssues||0,Date:x.fdate||''};});XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(clData),'Checklists');XLSX.writeFile(wb,'NED_DC_'+new Date().toISOString().slice(0,10)+'.xlsx');toast('יוצא');}
+function nedExportSummary(){var cls=Object.values(allCls||{});var tot=cls.length,done=cls.filter(function(x){return x.status==='done';}).length;var a=document.createElement('a');a.href='data:text/plain,NED+DC+Report+CL:'+tot+'+Done:'+done;a.download='NED_Summary.txt';a.click();toast('יוצא');}
+
+function mgrGoToLog(){closeSettings();showHomeTab('mgr');setTimeout(function(){mgrGoTab('log');},200);}
+function mgrGoToContacts(){closeSettings();showHomeTab('mgr');setTimeout(function(){mgrGoTab('contacts');},200);}
+
+function nedShowExportMenu(){
+  var bg=document.createElement("div");
+  bg.className="modal-bg";
+  var box=document.createElement("div");
+  box.className="modal-box";
+  box.style.cssText="max-width:360px;padding:8px 0";
+  var rows=[
+    {fn:"nedExportExcel()",bg:"linear-gradient(135deg,#22c55e,#15803d)",ico:"📊",title:"יצוא אקסל",sub:"צקליסטים ואנשי קשר"},
+    {fn:"nedExportSummary()",bg:"linear-gradient(135deg,#3b82f6,#1d4ed8)",ico:"📄",title:"דוח סיכום",sub:"ייצא דוח טקסט"},
+    {fn:"mgrGoToLog()",bg:"linear-gradient(135deg,#f5a623,#f59e0b)",ico:"📅",title:"יומן בדיקות",sub:"פתח יומן"},
+    {fn:"mgrGoToContacts()",bg:"linear-gradient(135deg,#8b5cf6,#6d28d9)",ico:"👥",title:"אנשי קשר",sub:"נהל אנשי קשר"}
+  ];
+  var lbl=document.createElement("div");
+  lbl.style.cssText="font-size:.6rem;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:12px 18px 8px";
+  lbl.textContent="יצוא · NED DC";
+  box.appendChild(lbl);
+  rows.forEach(function(r){
+    var row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer";
+    row.onclick=function(){bg.remove();new Function(r.fn)();};
+    var ico=document.createElement("div");
+    ico.style.cssText="width:36px;height:36px;border-radius:10px;background:"+r.bg+";display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0";
+    ico.textContent=r.ico;
+    var txt=document.createElement("div");txt.style.flex="1";
+    var t=document.createElement("div");t.style.cssText="font-size:.88rem;font-weight:700;color:var(--t1,#fff)";t.textContent=r.title;
+    var s=document.createElement("div");s.style.cssText="font-size:.65rem;color:var(--t3);margin-top:2px";s.textContent=r.sub;
+    txt.appendChild(t);txt.appendChild(s);
+    var arr=document.createElement("span");arr.textContent="›";arr.style.color="var(--t3)";
+    row.appendChild(ico);row.appendChild(txt);row.appendChild(arr);
+    box.appendChild(row);
+  });
+  var close=document.createElement("div");
+  close.style.cssText="text-align:center;padding:13px;font-size:.82rem;color:var(--t3);cursor:pointer";
+  close.textContent="סגור";
+  close.onclick=function(){bg.remove();};
+  box.appendChild(close);
+  bg.appendChild(box);
+  bg.onclick=function(e){if(e.target===bg)bg.remove();};
+  document.body.appendChild(bg);
+  setTimeout(function(){bg.classList.add("show");},10);
+}
+function mgrGoToLog(){showHomeTab('mgr');setTimeout(function(){mgrGoTab('log');},150);}
+function mgrGoToContacts(){showHomeTab('mgr');setTimeout(function(){mgrGoTab('contacts');},150);}
+
+
+function nedLoadProjects(){
+  // Collect from existing CLs + Firebase ned_projects
+  var projs=['NED DC'];
+  Object.values(allCls||{}).forEach(function(cl){if(cl.proj&&!projs.includes(cl.proj))projs.push(cl.proj);});
+  // Also load from Firebase
+  db.ref('ned_projects').once('value').then(function(s){
+    var v=s.val()||{};
+    Object.values(v).forEach(function(p){if(p.name&&!projs.includes(p.name))projs.push(p.name);});
+    nedPopulateProjSelect(projs);
+  }).catch(function(){nedPopulateProjSelect(projs);});
+}
+function nedPopulateProjSelect(projs){
+  var sel=document.getElementById('new-proj');
+  if(!sel)return;
+  var cur=sel.value||'NED DC';
+  sel.innerHTML='<option value="">בחר פרויקט...</option>';
+  projs.forEach(function(p){var o=document.createElement('option');o.value=p;o.text=p;if(p===cur)o.selected=true;sel.appendChild(o);});
+}
+function nedProjSelectChange(sel){
+  var custom=document.getElementById('new-proj-custom');
+  if(custom)custom.style.display=sel.value==='__new__'?'block':'none';
+}
+function nedMigrateProj(){
+  // Set NED DC on any CL missing proj
+  Object.keys(allCls||{}).forEach(function(id){
+    if(!allCls[id].proj){
+      allCls[id].proj='NED DC';
+      db.ref('checklists/'+id+'/meta/proj').set('NED DC').catch(function(){});
+    }
+  });
+}
+
+
+// ═══ CL File Attachments ═══
+var clFilesData = {};  // { clId: [{name,url,type,size,ts},...] }
+
+function clFilePick(mode){
+  if(!CID){toast('פתח צקליסט קודם');return;}
+  requireAuth(function(){
+    var inp=document.createElement('input');
+    inp.type='file';
+    inp.style.display='none';
+    if(mode==='image'){inp.accept='image/*';inp.capture='environment';}
+    else{inp.multiple=true;}
+    inp.onchange=function(){
+      if(inp.files&&inp.files.length){
+        Array.from(inp.files).forEach(function(f){clUploadFile(f);});
+      }
+      document.body.removeChild(inp);
+    };
+    document.body.appendChild(inp);
+    inp.click();
+  });
+}
+
+function clHandleFiles(input){
+  if(!input.files||!input.files.length)return;
+  Array.from(input.files).forEach(function(file){
+    clUploadFile(file);
+  });
+  input.value='';
+}
+
+function clUploadFile(file){
+  if(!CID)return;
+  var MAX=50*1024*1024; // 50MB
+  if(file.size>MAX){toast('קובץ גדול מדי (מקסימום 50MB)');return;}
+
+  // Show progress
+  var prog=document.getElementById('cl-upload-progress');
+  var nameEl=document.getElementById('cl-upload-name');
+  var pctEl=document.getElementById('cl-upload-pct');
+  var bar=document.getElementById('cl-upload-bar');
+  if(prog){prog.style.display='block';}
+  if(nameEl) nameEl.textContent=file.name;
+  if(pctEl) pctEl.textContent='0%';
+  if(bar) bar.style.width='0%';
+
+  // Read file as base64 and store in Firebase
+  // For large files we store as base64 chunks in Firebase Storage path
+  var reader=new FileReader();
+  reader.onprogress=function(e){
+    if(e.lengthComputable){
+      var pct=Math.round(e.loaded/e.total*50); // reading = first 50%
+      if(pctEl) pctEl.textContent=pct+'%';
+      if(bar) bar.style.width=pct+'%';
+    }
+  };
+  reader.onload=function(e){
+    var dataUrl=e.target.result;
+    var fileExt=file.name.split('.').pop().toLowerCase();
+    var fileKey='f_'+Date.now();
+    var meta={
+      name:file.name,
+      type:file.type||'application/octet-stream',
+      size:file.size,
+      ext:fileExt,
+      ts:Date.now(),
+      dataUrl:dataUrl  // store as dataURL (works up to ~10MB practical limit in Firebase)
+    };
+
+    if(pctEl) pctEl.textContent='שומר...';
+    if(bar) bar.style.width='75%';
+
+    db.ref('checklists/'+CID+'/files/'+fileKey).set(meta)
+      .then(function(){
+        if(bar) bar.style.width='100%';
+        if(pctEl) pctEl.textContent='100%';
+        setTimeout(function(){
+          if(prog) prog.style.display='none';
+        },1000);
+        toast('קובץ נשמר: '+file.name);
+        clRenderFiles();
+      })
+      .catch(function(err){
+        if(prog) prog.style.display='none';
+        toast('שגיאה: '+err.message);
+      });
+  };
+  reader.onerror=function(){
+    if(prog) prog.style.display='none';
+    toast('שגיאה בקריאת הקובץ');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clRenderFiles(){
+  if(!CID)return;
+  db.ref("checklists/"+CID+"/files").once("value").then(function(snap){
+    var v=snap.val()||{};
+    var files=Object.entries(v).sort(function(a,b){return (b[1].ts||0)-(a[1].ts||0);});
+    var lbl=document.getElementById("files-count-lbl");
+    if(lbl) lbl.textContent=files.length+" קבצים מצורפים";
+    var badge=document.getElementById("tab-fb");
+    if(badge) badge.style.display=files.length?"block":"none";
+    var cardBtn=document.getElementById("fab-"+CID);if(cardBtn)cardBtn.style.background=files.length?"rgba(59,130,246,.25)":"rgba(59,130,246,.1)";if(cardBtn&&files.length)cardBtn.textContent="📎"+files.length;
+    var el=document.getElementById("cl-files-list");
+    if(!el)return;
+    if(!files.length){
+      el.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--t3)'><div style='font-size:2rem;margin-bottom:8px'>📎</div><div style='font-size:.82rem;font-weight:600'>אין קבצים מצורפים עדיין</div><div style='font-size:.7rem;margin-top:4px'>לחץ כדי להוסיף</div></div>";
+      return;
+    }
+    el.innerHTML="";
+    files.forEach(function(entry){
+      var key=entry[0], f=entry[1];
+      var ico=clFileIcon(f.ext||"");
+      var sizeLbl=f.size?(f.size>1048576?(f.size/1048576).toFixed(1)+"MB":(f.size/1024).toFixed(0)+"KB"):"";
+      var date=f.ts?new Date(f.ts).toLocaleDateString("he-IL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
+      
+      var card=document.createElement("div");
+      card.className="clc";
+      card.style.cssText="padding:12px 14px;margin-bottom:8px;cursor:default";
+      
+      var row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:10px";
+      
+      var icoDiv=document.createElement("div");
+      icoDiv.style.cssText="width:42px;height:42px;border-radius:10px;background:"+clFileColor(f.ext||"")+";display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0";
+      icoDiv.textContent=ico;
+      
+      var info=document.createElement("div");
+      info.style.cssText="flex:1;min-width:0";
+      var nameDiv=document.createElement("div");
+      nameDiv.style.cssText="font-size:.86rem;font-weight:700;color:var(--t1,#0f172a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+      nameDiv.textContent=f.name||"קובץ";
+      var metaDiv=document.createElement("div");
+      metaDiv.style.cssText="font-size:.62rem;color:var(--t3);margin-top:2px";
+      metaDiv.textContent=sizeLbl+(sizeLbl&&date?" · ":"")+date;
+      info.appendChild(nameDiv);info.appendChild(metaDiv);
+      
+      var btns=document.createElement("div");
+      btns.style.cssText="display:flex;flex-direction:column;gap:4px";
+      
+      var dlBtn=document.createElement("button");
+      dlBtn.style.cssText="background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:5px 10px;font-size:.62rem;font-weight:700;cursor:pointer";
+      dlBtn.textContent="הורד";
+      dlBtn.onclick=(function(k){return function(){clDownloadFile(k);};})(key);
+      
+      var delBtn=document.createElement("button");
+      delBtn.style.cssText="background:rgba(239,68,68,.08);color:var(--fail);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:5px 10px;font-size:.62rem;font-weight:700;cursor:pointer";
+      delBtn.textContent="מחק";
+      delBtn.onclick=(function(k,n){return function(){clDeleteFile(k,n);};})(key,f.name||"קובץ");
+      
+      btns.appendChild(dlBtn);btns.appendChild(delBtn);
+      row.appendChild(icoDiv);row.appendChild(info);row.appendChild(btns);
+      card.appendChild(row);
+      el.appendChild(card);
+    });
+  }).catch(function(){});
+}
+
+function clFileIcon(ext){
+  var map={pdf:'📄',xlsx:'📊',xls:'📊',docx:'📝',doc:'📝',pptx:'📋',ppt:'📋',
+    jpg:'🖼',jpeg:'🖼',png:'🖼',gif:'🖼',mp4:'🎥',mp3:'🎵',zip:'🗜',rar:'🗜',txt:'📃'};
+  return map[ext]||'📁';
+}
+function clFileColor(ext){
+  if(['pdf'].includes(ext)) return 'rgba(239,68,68,.12)';
+  if(['xlsx','xls','csv'].includes(ext)) return 'rgba(16,185,129,.12)';
+  if(['docx','doc'].includes(ext)) return 'rgba(59,130,246,.12)';
+  if(['jpg','jpeg','png','gif','webp'].includes(ext)) return 'rgba(139,92,246,.12)';
+  return 'rgba(255,255,255,.08)';
+}
+
+function clDownloadFile(key){
+  db.ref('checklists/'+CID+'/files/'+key).once('value').then(function(snap){
+    var f=snap.val();
+    if(!f||!f.dataUrl){toast('הקובץ לא נמצא');return;}
+    var a=document.createElement('a');
+    a.href=f.dataUrl;
+    a.download=f.name||'file';
+    a.click();
+    toast('מוריד: '+f.name);
+  }).catch(function(){toast('שגיאה בהורדה');});
+}
+
+function clDeleteFile(key,name){
+  requireAuth(function(){
+    if(!confirm('למחוק את '+name+'?'))return;
+    db.ref('checklists/'+CID+'/files/'+key).remove()
+      .then(function(){toast('נמחק');clRenderFiles();})
+      .catch(function(){toast('שגיאה במחיקה');});
+  });
+}
+
+
+function clOpenFilesForCard(id){
+  openCl(id);
+  setTimeout(function(){switchTab("files");},400);
+}
+
+document.addEventListener('DOMContentLoaded',function(){mgrLoadLogFromFirebase();});
+
+
+
+function clOpenFilesForCard(clId){
+  if(!clId){toast("שגיאה: אין מזהה צקליסט");return;}
+  requireAuth(function(){
+    // Create a quick file picker modal directly
+    var bg=document.createElement("div");
+    bg.className="modal-bg";
+    var clTitle=(allCls[clId]&&allCls[clId].title)||"צקליסט";
+    
+    var box=document.createElement("div");
+    box.className="modal-box";
+    box.style.cssText="max-width:360px;padding:0;overflow:hidden";
+    
+    // Header
+    var hdr=document.createElement("div");
+    hdr.style.cssText="padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.08)";
+    hdr.innerHTML="<div style='font-size:.6rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px'>📎 קבצים מצורפים</div><div style='font-size:.9rem;font-weight:700;color:var(--t1,#fff);overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+clTitle+"</div>";
+    box.appendChild(hdr);
+    
+    // Buttons
+    var btns=document.createElement("div");
+    btns.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px";
+    
+    // File input (hidden)
+    var inp=document.createElement("input");
+    inp.type="file"; inp.multiple=true; inp.style.display="none";
+    inp.onchange=function(){if(inp.files&&inp.files.length){bg.remove();Array.from(inp.files).forEach(function(f){clUploadFileTo(clId,f);});}};
+    
+    var imgInp=document.createElement("input");
+    imgInp.type="file"; imgInp.accept="image/*"; imgInp.capture="environment"; imgInp.style.display="none";
+    imgInp.onchange=function(){if(imgInp.files&&imgInp.files.length){bg.remove();Array.from(imgInp.files).forEach(function(f){clUploadFileTo(clId,f);});}};
+    
+    box.appendChild(inp); box.appendChild(imgInp);
+    
+    // Any file button
+    var b1=document.createElement("button");
+    b1.style.cssText="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 12px;background:rgba(59,130,246,.1);border:2px dashed rgba(59,130,246,.4);border-radius:14px;cursor:pointer;font-family:inherit;width:100%";
+    b1.innerHTML="<span style='font-size:1.8rem'>📄</span><span style='font-size:.76rem;font-weight:700;color:#3b82f6'>כל קובץ</span><span style='font-size:.6rem;color:var(--t3)'>PDF, Excel, Word...</span>";
+    b1.onclick=function(){inp.click();};
+    
+    // Camera button
+    var b2=document.createElement("button");
+    b2.style.cssText="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 12px;background:rgba(16,185,129,.1);border:2px dashed rgba(16,185,129,.4);border-radius:14px;cursor:pointer;font-family:inherit;width:100%";
+    b2.innerHTML="<span style='font-size:1.8rem'>📷</span><span style='font-size:.76rem;font-weight:700;color:#10b981'>מצלמה</span><span style='font-size:.6rem;color:var(--t3)'>צלם מסמך</span>";
+    b2.onclick=function(){imgInp.click();};
+    
+    btns.appendChild(b1); btns.appendChild(b2);
+    box.appendChild(btns);
+    
+    // View all files link
+    var view=document.createElement("div");
+    view.style.cssText="text-align:center;padding:8px 16px 16px";
+    var viewBtn=document.createElement("button");
+    viewBtn.style.cssText="background:none;border:none;color:var(--gold);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit";
+    viewBtn.textContent="הצג כל הקבצים ›";
+    viewBtn.onclick=function(){bg.remove();openCl(clId);setTimeout(function(){switchTab("files");},600);};
+    view.appendChild(viewBtn);
+    
+    var cancel=document.createElement("div");
+    cancel.style.cssText="text-align:center;padding:4px 16px 14px";
+    var cancelBtn=document.createElement("button");
+    cancelBtn.style.cssText="background:none;border:none;color:var(--t3);font-size:.78rem;cursor:pointer;font-family:inherit";
+    cancelBtn.textContent="ביטול";
+    cancelBtn.onclick=function(){bg.remove();};
+    cancel.appendChild(cancelBtn);
+    
+    box.appendChild(view); box.appendChild(cancel);
+    bg.appendChild(box);
+    bg.onclick=function(e){if(e.target===bg)bg.remove();};
+    document.body.appendChild(bg);
+    setTimeout(function(){bg.classList.add("show");},10);
+  });
+}
+
+function clUploadFileTo(clId, file){
+  var MAX=50*1024*1024;
+  if(file.size>MAX){toast("קובץ גדול מדי (מקס 50MB)");return;}
+  toast("מעלה: "+file.name+"...");
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var fileKey="f_"+Date.now()+"_"+Math.random().toString(36).substr(2,5);
+    var ext=file.name.split(".").pop().toLowerCase();
+    var meta={name:file.name,type:file.type||"application/octet-stream",size:file.size,ext:ext,ts:Date.now(),dataUrl:e.target.result};
+    db.ref("checklists/"+clId+"/files/"+fileKey).set(meta)
+      .then(function(){
+        toast("✓ נשמר: "+file.name);
+        // Update badge on card
+        var cardBtn=document.getElementById("fab-"+clId);
+        if(cardBtn){
+          db.ref("checklists/"+clId+"/files").once("value").then(function(s){
+            var cnt=Object.keys(s.val()||{}).length;
+            cardBtn.textContent=cnt?"📎"+cnt:"📎";
+            cardBtn.style.background=cnt?"rgba(59,130,246,.25)":"rgba(59,130,246,.1)";
+          }).catch(function(){});
+        }
+      })
+      .catch(function(err){toast("שגיאה: "+err.message);});
+  };
+  reader.onerror=function(){toast("שגיאה בקריאת הקובץ");};
+  reader.readAsDataURL(file);
+}
+</script>
+
 </body>
-</html>
+</html
+>
