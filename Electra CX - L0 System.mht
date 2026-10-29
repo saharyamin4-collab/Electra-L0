@@ -255,14 +255,14 @@ button.chip:hover{border-color:var(--ink-3)}
 <script>
 /* ===== שכבת שמירה בשרת (Firebase) =====
    אם האתר רץ בתוך claude.ai נשארת השכבה המקורית. בכל מקום אחר: Firebase.
-   נתיב בשרת: shifts/  (נפרד לגמרי מהצ'קליסטים של Electra CX) */
+   נתיב בשרת: checklists/_shifts/  (נתיב שכבר פתוח לכתיבה באתר הצ'קליסטים, האתר הראשי מתעלם ממנו כי אין בו meta) */
 (function(){
   if(window.claude&&typeof window.claude.use==='function')return;
   var CFG={apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw",authDomain:"electra-10.firebaseapp.com",
     databaseURL:"https://electra-10-default-rtdb.firebaseio.com",projectId:"electra-10",
     storageBucket:"electra-10.firebasestorage.app",messagingSenderId:"751223433308",
     appId:"1:751223433308:web:c07da01b36d20e7b3cde99"};
-  var ROOT="shifts/",fdb=null,identP=null,identV=null;
+  var ROOT="checklists/_shifts/",fdb=null,identP=null,identV=null;
   function getDb(){
     if(!window.firebase)throw new Error("firebase sdk missing ("+location.protocol+" "+(navigator.onLine?"online":"offline")+")");
     if(!fdb){firebase.initializeApp(CFG);fdb=firebase.database();}
@@ -645,7 +645,7 @@ const draftKey=()=>S.mode==='live'?'cx_draft_'+S.uid:'cx_me';
 function prefsData(){const p=S.me;return{name:p.name.trim(),order:[],days:clone(p.days),note:p.note.trim(),period:S.settings.start,updatedAt:Date.now(),complete:complete(p)}}
 function scheduleSave(){S.ver++;clearTimeout(saveT);LS.set(draftKey(),prefsData());saveT=setTimeout(doSave,900)}
 function saveErrText(e){const c=String((e&&e.code)||'');
-  if(/permission/i.test(c))return'השרת דחה את הפעולה (PERMISSION_DENIED). ב-Firebase Console, תחת Realtime Database ואז Rules, צריך לאפשר קריאה וכתיבה לנתיב shifts.';
+  if(/permission/i.test(c))return'השרת דחה את הפעולה (PERMISSION_DENIED). ב-Firebase Console, תחת Realtime Database ואז Rules, צריך לוודא שהנתיב checklists פתוח לקריאה וכתיבה, כולל תתי-נתיבים.';
   if(c==='timeout')return'אין תקשורת עם השרת. בדוק חיבור לאינטרנט. הבחירות שמורות במכשיר.';
   return'השמירה נכשלה'+(c?' ('+c+')':(e&&e.message?' ('+e.message+')':''))+'. הבחירות שמורות במכשיר.'}
 async function runDiag(){
