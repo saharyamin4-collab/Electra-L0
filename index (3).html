@@ -243,6 +243,15 @@ button.chip:hover{border-color:var(--ink-3)}
 .ph-m{--ph:var(--ph-m);--soft:var(--ph-m-soft)}
 .ph-a{--ph:var(--ph-a);--soft:var(--ph-a-soft)}
 .ph-e{--ph:var(--ph-e);--soft:var(--ph-e-soft)}
+.rt{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:6px;margin-inline-start:2px;color:#fff;background:var(--mid)}
+.rt.r-i{background:#2F6FB5}.rt.r-l{background:#C8741A}.rt.r-n{background:#6B4FC0}
+.chip.me .rt{box-shadow:0 0 0 1px rgba(255,255,255,.55)}
+.rolepick{display:flex;gap:8px}
+.rolepick button{flex:1;padding:12px 8px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:600;font-size:15px}
+.rolepick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rcfg{grid-column:1/-1;display:flex;gap:14px;flex-wrap:wrap}
+.rcfg .rc{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2)}
+.miss{font-size:12.5px;color:var(--danger);font-weight:600;margin-top:5px}
 </style>
 </head>
 <body>
@@ -255,14 +264,14 @@ button.chip:hover{border-color:var(--ink-3)}
 <script>
 /* ===== שכבת שמירה בשרת (Firebase) =====
    אם האתר רץ בתוך claude.ai נשארת השכבה המקורית. בכל מקום אחר: Firebase.
-   נתיב בשרת: shifts/  (נפרד לגמרי מהצ'קליסטים של Electra CX) */
+   נתיב בשרת: checklists/_shifts/  (נתיב שכבר פתוח לכתיבה באתר הצ'קליסטים, האתר הראשי מתעלם ממנו כי אין בו meta) */
 (function(){
   if(window.claude&&typeof window.claude.use==='function')return;
   var CFG={apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw",authDomain:"electra-10.firebaseapp.com",
     databaseURL:"https://electra-10-default-rtdb.firebaseio.com",projectId:"electra-10",
     storageBucket:"electra-10.firebasestorage.app",messagingSenderId:"751223433308",
     appId:"1:751223433308:web:c07da01b36d20e7b3cde99"};
-  var ROOT="shifts/",fdb=null,identP=null,identV=null;
+  var ROOT="checklists/_shifts/",fdb=null,identP=null,identV=null;
   function getDb(){
     if(!window.firebase)throw new Error("firebase sdk missing ("+location.protocol+" "+(navigator.onLine?"online":"offline")+")");
     if(!fdb){firebase.initializeApp(CFG);fdb=firebase.database();}
@@ -358,6 +367,13 @@ const SHC={morning:'ph-m',afternoon:'ph-a',evening:'ph-e'};
 const DAYN=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 const DAYS=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 const RANKW=['עדיפות 1','עדיפות 2','עדיפות 3'];
+const ROLES=['insp','load','night'];
+const ROLEFULL={insp:'בודק CX',load:'עומסים',night:'בדיקות ומצברים'};
+const ROLESHORT={insp:'בודק CX',load:'עומסים',night:'מצברים'};
+const ROLEC={insp:'r-i',load:'r-l',night:'r-n'};
+const ROLEORD={insp:0,load:1,night:2};
+const capsOf=p=>p&&Array.isArray(p.roles)&&p.roles.length?p.roles:['insp','load'];
+const canDo=(p,r)=>r==='load'?capsOf(p).includes('load'):capsOf(p).includes('insp');
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -367,10 +383,11 @@ const dayDiff=(a,b)=>Math.round((b-a)/864e5);
 const clone=o=>JSON.parse(JSON.stringify(o));
 function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return Math.abs(h)}
 function nextSunday(){const t=new Date();t.setHours(0,0,0,0);t.setDate(t.getDate()+((7-t.getDay())%7||7));return ymd(t)}
-function defaults(){return{start:nextSunday(),days:[0,1,2,3,4,5],cap:{morning:3,afternoon:2,evening:2},hours:{morning:['07:00','15:00'],afternoon:['15:00','23:00'],evening:['23:00','07:00']},fri:{cap:2,hours:['07:00','13:00']},deadline:''}}
-function normSettings(s){const d=defaults();if(!s)return d;return{start:s.start||d.start,days:Array.isArray(s.days)?s.days.slice():d.days,cap:{...d.cap,...(s.cap||{})},hours:{...d.hours,...(s.hours||{})},fri:{cap:(s.fri&&s.fri.cap!=null)?s.fri.cap:d.fri.cap,hours:(s.fri&&Array.isArray(s.fri.hours))?s.fri.hours.slice():d.fri.hours},deadline:s.deadline||''}}
-function emptyPrefs(){return{name:'',order:[],days:{},note:'',period:'',updatedAt:0}}
-function normPrefs(p){const e=emptyPrefs();if(!p)return e;const r={name:p.name||'',order:Array.isArray(p.order)?p.order.filter(x=>SH.includes(x)):[],days:p.days&&typeof p.days==='object'?clone(p.days):{},note:p.note||'',period:p.period||'',updatedAt:p.updatedAt||0,complete:p.complete!==false};
+function defaults(){return{start:nextSunday(),days:[0,1,2,3,4,5],need:{morning:{insp:2,load:1,night:0},afternoon:{insp:1,load:1,night:0},evening:{insp:0,load:0,night:1}},hours:{morning:['07:00','15:00'],afternoon:['15:00','23:00'],evening:['23:00','07:00']},fri:{need:{insp:1,load:1,night:0},hours:['07:00','13:00']},deadline:''}}
+function normNeed(n,d){const o={};ROLES.forEach(r=>{const v=n?Number(n[r]):NaN;o[r]=Number.isFinite(v)?Math.max(0,Math.min(30,Math.round(v))):d[r]});return o}
+function normSettings(s){const d=defaults();if(!s)return d;const need={};SH.forEach(sh=>{need[sh]=normNeed(s.need&&s.need[sh],d.need[sh])});return{start:s.start||d.start,days:Array.isArray(s.days)?s.days.slice():d.days,need,hours:{...d.hours,...(s.hours||{})},fri:{need:normNeed(s.fri&&s.fri.need,d.fri.need),hours:(s.fri&&Array.isArray(s.fri.hours))?s.fri.hours.slice():d.fri.hours},deadline:s.deadline||''}}
+function emptyPrefs(){return{name:'',roles:[],order:[],days:{},note:'',period:'',updatedAt:0}}
+function normPrefs(p){const e=emptyPrefs();if(!p)return e;const r={name:p.name||'',order:Array.isArray(p.order)?p.order.filter(x=>SH.includes(x)):[],days:p.days&&typeof p.days==='object'?clone(p.days):{},note:p.note||'',period:p.period||'',updatedAt:p.updatedAt||0,complete:p.complete!==false,roles:Array.isArray(p.roles)?p.roles.filter((x,i,a)=>(x==='insp'||x==='load')&&a.indexOf(x)===i):[]};
   if(r.order.length===3){for(let w=0;w<7;w++){if(w===FRI)continue;const d=r.days[w]||{};if(!d.off&&!(Array.isArray(d.order)&&d.order.length===3)){d.order=r.order.slice();r.days[w]=d}}r.order=[]}
   return r}
 function periodDays(s){const out=[],st=parseYmd(s.start);for(let i=0;i<7;i++){const d=new Date(st);d.setDate(st.getDate()+i);if(s.days.includes(d.getDay()))out.push({w:d.getDay(),date:d,key:ymd(d)})}return out}
@@ -378,14 +395,17 @@ function rangeLabel(s){const ds=periodDays(s);if(!ds.length)return'';return ds.l
 const hrs=(s,sh)=>s.hours[sh][0]+'–'+s.hours[sh][1];
 const FRI=5;
 const dayShifts=w=>w===FRI?['morning']:SH;
-const capOf=(s,w,sh)=>w===FRI?(sh==='morning'?(s.fri.cap||0):0):(s.cap[sh]||0);
+const NONEED={insp:0,load:0,night:0};
+const needOf=(s,w,sh)=>w===FRI?(sh==='morning'?s.fri.need:NONEED):s.need[sh];
+const capOf=(s,w,sh)=>{const n=needOf(s,w,sh);return n.insp+n.load+n.night};
+function slotRoles(s,w,sh){const n=needOf(s,w,sh),o=[];ROLES.forEach(r=>{for(let k=0;k<n[r];k++)o.push(r)});return o}
 const hrsOf=(s,w,sh)=>w===FRI&&sh==='morning'?s.fri.hours[0]+'–'+s.fri.hours[1]:hrs(s,sh);
 const isOff=(p,w)=>!!(p.days&&p.days[w]&&p.days[w].off);
 function dayOrder(p,w){const d=p.days&&p.days[w];const need=w===FRI?1:3;if(d&&Array.isArray(d.order)&&d.order.length===need)return d.order;if(w!==FRI&&p.order&&p.order.length===3)return p.order;return null}
 function dayDone(p,w){return isOff(p,w)||!!dayOrder(p,w)}
 function missingDays(p){return periodDays(S.settings).filter(d=>!dayDone(p,d.w))}
 function rankOf(p,w,sh){const o=dayOrder(p,w);return o?o.indexOf(sh):1}
-function complete(p){return !!p.name.trim()&&missingDays(p).length===0}
+function complete(p){return !!p.name.trim()&&(p.roles||[]).length>0&&missingDays(p).length===0}
 
 /* ---------- scheduling engine: per-day optimal assignment (Hungarian) with weekly fairness ---------- */
 function hungarian(a){const n=a.length,m=a[0].length,INF=1e15;const u=Array(n+1).fill(0),v=Array(m+1).fill(0),p=Array(m+1).fill(0),way=Array(m+1).fill(0);
@@ -397,34 +417,46 @@ function hungarian(a){const n=a.length,m=a[0].length,INF=1e15;const u=Array(n+1)
     do{const j1=way[j0];p[j0]=p[j1];j0=j1}while(j0)}
   const ans=Array(n);for(let j=1;j<=m;j++)if(p[j])ans[p[j]-1]=j-1;return ans}
 
+function rolesFor(s,w,sh,ids,team){
+  const slots=slotRoles(s,w,sh),out={};if(!ids.length)return out;
+  const m=Math.max(ids.length,slots.length);
+  const cost=ids.map(id=>Array.from({length:m},(_,j)=>{const r=slots[j];if(!r)return .5;return canDo(team[id],r)?0:5}));
+  const asg=hungarian(cost);
+  ids.forEach((id,i)=>{const r=slots[asg[i]];out[id]=(r&&canDo(team[id],r))?r:(capsOf(team[id]).includes('insp')?'insp':'load')});
+  return out}
+function recomputeRoles(sc,s,team){s=s||S.settings;team=team||teamAll();sc.roles={};
+  Object.keys(sc.days).forEach(k=>{const w=parseYmd(k).getDay();const r={};dayShifts(w).forEach(sh=>Object.assign(r,rolesFor(s,w,sh,sc.days[k][sh]||[],team)));sc.roles[k]=r})}
+function missingRoles(s,w,sh,roles,ids){const need=needOf(s,w,sh),got={insp:0,load:0,night:0};ids.forEach(id=>{const r=roles&&roles[id];if(r&&got[r]!=null)got[r]++});const out={};ROLES.forEach(r=>{const m=need[r]-got[r];if(m>0)out[r]=m});return out}
 function buildSchedule(s,team){
   const ids=Object.keys(team).filter(id=>team[id]&&team[id].name);
   const debt={},offc={},last={};ids.forEach(i=>{debt[i]=0;offc[i]=0});
-  const res={period:s.start,days:{},ranks:{},people:{}};
+  const res={period:s.start,days:{},ranks:{},roles:{},people:{},hrs:{hours:clone(s.hours),fri:s.fri.hours.slice()}};
   ids.forEach(i=>res.people[i]=team[i].name.trim());
   for(const day of periodDays(s)){
     const avail=ids.filter(i=>!isOff(team[i],day.w));
-    const slots=[];dayShifts(day.w).forEach(sh=>{for(let k=0;k<capOf(s,day.w,sh);k++)slots.push(sh)});
+    const slots=[];dayShifts(day.w).forEach(sh=>slotRoles(s,day.w,sh).forEach(role=>slots.push({sh,role})));
     const cols=[...slots,...Array(Math.max(0,avail.length-slots.length)).fill(null)];
     const out={morning:[],afternoon:[],evening:[]},rk={};
     if(avail.length){
-      const cost=avail.map(id=>cols.map(sh=>{
-        const jit=(hash(id+day.key+(sh||'x'))%97)/1000;
-        if(sh===null)return 10+4*offc[id]+jit;
-        const r=rankOf(team[id],day.w,sh);
+      const cost=avail.map(id=>cols.map(sl=>{
+        const jit=(hash(id+day.key+(sl?sl.sh+sl.role:'x'))%97)/1000;
+        if(sl===null)return 10+4*offc[id]+jit;
+        const r=rankOf(team[id],day.w,sl.sh);
         let c=[0,3,8][r]*(1+.5*debt[id]);
-        const l=last[id];if(l&&l.shift==='evening'&&sh==='morning'&&dayDiff(l.date,day.date)===1)c+=40;
+        const l=last[id];if(l&&l.shift==='evening'&&sl.sh==='morning'&&dayDiff(l.date,day.date)===1)c+=40;
+        if(!canDo(team[id],sl.role))c+=1e5;
         return c+jit}));
       const asg=hungarian(cost);
-      avail.forEach((id,i)=>{const sh=cols[asg[i]];
-        if(sh){out[sh].push(id);const r=rankOf(team[id],day.w,sh);rk[id]=r;debt[id]+=[0,1,2.5][r];last[id]={shift:sh,date:day.date}}
+      avail.forEach((id,i)=>{const sl=cols[asg[i]];
+        if(sl&&canDo(team[id],sl.role)){out[sl.sh].push(id);const r=rankOf(team[id],day.w,sl.sh);rk[id]=r;debt[id]+=[0,1,2.5][r];last[id]={shift:sl.sh,date:day.date}}
         else offc[id]++});
     }
     res.days[day.key]=out;res.ranks[day.key]=rk;
   }
+  recomputeRoles(res,s,team);
   return res}
 function schedStats(sc){const c=[0,0,0];Object.values(sc.ranks||{}).forEach(rk=>Object.values(rk).forEach(r=>c[r]++));const t=c[0]+c[1]+c[2];return{c,t}}
-function shortages(s,sc){let n=0;periodDays(s).forEach(d=>{const o=sc.days[d.key];if(!o)return;dayShifts(d.w).forEach(sh=>{n+=Math.max(0,capOf(s,d.w,sh)-(o[sh]||[]).length)})});return n}
+function shortages(s,sc){let n=0;periodDays(s).forEach(d=>{const o=sc.days[d.key];if(!o)return;const rl=(sc.roles||{})[d.key];dayShifts(d.w).forEach(sh=>{const ids=o[sh]||[];if(rl){n+=Object.values(missingRoles(s,d.w,sh,rl,ids)).reduce((x,y)=>x+y,0)}else n+=Math.max(0,capOf(s,d.w,sh)-ids.length)})});return n}
 
 /* ---------- state ---------- */
 const S={mode:'loading',db:null,user:null,uid:null,isAdmin:false,settings:defaults(),setDraft:null,me:emptyPrefs(),dirty:false,savedAt:0,
@@ -508,14 +540,14 @@ function renderBar(){
   const b=document.getElementById('bar');
   if(S.mode==='loading'||S.tab!=='prefs'||summaryMode()){b.innerHTML='';return}
   const p=S.me,hasName=!!p.name.trim(),miss=missingDays(p);
-  const left=miss.length?'נשאר למלא: '+miss.map(d=>DAYN[d.w]).join(', '):'כל הימים מולאו';
+  let left=miss.length?'נשאר למלא: '+miss.map(d=>DAYN[d.w]).join(', '):'כל הימים מולאו';const noRole=!(p.roles||[]).length;if(noRole)left+='. בחר גם תפקיד';
   let st;
   if(!hasName)st='<span class="st dirty">כתוב את שמך כדי שהבחירות יגיעו למנהל</span>';
   else if(S.dirty||S.saving)st='<span class="st">שומר…</span>';
   else if(S.saveErr)st='<span class="st dirty">השמירה לשרת נכשלה. הבחירות שמורות במכשיר</span>';
   else if(S.savedAt)st=`<span class="st">✓ נשמר אוטומטית ${new Date(S.savedAt).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}. ${left}</span>`;
   else st=`<span class="st">${left}</span>`;
-  b.innerHTML=`<div class="savebar"><div class="savebar-in">${st}<button class="btn" data-action="savePrefs" ${hasName?'':'disabled'}>${miss.length?'שמור עכשיו':'שמור וסיים'}</button></div></div>`;
+  b.innerHTML=`<div class="savebar"><div class="savebar-in">${st}<button class="btn" data-action="savePrefs" ${hasName?'':'disabled'}>${(miss.length||noRole)?'שמור עכשיו':'שמור וסיים'}</button></div></div>`;
 }
 
 function tilesHTML(order,w,small){
@@ -534,6 +566,8 @@ function viewPrefs(){
   if(p.updatedAt&&p.period&&p.period!==s.start)h+=`<div class="banner warn"><span>⚡</span><span><b>נפתח שבוע חדש.</b> ההעדפות שלך הן מהשבוע הקודם. בדוק אותן ושמור שוב.</span></div>`;
   if(summaryMode())return h+summaryHTML(p,ds);
   h+=`<section class="card"><label class="lbl" for="nm">השם שלך</label><input class="in" id="nm" data-bind="name" value="${esc(p.name)}" placeholder="שם מלא" autocomplete="name"></section>`;
+  const rs=p.roles||[],rp=(a,b)=>`aria-pressed="${a}" data-action="role" data-role="${b}"`;
+  h+=`<section class="card"><label class="lbl">התפקיד שלך</label><div class="rolepick"><button ${rp(rs.length===1&&rs[0]==='insp','insp')}>בודק CX</button><button ${rp(rs.length===1&&rs[0]==='load','load')}>עומסים</button><button ${rp(rs.length===2,'both')}>שניהם</button></div><p class="hint" style="margin:10px 0 0">בבוקר ובערב כל משמרת כוללת בודקי CX ועומסים. בלילה עובד אחד אחראי על בדיקות ומצברים, ולכן הוא צריך להיות בודק CX.</p></section>`;
   const doneN=ds.filter(d=>dayDone(p,d.w)).length;
   h+=`<section class="card"><h2>העדפות לשבוע</h2><p class="hint">לכל יום, לחץ על המשמרות לפי הסדר שאתה מעדיף. הראשונה שתבחר היא עדיפות 1, ואחרי שתיים השלישית נקבעת לבד.</p>
     <div class="prog" aria-hidden="true">${ds.map(d=>`<span class="${dayDone(p,d.w)?'done':''}"></span>`).join('')}</div><div class="progl num">הושלמו ${doneN} מתוך ${ds.length} ימים</div>`;
@@ -557,7 +591,7 @@ function viewPrefs(){
 function summaryHTML(p,ds){const when=new Date(S.savedAt).toLocaleString('he-IL',{weekday:'long',day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
   const pub=S.schedule&&S.schedule.period===S.settings.start&&S.schedule.people&&S.schedule.people[myId()];
   return`<section class="card saved"><div class="savedhead"><span class="bigok" aria-hidden="true">✓</span><div><h2>ההעדפות של ${esc(p.name)} שמורות</h2><p class="hint" style="margin:2px 0 0">נשמר ${esc(when)}. אפשר לסגור ולחזור בכל זמן, הבחירות יחכו לך כאן.</p></div></div>
-    <div class="sumlist">${ds.map(d=>{const off=isOff(p,d.w);const o=dayOrder(p,d.w)||[];
+    <p class="hint" style="margin:0 0 10px">תפקיד: <b>${(p.roles||[]).length===2?'בודק CX ועומסים':esc(ROLEFULL[(p.roles||[])[0]]||'לא נבחר')}</b></p><div class="sumlist">${ds.map(d=>{const off=isOff(p,d.w);const o=dayOrder(p,d.w)||[];
       return`<div class="sumrow"><div class="dname">${DAYN[d.w]} <small class="num">${dm(d.date)}</small></div>${off?'<span class="offtag">לא זמין</span>':(d.w===FRI?`<div class="pills"><span class="pill ph-m"><i>✓</i>בוקר בלבד</span></div>`:pillsHTML(o,false))}</div>`}).join('')}</div>
     ${p.note?`<div class="sumnote"><b>הערה למנהל:</b> ${esc(p.note)}</div>`:''}
     <div class="btns" style="margin-top:16px"><button class="btn" data-action="editPrefs">עריכת הבחירות</button>${pub?'<button class="btn ghost" data-action="tab" data-tab="sched">למשמרות שלי</button>':''}<button class="btn ghost" data-action="copyCode">העתק קוד למנהל</button></div></section>`}
@@ -565,18 +599,20 @@ function summaryHTML(p,ds){const when=new Date(S.savedAt).toLocaleString('he-IL'
 
 function fcHTML(p){return`<div class="fc">${periodDays(S.settings).map(d=>{const off=isOff(p,d.w);const o=dayOrder(p,d.w);const sh=!off&&o?o[0]:null;return`<span title="${DAYN[d.w]}: ${off?'לא זמין':sh?SHL[sh]:'לא מולא'}"><b class="${sh?SHC[sh]:''}"></b>${DAYS[d.w]}</span>`}).join('')}</div>`}
 
+const sortByRole=(ids,rl)=>rl?ids.slice().sort((a,b)=>(ROLEORD[rl[a]]??3)-(ROLEORD[rl[b]]??3)):ids;
+const myRole=(sc,k,id)=>((sc.roles||{})[k]||{})[id];
 function chipHTML(id,name,r,opts={}){const me=id===myId();const tag=opts.btn?'button':'span';
-  return`<${tag} class="chip ${me?'me':''} ${opts.sel?'sel':''}" ${opts.btn?`data-action="chip" data-key="${opts.key}" data-id="${esc(id)}"`:''}>${r!=null?`<span class="r r${r} num" title="${RANKW[r]}">${r+1}</span>`:''}${esc(name)}</${tag}>`}
+  return`<${tag} class="chip ${me?'me':''} ${opts.sel?'sel':''}" ${opts.btn?`data-action="chip" data-key="${opts.key}" data-id="${esc(id)}"`:''}>${r!=null?`<span class="r r${r} num" title="${RANKW[r]}">${r+1}</span>`:''}${esc(name)}${opts.role?`<span class="rt ${ROLEC[opts.role]}">${ROLESHORT[opts.role]}</span>`:''}</${tag}>`}
 
 function gridHTML(sc,editable){
   const s=S.settings;const team=teamAll();
   let ds=periodDays(s);
   if(sc.period!==s.start){const keys=Object.keys(sc.days||{}).sort();ds=keys.map(k=>{const d=parseYmd(k);return{w:d.getDay(),date:d,key:k}})}
-  return`<div class="grid">${ds.map(d=>{const o=sc.days[d.key]||{morning:[],afternoon:[],evening:[]};const rk=(sc.ranks||{})[d.key]||{};
+  return`<div class="grid">${ds.map(d=>{const o=sc.days[d.key]||{morning:[],afternoon:[],evening:[]};const rk=(sc.ranks||{})[d.key]||{};const rl=(sc.roles||{})[d.key]||null;
     let h=`<div class="day"><div class="day-h"><b>${DAYN[d.w]}</b><span class="num">${dm(d.date)}</span></div>`;
-    dayShifts(d.w).forEach(sh=>{const ids=o[sh]||[];const cap=capOf(s,d.w,sh);
+    dayShifts(d.w).forEach(sh=>{const ids=sortByRole(o[sh]||[],rl);const cap=capOf(s,d.w,sh);const miss=rl?missingRoles(s,d.w,sh,rl,ids):{};
       h+=`<div class="shift ${SHC[sh]}"><div class="shift-h"><b>${SHL[sh]}</b><span class="cap num ${ids.length<cap?'short':''}">${ids.length} מתוך ${cap}</span></div><div class="chips">
-        ${ids.map(id=>chipHTML(id,sc.people[id]||'?',rk[id],{btn:editable,key:d.key,sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')||'<span class="empty-slot">אין שיבוץ</span>'}</div></div>`});
+        ${ids.map(id=>chipHTML(id,sc.people[id]||'?',rk[id],{btn:editable,key:d.key,role:rl&&rl[id],sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')||'<span class="empty-slot">אין שיבוץ</span>'}</div>${Object.keys(miss).length?`<div class="miss">חסר: ${Object.keys(miss).map(r=>ROLEFULL[r]+(miss[r]>1?' ×'+miss[r]:'')).join(', ')}</div>`:''}</div>`});
     if(editable){const assigned=new Set(SH.flatMap(sh=>o[sh]||[]));const ids=Object.keys(sc.people);
       const bench=ids.filter(id=>!assigned.has(id)&&team[id]&&!isOff(team[id],d.w));const off=ids.filter(id=>team[id]&&isOff(team[id],d.w));
       if(bench.length)h+=`<div class="bench">זמינים ולא משובצים<div class="chips">${bench.map(id=>chipHTML(id,sc.people[id],null,{btn:true,key:d.key,sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')}</div></div>`;
@@ -599,11 +635,14 @@ function viewSched(){
   if(sc.people&&sc.people[me]){
     const keys=Object.keys(sc.days).sort();
     h+=`<section class="card"><h2>המשמרות שלך</h2><p class="hint">${sc.publishedAt?'פורסם '+new Date(sc.publishedAt).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric'}):''}</p><div class="mine">${keys.map(k=>{const d=parseYmd(k);const sh=SH.find(x=>(sc.days[k][x]||[]).includes(me));
-      return`<div class="mineday ${sh?SHC[sh]:''}"><div class="d num">${DAYN[d.getDay()]} ${dm(d)}</div><div class="s">${sh?SHL[sh]:'חופש'}</div>${sh?`<div class="h num">${hrsOf(s,d.getDay(),sh)}</div>`:'<div class="h">&nbsp;</div>'}</div>`}).join('')}</div></section>`}
-  h+=`<section class="card"><h2>כל הצוות</h2>${statsHTML(sc)}</section>`;
+      return`<div class="mineday ${sh?SHC[sh]:''}"><div class="d num">${DAYN[d.getDay()]} ${dm(d)}</div><div class="s">${sh?SHL[sh]+(myRole(sc,k,me)?' · '+ROLEFULL[myRole(sc,k,me)]:''):'חופש'}</div>${sh?`<div class="h num">${hrsOf(s,d.getDay(),sh)}</div>`:'<div class="h">&nbsp;</div>'}</div>`}).join('')}</div></section>`}
+  h+=`<section class="card"><h2>כל הצוות</h2>${statsHTML(sc)}<div class="btns" style="margin-top:14px"><button class="btn" data-action="dlImg" data-src="pub">הורד כתמונה</button>${typeof navigator.canShare==='function'?'<button class="btn ghost" data-action="shareImg" data-src="pub">שתף</button>':''}</div></section>`;
   h+=gridHTML(sc,false);
   return h}
 
+function rcfgHTML(n,sh){const roles=sh==='evening'?['night']:['insp','load'];const lab={insp:'בודקי CX',load:'עומסים',night:'עובד לילה (בדיקות ומצברים)'};const act=sh?'cap':'capFri',shA=sh?`data-sh="${sh}"`:'';
+  return`<div class="rcfg">${roles.map(r=>`<div class="rc"><span>${lab[r]}</span><div class="stepper" aria-label="${lab[r]}"><button data-action="${act}" ${shA} data-role="${r}" data-d="-1" aria-label="פחות">−</button><span class="num">${n[r]}</span><button data-action="${act}" ${shA} data-role="${r}" data-d="1" aria-label="יותר">+</button></div></div>`).join('')}</div>`}
+const roleTag=p=>(p.roles&&p.roles.length)?`<span class="rt ${p.roles.length===2?'r-n':ROLEC[p.roles[0]]}">${p.roles.length===2?'בודק CX ועומסים':ROLEFULL[p.roles[0]]}</span>`:'<span class="tag">ללא תפקיד</span>';
 function viewAdmin(){
   if(!S.unlocked)return`<section class="card lock"><div class="ico" aria-hidden="true">🔒</div><h2>אזור מנהל</h2><p class="hint" style="margin:4px auto 10px">הזן קוד מנהל כדי לשנות הגדרות, לשבץ ולפרסם סידור.</p>
     <input class="in pin num" id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="קוד מנהל" data-enter="unlock">
@@ -612,40 +651,107 @@ function viewAdmin(){
   let h=`<div class="lockbar"><span>מחובר כמנהל</span><button class="link" data-action="lock">נעילה</button></div>`;
   if(S.mode==='local')h+=`<div class="banner"><span>📄</span><span><b>מצב קובץ.</b> הדבק כאן את הקודים שהצוות שולח לך. הכל נשמר במכשיר הזה. לאיסוף אוטומטי בלי קודים, פתח את הסידור מקישור claude.ai ושתף אותו עם הצוות.</span></div>`;
   // settings
-  h+=`<section class="card"><h2>השבוע והמשמרות</h2><p class="hint">קבע את ימי העבודה, את שעות המשמרות ואת מספר הבודקים הנדרש בכל משמרת. ביום שישי יש משמרת בוקר בלבד.</p>
+  h+=`<section class="card"><h2>השבוע והמשמרות</h2><p class="hint">קבע את ימי העבודה, את שעות המשמרות ואת מספר בודקי CX והעומסים הנדרש בכל משמרת. בלילה מוגדר עובד אחד לבדיקות ומצברים. ביום שישי יש משמרת בוקר בלבד.</p>
    <div class="row2"><div><label class="lbl" for="st">תחילת השבוע</label><input class="in num" type="date" id="st" data-bind="start" value="${esc(s.start)}"></div>
    <div><label class="lbl" for="dl">הגשת העדפות עד</label><input class="in num" type="date" id="dl" data-bind="deadline" value="${esc(s.deadline)}"></div></div>
    <label class="lbl" style="margin-top:14px">ימי עבודה</label><div class="daypick">${[0,1,2,3,4,5,6].map(w=>`<button data-action="toggleDay" data-day="${w}" aria-pressed="${s.days.includes(w)}" aria-label="${DAYN[w]}">${DAYS[w]}</button>`).join('')}</div>
    <div style="margin-top:14px">${SH.map(sh=>`<div class="shcfg ${SHC[sh]}"><span class="nm">${SHL[sh]}</span>
       <div class="times"><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="0" value="${esc(s.hours[sh][0])}" aria-label="תחילת ${SHL[sh]}"><span>–</span><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="1" value="${esc(s.hours[sh][1])}" aria-label="סיום ${SHL[sh]}"></div>
-      <div class="stepper" aria-label="בודקים במשמרת ${SHL[sh]}"><button data-action="cap" data-sh="${sh}" data-d="-1" aria-label="פחות">−</button><span class="num">${s.cap[sh]}</span><button data-action="cap" data-sh="${sh}" data-d="1" aria-label="יותר">+</button></div></div>`).join('')}
+      ${rcfgHTML(s.need[sh],sh)}</div>`).join('')}
       <div class="shcfg ph-m"><span class="nm">שישי בוקר</span><div class="times"><input class="in num" type="time" data-bind="frih" data-i="0" value="${esc(s.fri.hours[0])}" aria-label="תחילת שישי בוקר"><span>–</span><input class="in num" type="time" data-bind="frih" data-i="1" value="${esc(s.fri.hours[1])}" aria-label="סיום שישי בוקר"></div>
-      <div class="stepper" aria-label="בודקים בשישי בוקר"><button data-action="capFri" data-d="-1" aria-label="פחות">−</button><span class="num">${s.fri.cap}</span><button data-action="capFri" data-d="1" aria-label="יותר">+</button></div></div></div>
+      ${rcfgHTML(s.fri.need,null)}</div></div>
    <div class="btns" style="margin-top:14px"><button class="btn" data-action="saveSettings">שמור הגדרות</button></div></section>`;
   // team
   const sub=ids.length;
   h+=`<section class="card"><h2>העדפות הצוות</h2><p class="hint num">${sub?sub+' אנשי צוות הגישו העדפות. הריבוע מעל כל יום מראה את עדיפות 1.':'עוד אף אחד לא הגיש. שתף את הקישור עם הצוות.'}</p>${sub?`<div class="legend" style="margin-bottom:10px">${SH.map(sh=>`<span class="${SHC[sh]}"><i style="background:var(--ph)"></i>${SHL[sh]}</span>`).join('')}<span><i style="background:var(--line)"></i>לא זמין</span></div>`:''}<div class="team">
     ${ids.sort((a,b)=>team[a].name.localeCompare(team[b].name,'he')).map(id=>{const p=team[id];const offs=Object.keys(p.days||{}).filter(w=>p.days[w]&&p.days[w].off).map(w=>DAYS[w]);const cust=Object.keys(p.days||{}).filter(w=>p.days[w]&&Array.isArray(p.days[w].order)&&p.days[w].order.length===3&&!p.days[w].off).length;
-      return`<div class="trow"><div><div class="who">${esc(p.name)}${p.period&&p.period!==S.settings.start?'<span class="tag">משבוע קודם</span>':(missingDays(p).length?`<span class="tag">חסרים ${missingDays(p).length} ימים</span>`:'')}</div><div class="meta">${offs.length?'לא זמין: '+offs.join(' '):'זמין כל השבוע'}</div></div>
+      return`<div class="trow"><div><div class="who">${esc(p.name)} ${roleTag(p)}${p.period&&p.period!==S.settings.start?'<span class="tag">משבוע קודם</span>':(missingDays(p).length?`<span class="tag">חסרים ${missingDays(p).length} ימים</span>`:'')}</div><div class="meta">${offs.length?'לא זמין: '+offs.join(' '):'זמין כל השבוע'}</div></div>
       <div style="display:flex;gap:6px;align-items:center">${fcHTML(p)}${S.mode==='local'||id.startsWith('x-')||window.__cxShim?`<button class="btn-s" data-action="removePerson" data-id="${esc(id)}" aria-label="הסר את ${esc(p.name)}">הסר</button>`:''}</div>
       ${p.note?`<div class="note">${esc(p.note)}</div>`:''}</div>`}).join('')}</div>
     <details style="margin-top:12px"><summary class="link" style="display:inline;cursor:pointer">הוספה מקוד שנשלח אליך</summary>
       <textarea class="in" id="codes" style="margin-top:10px;direction:ltr" placeholder="CXE:…"></textarea><div class="btns" style="margin-top:8px"><button class="btn ghost" data-action="importCodes">הוסף לצוות</button></div></details>
     <div style="margin-top:12px"><button class="link" data-action="diag">בדיקת חיבור לשרת</button></div>${S.diagText?`<pre class="note" style="white-space:pre-wrap;direction:rtl;margin-top:8px;font-family:inherit">${esc(S.diagText)}</pre>`:''}</section>`;
   // scheduling
-  h+=`<section class="card"><h2>שיבוץ</h2><p class="hint">השיבוץ מחפש לכל יום את החלוקה שנותנת לכמה שיותר אנשים את עדיפות 1. מי שקיבל השבוע עדיפות נמוכה מקבל קדימות בימים הבאים, ואף אחד לא משובץ לבוקר אחרי משמרת לילה.</p>
-    <div class="btns"><button class="btn" data-action="runAuto" ${ids.length?'':'disabled'}>${S.draft?'שבץ מחדש':'שבץ אוטומטית'}</button>${S.draft?`<button class="btn ghost" data-action="publish">${S.mode==='live'?'פרסם לצוות':'שמור כסידור'}</button><button class="btn ghost" data-action="copySched">העתק כטקסט</button>`:''}</div>
+  h+=`<section class="card"><h2>שיבוץ</h2><p class="hint">השיבוץ מחפש לכל יום את החלוקה שנותנת לכמה שיותר אנשים את עדיפות 1. מי שקיבל השבוע עדיפות נמוכה מקבל קדימות בימים הבאים, ואף אחד לא משובץ לבוקר אחרי משמרת לילה. השיבוץ גם מקפיד שכל משמרת תכלול את התפקידים הנדרשים.</p>
+    <div class="btns"><button class="btn" data-action="runAuto" ${ids.length?'':'disabled'}>${S.draft?'שבץ מחדש':'שבץ אוטומטית'}</button>${S.draft?`<button class="btn ghost" data-action="publish">${S.mode==='live'?'פרסם לצוות':'שמור כסידור'}</button><button class="btn ghost" data-action="copySched">העתק כטקסט</button><button class="btn ghost" data-action="dlImg" data-src="draft">הורד כתמונה</button>`:''}</div>
     ${S.draft?`<div style="margin-top:18px">${statsHTML(S.draft)}</div><p class="hint" style="margin-top:12px">לחץ על שם כדי להעביר אותו למשמרת אחרת.</p>`:''}</section>`;
   if(S.draft)h+=gridHTML(S.draft,true);
   return h}
 
+/* ---------- schedule as image ---------- */
+const IMGFF='"IBM Plex Sans Hebrew","Heebo","Noto Sans Hebrew",system-ui,Arial,sans-serif';
+const IMGSH={morning:{c:'#C98A10',s:'#FBF1DC'},afternoon:{c:'#1B7FB0',s:'#E1F0F8'},evening:{c:'#5B4DC9',s:'#ECE9FA'}};
+const IMGRC={insp:'#2F6FB5',load:'#C8741A',night:'#6B4FC0'};
+function imgModel(sc){
+  const keys=Object.keys(sc.days||{}).sort();
+  const hrsFor=(w,sh)=>{const h=sc.hrs;if(h){return(w===FRI&&sh==='morning')?h.fri[0]+'–'+h.fri[1]:h.hours[sh][0]+'–'+h.hours[sh][1]}return hrsOf(S.settings,w,sh)};
+  const days=keys.map(k=>{const d=parseYmd(k),w=d.getDay(),rl=(sc.roles||{})[k]||null;
+    return{key:k,label:DAYN[w],date:dm(d),shifts:dayShifts(w).map(sh=>({sh,hours:hrsFor(w,sh),people:sortByRole(sc.days[k][sh]||[],rl).map(id=>({name:sc.people[id]||'?',role:rl&&rl[id]||null}))}))}});
+  const range=keys.length?(keys.length===1?dm(parseYmd(keys[0])):dm(parseYmd(keys[0]))+'–'+dm(parseYmd(keys[keys.length-1]))):'';
+  return{days,range}}
+function imgRR(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+async function schedCanvas(sc){
+  try{await Promise.race([Promise.all([document.fonts.load('600 26px "IBM Plex Sans Hebrew"'),document.fonts.load('400 20px "IBM Plex Sans Hebrew"')]),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+  const m=imgModel(sc),N=Math.max(1,m.days.length);
+  const PAD=40,LAB=230,COL=262,LH=50,CPAD=18,MINH=156,HEAD=190,DAYH=92,FOOT=130,GAP=10;
+  const W=PAD*2+LAB+N*COL;
+  const rows=SH.filter(sh=>m.days.some(d=>d.shifts.some(x=>x.sh===sh))).map(sh=>{const lines=Math.max(1,...m.days.map(d=>{const x=d.shifts.find(y=>y.sh===sh);return x?x.people.length:0}));return{sh,h:Math.max(MINH,lines*LH+CPAD*2)}});
+  const H=HEAD+DAYH+rows.reduce((a,r)=>a+r.h+GAP,0)+FOOT;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  const T=(t,x,y,o)=>{o=o||{};ctx.font=(o.w||400)+' '+(o.s||24)+'px '+IMGFF;ctx.fillStyle=o.c||'#1B1A17';ctx.direction=o.dir||'rtl';ctx.textAlign=o.a||'right';ctx.textBaseline='middle';ctx.fillText(t,x,y)};
+  const MW=(t,sz,w)=>{ctx.font=w+' '+sz+'px '+IMGFF;return ctx.measureText(t).width};
+  const FIT=(t,maxw,sz,w)=>{let z=sz;while(MW(t,z,w)>maxw&&z>14)z--;return z};
+  ctx.fillStyle='#F5F2EC';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#14213D';ctx.fillRect(0,0,W,HEAD);
+  ctx.fillStyle='#E7A93A';ctx.fillRect(0,HEAD-8,W,8);
+  T('סידור משמרות',W-PAD,70,{s:62,w:700,c:'#FFFFFF'});
+  T('CXelectra · אתר בית שמש MDCIL4',W-PAD,138,{s:30,w:500,c:'#E7A93A'});
+  T('שבוע '+m.range,PAD,70,{s:44,w:700,c:'#FFFFFF',a:'left',dir:'ltr'});
+  const x0=W-PAD-LAB,dayX=i=>x0-(i+1)*COL;
+  let y=HEAD+22;
+  m.days.forEach((d,i)=>{const x=dayX(i)+6;imgRR(ctx,x,y,COL-12,DAYH-18,14);ctx.fillStyle='#FFFFFF';ctx.fill();ctx.strokeStyle='#DDD6C8';ctx.lineWidth=2;ctx.stroke();
+    T(d.label,x+(COL-12)/2,y+26,{s:32,w:700,a:'center'});T(d.date,x+(COL-12)/2,y+54,{s:24,w:500,c:'#6B665C',a:'center',dir:'ltr'})});
+  y=HEAD+DAYH;
+  rows.forEach(r=>{const col=IMGSH[r.sh];
+    imgRR(ctx,x0+6,y,LAB-6,r.h,14);ctx.fillStyle=col.s;ctx.fill();ctx.fillStyle=col.c;ctx.fillRect(x0+LAB-12,y+10,8,r.h-20);
+    const cx=x0+6+(LAB-24)/2;T(SHL[r.sh],cx,y+r.h/2-34,{s:38,w:700,c:col.c,a:'center'});
+    const hr=((m.days.find(d=>d.shifts.some(x=>x.sh===r.sh))||{shifts:[]}).shifts.find(x=>x.sh===r.sh)||{}).hours||'';
+    T(hr,cx,y+r.h/2+8,{s:28,w:600,c:'#1B1A17',a:'center',dir:'ltr'});
+    if(r.sh==='evening')T('בדיקות ומצברים',cx,y+r.h/2+46,{s:20,w:500,c:'#6B665C',a:'center'});
+    m.days.forEach((d,i)=>{const x=dayX(i)+6,w=COL-12,cell=d.shifts.find(z=>z.sh===r.sh);
+      imgRR(ctx,x,y,w,r.h,14);
+      if(!cell){ctx.fillStyle='#ECE8E0';ctx.fill();T('—',x+w/2,y+r.h/2,{s:30,c:'#B8B2A5',a:'center'});return}
+      ctx.fillStyle='#FFFFFF';ctx.fill();ctx.strokeStyle=col.c;ctx.globalAlpha=.35;ctx.lineWidth=2;ctx.stroke();ctx.globalAlpha=1;
+      if(!cell.people.length){T('אין שיבוץ',x+w/2,y+r.h/2,{s:24,c:'#B04A3F',w:600,a:'center'});return}
+      cell.people.forEach((p,j)=>{const cy=y+CPAD+j*LH+LH/2;let pw=0,lbl='';
+        if(p.role){lbl=ROLESHORT[p.role];pw=MW(lbl,19,700)+22}
+        const maxN=w-32-(pw?pw+10:0),sz=FIT(p.name,maxN,27,700);
+        T(p.name,x+w-16,cy,{s:sz,w:700});const nw=MW(p.name,sz,700);
+        if(p.role){const px=x+w-16-nw-10-pw;imgRR(ctx,px,cy-16,pw,32,9);ctx.fillStyle=IMGRC[p.role];ctx.fill();T(lbl,px+pw/2,cy+1,{s:19,w:700,c:'#FFFFFF',a:'center'})}})});
+    y+=r.h+GAP});
+  const ly=H-FOOT+34;let lx=W-PAD;
+  ROLES.forEach(r=>{const lbl=ROLEFULL[r],pw=MW(lbl,22,700)+30;imgRR(ctx,lx-pw,ly-18,pw,36,10);ctx.fillStyle=IMGRC[r];ctx.fill();T(lbl,lx-pw/2,ly+1,{s:22,w:700,c:'#FFFFFF',a:'center'});lx-=pw+14});
+  T('הופק '+new Date().toLocaleDateString('he-IL',{day:'numeric',month:'numeric',year:'numeric'})+' · CXelectra',PAD,ly,{s:21,w:500,c:'#8A857A',a:'left',dir:'ltr'});
+  return cv}
+const imgSrc=b=>b.dataset.src==='draft'?S.draft:S.schedule;
+const imgBlob=async sc=>{const cv=await schedCanvas(sc);return new Promise(r=>cv.toBlob(r,'image/png'))};
+const imgName=sc=>'cxelectra-shifts-'+(Object.keys(sc.days).sort()[0]||'week')+'.png';
+async function imgDownload(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור להורדה');return}
+  toast('מכין תמונה…');const blob=await imgBlob(sc);if(!blob){toast('יצירת התמונה נכשלה');return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=imgName(sc);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast('התמונה נשמרה בהורדות')}
+async function imgShare(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור לשיתוף');return}
+  const blob=await imgBlob(sc);if(!blob){toast('יצירת התמונה נכשלה');return}
+  const f=new File([blob],imgName(sc),{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'סידור משמרות'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  await imgDownload(b)}
+
 /* ---------- autosave ---------- */
 let saveT=null;S.ver=0;
 const draftKey=()=>S.mode==='live'?'cx_draft_'+S.uid:'cx_me';
-function prefsData(){const p=S.me;return{name:p.name.trim(),order:[],days:clone(p.days),note:p.note.trim(),period:S.settings.start,updatedAt:Date.now(),complete:complete(p)}}
+function prefsData(){const p=S.me;return{name:p.name.trim(),roles:(p.roles||[]).slice(),order:[],days:clone(p.days),note:p.note.trim(),period:S.settings.start,updatedAt:Date.now(),complete:complete(p)}}
 function scheduleSave(){S.ver++;clearTimeout(saveT);LS.set(draftKey(),prefsData());saveT=setTimeout(doSave,900)}
 function saveErrText(e){const c=String((e&&e.code)||'');
-  if(/permission/i.test(c))return'השרת דחה את הפעולה (PERMISSION_DENIED). ב-Firebase Console, תחת Realtime Database ואז Rules, צריך לאפשר קריאה וכתיבה לנתיב shifts.';
+  if(/permission/i.test(c))return'השרת דחה את הפעולה (PERMISSION_DENIED). ב-Firebase Console, תחת Realtime Database ואז Rules, צריך לוודא שהנתיב checklists פתוח לקריאה וכתיבה, כולל תתי-נתיבים.';
   if(c==='timeout')return'אין תקשורת עם השרת. בדוק חיבור לאינטרנט. הבחירות שמורות במכשיר.';
   return'השמירה נכשלה'+(c?' ('+c+')':(e&&e.message?' ('+e.message+')':''))+'. הבחירות שמורות במכשיר.'}
 async function runDiag(){
@@ -673,7 +779,7 @@ function markDirty(){S.dirty=true;S.editing=true;scheduleSave();renderBar()}
 function rankToggle(arr,sh){const i=arr.indexOf(sh);if(i>=0){arr.splice(i,1)}else if(arr.length<3){arr.push(sh);if(arr.length===2)arr.push(SH.find(x=>!arr.includes(x)))}return arr}
 function recomputeRanks(sc){const team=teamAll();Object.keys(sc.days).forEach(k=>{const w=parseYmd(k).getDay();const rk={};SH.forEach(sh=>(sc.days[k][sh]||[]).forEach(id=>{if(team[id])rk[id]=rankOf(team[id],w,sh)}));sc.ranks[k]=rk})}
 function schedText(sc){const s=S.settings;let t=`סידור משמרות CXelectra\nאתר בית שמש MDCIL4\nשבוע ${rangeLabel(s)}\n`;
-  Object.keys(sc.days).sort().forEach(k=>{const d=parseYmd(k);t+=`\n${DAYN[d.getDay()]} ${dm(d)}\n`;dayShifts(d.getDay()).forEach(sh=>{t+=`${SHL[sh]} ${hrsOf(s,d.getDay(),sh)}: ${(sc.days[k][sh]||[]).map(id=>sc.people[id]).join(', ')||'אין שיבוץ'}\n`})});return t}
+  Object.keys(sc.days).sort().forEach(k=>{const d=parseYmd(k);t+=`\n${DAYN[d.getDay()]} ${dm(d)}\n`;dayShifts(d.getDay()).forEach(sh=>{t+=`${SHL[sh]} ${hrsOf(s,d.getDay(),sh)}: ${(sc.days[k][sh]||[]).map(id=>sc.people[id]+(myRole(sc,k,id)?' ('+ROLEFULL[myRole(sc,k,id)]+')':'')).join(', ')||'אין שיבוץ'}\n`})});return t}
 async function writeDoc(path,data){try{await S.db.doc(path).set(data);return true}catch(e){toast(saveErrText(e));return false}}
 
 const A={
@@ -691,15 +797,18 @@ const A={
   restoreCode(){const ta=document.getElementById('rcode');const it=decodeCodes(ta?ta.value:'')[0];if(!it){toast('לא נמצא קוד תקין. ודא שהעתקת את כל הקוד, כולל CXE:');return}S.me=normPrefs(it.p);touch();toast('הבחירות שוחזרו ונשמרו')},
   copyCode(){if(!complete(S.me))return;copyText(encodeCode(S.mode==='live'?'x-'+hash(S.uid):'x-'+S.lid,{...S.me,period:S.settings.start,updatedAt:S.me.updatedAt||Date.now()}),'הקוד הועתק. שלח אותו למנהל')},
   toggleDay(b){const w=+b.dataset.day,d=S.setDraft.days;const i=d.indexOf(w);i>=0?d.splice(i,1):d.push(w);d.sort();renderMain()},
-  capFri(b){S.setDraft.fri.cap=Math.max(0,Math.min(30,(S.setDraft.fri.cap||0)+(+b.dataset.d)));renderMain()},
-  cap(b){const sh=b.dataset.sh;S.setDraft.cap[sh]=Math.max(0,Math.min(30,(S.setDraft.cap[sh]||0)+(+b.dataset.d)));renderMain()},
+  role(b){const r=b.dataset.role;S.me.roles=r==='both'?['insp','load']:[r];touch()},
+  capFri(b){const n=S.setDraft.fri.need,r=b.dataset.role;n[r]=Math.max(0,Math.min(30,(n[r]||0)+(+b.dataset.d)));renderMain()},
+  cap(b){const n=S.setDraft.need[b.dataset.sh],r=b.dataset.role;n[r]=Math.max(0,Math.min(30,(n[r]||0)+(+b.dataset.d)));renderMain()},
+  async dlImg(b){await imgDownload(b)},
+  async shareImg(b){await imgShare(b)},
   async saveSettings(){const s=normSettings(S.setDraft);if(!s.days.length){toast('בחר לפחות יום עבודה אחד');return}
     if(S.mode==='live'){if(!await writeDoc('config/settings',s))return}else LS.set('cx_settings',s);
     S.settings=clone(s);if(S.draft&&S.draft.period!==s.start)S.draft=null;render();toast('ההגדרות נשמרו')},
   runAuto(){S.draft=buildSchedule(S.settings,teamAll());LS.set('cx_sdraft',S.draft);S.moving=null;render();toast('השיבוץ מוכן. אפשר לערוך לפני פרסום')},
   chip(b){const k=b.dataset.key,id=b.dataset.id;S.moving=(S.moving&&S.moving.key===k&&S.moving.id===id)?null:{key:k,id};renderMain()},
   moveCancel(){S.moving=null;renderMain()},
-  moveTo(b){const {key,id}=S.moving,o=S.draft.days[key];SH.forEach(sh=>o[sh]=(o[sh]||[]).filter(x=>x!==id));if(b.dataset.sh)o[b.dataset.sh].push(id);recomputeRanks(S.draft);LS.set('cx_sdraft',S.draft);S.moving=null;renderMain()},
+  moveTo(b){const {key,id}=S.moving,o=S.draft.days[key];SH.forEach(sh=>o[sh]=(o[sh]||[]).filter(x=>x!==id));if(b.dataset.sh)o[b.dataset.sh].push(id);recomputeRanks(S.draft);recomputeRoles(S.draft);LS.set('cx_sdraft',S.draft);S.moving=null;renderMain()},
   async publish(){const data={...clone(S.draft),publishedAt:Date.now()};
     if(S.mode==='live'){if(!await writeDoc('config/schedule',data))return;toast('הסידור פורסם לצוות')}else{LS.set('cx_schedule',data);toast('הסידור נשמר. העתק אותו כטקסט ושלח לצוות')}
     S.schedule=data;render()},
