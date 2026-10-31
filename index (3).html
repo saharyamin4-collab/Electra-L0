@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F1F4F9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#070D16" media="(prefers-color-scheme: dark)">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>סידור משמרות CXelectra, בית שמש MDCIL4</title>
@@ -410,10 +407,6 @@ button.chip:active{transform:scale(.985)}
 .pushbox{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-m);background:var(--surface-2);border:1px solid var(--line-2)}
 .pushbox .pt{flex:1;font-size:13.5px;color:var(--ink-2);line-height:1.4}
 .pushbox .pt b{display:block;color:var(--ink);font-size:15px}
-.instbox{margin-top:12px}
-.instbox .hint{margin:8px 2px 0;font-size:13px}
-.why-no{margin-top:10px;padding:10px 12px;border-radius:var(--r-s);background:color-mix(in srgb,var(--warn) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));font-size:13px;line-height:1.5;color:var(--ink-2)}
-.why-no b{color:var(--ink)}
 .nb .ndot{position:absolute;top:7px;inset-inline-end:calc(50% - 20px);width:10px;height:10px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 2px var(--surface)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:860px){.hero{padding:26px 28px 24px}.hero h1{font-size:40px}.kpi b{font-size:32px}}
@@ -742,23 +735,13 @@ function onSchedUpdate(prev){
     if(swReg&&'Notification' in window&&Notification.permission==='granted')swReg.showNotification('פורסם סידור משמרות חדש',{body:'שבוע '+rangeLabel(S.settings)+'. לחץ כדי לראות את המשמרות שלך',tag:'cx-schedule',renotify:true,dir:'rtl',lang:'he',data:{url:appUrl('#sched')}}).catch(()=>{});
   }else if(S.tab!=='sched')snack('פורסם סידור משמרות חדש',()=>{S.tab='sched';S.anim=true;render();window.scrollTo(0,0)},false,'צפה');
 }
-let installEv=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEv=e;installRefresh()});
-window.addEventListener('appinstalled',()=>{installEv=null;toast('האפליקציה הותקנה. פתח אותה מהמסך הראשי');installRefresh()});
-const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
-const isWebView=()=>/; wv\)/.test(navigator.userAgent);
-const pushMissing=()=>{const m=[];if(!('Notification' in window))m.push('Notification');if(!('serviceWorker' in navigator))m.push('Service Worker');if(!('PushManager' in window))m.push('Push');return m};
-function installRefresh(){const b=document.getElementById('installbox');if(!b)return;
-  if(isStandalone())b.innerHTML=`<div class="pushbox"><span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('check')}</span><span class="pt"><b>מותקנת כאפליקציה ✓</b>רצה בלי סרגל הדפדפן</span></div>`;
-  else if(installEv)b.innerHTML=`<div class="pushbox"><span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('download')}</span><span class="pt"><b>התקן כאפליקציה</b>סמל במסך הראשי, בלי סרגל דפדפן, עם התראות</span><button class="btn sm" data-action="installApp">התקן</button></div>`;
-  else b.innerHTML=`<p class="hint">כדי להתקין כאפליקציה: פתח את האתר ב-Chrome, לחץ על ⋮ ואז על <b>התקן אפליקציה</b> (או <b>הוסף למסך הבית</b> ואז <b>התקן</b>).</p>`}
 async function pushState(){
   const o={supported:('Notification' in window)&&('serviceWorker' in navigator)&&('PushManager' in window),perm:('Notification' in window)?Notification.permission:'denied',sub:false};
   try{if(o.supported){const reg=swReg||await Promise.race([navigator.serviceWorker.getRegistration(),new Promise(r=>setTimeout(()=>r(null),1500))]);if(reg&&reg.pushManager)o.sub=!!(await reg.pushManager.getSubscription())}}catch(e){}
   return o}
 async function pushRefresh(){
-  const box=document.getElementById('pushbox');if(!box)return;const old=box.nextElementSibling;if(old&&old.classList.contains('why-no'))old.remove();const st=await pushState();let t,b='';
-  if(!st.supported){const m=pushMissing();t='<b>לא נתמך כאן</b>החלון שבו האתר פתוח לא חושף התראות'+(m.length?' (חסר: '+m.join(', ')+')':'');b='';box.innerHTML=`<span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('bell')}</span><span class="pt">${t}</span>`;const w=document.createElement('div');w.className='why-no';w.innerHTML='<b>איך מתקנים:</b> '+(isWebView()?'זו מעטפת (WebView) שלא תומכת בהתראות מהאתר. מחק אותה ':'מחק את הקיצור הישן ')+'ופתח את האתר ב-Chrome. לחץ על ⋮ ואז <b>התקן אפליקציה</b>. האפליקציה החדשה תומכת בהתראות.';box.after(w);return}
+  const box=document.getElementById('pushbox');if(!box)return;const st=await pushState();let t,b='';
+  if(!st.supported)t='<b>לא נתמך</b>הדפדפן הזה לא תומך בהתראות';
   else if(st.perm==='denied')t='<b>חסום</b>אפשר לאפשר התראות בהגדרות האתר בדפדפן';
   else if(st.sub&&st.perm==='granted'){t='<b>מופעלות ✓</b>תקבל הודעה כשמתפרסם סידור חדש';b='<button class="btn tonal sm" data-action="pushOff">כבה</button>'}
   else{t='<b>כבויות</b>קבל הודעה בטלפון כשמתפרסם סידור';b=`<button class="btn sm" data-action="pushOn">${ico('bell')}הפעל</button>`}
@@ -1208,7 +1191,6 @@ const A={
   tab(b){S.tab=b.dataset.tab;S.moving=null;S.anim=true;closeSheet();try{history.replaceState(null,'','#'+S.tab)}catch(e){}render();window.scrollTo({top:0})},
   sheetClose(){closeSheet()},
   acc(b){S.acc=S.acc||{};const k=b.dataset.k;S.acc[k]=!accOpen(k);renderMain();if(k==='push'&&S.acc[k])loadPushCount()},
-  async installApp(){if(!installEv)return;installEv.prompt();try{await installEv.userChoice}catch(e){}installEv=null;installRefresh()},
   pushOn(){pushOn()},
   pushOff(){pushOff()},
   pushSave(){const c=S.pcfg||pushCfg();if(c.url&&!/^https?:\/\//.test(c.url)){toast('הכתובת צריכה להתחיל ב-https://');return false}setPushCfg({url:String(c.url||'').trim().replace(/\/+$/,''),secret:c.secret||''});S.pcfg=null;toast('הגדרות ההתראות נשמרו');loadPushCount();renderMain();return true},
@@ -1217,9 +1199,8 @@ const A={
     openSheet(`<div class="namecard" style="margin-bottom:14px"><span class="av-lg">${esc(initials(nm)||'?')}</span><div><h3 style="margin:0">${esc(nm||'אורח')}</h3><p class="hint" style="margin:0">בית שמש MDCIL4</p></div></div>
       <label class="lbl">מראה</label><div class="seg" role="group" aria-label="מראה">${[['auto','אוטומטי','gear'],['light','בהיר','sun'],['dark','כהה','moon']].map(([k,l,i])=>`<button data-action="setTheme" data-t="${k}" aria-pressed="${t===k}">${ico(i)}${l}</button>`).join('')}</div>
       <label class="lbl" style="margin-top:18px">התראות</label><div class="pushbox" id="pushbox"><span class="pt">בודק…</span></div>
-      <div class="instbox" id="installbox"></div>
       ${window.__cxShim?`<button class="btn ghost" data-action="switchUser" style="width:100%;margin-top:16px">${ico('user')}החלף משתמש</button>`:''}
-      <button class="btn tonal" data-action="sheetClose" style="width:100%;margin-top:10px">סגור</button>`,'תפריט משתמש');pushRefresh();installRefresh()},
+      <button class="btn tonal" data-action="sheetClose" style="width:100%;margin-top:10px">סגור</button>`,'תפריט משתמש');pushRefresh()},
   setTheme(b){try{localStorage.setItem('cx_theme',b.dataset.t)}catch(e){}applyTheme();A.userMenu()},
   rank(b){const sh=b.dataset.shift,w=+b.dataset.day;const dd=S.me.days[w]||(S.me.days[w]={});dd.off=false;if(!Array.isArray(dd.order))dd.order=[];
     if(w===FRI)dd.order=dd.order[0]===sh?[]:[sh];else rankToggle(dd.order,sh);touch()},
