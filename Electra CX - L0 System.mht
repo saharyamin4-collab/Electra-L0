@@ -22,8 +22,71 @@
   --ink:#0A1626; --ink-2:#44536B; --ink-3:#73829A;
   --line:#DCE3EE; --line-2:#E8EDF5;
   --brand:#1546A0; --brand-2:#2F6BFF; --on-brand:#FFFFFF; --brand-soft:#E7EEFF;
-  --ph-m:#D18A0B; --ph-a:#1D86C0; --ph-e:#6552D9;
-  --ph-m-soft:#FDF2DA; --ph-a-soft:#E1F1FA; --ph-e-soft:#EDE9FE;
+  --ph-m:#D18A0B; --ph-a:#1D86C0; --ph-e:#6552D9;/* sw.js — שירות ההתראות של סידור המשמרות (CXelectra).
+   צריך להיות באותה תיקייה של קובץ ה-HTML (למשל באותו repository ב-GitHub). */
+const ICON='data:image/png;base64,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';
+
+self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+/* מטפל ריק: נדרש כדי ש-Chrome יציע התקנה כאפליקציה. לא משנה שום בקשה. */
+self.addEventListener('fetch',()=>{});
+
+/* הגיעה התראה מהשרת (גם כשהאפליקציה סגורה) */
+self.addEventListener('push',e=>{
+  let d={};
+  try{d=e.data?e.data.json():{}}catch(_){d={body:e.data?e.data.text():''}}
+  const title=d.title||'סידור משמרות CXelectra';
+  e.waitUntil(self.registration.showNotification(title,{
+    body:d.body||'',
+    tag:d.tag||'cx-schedule',
+    renotify:true,
+    dir:'rtl',lang:'he',
+    icon:ICON,badge:ICON,
+    vibrate:[120,60,120],
+    data:{url:d.url||'./#sched'}
+  }));
+});
+
+/* לחיצה על ההתראה: נכנסים ישר לאזור הסידור */
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  const target=new URL((e.notification.data&&e.notification.data.url)||'./#sched',self.registration.scope).href;
+  e.waitUntil((async()=>{
+    const all=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    for(const c of all){
+      if(c.url.startsWith(self.registration.scope)){
+        await c.focus();
+        c.postMessage({type:'goto',tab:'sched'});
+        return;
+      }
+    }
+    await self.clients.openWindow(target);
+  })());
+});
+
+  --ph-m-soft:#FDF2DA; --ph-a-soft:#E1F1FA; --ph-e-soft:#EDE9FE;{
+  "id": "./",
+  "name": "סידור משמרות CXelectra · בית שמש MDCIL4",
+  "short_name": "משמרות",
+  "description": "העדפות משמרות, סידור והתראות לצוות",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F4F9",
+  "theme_color": "#0C2444",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "הסידור", "url": "./#sched", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}
+
   --ok:#17935F; --mid:#73829A; --warn:#C0561A; --danger:#D02C42; --wa:#1FA855;
   --shadow-1:0 1px 2px rgba(10,22,38,.06);
   --shadow:0 1px 2px rgba(10,22,38,.05),0 12px 32px -16px rgba(10,22,38,.24);
