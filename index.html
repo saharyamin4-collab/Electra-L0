@@ -274,6 +274,7 @@ button.chip:hover{border-color:var(--ink-3)}
 .snack.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .snack.warn{background:#B42335;color:#fff}
 .snack button{flex:none;background:none;border:0;color:inherit;font-weight:700;text-decoration:underline;padding:8px 10px;min-height:40px}
+#imgmodal.shot{background:#000!important;padding:0!important}#imgmodal.shot .imgbar{display:none!important}#imgmodal.shot img{border-radius:0!important}
 @media print{.tabs,.savebar,.toast,.snack,.lockbar,.btns,.mover,#imgmodal{display:none!important}body{background:#fff}.card,.day{box-shadow:none;break-inside:avoid}}
 </style>
 </head>
@@ -792,28 +793,37 @@ async function schedCanvas(sc){
 const imgSrc=b=>b.dataset.src==='draft'?S.draft:S.schedule;
 const imgBlob=async sc=>{const cv=await schedCanvas(sc);return new Promise(r=>cv.toBlob(r,'image/png'))};
 const imgName=sc=>'cxelectra-shifts-'+(Object.keys(sc.days).sort()[0]||'week')+'.png';
-let imgM={url:null,blob:null,name:''};
-function imgClose(){const m=document.getElementById('imgmodal');if(m)m.remove();if(imgM.url){try{URL.revokeObjectURL(imgM.url)}catch(e){}}imgM={url:null,blob:null,name:''}}
+let imgM={url:null,data:'',blob:null,name:'',sc:null};
+const imgInApp=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||/; wv\)/.test(navigator.userAgent)}catch(e){return false}};
+function chromeIntent(u){const base=String(u).split('#')[0],m=base.match(/^https:\/\/(.+)$/);return m?'intent://'+m[1]+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(base)+';end':null}
+function imgOpenChrome(){const i=chromeIntent(location.href);if(i)location.href=i;else toast('פתח את הקישור בדפדפן Chrome')}
+function imgClose(){const m=document.getElementById('imgmodal');if(m)m.remove();if(imgM.url){try{URL.revokeObjectURL(imgM.url)}catch(e){}}imgM={url:null,data:'',blob:null,name:'',sc:null}}
 async function imgShow(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור להצגה');return}
   toast('מכין תמונה…');
-  let blob=null;try{blob=await imgBlob(sc)}catch(e){}
-  if(!blob){toast('יצירת התמונה נכשלה');return}
-  imgClose();imgM={url:URL.createObjectURL(blob),blob,name:imgName(sc)};
-  const can=typeof navigator.canShare==='function';
+  let blob=null,data='';try{const cv=await schedCanvas(sc);data=cv.toDataURL('image/png');blob=await new Promise(r=>cv.toBlob(r,'image/png'))}catch(e){}
+  if(!blob&&!data){toast('יצירת התמונה נכשלה');return}
+  imgClose();imgM={url:blob?URL.createObjectURL(blob):null,data,blob,name:imgName(sc),sc};
+  const can=typeof navigator.canShare==='function',clip=!!(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write),app=imgInApp();
   const m=document.createElement('div');m.id='imgmodal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','תצוגת תמונה של הסידור');
   m.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(14,20,35,.94);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 40px';
-  m.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-action="imgSave">שמור…</button>${can?'<button class="btn" data-action="imgShare">שתף / שמור</button>':''}<button class="btn ghost" data-action="imgClose" style="background:#fff">סגור</button></div><p style="color:#fff;font-size:15px;line-height:1.5;margin:0 0 12px">לחץ <b>שמור…</b> ובחר היכן לשמור. אם לא נפתח חלון בחירה, התמונה יורדת לתיקיית ההורדות. אפשר גם ללחוץ והחזק על התמונה ולבחור <b>שמור תמונה</b>.</p><p style="color:#C9CFDD;font-size:13px;line-height:1.5;margin:0 0 12px">כדי שהטלפון ישאל תמיד היכן לשמור: Chrome ← הגדרות ← הורדות ← <b>שאל היכן לשמור קבצים</b>.</p><img src="${imgM.url}" alt="סידור משמרות" style="width:100%;height:auto;border-radius:12px;background:#fff;display:block">`;
+  const diag='אבחון: '+(app?'אפליקציה':'דפדפן')+(/; wv\)/.test(navigator.userAgent)?' (WebView)':'')+' · חלון שמירה: '+(typeof window.showSaveFilePicker==='function'?'כן':'לא')+' · שיתוף: '+(can?'כן':'לא')+' · העתקת תמונה: '+(clip?'כן':'לא');
+  m.innerHTML=`<div class="imgbar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-action="imgSave">שמור…</button>${can?'<button class="btn" data-action="imgShare">שתף</button>':''}<button class="btn ghost" data-action="imgText">העתק כטקסט</button>${clip?'<button class="btn ghost" data-action="imgCopy">העתק תמונה</button>':''}<button class="btn ghost" data-action="imgShot">מצב צילום מסך</button>${app?'<button class="btn ghost" data-action="imgChrome">פתח ב-Chrome</button>':''}<button class="btn ghost" data-action="imgClose">סגור</button></div><p class="imgbar" style="color:#fff;font-size:15px;line-height:1.5;margin:0 0 12px">לא נשמר? נסה <b>שתף</b>, או <b>העתק כטקסט</b> ושלח בוואטסאפ, או <b>מצב צילום מסך</b> וצלם מסך. אפשר גם ללחוץ והחזק על התמונה.</p>`;
+  const im=document.createElement('img');im.alt='סידור משמרות';im.src=data||imgM.url;im.style.cssText='width:100%;height:auto;border-radius:12px;background:#fff;display:block';m.appendChild(im);
+  const dg=document.createElement('p');dg.className='imgbar';dg.style.cssText='color:#9AA6B8;font-size:12.5px;margin:12px 0 0';dg.textContent=diag;m.appendChild(dg);
   document.body.appendChild(m);const f0=m.querySelector('button');if(f0)f0.focus()}
-async function imgSave(){if(!imgM.blob)return;
-  if(typeof window.showSaveFilePicker==='function'){
+async function imgSave(){if(!imgM.blob&&!imgM.data)return;
+  if(imgM.blob&&typeof window.showSaveFilePicker==='function'){
     try{const h=await window.showSaveFilePicker({suggestedName:imgM.name,types:[{description:'תמונה',accept:{'image/png':['.png']}}]});const wr=await h.createWritable();await wr.write(imgM.blob);await wr.close();toast('התמונה נשמרה');return}
     catch(e){if(e&&e.name==='AbortError')return}
   }
   imgDl()}
-function imgDl(){if(!imgM.url)return;const a=document.createElement('a');a.href=imgM.url;a.download=imgM.name;document.body.appendChild(a);a.click();a.remove();toast('ההורדה התחילה. אם אין קובץ, לחץ והחזק על התמונה ושמור')}
+function imgDl(){const href=imgM.url||imgM.data;if(!href)return;const a=document.createElement('a');a.href=href;a.download=imgM.name;document.body.appendChild(a);a.click();a.remove();toast('ההורדה התחילה. אם אין קובץ, נסה שתף, העתק כטקסט או מצב צילום מסך')}
 async function imgShareNow(){if(!imgM.blob)return;const f=new File([imgM.blob],imgM.name,{type:'image/png'});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'סידור משמרות'});return}}catch(e){if(e&&e.name==='AbortError')return}
-  toast('השיתוף לא נתמך כאן. לחץ והחזק על התמונה ושמור')}
+  toast('שיתוף תמונה לא נתמך כאן. נסה העתק כטקסט או מצב צילום מסך')}
+async function imgCopy(){if(!imgM.blob)return;try{await navigator.clipboard.write([new ClipboardItem({'image/png':imgM.blob})]);toast('התמונה הועתקה. הדבק בוואטסאפ')}catch(e){toast('העתקת תמונה לא נתמכת כאן. נסה העתק כטקסט או מצב צילום מסך')}}
+function imgShot(){const m=document.getElementById('imgmodal');if(!m)return;m.classList.add('shot');toast('צלם מסך עכשיו. הקש על המסך כדי לחזור');
+  setTimeout(()=>m.addEventListener('click',()=>m.classList.remove('shot'),{once:true}),500)}
 
 /* ---------- autosave ---------- */
 let saveT=null;S.ver=0;
@@ -875,6 +885,10 @@ const A={
   async imgSave(){await imgSave()},
   async imgShare(){await imgShareNow()},
   imgClose(){imgClose()},
+  imgText(){if(imgM.sc)copyText(schedText(imgM.sc),'הסידור הועתק כטקסט. הדבק בוואטסאפ')},
+  async imgCopy(){await imgCopy()},
+  imgShot(){imgShot()},
+  imgChrome(){imgOpenChrome()},
   async saveSettings(){const s=normSettings(S.setDraft);if(!s.days.length){toast('בחר לפחות יום עבודה אחד');return}
     if(S.mode==='live'){if(!await writeDoc('config/settings',s))return}else LS.set('cx_settings',s);
     S.settings=clone(s);if(S.draft&&S.draft.period!==s.start)S.draft=null;render();toast('ההגדרות נשמרו')},
