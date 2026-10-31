@@ -252,6 +252,29 @@ button.chip:hover{border-color:var(--ink-3)}
 .rcfg{grid-column:1/-1;display:flex;gap:14px;flex-wrap:wrap}
 .rcfg .rc{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2)}
 .miss{font-size:12.5px;color:var(--danger);font-weight:600;margin-top:5px}
+.chip.warn{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 11%,var(--surface));color:var(--danger);font-weight:600}
+.chip .wi{font-size:13px;line-height:1;margin-inline-end:2px}
+.alertcard{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 7%,var(--surface))}
+.alertcard h2{color:var(--danger)}
+.issue{display:flex;gap:10px;padding:10px 0;border-top:1px solid color-mix(in srgb,var(--danger) 25%,var(--line));font-size:14.5px;color:var(--ink)}
+.issue>span:first-child{color:var(--danger);flex:none}
+.hc{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:9px}
+.hc li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+.hc .ci{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;background:var(--ok)}
+.hc li.bad{color:var(--danger);font-weight:600}.hc li.bad .ci{background:var(--danger)}
+.subh{margin:18px 0 8px;font-size:14px;color:var(--ink-2);font-weight:600}
+.hrs{display:grid;gap:8px}
+.hrs>div{display:grid;grid-template-columns:minmax(84px,1fr) 2fr auto;gap:10px;align-items:center;font-size:14px}
+.hrs .trk{display:block;height:8px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.hrs .trk i{display:block;height:100%;border-radius:5px;background:var(--brand);opacity:.85}
+.dur{font-size:13px;color:var(--ink-3);white-space:nowrap}.dur.bad{color:var(--danger);font-weight:600}
+.restcfg{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--surface-2)}
+.restcfg .hint{font-size:13.5px}
+.snack{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,24px);z-index:30;display:flex;align-items:center;gap:14px;max-width:min(92vw,520px);padding:10px 8px 10px 18px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14.5px;box-shadow:0 8px 28px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.snack.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.snack.warn{background:#B42335;color:#fff}
+.snack button{flex:none;background:none;border:0;color:inherit;font-weight:700;text-decoration:underline;padding:8px 10px;min-height:40px}
+@media print{.tabs,.savebar,.toast,.snack,.lockbar,.btns,.mover,#imgmodal{display:none!important}body{background:#fff}.card,.day{box-shadow:none;break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -368,9 +391,9 @@ const DAYN=['ראשון','שני','שלישי','רביעי','חמישי','שיש
 const DAYS=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 const RANKW=['עדיפות 1','עדיפות 2','עדיפות 3'];
 const ROLES=['insp','load','night'];
-const ROLEFULL={insp:'בודק CX',load:'עומסים',night:'בדיקות ומצברים'};
-const ROLESHORT={insp:'בודק CX',load:'עומסים',night:'מצברים'};
-const ROLEC={insp:'r-i',load:'r-l',night:'r-n'};
+const ROLEFULL={insp:'בודק CX',load:'עומסים',night:'בודק CX'};
+const ROLESHORT={insp:'בודק CX',load:'עומסים',night:'בודק CX'};
+const ROLEC={insp:'r-i',load:'r-l',night:'r-i'};
 const ROLEORD={insp:0,load:1,night:2};
 const capsOf=p=>p&&Array.isArray(p.roles)&&p.roles.length?p.roles:['insp','load'];
 const canDo=(p,r)=>r==='load'?capsOf(p).includes('load'):capsOf(p).includes('insp');
@@ -383,9 +406,9 @@ const dayDiff=(a,b)=>Math.round((b-a)/864e5);
 const clone=o=>JSON.parse(JSON.stringify(o));
 function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return Math.abs(h)}
 function nextSunday(){const t=new Date();t.setHours(0,0,0,0);t.setDate(t.getDate()+((7-t.getDay())%7||7));return ymd(t)}
-function defaults(){return{start:nextSunday(),days:[0,1,2,3,4,5],need:{morning:{insp:2,load:1,night:0},afternoon:{insp:1,load:1,night:0},evening:{insp:0,load:0,night:1}},hours:{morning:['07:00','15:00'],afternoon:['15:00','23:00'],evening:['23:00','07:00']},fri:{need:{insp:1,load:1,night:0},hours:['07:00','13:00']},deadline:''}}
+function defaults(){return{start:nextSunday(),days:[0,1,2,3,4,5],need:{morning:{insp:2,load:1,night:0},afternoon:{insp:1,load:1,night:0},evening:{insp:0,load:0,night:1}},hours:{morning:['08:00','17:00'],afternoon:['14:00','23:00'],evening:['23:00','07:00']},fri:{need:{insp:1,load:1,night:0},hours:['07:00','13:00']},deadline:'',rest:8}}
 function normNeed(n,d){const o={};ROLES.forEach(r=>{const v=n?Number(n[r]):NaN;o[r]=Number.isFinite(v)?Math.max(0,Math.min(30,Math.round(v))):d[r]});return o}
-function normSettings(s){const d=defaults();if(!s)return d;const need={};SH.forEach(sh=>{need[sh]=normNeed(s.need&&s.need[sh],d.need[sh])});return{start:s.start||d.start,days:Array.isArray(s.days)?s.days.slice():d.days,need,hours:{...d.hours,...(s.hours||{})},fri:{need:normNeed(s.fri&&s.fri.need,d.fri.need),hours:(s.fri&&Array.isArray(s.fri.hours))?s.fri.hours.slice():d.fri.hours},deadline:s.deadline||''}}
+function normSettings(s){const d=defaults();if(!s)return d;const need={};SH.forEach(sh=>{need[sh]=normNeed(s.need&&s.need[sh],d.need[sh])});return{start:s.start||d.start,days:Array.isArray(s.days)?s.days.slice():d.days,need,hours:{...d.hours,...(s.hours||{})},fri:{need:normNeed(s.fri&&s.fri.need,d.fri.need),hours:(s.fri&&Array.isArray(s.fri.hours))?s.fri.hours.slice():d.fri.hours},deadline:s.deadline||'',rest:Number.isFinite(s.rest)?Math.max(0,Math.min(16,Math.round(s.rest))):d.rest}}
 function emptyPrefs(){return{name:'',roles:[],order:[],days:{},note:'',period:'',updatedAt:0}}
 function normPrefs(p){const e=emptyPrefs();if(!p)return e;const r={name:p.name||'',order:Array.isArray(p.order)?p.order.filter(x=>SH.includes(x)):[],days:p.days&&typeof p.days==='object'?clone(p.days):{},note:p.note||'',period:p.period||'',updatedAt:p.updatedAt||0,complete:p.complete!==false,roles:Array.isArray(p.roles)?p.roles.filter((x,i,a)=>(x==='insp'||x==='load')&&a.indexOf(x)===i):[]};
   if(r.order.length===3){for(let w=0;w<7;w++){if(w===FRI)continue;const d=r.days[w]||{};if(!d.off&&!(Array.isArray(d.order)&&d.order.length===3)){d.order=r.order.slice();r.days[w]=d}}r.order=[]}
@@ -417,6 +440,36 @@ function hungarian(a){const n=a.length,m=a[0].length,INF=1e15;const u=Array(n+1)
     do{const j1=way[j0];p[j0]=p[j1];j0=j1}while(j0)}
   const ans=Array(n);for(let j=1;j<=m;j++)if(p[j])ans[p[j]-1]=j-1;return ans}
 
+/* ---------- rest between shifts ---------- */
+const toMin=t=>{const [h,m]=String(t||'0:0').split(':').map(Number);return(h||0)*60+(m||0)};
+function spanOf(s,key,w,sh){const [y,mo,d]=key.split('-').map(Number);const base=Date.UTC(y,mo-1,d)/60000;
+  const hr=(w===FRI&&sh==='morning')?s.fri.hours:s.hours[sh];const a=toMin(hr[0]),b0=toMin(hr[1]);return{a:base+a,b:base+(b0<=a?b0+1440:b0)}}
+const shiftLen=(s,w,sh)=>{const p=spanOf(s,'2026-01-05',w,sh);return(p.b-p.a)/60};
+const numHe=n=>String(Math.round(n*10)/10);
+const hoursHe=n=>n<0?'חפיפה בין המשמרות':n===0?'ללא מנוחה':n===1?'שעה אחת':numHe(n)+' שעות';
+function restIssues(s,sc){const per={};
+  Object.keys(sc.days||{}).sort().forEach(key=>{const w=parseYmd(key).getDay();dayShifts(w).forEach(sh=>(sc.days[key][sh]||[]).forEach(id=>{(per[id]=per[id]||[]).push({key,sh,w,...spanOf(s,key,w,sh)})}))});
+  const out=[];Object.keys(per).forEach(id=>{const l=per[id].sort((x,y)=>x.a-y.a);for(let i=1;i<l.length;i++){const gap=(l[i].a-l[i-1].b)/60;if(gap<s.rest)out.push({id,name:(sc.people&&sc.people[id])||'?',prev:l[i-1],next:l[i],gap})}});
+  return out}
+const issueText=(i,s)=>`${i.name}: משמרת ${SHL[i.prev.sh]} (${DAYS[i.prev.w]} ${dm(parseYmd(i.prev.key))}) ואחריה משמרת ${SHL[i.next.sh]} (${DAYS[i.next.w]} ${dm(parseYmd(i.next.key))}). מנוחה בין המשמרות: ${hoursHe(i.gap)}. מינימום נדרש: ${hoursHe(s.rest)}.`;
+const durSpan=(id,len)=>`<span class="dur num${len>10?' bad':''}" id="${id}">${numHe(len)} שעות${len>10?' · מעל 10':''}</span>`;
+function setDur(e,len){e.textContent=numHe(len)+' שעות'+(len>10?' · מעל 10':'');e.classList.toggle('bad',len>10)}
+function updDur(){const d=S.setDraft;if(!d)return;SH.forEach(sh=>{const e=document.getElementById('dur-'+sh);if(e)setDur(e,shiftLen(d,0,sh))});const f=document.getElementById('dur-fri');if(f)setDur(f,shiftLen(d,FRI,'morning'))}
+const cntHe=(n,one,many)=>n===1?one:n+' '+many;
+function healthHTML(sc){const s=S.settings,iss=restIssues(s,sc),short=shortages(s,sc);
+  const longs=[...SH.map(sh=>[SHL[sh],shiftLen(s,0,sh)]),['שישי בוקר',shiftLen(s,FRI,'morning')]].filter(x=>x[1]>10);
+  const row=(ok,t)=>`<li class="${ok?'':'bad'}"><span class="ci" aria-hidden="true">${ok?'✓':'✕'}</span><span>${t}</span></li>`;
+  const hrs={};Object.keys(sc.days||{}).forEach(k=>{const w=parseYmd(k).getDay();dayShifts(w).forEach(sh=>(sc.days[k][sh]||[]).forEach(id=>{hrs[id]=(hrs[id]||0)+shiftLen(s,w,sh)}))});
+  const list=Object.keys(hrs).sort((a,b)=>hrs[b]-hrs[a]),mx=Math.max(1,...list.map(id=>hrs[id]));
+  let h=`<section class="card"><h2>בדיקות תקינות</h2><ul class="hc">${row(!short,short?`${short===1?'משבצת אחת חסרה':short+' משבצות חסרות'} בסידור`:'כל המשמרות והתפקידים מאוישים')}${row(!iss.length,iss.length?`${iss.length===1?'שיבוץ אחד':iss.length+' שיבוצים'} עוקבים ללא מנוחה מספקת`:`אין שיבוצים עוקבים ללא מנוחה (מינימום ${hoursHe(s.rest)})`)}${row(!longs.length,longs.length?`משמרת ${longs.map(x=>x[0]).join(', ')} ארוכה מ-10 שעות`:'כל המשמרות עד 10 שעות')}</ul>`;
+  if(list.length)h+=`<h3 class="subh">שעות עבודה בשבוע</h3><div class="hrs">${list.map(id=>`<div><span>${esc(sc.people[id]||'?')}</span><span class="trk"><i style="width:${Math.round(hrs[id]/mx*100)}%"></i></span><b class="num">${numHe(hrs[id])}</b></div>`).join('')}</div>`;
+  h+='</section>';
+  if(iss.length)h+=`<section class="card alertcard" role="alert"><h2>⚠️ אין מנוחה מספקת בין משמרות</h2><p class="hint">לא ניתן לשבץ משמרת מיד אחרי משמרת אחרת. הזז אחד מהשיבוצים המסומנים באדום.</p>${iss.map(i=>`<div class="issue"><span aria-hidden="true">⚠</span><span>${esc(issueText(i,s))}</span></div>`).join('')}</section>`;
+  return h}
+function snack(msg,undo,warn){let el=document.getElementById('snack');if(!el){el=document.createElement('div');el.id='snack';el.setAttribute('role','status');document.body.appendChild(el)}
+  el.className='snack on'+(warn?' warn':'');el.innerHTML='';const t=document.createElement('span');t.textContent=msg;el.appendChild(t);
+  if(undo){const b=document.createElement('button');b.textContent='בטל';b.onclick=()=>{undo();el.classList.remove('on')};el.appendChild(b)}
+  clearTimeout(snack._t);snack._t=setTimeout(()=>el.classList.remove('on'),warn?7000:5000)}
 function rolesFor(s,w,sh,ids,team){
   const slots=slotRoles(s,w,sh),out={};if(!ids.length)return out;
   const m=Math.max(ids.length,slots.length);
@@ -443,12 +496,12 @@ function buildSchedule(s,team){
         if(sl===null)return 10+4*offc[id]+jit;
         const r=rankOf(team[id],day.w,sl.sh);
         let c=[0,3,8][r]*(1+.5*debt[id]);
-        const l=last[id];if(l&&l.shift==='evening'&&sl.sh==='morning'&&dayDiff(l.date,day.date)===1)c+=40;
+        const l=last[id];if(l!=null&&(spanOf(s,day.key,day.w,sl.sh).a-l)/60<s.rest)c+=600;
         if(!canDo(team[id],sl.role))c+=1e5;
         return c+jit}));
       const asg=hungarian(cost);
       avail.forEach((id,i)=>{const sl=cols[asg[i]];
-        if(sl&&canDo(team[id],sl.role)){out[sl.sh].push(id);const r=rankOf(team[id],day.w,sl.sh);rk[id]=r;debt[id]+=[0,1,2.5][r];last[id]={shift:sl.sh,date:day.date}}
+        if(sl&&canDo(team[id],sl.role)){out[sl.sh].push(id);const r=rankOf(team[id],day.w,sl.sh);rk[id]=r;debt[id]+=[0,1,2.5][r];last[id]=spanOf(s,day.key,day.w,sl.sh).b}
         else offc[id]++});
     }
     res.days[day.key]=out;res.ranks[day.key]=rk;
@@ -602,17 +655,18 @@ function fcHTML(p){return`<div class="fc">${periodDays(S.settings).map(d=>{const
 const sortByRole=(ids,rl)=>rl?ids.slice().sort((a,b)=>(ROLEORD[rl[a]]??3)-(ROLEORD[rl[b]]??3)):ids;
 const myRole=(sc,k,id)=>((sc.roles||{})[k]||{})[id];
 function chipHTML(id,name,r,opts={}){const me=id===myId();const tag=opts.btn?'button':'span';
-  return`<${tag} class="chip ${me?'me':''} ${opts.sel?'sel':''}" ${opts.btn?`data-action="chip" data-key="${opts.key}" data-id="${esc(id)}"`:''}>${r!=null?`<span class="r r${r} num" title="${RANKW[r]}">${r+1}</span>`:''}${esc(name)}${opts.role?`<span class="rt ${ROLEC[opts.role]}">${ROLESHORT[opts.role]}</span>`:''}</${tag}>`}
+  return`<${tag} class="chip ${me?'me':''} ${opts.sel?'sel':''} ${opts.warn?'warn':''}" ${opts.warn?`title="${esc(opts.warn)}"`:''} ${opts.btn?`data-action="chip" data-key="${opts.key}" data-id="${esc(id)}"`:''}>${r!=null?`<span class="r r${r} num" title="${RANKW[r]}">${r+1}</span>`:''}${opts.warn?'<span class="wi" aria-hidden="true">⚠</span>':''}${esc(name)}${opts.role?`<span class="rt ${ROLEC[opts.role]}">${ROLESHORT[opts.role]}</span>`:''}</${tag}>`}
 
 function gridHTML(sc,editable){
   const s=S.settings;const team=teamAll();
+  const bad={};if(editable)restIssues(s,sc).forEach(i=>{const t=issueText(i,s);bad[i.prev.key+'|'+i.id]=t;bad[i.next.key+'|'+i.id]=t});
   let ds=periodDays(s);
   if(sc.period!==s.start){const keys=Object.keys(sc.days||{}).sort();ds=keys.map(k=>{const d=parseYmd(k);return{w:d.getDay(),date:d,key:k}})}
   return`<div class="grid">${ds.map(d=>{const o=sc.days[d.key]||{morning:[],afternoon:[],evening:[]};const rk=(sc.ranks||{})[d.key]||{};const rl=(sc.roles||{})[d.key]||null;
     let h=`<div class="day"><div class="day-h"><b>${DAYN[d.w]}</b><span class="num">${dm(d.date)}</span></div>`;
     dayShifts(d.w).forEach(sh=>{const ids=sortByRole(o[sh]||[],rl);const cap=capOf(s,d.w,sh);const miss=rl?missingRoles(s,d.w,sh,rl,ids):{};
       h+=`<div class="shift ${SHC[sh]}"><div class="shift-h"><b>${SHL[sh]}</b><span class="cap num ${ids.length<cap?'short':''}">${ids.length} מתוך ${cap}</span></div><div class="chips">
-        ${ids.map(id=>chipHTML(id,sc.people[id]||'?',rk[id],{btn:editable,key:d.key,role:rl&&rl[id],sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')||'<span class="empty-slot">אין שיבוץ</span>'}</div>${Object.keys(miss).length?`<div class="miss">חסר: ${Object.keys(miss).map(r=>ROLEFULL[r]+(miss[r]>1?' ×'+miss[r]:'')).join(', ')}</div>`:''}</div>`});
+        ${ids.map(id=>chipHTML(id,sc.people[id]||'?',rk[id],{btn:editable,key:d.key,role:rl&&rl[id],warn:bad[d.key+'|'+id],sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')||'<span class="empty-slot">אין שיבוץ</span>'}</div>${Object.keys(miss).length?`<div class="miss">חסר: ${Object.keys(miss).map(r=>ROLEFULL[r]+(miss[r]>1?' ×'+miss[r]:'')).join(', ')}</div>`:''}</div>`});
     if(editable){const assigned=new Set(SH.flatMap(sh=>o[sh]||[]));const ids=Object.keys(sc.people);
       const bench=ids.filter(id=>!assigned.has(id)&&team[id]&&!isOff(team[id],d.w));const off=ids.filter(id=>team[id]&&isOff(team[id],d.w));
       if(bench.length)h+=`<div class="bench">זמינים ולא משובצים<div class="chips">${bench.map(id=>chipHTML(id,sc.people[id],null,{btn:true,key:d.key,sel:S.moving&&S.moving.key===d.key&&S.moving.id===id})).join('')}</div></div>`;
@@ -636,7 +690,7 @@ function viewSched(){
     const keys=Object.keys(sc.days).sort();
     h+=`<section class="card"><h2>המשמרות שלך</h2><p class="hint">${sc.publishedAt?'פורסם '+new Date(sc.publishedAt).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric'}):''}</p><div class="mine">${keys.map(k=>{const d=parseYmd(k);const sh=SH.find(x=>(sc.days[k][x]||[]).includes(me));
       return`<div class="mineday ${sh?SHC[sh]:''}"><div class="d num">${DAYN[d.getDay()]} ${dm(d)}</div><div class="s">${sh?SHL[sh]+(myRole(sc,k,me)?' · '+ROLEFULL[myRole(sc,k,me)]:''):'חופש'}</div>${sh?`<div class="h num">${hrsOf(s,d.getDay(),sh)}</div>`:'<div class="h">&nbsp;</div>'}</div>`}).join('')}</div></section>`}
-  h+=`<section class="card"><h2>כל הצוות</h2>${statsHTML(sc)}<div class="btns" style="margin-top:14px"><button class="btn" data-action="dlImg" data-src="pub">הורד כתמונה</button>${typeof navigator.canShare==='function'?'<button class="btn ghost" data-action="shareImg" data-src="pub">שתף</button>':''}</div></section>`;
+  h+=`<section class="card"><h2>כל הצוות</h2>${statsHTML(sc)}<div class="btns" style="margin-top:14px"><button class="btn" data-action="dlImg" data-src="pub">הורד כתמונה</button></div></section>`;
   h+=gridHTML(sc,false);
   return h}
 
@@ -656,10 +710,11 @@ function viewAdmin(){
    <div><label class="lbl" for="dl">הגשת העדפות עד</label><input class="in num" type="date" id="dl" data-bind="deadline" value="${esc(s.deadline)}"></div></div>
    <label class="lbl" style="margin-top:14px">ימי עבודה</label><div class="daypick">${[0,1,2,3,4,5,6].map(w=>`<button data-action="toggleDay" data-day="${w}" aria-pressed="${s.days.includes(w)}" aria-label="${DAYN[w]}">${DAYS[w]}</button>`).join('')}</div>
    <div style="margin-top:14px">${SH.map(sh=>`<div class="shcfg ${SHC[sh]}"><span class="nm">${SHL[sh]}</span>
-      <div class="times"><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="0" value="${esc(s.hours[sh][0])}" aria-label="תחילת ${SHL[sh]}"><span>–</span><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="1" value="${esc(s.hours[sh][1])}" aria-label="סיום ${SHL[sh]}"></div>
+      <div class="times"><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="0" value="${esc(s.hours[sh][0])}" aria-label="תחילת ${SHL[sh]}"><span>–</span><input class="in num" type="time" data-bind="hour" data-sh="${sh}" data-i="1" value="${esc(s.hours[sh][1])}" aria-label="סיום ${SHL[sh]}">${durSpan('dur-'+sh,shiftLen(s,0,sh))}</div>
       ${rcfgHTML(s.need[sh],sh)}</div>`).join('')}
-      <div class="shcfg ph-m"><span class="nm">שישי בוקר</span><div class="times"><input class="in num" type="time" data-bind="frih" data-i="0" value="${esc(s.fri.hours[0])}" aria-label="תחילת שישי בוקר"><span>–</span><input class="in num" type="time" data-bind="frih" data-i="1" value="${esc(s.fri.hours[1])}" aria-label="סיום שישי בוקר"></div>
+      <div class="shcfg ph-m"><span class="nm">שישי בוקר</span><div class="times"><input class="in num" type="time" data-bind="frih" data-i="0" value="${esc(s.fri.hours[0])}" aria-label="תחילת שישי בוקר"><span>–</span><input class="in num" type="time" data-bind="frih" data-i="1" value="${esc(s.fri.hours[1])}" aria-label="סיום שישי בוקר">${durSpan('dur-fri',shiftLen(s,FRI,'morning'))}</div>
       ${rcfgHTML(s.fri.need,null)}</div></div>
+   <div class="restcfg"><div><b>מנוחה מינימלית בין משמרות</b><p class="hint" style="margin:2px 0 0">שיבוץ של אותו עובד לשתי משמרות עם פחות מנוחה יסומן באדום.</p></div><div class="stepper" aria-label="שעות מנוחה מינימליות"><button data-action="rest" data-d="-1" aria-label="פחות">−</button><span class="num">${s.rest}</span><button data-action="rest" data-d="1" aria-label="יותר">+</button></div></div>
    <div class="btns" style="margin-top:14px"><button class="btn" data-action="saveSettings">שמור הגדרות</button></div></section>`;
   // team
   const sub=ids.length;
@@ -672,19 +727,19 @@ function viewAdmin(){
       <textarea class="in" id="codes" style="margin-top:10px;direction:ltr" placeholder="CXE:…"></textarea><div class="btns" style="margin-top:8px"><button class="btn ghost" data-action="importCodes">הוסף לצוות</button></div></details>
     <div style="margin-top:12px"><button class="link" data-action="diag">בדיקת חיבור לשרת</button></div>${S.diagText?`<pre class="note" style="white-space:pre-wrap;direction:rtl;margin-top:8px;font-family:inherit">${esc(S.diagText)}</pre>`:''}</section>`;
   // scheduling
-  h+=`<section class="card"><h2>שיבוץ</h2><p class="hint">השיבוץ מחפש לכל יום את החלוקה שנותנת לכמה שיותר אנשים את עדיפות 1. מי שקיבל השבוע עדיפות נמוכה מקבל קדימות בימים הבאים, ואף אחד לא משובץ לבוקר אחרי משמרת לילה. השיבוץ גם מקפיד שכל משמרת תכלול את התפקידים הנדרשים.</p>
+  h+=`<section class="card"><h2>שיבוץ</h2><p class="hint">השיבוץ מחפש לכל יום את החלוקה שנותנת לכמה שיותר אנשים את עדיפות 1. מי שקיבל השבוע עדיפות נמוכה מקבל קדימות בימים הבאים, ובין שתי משמרות של אותו עובד נשמרת מנוחה מינימלית, לפי ההגדרה למעלה. השיבוץ גם מקפיד שכל משמרת תכלול את התפקידים הנדרשים.</p>
     <div class="btns"><button class="btn" data-action="runAuto" ${ids.length?'':'disabled'}>${S.draft?'שבץ מחדש':'שבץ אוטומטית'}</button>${S.draft?`<button class="btn ghost" data-action="publish">${S.mode==='live'?'פרסם לצוות':'שמור כסידור'}</button><button class="btn ghost" data-action="copySched">העתק כטקסט</button><button class="btn ghost" data-action="dlImg" data-src="draft">הורד כתמונה</button>`:''}</div>
     ${S.draft?`<div style="margin-top:18px">${statsHTML(S.draft)}</div><p class="hint" style="margin-top:12px">לחץ על שם כדי להעביר אותו למשמרת אחרת.</p>`:''}</section>`;
-  if(S.draft)h+=gridHTML(S.draft,true);
+  if(S.draft)h+=healthHTML(S.draft)+gridHTML(S.draft,true);
   return h}
 
 /* ---------- schedule as image ---------- */
 const IMGFF='"IBM Plex Sans Hebrew","Heebo","Noto Sans Hebrew",system-ui,Arial,sans-serif';
 const IMGSH={morning:{c:'#C98A10',s:'#FBF1DC'},afternoon:{c:'#1B7FB0',s:'#E1F0F8'},evening:{c:'#5B4DC9',s:'#ECE9FA'}};
-const IMGRC={insp:'#2F6FB5',load:'#C8741A',night:'#6B4FC0'};
+const IMGRC={insp:'#2F6FB5',load:'#C8741A',night:'#2F6FB5'};
 function imgModel(sc){
   const keys=Object.keys(sc.days||{}).sort();
-  const hrsFor=(w,sh)=>{const h=sc.hrs;if(h){return(w===FRI&&sh==='morning')?h.fri[0]+'–'+h.fri[1]:h.hours[sh][0]+'–'+h.hours[sh][1]}return hrsOf(S.settings,w,sh)};
+  const hrsFor=(w,sh)=>hrsOf(S.settings,w,sh);
   const days=keys.map(k=>{const d=parseYmd(k),w=d.getDay(),rl=(sc.roles||{})[k]||null;
     return{key:k,label:DAYN[w],date:dm(d),shifts:dayShifts(w).map(sh=>({sh,hours:hrsFor(w,sh),people:sortByRole(sc.days[k][sh]||[],rl).map(id=>({name:sc.people[id]||'?',role:rl&&rl[id]||null}))}))}});
   const range=keys.length?(keys.length===1?dm(parseYmd(keys[0])):dm(parseYmd(keys[0]))+'–'+dm(parseYmd(keys[keys.length-1]))):'';
@@ -693,14 +748,15 @@ function imgRR(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,
 async function schedCanvas(sc){
   try{await Promise.race([Promise.all([document.fonts.load('600 26px "IBM Plex Sans Hebrew"'),document.fonts.load('400 20px "IBM Plex Sans Hebrew"')]),new Promise(r=>setTimeout(r,2500))])}catch(e){}
   const m=imgModel(sc),N=Math.max(1,m.days.length);
-  const PAD=40,LAB=230,COL=262,LH=50,CPAD=18,MINH=156,HEAD=190,DAYH=92,FOOT=130,GAP=10;
+  const PAD=40,LAB=230,COL=276,LH=50,CPAD=18,MINH=156,HEAD=190,DAYH=92,FOOT=130,GAP=10;
   const W=PAD*2+LAB+N*COL;
   const rows=SH.filter(sh=>m.days.some(d=>d.shifts.some(x=>x.sh===sh))).map(sh=>{const lines=Math.max(1,...m.days.map(d=>{const x=d.shifts.find(y=>y.sh===sh);return x?x.people.length:0}));return{sh,h:Math.max(MINH,lines*LH+CPAD*2)}});
-  const H=HEAD+DAYH+rows.reduce((a,r)=>a+r.h+GAP,0)+FOOT;
+  const H=HEAD+DAYH+12+rows.reduce((a,r)=>a+r.h+GAP,0)+FOOT;
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
   const T=(t,x,y,o)=>{o=o||{};ctx.font=(o.w||400)+' '+(o.s||24)+'px '+IMGFF;ctx.fillStyle=o.c||'#1B1A17';ctx.direction=o.dir||'rtl';ctx.textAlign=o.a||'right';ctx.textBaseline='middle';ctx.fillText(t,x,y)};
   const MW=(t,sz,w)=>{ctx.font=w+' '+sz+'px '+IMGFF;return ctx.measureText(t).width};
   const FIT=(t,maxw,sz,w)=>{let z=sz;while(MW(t,z,w)>maxw&&z>14)z--;return z};
+  let NSZ=28;m.days.forEach(d=>d.shifts.forEach(c=>c.people.forEach(p=>{const pw=p.role?MW(ROLESHORT[p.role],19,700)+22:0;NSZ=Math.min(NSZ,FIT(p.name,COL-12-32-(pw?pw+10:0),28,700))})));
   ctx.fillStyle='#F5F2EC';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#14213D';ctx.fillRect(0,0,W,HEAD);
   ctx.fillStyle='#E7A93A';ctx.fillRect(0,HEAD-8,W,8);
@@ -711,7 +767,7 @@ async function schedCanvas(sc){
   let y=HEAD+22;
   m.days.forEach((d,i)=>{const x=dayX(i)+6;imgRR(ctx,x,y,COL-12,DAYH-18,14);ctx.fillStyle='#FFFFFF';ctx.fill();ctx.strokeStyle='#DDD6C8';ctx.lineWidth=2;ctx.stroke();
     T(d.label,x+(COL-12)/2,y+26,{s:32,w:700,a:'center'});T(d.date,x+(COL-12)/2,y+54,{s:24,w:500,c:'#6B665C',a:'center',dir:'ltr'})});
-  y=HEAD+DAYH;
+  y=HEAD+DAYH+12;
   rows.forEach(r=>{const col=IMGSH[r.sh];
     imgRR(ctx,x0+6,y,LAB-6,r.h,14);ctx.fillStyle=col.s;ctx.fill();ctx.fillStyle=col.c;ctx.fillRect(x0+LAB-12,y+10,8,r.h-20);
     const cx=x0+6+(LAB-24)/2;T(SHL[r.sh],cx,y+r.h/2-34,{s:38,w:700,c:col.c,a:'center'});
@@ -725,25 +781,39 @@ async function schedCanvas(sc){
       if(!cell.people.length){T('אין שיבוץ',x+w/2,y+r.h/2,{s:24,c:'#B04A3F',w:600,a:'center'});return}
       cell.people.forEach((p,j)=>{const cy=y+CPAD+j*LH+LH/2;let pw=0,lbl='';
         if(p.role){lbl=ROLESHORT[p.role];pw=MW(lbl,19,700)+22}
-        const maxN=w-32-(pw?pw+10:0),sz=FIT(p.name,maxN,27,700);
+        const sz=NSZ;
         T(p.name,x+w-16,cy,{s:sz,w:700});const nw=MW(p.name,sz,700);
         if(p.role){const px=x+w-16-nw-10-pw;imgRR(ctx,px,cy-16,pw,32,9);ctx.fillStyle=IMGRC[p.role];ctx.fill();T(lbl,px+pw/2,cy+1,{s:19,w:700,c:'#FFFFFF',a:'center'})}})});
     y+=r.h+GAP});
   const ly=H-FOOT+34;let lx=W-PAD;
-  ROLES.forEach(r=>{const lbl=ROLEFULL[r],pw=MW(lbl,22,700)+30;imgRR(ctx,lx-pw,ly-18,pw,36,10);ctx.fillStyle=IMGRC[r];ctx.fill();T(lbl,lx-pw/2,ly+1,{s:22,w:700,c:'#FFFFFF',a:'center'});lx-=pw+14});
+  ['insp','load'].forEach(r=>{const lbl=ROLEFULL[r],pw=MW(lbl,22,700)+30;imgRR(ctx,lx-pw,ly-18,pw,36,10);ctx.fillStyle=IMGRC[r];ctx.fill();T(lbl,lx-pw/2,ly+1,{s:22,w:700,c:'#FFFFFF',a:'center'});lx-=pw+14});
   T('הופק '+new Date().toLocaleDateString('he-IL',{day:'numeric',month:'numeric',year:'numeric'})+' · CXelectra',PAD,ly,{s:21,w:500,c:'#8A857A',a:'left',dir:'ltr'});
   return cv}
 const imgSrc=b=>b.dataset.src==='draft'?S.draft:S.schedule;
 const imgBlob=async sc=>{const cv=await schedCanvas(sc);return new Promise(r=>cv.toBlob(r,'image/png'))};
 const imgName=sc=>'cxelectra-shifts-'+(Object.keys(sc.days).sort()[0]||'week')+'.png';
-async function imgDownload(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור להורדה');return}
-  toast('מכין תמונה…');const blob=await imgBlob(sc);if(!blob){toast('יצירת התמונה נכשלה');return}
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=imgName(sc);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast('התמונה נשמרה בהורדות')}
-async function imgShare(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור לשיתוף');return}
-  const blob=await imgBlob(sc);if(!blob){toast('יצירת התמונה נכשלה');return}
-  const f=new File([blob],imgName(sc),{type:'image/png'});
+let imgM={url:null,blob:null,name:''};
+function imgClose(){const m=document.getElementById('imgmodal');if(m)m.remove();if(imgM.url){try{URL.revokeObjectURL(imgM.url)}catch(e){}}imgM={url:null,blob:null,name:''}}
+async function imgShow(b){const sc=imgSrc(b);if(!sc||!sc.days){toast('אין סידור להצגה');return}
+  toast('מכין תמונה…');
+  let blob=null;try{blob=await imgBlob(sc)}catch(e){}
+  if(!blob){toast('יצירת התמונה נכשלה');return}
+  imgClose();imgM={url:URL.createObjectURL(blob),blob,name:imgName(sc)};
+  const can=typeof navigator.canShare==='function';
+  const m=document.createElement('div');m.id='imgmodal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','תצוגת תמונה של הסידור');
+  m.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(14,20,35,.94);overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 40px';
+  m.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-action="imgSave">שמור…</button>${can?'<button class="btn" data-action="imgShare">שתף / שמור</button>':''}<button class="btn ghost" data-action="imgClose" style="background:#fff">סגור</button></div><p style="color:#fff;font-size:15px;line-height:1.5;margin:0 0 12px">לחץ <b>שמור…</b> ובחר היכן לשמור. אם לא נפתח חלון בחירה, התמונה יורדת לתיקיית ההורדות. אפשר גם ללחוץ והחזק על התמונה ולבחור <b>שמור תמונה</b>.</p><p style="color:#C9CFDD;font-size:13px;line-height:1.5;margin:0 0 12px">כדי שהטלפון ישאל תמיד היכן לשמור: Chrome ← הגדרות ← הורדות ← <b>שאל היכן לשמור קבצים</b>.</p><img src="${imgM.url}" alt="סידור משמרות" style="width:100%;height:auto;border-radius:12px;background:#fff;display:block">`;
+  document.body.appendChild(m);const f0=m.querySelector('button');if(f0)f0.focus()}
+async function imgSave(){if(!imgM.blob)return;
+  if(typeof window.showSaveFilePicker==='function'){
+    try{const h=await window.showSaveFilePicker({suggestedName:imgM.name,types:[{description:'תמונה',accept:{'image/png':['.png']}}]});const wr=await h.createWritable();await wr.write(imgM.blob);await wr.close();toast('התמונה נשמרה');return}
+    catch(e){if(e&&e.name==='AbortError')return}
+  }
+  imgDl()}
+function imgDl(){if(!imgM.url)return;const a=document.createElement('a');a.href=imgM.url;a.download=imgM.name;document.body.appendChild(a);a.click();a.remove();toast('ההורדה התחילה. אם אין קובץ, לחץ והחזק על התמונה ושמור')}
+async function imgShareNow(){if(!imgM.blob)return;const f=new File([imgM.blob],imgM.name,{type:'image/png'});
   try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'סידור משמרות'});return}}catch(e){if(e&&e.name==='AbortError')return}
-  await imgDownload(b)}
+  toast('השיתוף לא נתמך כאן. לחץ והחזק על התמונה ושמור')}
 
 /* ---------- autosave ---------- */
 let saveT=null;S.ver=0;
@@ -800,16 +870,28 @@ const A={
   role(b){const r=b.dataset.role;S.me.roles=r==='both'?['insp','load']:[r];touch()},
   capFri(b){const n=S.setDraft.fri.need,r=b.dataset.role;n[r]=Math.max(0,Math.min(30,(n[r]||0)+(+b.dataset.d)));renderMain()},
   cap(b){const n=S.setDraft.need[b.dataset.sh],r=b.dataset.role;n[r]=Math.max(0,Math.min(30,(n[r]||0)+(+b.dataset.d)));renderMain()},
-  async dlImg(b){await imgDownload(b)},
-  async shareImg(b){await imgShare(b)},
+  async dlImg(b){await imgShow(b)},
+  imgDl(){imgDl()},
+  async imgSave(){await imgSave()},
+  async imgShare(){await imgShareNow()},
+  imgClose(){imgClose()},
   async saveSettings(){const s=normSettings(S.setDraft);if(!s.days.length){toast('בחר לפחות יום עבודה אחד');return}
     if(S.mode==='live'){if(!await writeDoc('config/settings',s))return}else LS.set('cx_settings',s);
     S.settings=clone(s);if(S.draft&&S.draft.period!==s.start)S.draft=null;render();toast('ההגדרות נשמרו')},
   runAuto(){S.draft=buildSchedule(S.settings,teamAll());LS.set('cx_sdraft',S.draft);S.moving=null;render();toast('השיבוץ מוכן. אפשר לערוך לפני פרסום')},
   chip(b){const k=b.dataset.key,id=b.dataset.id;S.moving=(S.moving&&S.moving.key===k&&S.moving.id===id)?null:{key:k,id};renderMain()},
   moveCancel(){S.moving=null;renderMain()},
-  moveTo(b){const {key,id}=S.moving,o=S.draft.days[key];SH.forEach(sh=>o[sh]=(o[sh]||[]).filter(x=>x!==id));if(b.dataset.sh)o[b.dataset.sh].push(id);recomputeRanks(S.draft);recomputeRoles(S.draft);LS.set('cx_sdraft',S.draft);S.moving=null;renderMain()},
-  async publish(){const data={...clone(S.draft),publishedAt:Date.now()};
+  moveTo(b){const {key,id}=S.moving,o=S.draft.days[key],st=S.settings;const before=clone(S.draft);const nb=restIssues(st,S.draft).filter(i=>i.id===id).length;
+    SH.forEach(sh=>o[sh]=(o[sh]||[]).filter(x=>x!==id));if(b.dataset.sh)o[b.dataset.sh].push(id);
+    recomputeRanks(S.draft);recomputeRoles(S.draft);LS.set('cx_sdraft',S.draft);S.moving=null;renderMain();
+    const nm=S.draft.people[id]||'',na=restIssues(st,S.draft).filter(i=>i.id===id).length;
+    const undo=()=>{S.draft=before;LS.set('cx_sdraft',S.draft);renderMain()};
+    if(na>nb)snack('⚠️ '+nm+': אין מנוחה מספקת בין המשמרות. נדרשות '+hoursHe(st.rest),undo,true);
+    else snack(b.dataset.sh?nm+' הועבר ל'+SHL[b.dataset.sh]:nm+' הוסר מהמשמרת',undo,false)},
+  rest(b){S.setDraft.rest=Math.max(0,Math.min(16,(S.setDraft.rest||0)+(+b.dataset.d)));renderMain()},
+  async publish(){const st=S.settings,ni=restIssues(st,S.draft).length,nsh=shortages(st,S.draft);
+    if((ni||nsh)&&!confirm('בסידור יש '+(ni?cntHe(ni,'שיבוץ אחד','שיבוצים')+' ללא מנוחה מספקת':'')+(ni&&nsh?' ו':'')+(nsh?(nsh===1?'משבצת אחת חסרה':nsh+' משבצות חסרות'):'')+'. לפרסם בכל זאת?'))return;
+    const data={...clone(S.draft),publishedAt:Date.now()};
     if(S.mode==='live'){if(!await writeDoc('config/schedule',data))return;toast('הסידור פורסם לצוות')}else{LS.set('cx_schedule',data);toast('הסידור נשמר. העתק אותו כטקסט ושלח לצוות')}
     S.schedule=data;render()},
   copySched(){copyText(schedText(S.draft),'הסידור הועתק')},
@@ -830,12 +912,13 @@ const B={
   note(t){S.me.note=t.value;markDirty()},
   start(t){if(t.value)S.setDraft.start=t.value},
   deadline(t){S.setDraft.deadline=t.value},
-  frih(t){if(t.value)S.setDraft.fri.hours[+t.dataset.i]=t.value},
-  hour(t){if(t.value)S.setDraft.hours[t.dataset.sh][+t.dataset.i]=t.value}
+  frih(t){if(t.value){S.setDraft.fri.hours[+t.dataset.i]=t.value;updDur()}},
+  hour(t){if(t.value){S.setDraft.hours[t.dataset.sh][+t.dataset.i]=t.value;updDur()}}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b||b.disabled)return;if(b.dataset.action==='closeModal'&&e.target!==b&&!e.target.closest('button'))return;const f=A[b.dataset.action];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key==='Enter'&&t.dataset&&t.dataset.enter&&A[t.dataset.enter]){e.preventDefault();A[t.dataset.enter](t)}});
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.bind&&B[t.dataset.bind])B[t.dataset.bind](t)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('imgmodal'))imgClose()});
 init();
 </script>
 </body>
