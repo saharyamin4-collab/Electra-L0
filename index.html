@@ -81,6 +81,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .mark i:nth-child(2){height:16px;background:var(--ph-a)}
 .mark i:nth-child(3){height:10px;background:var(--ph-e)}
 .word{font-weight:700;font-size:17px;letter-spacing:-.01em;direction:ltr}
+.top-in .site{min-width:0}
 .site{margin-inline-start:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;white-space:nowrap}
 .site .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 22%,transparent)}
 .site.off .dot{background:var(--warn);box-shadow:0 0 0 3px color-mix(in srgb,var(--warn) 22%,transparent)}
@@ -407,6 +408,24 @@ button.chip:active{transform:scale(.985)}
 .pushbox{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-m);background:var(--surface-2);border:1px solid var(--line-2)}
 .pushbox .pt{flex:1;font-size:13.5px;color:var(--ink-2);line-height:1.4}
 .pushbox .pt b{display:block;color:var(--ink);font-size:15px}
+.elmark{flex:none;width:34px;height:34px;border-radius:11px;background:linear-gradient(160deg,#F7B733,#E89A0C);display:grid;place-items:center;box-shadow:0 8px 16px -8px rgba(232,154,12,.8)}
+.elmark .ic{width:19px;height:19px;fill:#0C2444;stroke:none}
+.elmark.lg{width:56px;height:56px;border-radius:18px;margin:0 auto 14px}.elmark.lg .ic{width:30px;height:30px}
+.brand-t{display:flex;flex-direction:column;line-height:1.05;min-width:0}
+.brand-t b{font-size:15.5px;font-weight:700;letter-spacing:.2em;direction:ltr;text-align:start}
+.brand-t small{font-size:11px;color:var(--ink-3);font-weight:500;letter-spacing:.02em;margin-top:2px}
+.hero .deco{display:block;height:auto;opacity:.1;top:6px;inset-inline-end:10px}
+.hero .deco .ic{width:118px;height:118px;fill:#fff;stroke:none}
+.offchip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--warn) 16%,var(--surface));color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));font-size:12px;font-weight:700;white-space:nowrap}
+.brandfoot{display:flex;align-items:center;justify-content:center;gap:8px;margin:26px 0 0;color:var(--ink-3);font-size:12px;letter-spacing:.14em;font-weight:600;direction:ltr}
+.brandfoot .ic{width:13px;height:13px;fill:var(--ph-m);stroke:none}
+.toast.top{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 78px);transform:translate(-50%,-12px)}
+.toast.top.on{transform:translate(-50%,0)}
+.instbox{margin-top:12px}
+a.btn{text-decoration:none}
+.instbox .hint{margin:8px 2px 0;font-size:13px}
+.why-no{margin-top:10px;padding:10px 12px;border-radius:var(--r-s);background:color-mix(in srgb,var(--warn) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));font-size:13px;line-height:1.5;color:var(--ink-2)}
+.why-no b{color:var(--ink)}
 .nb .ndot{position:absolute;top:7px;inset-inline-end:calc(50% - 20px);width:10px;height:10px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 2px var(--surface)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:860px){.hero{padding:26px 28px 24px}.hero h1{font-size:40px}.kpi b{font-size:32px}}
@@ -697,7 +716,7 @@ const PIN_H=812292544;
 try{S.unlocked=sessionStorage.getItem('cx_unlock')==='1'}catch(e){}
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2600)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('top',!!document.querySelector('.sheet'));t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2600)}
 async function copyText(txt,okMsg){try{await navigator.clipboard.writeText(txt);toast(okMsg);return}catch(e){}
   const m=document.getElementById('modal');
   m.innerHTML=`<div class="modal" data-action="closeModal"><div class="card" onclick="event.stopPropagation()"><h2>העתקה</h2><p class="hint">סמן את הטקסט והעתק אותו ידנית.</p><textarea class="in" id="cpy" style="min-height:160px;direction:ltr" readonly>${esc(txt)}</textarea><div class="btns" style="margin-top:12px"><button class="btn" data-action="closeModal">סגירה</button></div></div></div>`;
@@ -710,19 +729,74 @@ function decodeCodes(txt){const out=[];(txt.match(/CXE:[A-Za-z0-9+/=]+/g)||[]).f
 function watchTeam(){if(S.teamWatch||!S.db||!S.isAdmin)return;S.teamWatch=true;
   S.db.collection('prefs').onSnapshot(sn=>{const t={};sn.docs.forEach(d=>{if(d.exists)t[d.id]=normPrefs(d.data())});S.team=t;render()},()=>{})}
 /* ---------- התראות: מכשירים, שרת שליחה, קישור ישיר לסידור ---------- */
+const SW_SRC=`/* sw.js: התראות ועבודה בלי אינטרנט לסידור המשמרות (CXelectra) */
+const CACHE='cx-shell-v2';
+self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil((async()=>{
+  for(const k of await caches.keys())if(k!==CACHE)await caches.delete(k);
+  await self.clients.claim();
+})()));
+/* עמודי האפליקציה: קודם מהרשת (כדי לקבל עדכונים), ובלי חיבור מהעותק השמור */
+self.addEventListener('fetch',e=>{
+  const r=e.request;if(r.method!=='GET')return;
+  const u=new URL(r.url);
+  if(r.mode==='navigate'&&u.origin===self.location.origin){
+    e.respondWith((async()=>{
+      const c=await caches.open(CACHE);
+      try{const res=await fetch(r);if(res.ok)c.put(u.origin+u.pathname,res.clone()).catch(()=>{});return res}
+      catch(err){return (await c.match(u.origin+u.pathname))||(await c.match(self.registration.scope))||Response.error()}
+    })());
+    return;
+  }
+  if(/^(www\.gstatic\.com|fonts\.googleapis\.com|fonts\.gstatic\.com)$/.test(u.hostname)){
+    e.respondWith((async()=>{
+      const c=await caches.open(CACHE),hit=await c.match(r);
+      const net=fetch(r).then(res=>{c.put(r,res.clone()).catch(()=>{});return res}).catch(()=>hit);
+      return hit||net;
+    })());
+  }
+});
+self.addEventListener('push',e=>{
+  let d={};try{d=e.data?e.data.json():{}}catch(_){d={body:e.data?e.data.text():''}}
+  e.waitUntil(self.registration.showNotification(d.title||'סידור משמרות CXelectra',{
+    body:d.body||'',tag:d.tag||'cx-schedule',renotify:true,dir:'rtl',lang:'he',vibrate:[120,60,120],
+    icon:'icon-192.png',badge:'icon-192.png',data:{url:d.url||''}}));
+});
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  const tab=((e.notification.data&&e.notification.data.url||'').split('#')[1]||'sched').replace(/[^a-z]/gi,'')||'sched';
+  const target=new URL('./#'+tab,self.registration.scope).href;
+  e.waitUntil((async()=>{
+    const all=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    for(const c of all){
+      if(c.url.startsWith(self.registration.scope)){await c.focus();c.postMessage({type:'goto',tab});return}
+    }
+    await self.clients.openWindow(target);
+  })());
+});
+`;
 const PUSH_KEY='BG08Z9NG5ZbQmX9TIWmtT3pKpoiLlKmjSm_ZR-P_muF_Vzpnd_FNrfTyXdUldEyYYyt8KER0UskDTTmrPY0JDdo';
 const u8=b=>{const r=atob((b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
 const pushCfg=()=>{try{return JSON.parse(localStorage.getItem('cx_push_cfg')||'{}')}catch(e){return{}}};
 const setPushCfg=c=>{try{localStorage.setItem('cx_push_cfg',JSON.stringify(c))}catch(e){}};
 const appUrl=h=>location.href.split('#')[0].split('?')[0]+(h||'');
 let swReg=null,schedSeenOnce=false;
+function githubNewUrl(host,path){
+  host=host||location.hostname;path=path||location.pathname;
+  const m=host.match(/^([^.]+)\.github\.io$/);if(!m)return null;
+  const owner=m[1],seg=path.split('/').filter(Boolean),isFile=x=>/\.html?$/i.test(x);
+  let repo,dir;
+  if(seg.length&&!isFile(seg[0])){repo=seg[0];dir=seg.slice(1).filter(x=>!isFile(x))}else{repo=owner+'.github.io';dir=seg.filter(x=>!isFile(x))}
+  return'https://github.com/'+owner+'/'+repo+'/new/main?filename='+encodeURIComponent((dir.length?dir.join('/')+'/':'')+'sw.js')+'&value='+encodeURIComponent(SW_SRC)}
 function initSW(){
   if(!('serviceWorker' in navigator)||!(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))return;
-  navigator.serviceWorker.register('sw.js').then(r=>{swReg=r}).catch(()=>{});
+  navigator.serviceWorker.register('sw.js').then(r=>{swReg=r;S.swErr='';fetch('manifest.webmanifest',{method:'HEAD'}).then(x=>{if(x.ok&&!document.querySelector('link[rel=manifest]')){const l=document.createElement('link');l.rel='manifest';l.href='manifest.webmanifest';document.head.appendChild(l)}}).catch(()=>{})}).catch(e=>{S.swErr=String((e&&e.message)||e)});
   navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='goto'){S.tab=e.data.tab||'sched';S.anim=true;render();window.scrollTo(0,0)}});
 }
 function applyHash(){const h=(location.hash||'').slice(1);if(['prefs','sched','admin'].includes(h)&&S.tab!==h){S.tab=h;S.anim=true;closeSheet();render();window.scrollTo(0,0)}}
 window.addEventListener('hashchange',applyHash);
+window.addEventListener('online',()=>{renderTop();toast('החיבור חזר')});
+window.addEventListener('offline',()=>{renderTop();toast('אין אינטרנט. הבחירות נשמרות בטלפון ויישלחו כשהחיבור יחזור')});
 const seenPub=()=>{try{return +localStorage.getItem('cx_seen_pub')||0}catch(e){return 0}};
 const markSeen=()=>{const t=S.schedule&&S.schedule.publishedAt;if(t){try{localStorage.setItem('cx_seen_pub',String(t))}catch(e){}}};
 const hasNewSched=()=>!!(S.schedule&&S.schedule.publishedAt&&S.schedule.publishedAt>seenPub());
@@ -735,13 +809,29 @@ function onSchedUpdate(prev){
     if(swReg&&'Notification' in window&&Notification.permission==='granted')swReg.showNotification('פורסם סידור משמרות חדש',{body:'שבוע '+rangeLabel(S.settings)+'. לחץ כדי לראות את המשמרות שלך',tag:'cx-schedule',renotify:true,dir:'rtl',lang:'he',data:{url:appUrl('#sched')}}).catch(()=>{});
   }else if(S.tab!=='sched')snack('פורסם סידור משמרות חדש',()=>{S.tab='sched';S.anim=true;render();window.scrollTo(0,0)},false,'צפה');
 }
+let installEv=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEv=e;installRefresh()});
+window.addEventListener('appinstalled',()=>{installEv=null;toast('האפליקציה הותקנה. פתח אותה מהמסך הראשי');installRefresh()});
+const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const isWebView=()=>/; wv\)/.test(navigator.userAgent);
+const pushMissing=()=>{const m=[];if(!('Notification' in window))m.push('Notification');if(!('serviceWorker' in navigator))m.push('Service Worker');if(!('PushManager' in window))m.push('Push');return m};
+function installRefresh(){const b=document.getElementById('installbox');if(!b)return;
+  if(isStandalone())b.innerHTML=`<div class="pushbox"><span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('check')}</span><span class="pt"><b>מותקנת כאפליקציה ✓</b>רצה בלי סרגל הדפדפן</span></div>`;
+  else if(installEv)b.innerHTML=`<div class="pushbox"><span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('download')}</span><span class="pt"><b>התקן כאפליקציה</b>סמל במסך הראשי, בלי סרגל דפדפן, עם התראות</span><button class="btn sm" data-action="installApp">התקן</button></div>`;
+  else b.innerHTML=`<p class="hint">כדי להתקין כאפליקציה: פתח את האתר ב-Chrome, לחץ על ⋮ ואז על <b>התקן אפליקציה</b> (או <b>הוסף למסך הבית</b> ואז <b>התקן</b>).</p>`}
 async function pushState(){
   const o={supported:('Notification' in window)&&('serviceWorker' in navigator)&&('PushManager' in window),perm:('Notification' in window)?Notification.permission:'denied',sub:false};
   try{if(o.supported){const reg=swReg||await Promise.race([navigator.serviceWorker.getRegistration(),new Promise(r=>setTimeout(()=>r(null),1500))]);if(reg&&reg.pushManager)o.sub=!!(await reg.pushManager.getSubscription())}}catch(e){}
   return o}
 async function pushRefresh(){
-  const box=document.getElementById('pushbox');if(!box)return;const st=await pushState();let t,b='';
-  if(!st.supported)t='<b>לא נתמך</b>הדפדפן הזה לא תומך בהתראות';
+  const box=document.getElementById('pushbox');if(!box)return;const old=box.nextElementSibling;if(old&&old.classList.contains('why-no'))old.remove();const st=await pushState();let t,b='';
+  if(st.supported&&S.swErr&&!swReg){const u=new URL('sw.js',location.href).href;
+    box.innerHTML=`<span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('bell')}</span><span class="pt"><b>חסר קובץ באתר</b>הקובץ sw.js לא נמצא</span>`;
+    const w=document.createElement('div');w.className='why-no';
+    const gh=githubNewUrl();
+    w.innerHTML=`<b>חסר קובץ אחד באתר (חד פעמי).</b> הדפדפנים דורשים אותו כדי להציג התראות.${gh?`<ol style="margin:8px 0 0;padding-inline-start:20px"><li>לחץ על הכפתור הכחול. GitHub ייפתח עם הקובץ מוכן.</li><li>ב-GitHub לחץ <b>Commit changes</b>, ושוב <b>Commit changes</b> בחלון שנפתח.</li><li>חזור לכאן, חכה דקה, רענן ולחץ <b>הפעל</b>.</li></ol><div class="btns" style="margin-top:10px"><a class="btn sm" href="${esc(gh)}" target="_blank" rel="noopener">${ico('external')}צור את הקובץ ב-GitHub</a><button class="btn tonal sm" data-action="swCopy">העתק את הקוד</button></div>`:'<div class="btns" style="margin-top:10px"><button class="btn tonal sm" data-action="swCopy">העתק את הקוד</button></div><br>ב-GitHub: Add file, Create new file, שם <b>sw.js</b>, הדבק ושמור. הקובץ צריך לשבת ליד קובץ האתר.'}`;
+    box.after(w);return}
+  if(!st.supported){const m=pushMissing();t='<b>לא נתמך כאן</b>החלון שבו האתר פתוח לא חושף התראות'+(m.length?' (חסר: '+m.join(', ')+')':'');b='';box.innerHTML=`<span class="ibadge" style="width:36px;height:36px" aria-hidden="true">${ico('bell')}</span><span class="pt">${t}</span>`;const w=document.createElement('div');w.className='why-no';w.innerHTML='<b>איך מתקנים:</b> '+(isWebView()?'זו מעטפת (WebView) שלא תומכת בהתראות מהאתר. מחק אותה ':'מחק את הקיצור הישן ')+'ופתח את האתר ב-Chrome. לחץ על ⋮ ואז <b>התקן אפליקציה</b>. האפליקציה החדשה תומכת בהתראות.';box.after(w);return}
   else if(st.perm==='denied')t='<b>חסום</b>אפשר לאפשר התראות בהגדרות האתר בדפדפן';
   else if(st.sub&&st.perm==='granted'){t='<b>מופעלות ✓</b>תקבל הודעה כשמתפרסם סידור חדש';b='<button class="btn tonal sm" data-action="pushOff">כבה</button>'}
   else{t='<b>כבויות</b>קבל הודעה בטלפון כשמתפרסם סידור';b=`<button class="btn sm" data-action="pushOn">${ico('bell')}הפעל</button>`}
@@ -751,7 +841,7 @@ async function pushOn(){
   let perm=Notification.permission;if(perm==='default')perm=await Notification.requestPermission();
   if(perm!=='granted'){toast('ההתראות לא אושרו. אפשר לאפשר אותן בהגדרות האתר בדפדפן');pushRefresh();return}
   const reg=await Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),4000))]);
-  if(!reg){toast('קובץ sw.js לא נמצא ליד האתר. העלה אותו ל-GitHub, רענן ונסה שוב');pushRefresh();return}
+  if(!reg){toast('הקובץ sw.js לא נמצא באתר. העלה אותו ל-GitHub בשם sw.js בדיוק, רענן ונסה שוב');pushRefresh();return}
   try{
     let sub=await reg.pushManager.getSubscription();
     if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(PUSH_KEY)});
@@ -816,7 +906,7 @@ function render(){if(S.tab==='sched'&&S.schedule)markSeen();const a=document.act
 function userName(){return(window.__cxShim&&window.__cxShim.name&&window.__cxShim.name())||(S.me&&S.me.name)||''}
 function renderTop(){
   const off=S.mode==='local'&&window.__cxShim;
-  document.getElementById('top').innerHTML=`<div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="word">CXelectra</span></div><span class="site ${off?'off':''}"><span class="dot" aria-hidden="true"></span>בית שמש <bdi>MDCIL4</bdi></span><button class="avatar-btn" data-action="userMenu" aria-label="תפריט משתמש">${esc(initials(userName())||'?')}</button>`;
+  document.getElementById('top').innerHTML=`<div class="brand"><span class="elmark" aria-hidden="true">${ico('bolt')}</span><span class="brand-t"><b>ELECTRA</b><small>CX · שיבוצים</small></span></div>${navigator.onLine===false?`<span class="offchip" role="status">${ico('alert','sm')}אופליין</span>`:''}<span class="site ${off?'off':''}"><span class="dot" aria-hidden="true"></span>בית שמש <bdi>MDCIL4</bdi></span><button class="avatar-btn" data-action="userMenu" aria-label="תפריט משתמש">${esc(initials(userName())||'?')}</button>`;
 }
 function renderNav(){
   const nTeam=Object.keys(teamAll()).length;
@@ -835,7 +925,7 @@ function heroHTML(){
     else chips.push(`<span class="hchip warn">${ico('alert')}${(p.roles||[]).length?'נשארו '+miss+' ימים למלא':'בחר תפקיד'}</span>`)}
   else if(S.tab==='sched'){const ok=S.schedule&&S.schedule.days;chips.push(ok?`<span class="hchip ok">${ico('check')}הסידור פורסם</span>`:`<span class="hchip">${ico('clock')}ממתין לפרסום</span>`)}
   else if(S.unlocked){const n=Object.keys(teamAll()).length;chips.push(`<span class="hchip">${ico('users')}${n} הגישו העדפות</span>`)}
-  return`<section class="hero"><div class="deco" aria-hidden="true"><i></i><i></i><i></i></div><div class="eyebrow">סידור משמרות קומישנינג · בית שמש</div><h1 class="num">שבוע ${esc(rangeLabel(s))}</h1><div class="hchips">${chips.filter(Boolean).join('')}</div></section>`}
+  return`<section class="hero"><div class="deco" aria-hidden="true">${ico('bolt')}</div><div class="eyebrow">סידור משמרות קומישנינג · בית שמש</div><h1 class="num">שבוע ${esc(rangeLabel(s))}</h1><div class="hchips">${chips.filter(Boolean).join('')}</div></section>`}
 function statusBanner(){
   if(window.__cxShim&&S.mode==='local')return`<div class="banner warn"><span>⚠️</span><span><b>אין חיבור לשרת.</b> ${esc(S.connErr||'ספריית Firebase לא נטענה')}. ההעדפות נשמרות רק במכשיר הזה ולא יגיעו למנהל.<br><b>מה לעשות:</b> פתח את הקובץ ב-Chrome (מתוך ההורדות), ולא מתוך וואטסאפ, תצוגה מקדימה או מסך "תוכן אינטרנטי". <button class="link" data-action="retry">נסה שוב</button></span></div>`;
   if(S.saveErr)return`<div class="banner warn"><span>⚠️</span><span><b>לא נשמר בשרת.</b> ${esc(S.saveErrMsg||'')}</span></div>`;
@@ -848,6 +938,7 @@ function renderMain(){
   if(S.tab==='prefs')m.innerHTML=hero+statusBanner()+viewPrefs();
   else if(S.tab==='sched')m.innerHTML=hero+statusBanner()+viewSched();
   else m.innerHTML=hero+statusBanner()+viewAdmin();
+  m.insertAdjacentHTML('beforeend',`<div class="brandfoot">${ico('bolt')}ELECTRA CX · QUALITY CONTROL</div>`);
   if(ms)ms.innerHTML=moverSheetHTML();
 }
 function renderBar(){
@@ -952,9 +1043,30 @@ function nextShiftInfo(sc,me){
   else if(dd===1)when='מחר';
   else when=`יום ${DAYN[best.w]} ${dm(parseYmd(best.k))}`;
   return{...best,when,live}}
+function icsEsc(t){return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+function buildIcs(sc,me){
+  const st=S.settings,p2=n=>String(n).padStart(2,'0');
+  const fmt=m=>{const d=new Date(m*60000);return d.getUTCFullYear()+p2(d.getUTCMonth()+1)+p2(d.getUTCDate())+'T'+p2(d.getUTCHours())+p2(d.getUTCMinutes())+'00'};
+  const n=new Date(),stamp=n.getUTCFullYear()+p2(n.getUTCMonth()+1)+p2(n.getUTCDate())+'T'+p2(n.getUTCHours())+p2(n.getUTCMinutes())+p2(n.getUTCSeconds())+'Z';
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CXelectra//Shifts//HE','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+icsEsc('משמרות CXelectra')];
+  let count=0;
+  Object.keys(sc.days).sort().forEach(k=>{
+    const w=parseYmd(k).getDay(),sh=SH.find(x=>(sc.days[k][x]||[]).includes(me));if(!sh)return;
+    const sp=spanOf(st,k,w,sh),rl=myRole(sc,k,me);count++;
+    L.push('BEGIN:VEVENT','UID:'+k+'-'+sh+'-'+String(me).replace(/[^A-Za-z0-9_-]/g,'')+'@cxelectra','DTSTAMP:'+stamp,'DTSTART:'+fmt(sp.a),'DTEND:'+fmt(sp.b),
+      'SUMMARY:'+icsEsc('משמרת '+SHL[sh]+(rl?' · '+ROLEFULL[rl]:'')),'LOCATION:'+icsEsc('בית שמש MDCIL4'),'DESCRIPTION:'+icsEsc('סידור משמרות CXelectra'),
+      'BEGIN:VALARM','TRIGGER:-PT60M','ACTION:DISPLAY','DESCRIPTION:'+icsEsc('המשמרת מתחילה בעוד שעה'),'END:VALARM','END:VEVENT');
+  });
+  L.push('END:VCALENDAR');return{text:L.join('\r\n')+'\r\n',count}}
+function icsMine(){
+  const sc=S.schedule,me=myId();if(!sc||!sc.days){toast('אין סידור להוספה');return}
+  const r=buildIcs(sc,me);if(!r.count){toast('אין לך משמרות בסידור הזה');return}
+  const blob=new Blob([r.text],{type:'text/calendar;charset=utf-8'}),u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download='cxelectra-my-shifts.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),8000);
+  toast('נוצר קובץ יומן עם '+r.count+' משמרות. פתח אותו כדי להוסיף')}
 function viewSched(){
   const s=S.settings,sc=S.schedule;
-  if(!sc||!sc.days)return`<div class="card emptystate"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><h3>הסידור עוד לא פורסם</h3><p class="hint" style="margin:0 auto 16px">כשהמנהל ישבץ ויפרסם, המשמרות שלך יופיעו כאן.${complete(S.me)&&S.savedAt?'':' בינתיים מלא את ההעדפות שלך.'}</p>${complete(S.me)&&S.savedAt?'':'<button class="btn" data-action="tab" data-tab="prefs">למילוי העדפות</button>'}</div>`;
+  if(!sc||!sc.days)return`<div class="card emptystate"><span class="elmark lg" aria-hidden="true">${ico('bolt')}</span><h3>הסידור עוד לא פורסם</h3><p class="hint" style="margin:0 auto 16px">כשהמנהל ישבץ ויפרסם, המשמרות שלך יופיעו כאן.${complete(S.me)&&S.savedAt?'':' בינתיים מלא את ההעדפות שלך.'}</p>${complete(S.me)&&S.savedAt?'':'<button class="btn" data-action="tab" data-tab="prefs">למילוי העדפות</button>'}</div>`;
   let h='';
   if(sc.period!==s.start)h+=`<div class="banner"><span>🗓️</span><span>זה הסידור של השבוע הקודם. הסידור החדש יפורסם אחרי סיום ההגשה.</span></div>`;
   const me=myId();
@@ -962,7 +1074,7 @@ function viewSched(){
     const nx=nextShiftInfo(sc,me);
     if(nx){const rl=myRole(sc,nx.k,me);h+=`<section class="nextcard ${SHC[nx.sh]}"><span class="nx-ic">${ico(SHI[nx.sh])}</span><div><small>${nx.live?'המשמרת שלך מתבצעת עכשיו':'המשמרת הבאה שלך'}</small><b>${esc(nx.when)} · ${SHL[nx.sh]}</b><span class="m"><bdi class="ltr num">${hrsOf(s,nx.w,nx.sh)}</bdi>${rl?' · '+ROLEFULL[rl]:''}</span></div></section>`}
     const keys=Object.keys(sc.days).sort();
-    h+=`<div class="sec-h"><h2>השבוע שלי</h2><small>${sc.publishedAt?'פורסם '+esc(new Date(sc.publishedAt).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric'})):''}</small></div><div class="mine">${keys.map(k=>{const d=parseYmd(k);const sh=SH.find(x=>(sc.days[k][x]||[]).includes(me));const rl=sh?myRole(sc,k,me):null;
+    h+=`<div class="sec-h"><h2>השבוע שלי</h2><span style="display:flex;gap:12px;align-items:center"><small>${sc.publishedAt?'פורסם '+esc(new Date(sc.publishedAt).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric'})):''}</small><button class="link" data-action="icsMine" style="display:inline-flex;align-items:center;gap:5px">${ico('calendar','sm')}הוסף ליומן</button></span></div><div class="mine">${keys.map(k=>{const d=parseYmd(k);const sh=SH.find(x=>(sc.days[k][x]||[]).includes(me));const rl=sh?myRole(sc,k,me):null;
       return sh?`<div class="mineday ${SHC[sh]}"><div class="d num">${DAYN[d.getDay()]} ${dm(d)}</div><div class="mi">${ico(SHI[sh])}</div><div class="s">${SHL[sh]}</div><div class="h num">${hrsOf(s,d.getDay(),sh)}</div>${rl?`<span class="rt ${ROLEC[rl]}" style="margin-top:6px">${ROLESHORT[rl]}</span>`:''}</div>`
         :`<div class="mineday off"><div class="d num">${DAYN[d.getDay()]} ${dm(d)}</div><div class="s" style="margin-top:12px;color:var(--ink-3)">חופש</div></div>`}).join('')}</div>`}
   h+=`<div class="actbar"><button class="act" data-action="dlImg" data-src="pub">${ico('image')}תמונה</button><button class="act wa" data-action="waShare" data-src="pub">${ico('wa','fill')}וואטסאפ</button><button class="act" data-action="copySched" data-src="pub">${ico('text')}העתק טקסט</button></div>`;
@@ -1191,6 +1303,9 @@ const A={
   tab(b){S.tab=b.dataset.tab;S.moving=null;S.anim=true;closeSheet();try{history.replaceState(null,'','#'+S.tab)}catch(e){}render();window.scrollTo({top:0})},
   sheetClose(){closeSheet()},
   acc(b){S.acc=S.acc||{};const k=b.dataset.k;S.acc[k]=!accOpen(k);renderMain();if(k==='push'&&S.acc[k])loadPushCount()},
+  icsMine(){icsMine()},
+  swCopy(){copyText(SW_SRC,'הקוד הועתק. ב-GitHub: Add file, Create new file, שם sw.js, הדבק ושמור')},
+  async installApp(){if(!installEv)return;installEv.prompt();try{await installEv.userChoice}catch(e){}installEv=null;installRefresh()},
   pushOn(){pushOn()},
   pushOff(){pushOff()},
   pushSave(){const c=S.pcfg||pushCfg();if(c.url&&!/^https?:\/\//.test(c.url)){toast('הכתובת צריכה להתחיל ב-https://');return false}setPushCfg({url:String(c.url||'').trim().replace(/\/+$/,''),secret:c.secret||''});S.pcfg=null;toast('הגדרות ההתראות נשמרו');loadPushCount();renderMain();return true},
@@ -1199,8 +1314,9 @@ const A={
     openSheet(`<div class="namecard" style="margin-bottom:14px"><span class="av-lg">${esc(initials(nm)||'?')}</span><div><h3 style="margin:0">${esc(nm||'אורח')}</h3><p class="hint" style="margin:0">בית שמש MDCIL4</p></div></div>
       <label class="lbl">מראה</label><div class="seg" role="group" aria-label="מראה">${[['auto','אוטומטי','gear'],['light','בהיר','sun'],['dark','כהה','moon']].map(([k,l,i])=>`<button data-action="setTheme" data-t="${k}" aria-pressed="${t===k}">${ico(i)}${l}</button>`).join('')}</div>
       <label class="lbl" style="margin-top:18px">התראות</label><div class="pushbox" id="pushbox"><span class="pt">בודק…</span></div>
+      <div class="instbox" id="installbox"></div>
       ${window.__cxShim?`<button class="btn ghost" data-action="switchUser" style="width:100%;margin-top:16px">${ico('user')}החלף משתמש</button>`:''}
-      <button class="btn tonal" data-action="sheetClose" style="width:100%;margin-top:10px">סגור</button>`,'תפריט משתמש');pushRefresh()},
+      <button class="btn tonal" data-action="sheetClose" style="width:100%;margin-top:10px">סגור</button>`,'תפריט משתמש');pushRefresh();installRefresh()},
   setTheme(b){try{localStorage.setItem('cx_theme',b.dataset.t)}catch(e){}applyTheme();A.userMenu()},
   rank(b){const sh=b.dataset.shift,w=+b.dataset.day;const dd=S.me.days[w]||(S.me.days[w]={});dd.off=false;if(!Array.isArray(dd.order))dd.order=[];
     if(w===FRI)dd.order=dd.order[0]===sh?[]:[sh];else rankToggle(dd.order,sh);touch()},
