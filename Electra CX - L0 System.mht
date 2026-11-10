@@ -190,7 +190,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .tile .top{display:flex;align-items:flex-start;gap:8px}
 .tile .n{font-weight:700;font-size:1.25rem;line-height:1.2;letter-spacing:-.01em;word-break:break-word}
 .tile .lock{margin-inline-start:auto;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:.8rem;background:var(--ok-soft);flex:none}
-.tile .bars{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.tile .bars{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .tile .bars i{height:6px;border-radius:3px;background:var(--line-2)}
 .tile .bars i.on{background:var(--brand)}
 .tile.ready .bars i.on{background:var(--ok)}
@@ -248,7 +248,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .dsec .sub{color:var(--ink-3);font-size:.88rem;margin:0 0 16px}
 .pipe{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--line-2);gap:2px}
 .pipe i{display:block;height:100%;transition:width .5s}
-.stages{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.stages{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
 .stg{border:1px solid var(--line);background:var(--sunk);border-radius:14px;padding:12px 14px;text-align:start;cursor:pointer;position:relative;overflow:hidden;color:var(--ink)}
 .stg::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--c)}
 .stg[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent);background:var(--surface)}
@@ -302,6 +302,21 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .cellrow .cth img{width:100%;height:100%;object-fit:cover;display:block}
 .cellrow .acts{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
 .addcell{margin-top:12px;border-radius:14px}
+.grph{font-weight:700;font-size:.9rem;color:var(--brand);margin:14px 2px 2px;padding-bottom:4px;border-bottom:2px solid var(--brand-soft)}
+.grph:first-child{margin-top:0}
+.cellrow .scan{display:inline-flex;align-items:center;gap:8px;font-size:.84rem;font-weight:500;color:var(--ink-2);cursor:pointer;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
+.cellrow .scan:has(input:checked){border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.cellrow .scan input{width:18px;height:18px;accent-color:var(--ok);margin:0}
+.s2prog{font-size:.86rem;font-weight:600;color:var(--warn);margin:0 0 10px}
+.s2prog.ok{color:var(--ok)}
+.gate{margin:16px 0 0;padding:12px 14px;border-radius:14px;border:1px solid var(--warn);background:var(--warn-soft);font-size:.88rem;color:var(--ink)}
+.gate.ok{border-color:var(--ok);background:var(--ok-soft)}
+.gate.wait{border-color:var(--line);background:var(--sunk);color:var(--ink-2)}
+.gate b{display:block;margin-bottom:6px}
+.gate ul{margin:0;padding:0 18px 0 0}
+.gate li{margin:2px 0}
+.clean{margin-top:14px}
+.clean .decl{margin:8px 0}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -335,7 +350,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div>
         <div class="cl-title"><span class="mlabel">שם המודול</span><span class="mnum" id="mNum">צ׳קליסט חדש</span><span class="msub" id="mSub"></span></div>
       </div>
-      <div class="ring" id="ring"><span id="ringTxt">0/3</span></div>
+      <div class="ring" id="ring"><span id="ringTxt">0/4</span></div>
       <div class="statusline" id="statusLine"><span class="lamp"></span><span id="statusTxt">מלא את פרטי המודול כדי להתחיל</span></div>
     </div>
     <div class="toolbar">
@@ -373,6 +388,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       </div>
       <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
       <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, מפעיל תדיראן החתום מטה, מצהיר כי כל הכניסות והיציאות של המודול עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.</span></label>
+      <div class="gate" id="gate1" hidden></div>
       <div class="sig" data-sig="s1"></div>
       <div class="actions"><button class="btn primary" data-sign="1"></button><span class="err" id="s1err"></span></div>
     </section>
@@ -382,17 +398,39 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="grid">
         <label class="f"><span class="req">שם האחראי שביצע את הניקיון</span><input data-f="name" autocomplete="off"></label>
         <label class="f"><span>תפקיד / חברה</span><input data-f="role" autocomplete="off"></label>
+        <label class="f"><span class="req">תאריך ביצוע הניקיון</span><input data-f="date" type="date"></label>
       </div>
       <div style="margin-top:14px">
-        <div class="hint req" style="margin:0 0 8px">תמונות הוכחה שהתאים נקיים, תמונה לכל תא (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)</div>
+        <div class="hint req" style="margin:0 0 8px" id="s2hint"></div>
+        <div class="s2prog" id="s2prog"></div>
         <div class="cells" id="s2photos"></div>
         <button type="button" class="btn addcell" id="addCell">הוסף תא +</button>
         <input type="file" id="s2files" accept="image/*" hidden>
       </div>
       <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
-      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני מאשר כי ביצעתי ניקיון יסודי של כל התאים במודול, והתמונות המצורפות משקפות את מצבם לאחר הניקיון.</span></label>
+      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני מאשר כי ביצעתי ניקיון יסודי של כל הפריטים במודול (תאים, גופי ה־UPS והתקרות), בוצעה סריקה פיזית לכל פריט, והתמונות המצורפות משקפות את מצבם לאחר הניקיון.</span></label>
+      <div class="gate" id="gate2" hidden></div>
       <div class="sig" data-sig="s2"></div>
       <div class="actions"><button class="btn primary" data-sign="2"></button><span class="err" id="s2err"></span></div>
+    </section>
+
+    <section class="sec stage" id="st4">
+      <div class="sec-h"><span class="badge">3</span><h2>איטומי אש</h2><span class="state" id="st4state"></span></div>
+      <div class="grid">
+        <label class="f"><span class="req">שם האחראי על איטומי האש</span><input data-f="name" autocomplete="off"></label>
+        <label class="f"><span>תפקיד / חברה</span><input data-f="role" autocomplete="off"></label>
+        <label class="f"><span class="req">תאריך ביצוע איטומי האש</span><input data-f="date" type="date"></label>
+      </div>
+      <div style="margin-top:14px">
+        <div class="hint req" style="margin:0 0 8px">תמונות איטומי האש לאחר הביצוע (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)</div>
+        <label class="drop" id="s4drop"><input type="file" id="s4files" accept="image/*" multiple>צלם / בחר תמונות</label>
+        <div class="files" id="s4list"></div>
+      </div>
+      <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
+      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, האחראי על איטומי האש, מצהיר כי בוצעו איטומי אש בכל המעברים והחדירות הנדרשים במודול, והתמונות המצורפות משקפות את מצבם לאחר הביצוע.</span></label>
+      <div class="gate" id="gate4" hidden></div>
+      <div class="sig" data-sig="s4"></div>
+      <div class="actions"><button class="btn primary" data-sign="4"></button><span class="err" id="s4err"></span></div>
     </section>
 
     <section class="sec stage" id="st3">
@@ -408,7 +446,13 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="drop" id="s3drop"><input type="file" id="s3files" accept="image/*,application/pdf" multiple>בחר קבצים</label>
         <div class="files" id="s3list"></div>
       </div>
+      <div class="clean">
+        <div class="hint req" style="margin:0 0 4px">דוחות בודק נקיים: תנאי למעבר לבדיקות בעומס</div>
+        <label class="decl"><input type="checkbox" data-f="clean1"><span class="ctext">דוח הבודק ל־UPS 1 צורף, ואין בו ליקויים פתוחים.</span></label>
+        <label class="decl"><input type="checkbox" data-f="clean2"><span class="ctext">דוח הבודק ל־UPS 2 צורף, ואין בו ליקויים פתוחים.</span></label>
+      </div>
       <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, מתאם תדיראן האחראי, מתחייב כי עברתי על אישור הבודק למודול, ולמיטב הבנתי המודול תקין ומוכן לעבור לשלב הבדיקות בעומס.</span></label>
+      <div class="gate" id="gate3" hidden></div>
       <div class="sig" data-sig="s3"></div>
       <div class="actions"><button class="btn primary" data-sign="3"></button><span class="err" id="s3err"></span></div>
       <div class="hint" id="finalHint">חתימה על שלב זה נועלת את הצ׳קליסט כולו לצמיתות.</div>
@@ -471,8 +515,9 @@ function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefi
 
 /* RTDB drops empty maps and nulls, so restore the shape the app expects */
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
-  d.log=d.log||{}; for(const k of ['s1','s2','s3']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
-  d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s3.files=d.s3.files||{}; return d; }
+  d.log=d.log||{}; for(const k of ['s1','s2','s3','s4']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
+  d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s2.scans=d.s2.scans||{}; d.s3.files=d.s3.files||{}; d.s4.photos=d.s4.photos||{}; return d; }
+const FIXLAB={}; for(let u=1;u<=2;u++){ for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]='UPS'+u+'_תא'+c; FIXLAB['u'+u+'body']='UPS'+u+'_גוף'; FIXLAB['u'+u+'ceil']='UPS'+u+'_תקרה'; }
 const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
 const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(isObj(o)) return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o===undefined?null:o); };
 function strip(o){ if(Array.isArray(o)) return o.map(strip); if(isObj(o)){ const r={}; for(const k of Object.keys(o)){ const v=strip(o[k]); if(v===null||v===undefined) continue; if(isObj(v)&&!Object.keys(v).length) continue; r[k]=v; } return r; } return o; }
@@ -554,8 +599,8 @@ async function fetchAsset(id){
     const blob=await (await fetch(v.data)).blob(), b=blob.type===v.type?blob:new Blob([blob],{type:v.type});
     if(!assetMeta.has(id)){ const rec={id,type:v.type,size:b.size,at:v.at||Date.now(),blob:b,dirty:false}; await put('assets',rec); assetMeta.set(id,rec); urls.set(id,URL.createObjectURL(b)); notifyAll(); }
   }catch(e){ failedAssets.add(id); } finally{ inflight.delete(id); } }
-function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
-  ['s1','s2','s3'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
+function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
+  ['s1','s2','s3','s4'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
 function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
 function flushAll(){ [...dirtyDocs].forEach(p=>pushDoc(p,null)); [...dirtyAssets].forEach(pushAsset); }
 function applyRemote(key,val){
@@ -623,9 +668,10 @@ async function exportZip(){
   for(const r of reportDocs()){
     const folder=safe([r.site,quadOf(r),r.module].filter(Boolean).join('_'))||r.id;
     const cl=Object.values((r.s2&&r.s2.cells)||{}).filter(c=>c&&!c.removed).sort((x,y)=>((x.t||0)-(y.t||0))||String(x.id).localeCompare(String(y.id)));
-    for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
+    for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(FIXLAB[p.cell]?FIXLAB[p.cell]+'_':ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
+    for(const p of Object.values((r.s4&&r.s4.photos)||{})) await add(folder+'/fire-stopping',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
     for(const p of Object.values((r.s3&&r.s3.files)||{})) await add(folder+'/inspector',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
-    for(const k of ['s1','s2','s3']){ const s=r[k]&&r[k].sig; if(!s) continue;
+    for(const k of ['s1','s2','s3','s4']){ const s=r[k]&&r[k].sig; if(!s) continue;
       if(s.assetId) await add(folder+'/signatures','signature-'+k+'.png',s.assetId,'image/png');
       else if(s.data){ const b=await (await fetch(s.data)).blob(); files.push({name:folder+'/signatures/signature-'+k+'.png',data:new Uint8Array(await b.arrayBuffer())}); } } }
   for(const a of assetMeta.values()) if(!seen.has(a.id)) await add('unlinked',a.id,a.id,a.type);
@@ -634,8 +680,8 @@ async function exportZip(){
 
 function missingAssets(){ const miss=new Set();
   for(const r of reportDocs()){
-    Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
-    ['s1','s2','s3'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
+    Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
+    ['s1','s2','s3','s4'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
   return miss.size; }
 async function restoreBackup(obj){ await ready;
   if(!obj||!Array.isArray(obj.reports)) throw new Error('bad-format');
@@ -674,8 +720,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const SECS=['s1','s2','s3'];
-  const TEXT={s1:['name','empId','tool','calib','notes','declared'],s2:['name','role','notes','declared'],s3:['name','inspector','no','date','declared']};
+  const SECS=['s1','s2','s4','s3'];  /* s4 = fire-stopping, shown as stage 3; s3 = inspector, shown as stage 4 */
+  const numOf=k=>SECS.indexOf(k)+1;
+  const TEXT={s1:['name','empId','tool','calib','notes','declared'],s2:['name','role','date','notes','declared'],s4:['name','role','date','notes','declared'],s3:['name','inspector','no','date','clean1','clean2','declared']};
   const HDR=['module','site','quadrant'], HREQ=['module','site','quadrant'];
   const quad=r=>(r.quadrant!=null&&r.quadrant!=='')?r.quadrant:(r.location||'');
   let db=null,col=null,assets=null,downloads=null,userNs=null,me='',canEdit=false;
@@ -695,11 +742,19 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function blank(){
     return {id:null,module:'',site:'',quadrant:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
       s1:{name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
-      s2:{name:'',role:'',notes:'',declared:false,photos:{},cells:{},sig:null,signedAt:0},
-      s3:{name:'',inspector:'',no:'',date:'',declared:false,files:{},sig:null,signedAt:0}};
+      s2:{name:'',role:'',date:'',notes:'',declared:false,photos:{},cells:{},scans:{},fixed:true,sig:null,signedAt:0},
+      s4:{name:'',role:'',date:'',notes:'',declared:false,photos:{},sig:null,signedAt:0},
+      s3:{name:'',inspector:'',no:'',date:'',clean1:false,clean2:false,declared:false,files:{},sig:null,signedAt:0}};
   }
   const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
+  /* fixed inspection items: per UPS, 7 cells + the UPS body + the UPS ceiling (edit these 3 numbers to change the scheme) */
+  const UPS_N=2, CELLS_N=7, ITEMS=[];
+  for(let u=1;u<=UPS_N;u++){ for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:'UPS '+u+' / תא '+c,grp:'UPS '+u}); ITEMS.push({id:'u'+u+'body',label:'UPS '+u+' / גוף ה־UPS',grp:'UPS '+u}); ITEMS.push({id:'u'+u+'ceil',label:'UPS '+u+' / תקרת UPS',grp:'UPS '+u}); }
+  /* checklists whose stage 2 was already signed before this scheme keep the old free-form cells */
+  const isFixed=r=>!!(r.s2&&r.s2.fixed)||(!(r.s2&&r.s2.sig)&&!isFinal(r));
+  const scanOk=(r,id)=>!!(((r.s2&&r.s2.scans)||{})[id]||{}).ok;
   function s2Model(r){ const cells=cellsOf(r), ph=live(r.s2.photos), used=new Set();
+    if(isFixed(r)){ const rows=ITEMS.map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
     const rows=cells.map((c,i)=>{ const ps=ph.filter(p=>p.cell===c.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c,label:'תא '+(i+1),p}; });
     return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
   let lastCellT=0;
@@ -712,13 +767,15 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const f=(m,withCell)=>live(m).map(p=>({assetId:p.assetId||'',name:p.name||'',size:p.size||0,sha:(shas&&shas[p.assetId])||'',...(withCell&&p.cell?{cell:p.cell}:{})}));
     const sg=s=>s.sig?{ref:s.sig.assetId||'',sha:(shas&&shas[s.sig.assetId||'inline-'+s.signedAt])||'',at:s.signedAt}:null;
     const o={id:r.id,module:r.module,site:r.site,location:r.location,model:r.model,serial:r.serial,createdAt:r.createdAt}; if(r.quadrant!==undefined) o.quadrant=r.quadrant;
-    SECS.forEach(k=>{ o[k]={}; TEXT[k].forEach(x=>o[k][x]=r[k][x]); o[k].sig=sg(r[k]); });
+    SECS.forEach(k=>{ if(k==='s4'&&!(r.s4&&r.s4.sig)) return; o[k]={}; TEXT[k].forEach(x=>{ if(r[k][x]!==undefined) o[k][x]=r[k][x]; }); o[k].sig=sg(r[k]); });
+    if(o.s4) o.s4.photos=f(r.s4.photos);
+    if(r.s2.fixed) o.s2.scans=ITEMS.filter(i=>scanOk(r,i.id)).map(i=>i.id);
     o.s2.photos=f(r.s2.photos,true); o.s3.files=f(r.s3.files); const cl=cellsOf(r); if(cl.length) o.s2.cells=cl.map(c=>({id:c.id,t:c.t})); return o;
   }
   async function fileShas(r){
-    const shas={}, items=[...live(r.s2.photos),...live(r.s3.files)];
+    const shas={}, items=[...live(r.s2.photos),...live(r.s3.files),...live((r.s4||{}).photos)];
     for(const p of items){ try{ shas[p.assetId]=await sha(await (await fetch(src(p))).arrayBuffer()); }catch(_){ shas[p.assetId]='unreadable'; } }
-    for(const k of SECS){ const s=r[k].sig; if(!s) continue; const key=s.assetId||'inline-'+r[k].signedAt;
+    for(const k of SECS){ const s=(r[k]||{}).sig; if(!s) continue; const key=s.assetId||'inline-'+r[k].signedAt;
       try{ shas[key]= s.assetId? await sha(await (await fetch(src(s))).arrayBuffer()) : await sha(s.data); }catch(_){ shas[key]='unreadable'; } }
     return shas;
   }
@@ -895,10 +952,10 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       if(!res){ p.status='נכשל'; p.err=le&&le.code; paintFiles(); continue; }
       const rec={assetId:res.id,name:p.name,size:res.sizeBytes,type:res.contentType,t:p.t,by:me}; if(p.slot==='photo'&&p.cell) rec.cell=p.cell;
       const prevRem={}; if(p.slot==='photo'&&p.cell){ const base=(cur&&cur.id===p.reportId)?cur:reports.find(r=>r.id===p.reportId); if(base) live(base.s2.photos).filter(x=>x.cell===p.cell).forEach(x=>{ prevRem[x.assetId]={...x,removed:true,removedAt:Date.now(),removedBy:me,replaced:true}; }); }
-      const field=p.slot==='photo'?{s2:{photos:{...prevRem,[res.id]:rec}}}:{s3:{files:{[res.id]:rec}}};
-      if(await writeRetry(p.reportId,{...field,log:logEntry((p.slot==='photo'?'תמונה נוספה: ':'קובץ אישור נוסף: ')+p.name)})){
+      const field=p.slot==='photo'?{s2:{photos:{...prevRem,[res.id]:rec}}}:p.slot==='fire'?{s4:{photos:{[res.id]:rec}}}:{s3:{files:{[res.id]:rec}}};
+      if(await writeRetry(p.reportId,{...field,log:logEntry((p.slot==='photo'?'תמונה נוספה: ':p.slot==='fire'?'תמונת איטום אש נוספה: ':'קובץ אישור נוסף: ')+p.name)})){
         await qDel(key); URL.revokeObjectURL(p.url); pending.delete(key);
-        if(cur&&cur.id===p.reportId){ (p.slot==='photo'?cur.s2.photos:cur.s3.files)[res.id]=rec; if(p.slot==='photo') Object.assign(cur.s2.photos,prevRem); }
+        if(cur&&cur.id===p.reportId){ (p.slot==='photo'?cur.s2.photos:p.slot==='fire'?cur.s4.photos:cur.s3.files)[res.id]=rec; if(p.slot==='photo') Object.assign(cur.s2.photos,prevRem); }
       } else p.status='ממתין לשמירה';
       paintFiles();
     } } finally { running=false; paintPending(); refreshStorage(); }
@@ -906,7 +963,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function paintPending(){ const n=pending.size,b=$('pendingBanner'); b.hidden=!n; if(n) b.textContent=n+' קבצים בתהליך העלאה. הם שמורים בדפדפן הזה עד שהשרת מאשר אותם, אז אל תנקה את נתוני הדפדפן עד הסיום.'; }
   function paintFiles(){
     if(!cur) return;
-    const fin=isFinal(cur), l2=fin||!!cur.s2.sig, l3=fin||!!cur.s3.sig||!(cur.s1.sig&&cur.s2.sig);
+    const fin=isFinal(cur), l2=fin||!!cur.s2.sig, l3=fin||!!cur.s3.sig||!(cur.s1.sig&&cur.s2.sig&&cur.s4.sig), l4=fin||!!cur.s4.sig||!cur.s2.sig;
     paintCells(l2);
     const lst=$('s3list'); lst.innerHTML='';
     live(cur.s3.files).forEach(p=>{ const d=document.createElement('div'); d.className='file'; const pdf=(p.type||'').includes('pdf');
@@ -914,12 +971,18 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       if(!pdf) d.querySelector('img').src=src(p); const a=d.querySelector('a'); a.href=src(p); a.textContent=p.name||'אישור בודק';
       if(!l3){ const b=document.createElement('button'); b.className='btn small'; b.textContent='הסר'; b.onclick=()=>removeItem('file',p); d.querySelector('.sp').appendChild(b); }
       lst.appendChild(d); });
-    for(const [key,p] of pending){ if(p.reportId!==cur.id) continue; const failed=p.status==='נכשל';
+    const l4box=$('s4list'); l4box.innerHTML='';
+    live(cur.s4.photos).forEach(p=>{ const d=document.createElement('div'); d.className='file'; d.innerHTML='<img alt=""><a target="_blank" rel="noopener"></a><span class="sp"></span>'; d.querySelector('img').src=src(p); const a=d.querySelector('a'); a.href=src(p); a.textContent=p.name||'תמונת איטום אש';
+      if(!l4){ const b=document.createElement('button'); b.className='btn small'; b.textContent='הסר'; b.onclick=()=>removeItem('fire',p); d.querySelector('.sp').appendChild(b); }
+      l4box.appendChild(d); });
+    for(const [key,p] of pending){ if(p.reportId!==cur.id||p.slot!=='fire') continue; const failed=p.status==='נכשל'; const d=document.createElement('div'); d.className='file'; d.innerHTML='<span>⏳</span><span></span><span class="sp"></span>'; d.children[1].textContent=p.name+' / '+(failed?'ההעלאה נכשלה':p.status);
+      if(failed&&p.err!=='locked'){ const b=document.createElement('button'); b.className='btn small'; b.textContent='נסה שוב'; b.onclick=()=>{p.status='מעלה…';runQueue();}; d.querySelector('.sp').appendChild(b); } l4box.appendChild(d); }
+    for(const [key,p] of pending){ if(p.reportId!==cur.id||p.slot==='fire') continue; const failed=p.status==='נכשל';
       if(p.slot==='photo'){ /* shown inside its cell row */ } else { const d=document.createElement('div'); d.className='file'; d.innerHTML='<span>⏳</span><span></span><span class="sp"></span>';
         d.children[1].textContent=p.name+' / '+(failed?'ההעלאה נכשלה':p.status);
         if(failed&&p.err!=='locked'){ const b=document.createElement('button'); b.className='btn small'; b.textContent='נסה שוב'; b.onclick=()=>{p.status='מעלה…';runQueue();}; d.querySelector('.sp').appendChild(b); }
         lst.appendChild(d); } }
-    $('addCell').hidden=l2||!assets; $('s3drop').hidden=l3||!assets; paintPending();
+    $('addCell').hidden=l2||!assets||isFixed(cur); $('s3drop').hidden=l3||!assets; $('s4drop').hidden=l4||!assets; paintPending(); paintGates();
   }
   /* ---------- section 2: one photo per cell ---------- */
   let s2target=null;
@@ -929,7 +992,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const pend=[...pending.values()].filter(p=>p.reportId===cur.id&&p.slot==='photo');
     const known=new Set(rows.map(r=>r.c.id)), loose=pend.filter(p=>!p.cell||!known.has(p.cell));
     if(!rows.length&&!m.extra.length&&!loose.length) rows.push({c:null,label:'תא 1',p:null});
-    const many=rows.filter(r=>r.c).length>1;
+    const many=!m.fixed&&rows.filter(r=>r.c).length>1;
     const mk=(txt,fn)=>{ const b=document.createElement('button'); b.type='button'; b.className='btn small'; b.textContent=txt; b.onclick=e=>{ e.stopPropagation(); fn(); }; return b; };
     const build=(label,photo,pe,cellId,canPick)=>{
       const d=document.createElement('div'); d.className='cellrow';
@@ -950,9 +1013,30 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         if(cellId&&many) acts.appendChild(mk('מחק תא',()=>removeCell(cellId)));
         if(!photo&&canPick&&assets){ d.classList.add('click'); d.onclick=()=>pickPhoto(cellId); } }
       d.appendChild(acts); return d; };
-    rows.forEach(r=>{ const id=r.c?r.c.id:null; box.appendChild(build(r.label,r.p,id?pend.find(p=>p.cell===id):null,id,true)); });
+    const hint=$('s2hint'), prog=$('s2prog');
+    if(m.fixed){
+      hint.textContent='לכל אחת מ־'+UPS_N+' יחידות ה־UPS: '+CELLS_N+' תאים, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים). לכל פריט נדרשים תמונה ואישור סריקה פיזית. אי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)';
+      const nP=rows.filter(r=>r.p).length, nS=rows.filter(r=>r.scan).length, all=nP===rows.length&&nS===rows.length;
+      prog.textContent='תמונות: '+nP+' מתוך '+rows.length+'  /  סריקה פיזית: '+nS+' מתוך '+rows.length; prog.className='s2prog'+(all?' ok':'');
+      let lastG='';
+      rows.forEach(r=>{ if(r.grp!==lastG){ lastG=r.grp; const h=document.createElement('div'); h.className='grph'; h.textContent=r.grp; box.appendChild(h); }
+        const row=build(r.label,r.p,pend.find(p=>p.cell===r.c.id),r.c.id,true);
+        const lb=document.createElement('label'); lb.className='scan'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=r.scan; cb.disabled=!!l2;
+        lb.appendChild(cb); lb.appendChild(document.createTextNode('סריקה פיזית בוצעה')); lb.onclick=e=>e.stopPropagation(); cb.onchange=()=>setScan(r.c.id,cb.checked);
+        row.insertBefore(lb,row.querySelector('.acts')); box.appendChild(row); });
+    } else {
+      hint.textContent='תמונות הוכחה שהתאים נקיים, תמונה לכל תא (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)'; prog.textContent='';
+      rows.forEach(r=>{ const id=r.c?r.c.id:null; box.appendChild(build(r.label,r.p,id?pend.find(p=>p.cell===id):null,id,true)); });
+    }
     m.extra.forEach(p=>box.appendChild(build('תמונה נוספת',p,null,null,false)));
     loose.forEach(pe=>box.appendChild(build('תמונה נוספת',null,pe,null,false)));
+  }
+  async function setScan(id,on){
+    if(!cur||isFinal(cur)||cur.s2.sig) return;
+    if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); paintFiles(); return; }
+    const rec={ok:!!on,at:Date.now(),by:me}; if(!cur.s2.scans) cur.s2.scans={}; cur.s2.scans[id]=rec; paintFiles();
+    const it=ITEMS.find(i=>i.id===id);
+    await writeRetry(cur.id,{s2:{scans:{[id]:rec}},log:logEntry((on?'סריקה פיזית אושרה: ':'אישור סריקה פיזית בוטל: ')+(it?it.label:id))});
   }
   async function newCell(){
     if(!(await ensureCreated())) return null;
@@ -974,23 +1058,28 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(isFinal(cur)) return;
     if(!confirm('להסיר את „'+(p.name||'הקובץ')+'” מהצ׳קליסט? הקובץ עצמו נשאר שמור בגיבוי.')) return;
     const rec={...p,removed:true,removedAt:Date.now(),removedBy:me};
-    (kind==='photo'?cur.s2.photos:cur.s3.files)[p.assetId]=rec; paintFiles();
-    await writeRetry(cur.id,{...(kind==='photo'?{s2:{photos:{[p.assetId]:rec}}}:{s3:{files:{[p.assetId]:rec}}}),log:logEntry('הוסר מהתצוגה: '+(p.name||''))});
+    (kind==='photo'?cur.s2.photos:kind==='fire'?cur.s4.photos:cur.s3.files)[p.assetId]=rec; paintFiles();
+    await writeRetry(cur.id,{...(kind==='photo'?{s2:{photos:{[p.assetId]:rec}}}:kind==='fire'?{s4:{photos:{[p.assetId]:rec}}}:{s3:{files:{[p.assetId]:rec}}}),log:logEntry('הוסר מהתצוגה: '+(p.name||''))});
   }
   $('s2files').addEventListener('change',async e=>{ const f=[...e.target.files]; e.target.value=''; if(!f.length||!cur||isFinal(cur)||cur.s2.sig) return;
     if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
     let cid=s2target; if(!cid){ cid=await newCell(); if(!cid) return; }
     await addFiles(f.slice(0,1),'photo',cid); });
   $('s3files').addEventListener('change',e=>{const f=[...e.target.files];e.target.value='';addFiles(f,'file');});
+  $('s4files').addEventListener('change',e=>{const f=[...e.target.files];e.target.value=''; if(!cur||cur.s4.sig) return; addFiles(f,'fire');});
 
   /* ---------- sign / reopen / final lock ---------- */
   function validate(n){
     const k='s'+n,s=cur[k],miss=[];
     const h=readSec('hdr'); HREQ.forEach(f=>{ if(!h[f]) miss.push({module:'שם המודול',site:'אתר',quadrant:'רביע'}[f]); });
     if(!s.name.trim()) miss.push('שם');
-    if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
-    if(n===3&&!s.inspector.trim()) miss.push('שם הבודק');
-    if([...pending.values()].some(p=>p.reportId===cur.id&&((n===2&&p.slot==='photo')||(n===3&&p.slot==='file')))) miss.push('המתן לסיום ההעלאה');
+    if(n===2&&isFixed(cur)){ const m=s2Model(cur), np=m.rows.filter(r=>!r.p).length, ns=m.rows.filter(r=>!r.scan).length;
+      if(!s.date) miss.push('תאריך ביצוע הניקיון'); if(np) miss.push('תמונה ל־'+np+' פריטים'); if(ns) miss.push('אישור סריקה פיזית ל־'+ns+' פריטים'); }
+    else if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
+    if(n===4){ if(!s.date) miss.push('תאריך ביצוע איטומי האש'); if(!live(s.photos).length) miss.push('תמונה אחת לפחות של איטומי האש'); }
+    if(n===3){ if(!s.inspector.trim()) miss.push('שם הבודק'); if(!s.date) miss.push('תאריך אישור הבודק'); if(!live(s.files).length) miss.push('דוח בודק מצורף');
+      for(let u=1;u<=UPS_N;u++) if(!s['clean'+u]) miss.push('אישור דוח בודק נקי ל־UPS '+u); }
+    if([...pending.values()].some(p=>p.reportId===cur.id&&((n===2&&p.slot==='photo')||(n===3&&p.slot==='file')||(n===4&&p.slot==='fire')))) miss.push('המתן לסיום ההעלאה');
     if(!s.declared) miss.push('סימון ההצהרה');
     if(!pads[k]||!pads[k].isDirty()) miss.push('חתימה');
     return miss;
@@ -999,14 +1088,15 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const n=+b.dataset.sign,k='s'+n; if(!cur||isFinal(cur)) return;
     SECS.forEach(x=>{ if(!cur[x].sig) Object.assign(cur[x],readSec(x)); });
     if(cur[k].sig){
-      if(!confirm('לפתוח את שלב '+n+' לעריכה? החתימה תבוטל ותישמר בהיסטוריית הגרסאות.')) return;
-      await flushAll(); await snapshotVersion('לפני ביטול חתימת שלב '+n);
+      if(!confirm('לפתוח את שלב '+numOf(k)+' לעריכה? החתימה תבוטל ותישמר בהיסטוריית הגרסאות.')) return;
+      await flushAll(); await snapshotVersion('לפני ביטול חתימת שלב '+numOf(k));
       cur[k].sig=null; cur[k].signedAt=0; cur[k].declared=false;
-      paint(true); await writeRetry(cur.id,{[k]:{sig:null,signedAt:0,declared:false},log:logEntry('חתימת שלב '+n+' בוטלה לעריכה')}); return;
+      paint(true); await writeRetry(cur.id,{[k]:{sig:null,signedAt:0,declared:false},log:logEntry('חתימת שלב '+numOf(k)+' בוטלה לעריכה')}); return;
     }
     const miss=validate(n); if(miss.length){ $(k+'err').textContent='חסר: '+miss.join(', '); return; }
+    const fx=n===2&&isFixed(cur);
     if(n===1){ const cs=calibState(); if(cs&&cs.exp&&!confirm('תוקף הכיול של מד המומנט פג. החתימה תסומן כחריגה בתמונת המצב. לחתום בכל זאת?')) return; }
-    if(n===3 && !confirm('חתימה על שלב 3 תנעל את הצ׳קליסט של מודול '+cur.module+' לצמיתות. לא ניתן יהיה לשנות אותו אחר כך. להמשיך?')) return;
+    if(n===3 && !confirm('חתימה על שלב '+numOf(k)+' תנעל את הצ׳קליסט של מודול '+cur.module+' לצמיתות. לא ניתן יהיה לשנות אותו אחר כך. להמשיך?')) return;
     if(!(await ensureCreated())) return;
     await flushAll();
     b.disabled=true; $(k+'err').textContent=''; b.textContent='שומר חתימה…';
@@ -1015,9 +1105,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       if(!sig) sig={data:await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(blob);})}; }
     catch(_){ b.disabled=false; paint(false); $(k+'err').textContent='שמירת החתימה נכשלה, נסה שוב'; return; }
     const at=Date.now(),vals=readSec(k);
-    if(!(await writeRetry(cur.id,{[k]:{...vals,sig,signedAt:at,signedBy:me},log:logEntry('שלב '+n+' נחתם ע״י '+vals.name)}))){ b.disabled=false; paint(false); $(k+'err').textContent='החתימה לא נשמרה. בדוק חיבור ונסה שוב.'; return; }
-    Object.assign(cur[k],vals,{sig,signedAt:at,signedBy:me}); dirty[k]=false; saveDraft(); maybeClearDraft();
-    if(n===3) await seal(); else { await snapshotVersion('שלב '+n+' נחתם'); toast('שלב '+n+' נחתם ונשמר'); }
+    if(!(await writeRetry(cur.id,{[k]:{...vals,sig,signedAt:at,signedBy:me,...(fx?{fixed:true}:{})},log:logEntry('שלב '+numOf(k)+' נחתם ע״י '+vals.name)}))){ b.disabled=false; paint(false); $(k+'err').textContent='החתימה לא נשמרה. בדוק חיבור ונסה שוב.'; return; }
+    Object.assign(cur[k],vals,{sig,signedAt:at,signedBy:me},fx?{fixed:true}:{}); dirty[k]=false; saveDraft(); maybeClearDraft();
+    if(n===3) await seal(); else { await snapshotVersion('שלב '+numOf(k)+' נחתם'); toast('שלב '+numOf(k)+' נחתם ונשמר'); }
     b.disabled=false; paint(true);
   }));
   async function seal(){
@@ -1046,29 +1136,44 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     $('mNum').textContent=m.trim()||'צ׳קליסט חדש';
     const site=cur?(cur.site||$('site').value):'', q=cur?(quad(cur)||$('quadrant').value):'';
     $('mSub').textContent=[site&&('אתר '+site),q&&('רביע '+q)].filter(Boolean).join(' / ');
-    const d=cur?SECS.map(k=>!!cur[k].sig):[false,false,false], n=d.filter(Boolean).length, fin=isFinal(cur);
-    const ring=$('ring'); ring.style.setProperty('--p',Math.round(n/3*100)); ring.classList.toggle('go',fin); $('ringTxt').textContent=fin?'✓':n+'/3';
+    const d=cur?SECS.map(k=>!!cur[k].sig):SECS.map(()=>false), n=d.filter(Boolean).length, fin=isFinal(cur);
+    const ring=$('ring'); ring.style.setProperty('--p',Math.round(n/SECS.length*100)); ring.classList.toggle('go',fin); $('ringTxt').textContent=fin?'✓':n+'/'+SECS.length;
     const sl=$('statusLine'); sl.classList.toggle('go',fin);
-    $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין להצהרת מפעיל תדיראן': !d[1]?'ממתין לאישור ניקיון התאים':'ממתין לאישור מתאם תדיראן';
+    $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין להצהרת מפעיל תדיראן': !d[1]?'ממתין לאישור ניקיון התאים': !d[2]?'ממתין לאישור איטומי אש':'ממתין לאישור מתאם תדיראן';
     const pb=$('pdfBtn'); pb.hidden=false; if(!pb.disabled) pb.textContent=pdfLabel();
   }
+  function paintGates(){
+    if(!cur) return; const fin=isFinal(cur);
+    SECS.forEach(x=>{ if(!cur[x].sig){ try{ Object.assign(cur[x],readSec(x)); }catch(_){} } });
+    SECS.forEach(k=>{ const n=+k[1], g=$('gate'+n); if(!g) return;
+      if(fin||cur[k].sig){ g.hidden=true; return; } g.hidden=false;
+      if(k==='s3'&&!(cur.s1.sig&&cur.s2.sig&&cur.s4.sig)){ g.className='gate wait'; g.textContent='תנאי למעבר: חתימה על שלבים 1, 2 ו־3 (מודול, ניקיון ואיטומי אש).'; return; }
+      if(k==='s4'&&!cur.s2.sig){ g.className='gate wait'; g.textContent='תנאי למעבר: חתימה על שלב 2 (ניקיון התאים).'; return; }
+      const miss=validate(n).filter(x=>x!=='חתימה');
+      g.innerHTML=''; if(!miss.length){ g.className='gate ok'; const b=document.createElement('b'); b.textContent=k==='s3'?'כל התנאים מתקיימים. אפשר לחתום ולנעול את הצ׳קליסט.':'כל התנאים מתקיימים. אפשר לחתום ולעבור לשלב הבא.'; g.appendChild(b); return; }
+      g.className='gate'; const b=document.createElement('b'); b.textContent='תנאים שעוד חסרים למעבר לשלב הבא:'; g.appendChild(b);
+      const ul=document.createElement('ul'); miss.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul.appendChild(li); }); g.appendChild(ul); });
+  }
+  ['input','change','pointerup'].forEach(ev=>document.addEventListener(ev,()=>{ clearTimeout(paintGates.h); paintGates.h=setTimeout(paintGates,150); }));
   function paint(force){
     writeInputs(force); paintHead();
     const fin=isFinal(cur), d=SECS.map(k=>!!cur[k].sig);
-    [1,2,3].forEach(n=>{
-      const st=$('st'+n),signed=d[n-1],locked=!signed&&n===3&&!(d[0]&&d[1]);
-      st.classList.toggle('signed',signed); st.classList.toggle('locked',locked); st.querySelector('.badge').textContent=signed?'✓':String(n);
-      $('st'+n+'state').textContent= fin?'נעול': signed?'נחתם': locked?'ממתין לשלבים 1 ו־2':'ממתין לחתימה';
+    SECS.forEach((k,i)=>{
+      const n=+k[1], num=i+1, st=$('st'+n), signed=d[i], isInsp=k==='s3', noReq=fin&&!signed&&k==='s4';
+      const locked=!signed&&!fin&&((isInsp&&!(d[0]&&d[1]&&d[2]))||(k==='s4'&&!d[1]));
+      st.classList.toggle('signed',signed); st.classList.toggle('locked',locked); st.querySelector('.badge').textContent=signed?'✓':String(num);
+      $('st'+n+'state').textContent= noReq?'לא נדרש (נחתם לפני הוספת שלב זה)': fin?'נעול': signed?'נחתם': locked?(isInsp?'ממתין לשלבים 1 עד 3':'ממתין לשלב 2'):'ממתין לחתימה';
       st.querySelectorAll('input:not([type=file]),textarea').forEach(el=>el.disabled=fin||signed||locked);
       const b=st.querySelector('[data-sign]');
-      b.hidden=fin; b.textContent= signed?'פתח לעריכה': n===3?'חתום ונעל את הצ׳קליסט':'חתום ואשר שלב '+n;
-      b.className='btn '+(signed?'':(n===3?'brass':'primary')); b.disabled=locked;
-      paintSig('s'+n);
+      b.hidden=fin; b.textContent= signed?'פתח לעריכה': isInsp?'חתום ונעל את הצ׳קליסט':'חתום ואשר שלב '+num;
+      b.className='btn '+(signed?'':(isInsp?'brass':'primary')); b.disabled=locked;
+      paintSig(k);
+
     });
     $('finalHint').hidden=fin;
     $('hdr').querySelectorAll('input').forEach(el=>el.disabled=d.some(Boolean)||fin);
     $('hdrHint').hidden=!!cur.id;
-    paintFiles(); paintSeal(); paintCalib();
+    paintFiles(); paintSeal(); paintCalib(); paintGates();
     $('logSec').hidden=!cur.id;
     const lg=$('log'); lg.innerHTML='';
     Object.values(cur.log||{}).sort((a,b)=>b.t-a.t).forEach(e=>{const r=document.createElement('div');r.innerHTML='<time></time><span></span>';r.firstChild.textContent=fmt(e.t);r.lastChild.textContent=e.text;lg.appendChild(r);});
@@ -1094,9 +1199,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       sec.querySelector('.meta').textContent=items.filter(isFinal).length+' מתוך '+items.length+' מודולים נעולים ומוכנים';
       items.forEach(r=>{
         const n=done(r),fin=isFinal(r),t=document.createElement('button'); t.type='button'; t.className='tile'+(fin?' ready':'')+(cur&&r.id===cur.id?' active':'');
-        t.innerHTML='<div class="top"><span class="n"></span>'+(fin?'<span class="lock" title="נעול">🔒</span>':'')+'</div><div class="bars"><i></i><i></i><i></i></div><span class="chip"></span><span class="m"></span>';
+        t.innerHTML='<div class="top"><span class="n"></span>'+(fin?'<span class="lock" title="נעול">🔒</span>':'')+'</div><div class="bars"><i></i><i></i><i></i><i></i></div><span class="chip"></span><span class="m"></span>';
         t.querySelector('.n').textContent=r.module||'?';
-        SECS.forEach((k,i)=>{ if(r[k]&&r[k].sig) t.querySelectorAll('.bars i')[i].classList.add('on'); });
+        SECS.forEach((k,i)=>{ if(r[k]&&(r[k].sig||(isFinal(r)&&k==='s4'))) t.querySelectorAll('.bars i')[i].classList.add('on'); });
         t.querySelector('.chip').textContent=fin?'נעול / מוכן לעומס':n+' מתוך 3 שלבים';
         t.querySelector('.m').textContent='עודכן '+fmt(r.updatedAt);
         if(!fin&&hasDraft(r.id)){ const w=document.createElement('span'); w.className='chip draft'; w.textContent='שינויים במכשיר שטרם נשמרו'; t.insertBefore(w,t.querySelector('.m')); }
@@ -1143,23 +1248,27 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
       const fin=isFinal(cur);
       // locked checklists print the sealed copy
-      let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location}); SECS.forEach(k=>TEXT[k].forEach(f=>r[k][f]=sd[k][f])); }
+      let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>r[k][f]=sd[k][f]); }); }
       const logo='';
-      const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label,p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',p}))); const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1500)));
+      const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label+(sm2.fixed?(x.scan?' / סריקה פיזית ✓':' / ללא אישור סריקה'):''),p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',p}))); const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1500)));
+      const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireImgs=await Promise.all(live(r.s4.photos).map(p=>toData(src(p),1500)));
       const att=live(r.s3.files), attImgs=await Promise.all(att.map(p=>(p.type||'').includes('pdf')?'':toData(src(p),1600)));
       const sigs={}; for(const k of SECS) sigs[k]=r[k].sig?(r[k].sig.data||await toData(src(r[k].sig),900)):'';
       const row=(k,v)=>blank?'<tr><th>'+k+'</th><td class="ln">'+esc(v||'')+'</td></tr>':(v?'<tr><th>'+k+'</th><td>'+esc(v)+'</td></tr>':'');
       const dt=n=>(blank?'<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #13213A;border-radius:2px;margin-left:8px;vertical-align:-2px"></span>':'')+esc($('st'+n).querySelector('.dtext').textContent);
       const sg=k=>blank?'<div class="avoid"><table style="width:auto"><tr><th style="width:auto;border:0">חתימה</th><td style="border:0"><div class="sbx"></div></td><th style="width:auto;border:0;padding-right:18px">תאריך</th><td style="border:0;vertical-align:bottom"><div class="ln" style="width:130px"></div></td></tr></table></div>':r[k].sig?'<div class="avoid sg"><img src="'+sigs[k]+'"><div class="sm">נחתם ע״י '+esc(r[k].name)+' / '+fmt(r[k].signedAt)+'</div></div>':'<p class="no">שלב זה טרם נחתם</p>';
       const n=done(r);
+      const itemsTbl=sm2.fixed?'<table style="margin-top:8px"><tr><th style="width:auto">פריט</th><th style="width:70px">תמונה</th><th style="width:100px">סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?'☐':(x.p?'✓':'✗'))+'</td><td>'+(blank?'☐':(x.scan?'✓':'✗'))+'</td></tr>').join('')+'</table>':'';
+      const cln=v=>blank?'☐':(v?'כן':'לא');
       const html='<div dir="rtl" style="font-family:\'Rubik\',Arial,sans-serif;color:#13213A;width:720px;font-size:12.5px;line-height:1.55">'+
         '<style>.hd{background:#0A0F1C;color:#fff;padding:18px 20px;border-bottom:4px solid #2D5BFF;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:16px}.hd img{max-height:40px;max-width:180px;background:#fff;padding:4px 8px;border-radius:4px}.hd .bn{font-weight:800;font-size:16px;direction:ltr;color:#fff}.hd h1{font-size:21px;margin:0;font-weight:700}.hd .s{opacity:.8;font-size:12px}.bd{padding:6px 4px}h2{font-size:15px;font-weight:700;color:#0A0F1C;border-bottom:2px solid #2D5BFF;padding-bottom:3px;margin:18px 0 8px}table{border-collapse:collapse;width:100%}th,td{text-align:right;padding:4px 6px;border-bottom:1px solid #E1E6EC;vertical-align:top}th{width:34%;color:#56657C;font-weight:600}.d{background:#EAF0FF;padding:8px 10px;border-radius:5px;margin:8px 0}.sg img{width:240px;border:1px solid #D5DCE5;border-radius:4px}.sm{font-size:11px;color:#1D7A55;font-weight:600}.ph{display:flex;flex-wrap:wrap;gap:6px}.ph img{width:232px;height:174px;object-fit:cover;border:1px solid #D5DCE5}.no{color:#A93A2B;font-weight:700}.st{padding:9px 12px;border-radius:5px;font-weight:700;margin:12px 0}.seal{border:1.5px solid #2D5BFF;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:11px}.fp{direction:ltr;font-family:monospace;word-break:break-all;color:#56657C}.ln{height:26px;border-bottom:1px solid #9AA3B2}.sbx{width:280px;height:86px;border:1.5px dashed #9AA3B2;border-radius:6px}</style>'+
         '<div class="hd">'+(logo?'<img src="'+logo+'">':'<span class="bn"><span style="color:#7C9AFF;font-weight:800;font-size:19px">CX</span><span style="display:inline-block;width:2px;height:15px;background:#12C2E9;margin:0 8px;vertical-align:-1px"></span><span style="letter-spacing:3px;font-weight:700">ELECTRA</span><div style="font-size:7.5px;letter-spacing:2.6px;color:#8A93A6;margin-top:3px;font-weight:500">ELECTRICAL COMMISSIONING</div></span>')+'<div><h1>צ׳קליסט מוכנות לבדיקות בעומס / '+esc(r.module)+'</h1><div class="s">'+esc(['אתר '+(r.site||''),quad(r)&&('רביע '+quad(r))].filter(Boolean).join(' / '))+'</div></div></div><div class="bd">'+
-        (blank?'<div class="st" style="background:#EAF0FF;color:#1F44D6">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>':'<div class="st" style="background:'+(fin?'#E0F1E8;color:#1D7A55':'#FBF1DC;color:#9A6200')+'">'+(fin?'המודול נחתם במלואו, ננעל ומאושר למעבר לבדיקות בעומס':'טיוטה, הצ׳קליסט טרם הושלם ('+n+' מתוך 3 שלבים)')+'</div>')+
+        (blank?'<div class="st" style="background:#EAF0FF;color:#1F44D6">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>':'<div class="st" style="background:'+(fin?'#E0F1E8;color:#1D7A55':'#FBF1DC;color:#9A6200')+'">'+(fin?'המודול נחתם במלואו, ננעל ומאושר למעבר לבדיקות בעומס':'טיוטה, הצ׳קליסט טרם הושלם ('+n+' מתוך '+SECS.length+' שלבים)')+'</div>')+
         '<h2>פרטי המודול</h2><table>'+row('שם המודול',r.module)+row('אתר',r.site)+row('רביע',quad(r))+(blank?'':row('נפתח',fmt(r.createdAt))+row('ננעל',fin?fmt(r.lockedAt):'')+row('הופק',fmt(Date.now()))+row('מזהה',r.id))+'</table>'+
         '<h2>1. חיזוק כניסות ויציאות במד מומנט</h2><table>'+row('מפעיל תדיראן',r.s1.name)+row('מספר עובד / ת״ז',r.s1.empId)+row('מס׳ מד מומנט',r.s1.tool)+row('תוקף כיול',r.s1.calib)+row('הערות',r.s1.notes)+'</table><p class="d avoid">'+dt(1)+'</p>'+sg('s1')+
-        '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table><div class="ph">'+photos.map((x,i)=>x?'<figure class="avoid" style="margin:0;text-align:center"><img class="avoid" src="'+x+'"><figcaption style="font-size:11px;color:#13213A;margin-top:2px">'+esc(pItems[i].label)+'</figcaption></figure>':'').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
-        '<h2 style="page-break-before:always">3. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
+        '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('תאריך ביצוע הניקיון',r.s2.date)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table>'+itemsTbl+'<div class="ph">'+photos.map((x,i)=>x?'<figure class="avoid" style="margin:0;text-align:center"><img class="avoid" src="'+x+'"><figcaption style="font-size:11px;color:#13213A;margin-top:2px">'+esc(pItems[i].label)+'</figcaption></figure>':'').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
+        (fireOn?'<h2 style="page-break-before:always">3. איטומי אש</h2><table>'+row('אחראי איטומי אש',r.s4.name)+row('תפקיד / חברה',r.s4.role)+row('תאריך ביצוע',r.s4.date)+row('הערות',r.s4.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(fireImgs.length))+'</table><div class="ph">'+fireImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'">').join('')+'</div><p class="d avoid">'+dt(4)+'</p>'+sg('s4'):'')+
+        '<h2 style="page-break-before:always">'+(fireOn?'4':'3')+'. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+((r.s3.clean1===undefined&&!blank)?'':row('דוח בודק נקי: UPS 1',cln(r.s3.clean1))+row('דוח בודק נקי: UPS 2',cln(r.s3.clean2)))+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
         '<div class="ph">'+attImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'" style="width:360px;height:auto">').join('')+'</div><p class="d avoid">'+dt(3)+'</p>'+sg('s3')+
         (fin&&cur.seal?'<div class="seal avoid"><b>חותמת דיגיטלית (SHA-256) של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div>':'')+
         (blank?'':'<h2>יומן פעולות</h2><table>'+Object.values(cur.log||{}).sort((a,b)=>a.t-b.t).map(e=>'<tr><th>'+fmt(e.t)+'</th><td>'+esc(e.text)+'</td></tr>').join('')+'</table>')+'</div></div>';
@@ -1196,11 +1305,11 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'&&cur&&Object.values(dirty).some(Boolean)){ saveDraft(); flushAll(); } else if(document.visibilityState==='visible'){ autoRetry(); } });
 
   /* ---------- status dashboard (read-only view over the same reports) ---------- */
-  const STG={new:{l:'לא התחיל',c:'var(--ink-3)'},s1:{l:'ממתין למומנט',c:'var(--warn)',tc:'#0A0F1C'},s2:{l:'ממתין לניקיון',c:'var(--cyan)',tc:'#0A0F1C'},s3:{l:'ממתין לאישור בודק',c:'var(--brand)'},ready:{l:'מוכן לעומס',c:'var(--ok)'}};
-  const STG_ORDER=['new','s1','s2','s3','ready'];
+  const STG={new:{l:'לא התחיל',c:'var(--ink-3)'},s1:{l:'ממתין למומנט',c:'var(--warn)',tc:'#0A0F1C'},s2:{l:'ממתין לניקיון',c:'var(--cyan)',tc:'#0A0F1C'},s4:{l:'ממתין לאיטומי אש',c:'#8E5CF7'},s3:{l:'ממתין לאישור בודק',c:'var(--brand)'},ready:{l:'מוכן לעומס',c:'var(--ok)'}};
+  const STG_ORDER=['new','s1','s2','s4','s3','ready'];
   const DASH={site:'',stage:'',idle:3};
   let view='cl';
-  function stageOf(r){ if(isFinal(r)) return 'ready'; const a=!!(r.s1&&r.s1.sig), b=!!(r.s2&&r.s2.sig); if(!a&&!b) return 'new'; if(!a) return 's1'; if(!b) return 's2'; return 's3'; }
+  function stageOf(r){ if(isFinal(r)) return 'ready'; const a=!!(r.s1&&r.s1.sig), b=!!(r.s2&&r.s2.sig); if(!a&&!b) return 'new'; if(!a) return 's1'; if(!b) return 's2'; if(!(r.s4&&r.s4.sig)) return 's4'; return 's3'; }
   function lastAct(r){ let t=r.updatedAt||r.createdAt||0; Object.values(r.log||{}).forEach(e=>{ if(e&&e.t>t) t=e.t; }); SECS.forEach(k=>{ if(r[k]&&r[k].signedAt>t) t=r[k].signedAt; }); return t; }
   function lockAt(r){ return r.lockedAt||(r.seal&&r.seal.at)||(r.s3&&r.s3.signedAt)||0; }
   function flagsOf(r){
@@ -1210,6 +1319,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       else if(!s1.sig&&cal<Date.now()) out.push({sev:'bad',t:'תוקף הכיול שהוזן כבר פג'}); }
     else if(s1.sig) out.push({sev:'warn',t:'חסר תוקף כיול למד המומנט'});
     if(s2.sig&&!live(s2.photos).length) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונות'});
+    if(s2.fixed&&s2.sig){ const has=new Set(live(s2.photos).map(p=>p.cell)); if(ITEMS.some(i=>!has.has(i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונה לכל הפריטים'}); if(ITEMS.some(i=>!scanOk(r,i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא אישור סריקה פיזית מלא'}); }
+    if(fin&&s3.clean1!==undefined&&!(s3.clean1&&s3.clean2)) out.push({sev:'bad',t:'נעול ללא אישור דוחות בודק נקיים'});
+    if(fin&&r.s4&&r.s4.sig&&!live(r.s4.photos).length) out.push({sev:'bad',t:'איטומי אש נחתמו ללא תמונות'});
     if(fin&&!live(s3.files).length) out.push({sev:'warn',t:'אין קובץ אישור בודק מצורף'});
     if(fin&&!r.seal) out.push({sev:'warn',t:'נעול ללא חותמת דיגיטלית'});
     const reo=Object.values(r.log||{}).filter(e=>e&&/בוטלה/.test(e.text||'')).length;
@@ -1281,9 +1393,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(t.dataset.didle!==undefined){ DASH.idle=+t.dataset.didle; paintDash(); return; }
     if(t.dataset.dcsv!==undefined){
       const c=v=>{ const s=String(v==null?'':v); return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-      const rows=[['אתר','רביע','מודול','שלב','מפעיל תדיראן','חתימת שלב 1','תוקף כיול','אחראי ניקיון','חתימת שלב 2','תמונות ניקיון','מתאם תדיראן','בודק','מספר אישור','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
-      reports.filter(r=>!DASH.site||(r.site||'ללא אתר')===DASH.site).sort((a,b)=>[a.site,quad(a),a.module].join('|').localeCompare([b.site,quad(b),b.module].join('|'),'he',{numeric:true})).forEach(r=>{ const s1=r.s1||{},s2=r.s2||{},s3=r.s3||{};
-        rows.push([r.site,quad(r),r.module,STG[stageOf(r)].l,s1.name,fmt(s1.signedAt),s1.calib,s2.name,fmt(s2.signedAt),live(s2.photos).length,s3.name,s3.inspector,s3.no,isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
+      const rows=[['אתר','רביע','מודול','שלב','מפעיל תדיראן','חתימת שלב 1','תוקף כיול','אחראי ניקיון','תאריך ניקיון','חתימת שלב 2','תמונות ניקיון','סריקות פיזיות','אחראי איטומי אש','תאריך איטומי אש','חתימת איטומי אש','תמונות איטומי אש','מתאם תדיראן','בודק','מספר אישור','דוחות בודק נקיים','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
+      reports.filter(r=>!DASH.site||(r.site||'ללא אתר')===DASH.site).sort((a,b)=>[a.site,quad(a),a.module].join('|').localeCompare([b.site,quad(b),b.module].join('|'),'he',{numeric:true})).forEach(r=>{ const s1=r.s1||{},s2=r.s2||{},s3=r.s3||{},s4=r.s4||{};
+        rows.push([r.site,quad(r),r.module,STG[stageOf(r)].l,s1.name,fmt(s1.signedAt),s1.calib,s2.name,s2.date||'',fmt(s2.signedAt),live(s2.photos).length,s2.fixed?ITEMS.filter(i=>scanOk(r,i.id)).length:'',s4.name,s4.date||'',fmt(s4.signedAt),live(s4.photos).length,s3.name,s3.inspector,s3.no,s3.clean1===undefined?'':((s3.clean1&&s3.clean2)?'כן':'לא'),isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
       try{ await downloads.save({filename:'CX-ELECTRA-UPS-status-'+new Date().toISOString().slice(0,10)+'.csv',data:'\ufeff'+rows.map(r=>r.map(c).join(',')).join('\r\n')}); toast('דוח המצב הורד'); }
       catch(err){ if(!(err&&err.code==='declined')) toast('ההורדה נכשלה'); }
     }
