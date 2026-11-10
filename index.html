@@ -373,6 +373,8 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f mod-field"><span class="req">שם המודול</span><input id="module" autocomplete="off"></label>
         <label class="f"><span class="req">אתר</span><input id="site" autocomplete="off"></label>
         <label class="f"><span class="req">רביע</span><input id="quadrant" autocomplete="off"></label>
+        <label class="f"><span>UPS110 מספר סידורי</span><input id="sn1" autocomplete="off" dir="ltr" style="text-align:right"></label>
+        <label class="f"><span>UPS210 מספר סידורי</span><input id="sn2" autocomplete="off" dir="ltr" style="text-align:right"></label>
       </div>
       <div class="hint" id="hdrHint">הצ׳קליסט נשמר אוטומטית מרגע שכל השדות המסומנים מולאו.</div>
     </section>
@@ -448,8 +450,8 @@ details.logbox summary{cursor:pointer;font-weight:600}
       </div>
       <div class="clean">
         <div class="hint req" style="margin:0 0 4px">דוחות בודק נקיים: תנאי למעבר לבדיקות בעומס</div>
-        <label class="decl"><input type="checkbox" data-f="clean1"><span class="ctext">דוח הבודק ל־UPS 1 צורף, ואין בו ליקויים פתוחים.</span></label>
-        <label class="decl"><input type="checkbox" data-f="clean2"><span class="ctext">דוח הבודק ל־UPS 2 צורף, ואין בו ליקויים פתוחים.</span></label>
+        <label class="decl"><input type="checkbox" data-f="clean1"><span class="ctext">דוח הבודק ל־UPS110 צורף, ואין בו ליקויים פתוחים.</span></label>
+        <label class="decl"><input type="checkbox" data-f="clean2"><span class="ctext">דוח הבודק ל־UPS210 צורף, ואין בו ליקויים פתוחים.</span></label>
       </div>
       <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, מתאם תדיראן האחראי, מתחייב כי עברתי על אישור הבודק למודול, ולמיטב הבנתי המודול תקין ומוכן לעבור לשלב הבדיקות בעומס.</span></label>
       <div class="gate" id="gate3" hidden></div>
@@ -517,7 +519,7 @@ function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefi
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
   d.log=d.log||{}; for(const k of ['s1','s2','s3','s4']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
   d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s2.scans=d.s2.scans||{}; d.s3.files=d.s3.files||{}; d.s4.photos=d.s4.photos||{}; return d; }
-const FIXLAB={}; for(let u=1;u<=2;u++){ for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]='UPS'+u+'_תא'+c; FIXLAB['u'+u+'body']='UPS'+u+'_גוף'; FIXLAB['u'+u+'ceil']='UPS'+u+'_תקרה'; }
+const FIXLAB={}; for(let u=1;u<=2;u++){ const U='UPS'+u+'10'; for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]=U+'_תא'+c; FIXLAB['u'+u+'body']=U+'_גוף'; FIXLAB['u'+u+'ceil']=U+'_תקרה'; }
 const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
 const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(isObj(o)) return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o===undefined?null:o); };
 function strip(o){ if(Array.isArray(o)) return o.map(strip); if(isObj(o)){ const r={}; for(const k of Object.keys(o)){ const v=strip(o[k]); if(v===null||v===undefined) continue; if(isObj(v)&&!Object.keys(v).length) continue; r[k]=v; } return r; } return o; }
@@ -723,7 +725,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const SECS=['s1','s2','s4','s3'];  /* s4 = fire-stopping, shown as stage 3; s3 = inspector, shown as stage 4 */
   const numOf=k=>SECS.indexOf(k)+1;
   const TEXT={s1:['name','empId','tool','calib','notes','declared'],s2:['name','role','date','notes','declared'],s4:['name','role','date','notes','declared'],s3:['name','inspector','no','date','clean1','clean2','declared']};
-  const HDR=['module','site','quadrant'], HREQ=['module','site','quadrant'];
+  const HDR=['module','site','quadrant','sn1','sn2'], HREQ=['module','site','quadrant'];
   const quad=r=>(r.quadrant!=null&&r.quadrant!=='')?r.quadrant:(r.location||'');
   let db=null,col=null,assets=null,downloads=null,userNs=null,me='',canEdit=false;
   let reports=[],cur=null,connected=false,brand={},sealState=null;
@@ -740,7 +742,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
   function blank(){
-    return {id:null,module:'',site:'',quadrant:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
+    return {id:null,module:'',site:'',quadrant:'',sn1:'',sn2:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
       s1:{name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
       s2:{name:'',role:'',date:'',notes:'',declared:false,photos:{},cells:{},scans:{},fixed:true,sig:null,signedAt:0},
       s4:{name:'',role:'',date:'',notes:'',declared:false,photos:{},sig:null,signedAt:0},
@@ -749,7 +751,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
   /* fixed inspection items: per UPS, 7 cells + the UPS body + the UPS ceiling (edit these 3 numbers to change the scheme) */
   const UPS_N=2, CELLS_N=7, ITEMS=[];
-  for(let u=1;u<=UPS_N;u++){ for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:'UPS '+u+' / תא '+c,grp:'UPS '+u}); ITEMS.push({id:'u'+u+'body',label:'UPS '+u+' / גוף ה־UPS',grp:'UPS '+u}); ITEMS.push({id:'u'+u+'ceil',label:'UPS '+u+' / תקרת UPS',grp:'UPS '+u}); }
+  for(let u=1;u<=UPS_N;u++){ const U='UPS'+u+'10'; for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:U+' / תא '+c,grp:U}); ITEMS.push({id:'u'+u+'body',label:U+' / גוף ה־UPS',grp:U}); ITEMS.push({id:'u'+u+'ceil',label:U+' / תקרת UPS',grp:U}); }
   /* checklists whose stage 2 was already signed before this scheme keep the old free-form cells */
   const isFixed=r=>!!(r.s2&&r.s2.fixed)||(!(r.s2&&r.s2.sig)&&!isFinal(r));
   const scanOk=(r,id)=>!!(((r.s2&&r.s2.scans)||{})[id]||{}).ok;
@@ -766,7 +768,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function canon(r,shas){
     const f=(m,withCell)=>live(m).map(p=>({assetId:p.assetId||'',name:p.name||'',size:p.size||0,sha:(shas&&shas[p.assetId])||'',...(withCell&&p.cell?{cell:p.cell}:{})}));
     const sg=s=>s.sig?{ref:s.sig.assetId||'',sha:(shas&&shas[s.sig.assetId||'inline-'+s.signedAt])||'',at:s.signedAt}:null;
-    const o={id:r.id,module:r.module,site:r.site,location:r.location,model:r.model,serial:r.serial,createdAt:r.createdAt}; if(r.quadrant!==undefined) o.quadrant=r.quadrant;
+    const o={id:r.id,module:r.module,site:r.site,location:r.location,model:r.model,serial:r.serial,createdAt:r.createdAt}; if(r.quadrant!==undefined) o.quadrant=r.quadrant; if(r.sn1) o.sn1=r.sn1; if(r.sn2) o.sn2=r.sn2;
     SECS.forEach(k=>{ if(k==='s4'&&!(r.s4&&r.s4.sig)) return; o[k]={}; TEXT[k].forEach(x=>{ if(r[k][x]!==undefined) o[k][x]=r[k][x]; }); o[k].sig=sg(r[k]); });
     if(o.s4) o.s4.photos=f(r.s4.photos);
     if(r.s2.fixed) o.s2.scans=ITEMS.filter(i=>scanOk(r,i.id)).map(i=>i.id);
@@ -1248,7 +1250,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
       const fin=isFinal(cur);
       // locked checklists print the sealed copy
-      let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>r[k][f]=sd[k][f]); }); }
+      let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location,sn1:sd.sn1||'',sn2:sd.sn2||''}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>r[k][f]=sd[k][f]); }); }
       const logo='';
       const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label+(sm2.fixed?(x.scan?' / סריקה פיזית ✓':' / ללא אישור סריקה'):''),p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',p}))); const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1500)));
       const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireImgs=await Promise.all(live(r.s4.photos).map(p=>toData(src(p),1500)));
@@ -1264,11 +1266,11 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         '<style>.hd{background:#0A0F1C;color:#fff;padding:18px 20px;border-bottom:4px solid #2D5BFF;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:16px}.hd img{max-height:40px;max-width:180px;background:#fff;padding:4px 8px;border-radius:4px}.hd .bn{font-weight:800;font-size:16px;direction:ltr;color:#fff}.hd h1{font-size:21px;margin:0;font-weight:700}.hd .s{opacity:.8;font-size:12px}.bd{padding:6px 4px}h2{font-size:15px;font-weight:700;color:#0A0F1C;border-bottom:2px solid #2D5BFF;padding-bottom:3px;margin:18px 0 8px}table{border-collapse:collapse;width:100%}th,td{text-align:right;padding:4px 6px;border-bottom:1px solid #E1E6EC;vertical-align:top}th{width:34%;color:#56657C;font-weight:600}.d{background:#EAF0FF;padding:8px 10px;border-radius:5px;margin:8px 0}.sg img{width:240px;border:1px solid #D5DCE5;border-radius:4px}.sm{font-size:11px;color:#1D7A55;font-weight:600}.ph{display:flex;flex-wrap:wrap;gap:6px}.ph img{width:232px;height:174px;object-fit:cover;border:1px solid #D5DCE5}.no{color:#A93A2B;font-weight:700}.st{padding:9px 12px;border-radius:5px;font-weight:700;margin:12px 0}.seal{border:1.5px solid #2D5BFF;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:11px}.fp{direction:ltr;font-family:monospace;word-break:break-all;color:#56657C}.ln{height:26px;border-bottom:1px solid #9AA3B2}.sbx{width:280px;height:86px;border:1.5px dashed #9AA3B2;border-radius:6px}</style>'+
         '<div class="hd">'+(logo?'<img src="'+logo+'">':'<span class="bn"><span style="color:#7C9AFF;font-weight:800;font-size:19px">CX</span><span style="display:inline-block;width:2px;height:15px;background:#12C2E9;margin:0 8px;vertical-align:-1px"></span><span style="letter-spacing:3px;font-weight:700">ELECTRA</span><div style="font-size:7.5px;letter-spacing:2.6px;color:#8A93A6;margin-top:3px;font-weight:500">ELECTRICAL COMMISSIONING</div></span>')+'<div><h1>צ׳קליסט מוכנות לבדיקות בעומס / '+esc(r.module)+'</h1><div class="s">'+esc(['אתר '+(r.site||''),quad(r)&&('רביע '+quad(r))].filter(Boolean).join(' / '))+'</div></div></div><div class="bd">'+
         (blank?'<div class="st" style="background:#EAF0FF;color:#1F44D6">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>':'<div class="st" style="background:'+(fin?'#E0F1E8;color:#1D7A55':'#FBF1DC;color:#9A6200')+'">'+(fin?'המודול נחתם במלואו, ננעל ומאושר למעבר לבדיקות בעומס':'טיוטה, הצ׳קליסט טרם הושלם ('+n+' מתוך '+SECS.length+' שלבים)')+'</div>')+
-        '<h2>פרטי המודול</h2><table>'+row('שם המודול',r.module)+row('אתר',r.site)+row('רביע',quad(r))+(blank?'':row('נפתח',fmt(r.createdAt))+row('ננעל',fin?fmt(r.lockedAt):'')+row('הופק',fmt(Date.now()))+row('מזהה',r.id))+'</table>'+
+        '<h2>פרטי המודול</h2><table>'+row('שם המודול',r.module)+row('אתר',r.site)+row('רביע',quad(r))+row('UPS110 מספר סידורי',r.sn1)+row('UPS210 מספר סידורי',r.sn2)+(blank?'':row('נפתח',fmt(r.createdAt))+row('ננעל',fin?fmt(r.lockedAt):'')+row('הופק',fmt(Date.now()))+row('מזהה',r.id))+'</table>'+
         '<h2>1. חיזוק כניסות ויציאות במד מומנט</h2><table>'+row('מפעיל תדיראן',r.s1.name)+row('מספר עובד / ת״ז',r.s1.empId)+row('מס׳ מד מומנט',r.s1.tool)+row('תוקף כיול',r.s1.calib)+row('הערות',r.s1.notes)+'</table><p class="d avoid">'+dt(1)+'</p>'+sg('s1')+
         '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('תאריך ביצוע הניקיון',r.s2.date)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table>'+itemsTbl+'<div class="ph">'+photos.map((x,i)=>x?'<figure class="avoid" style="margin:0;text-align:center"><img class="avoid" src="'+x+'"><figcaption style="font-size:11px;color:#13213A;margin-top:2px">'+esc(pItems[i].label)+'</figcaption></figure>':'').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
         (fireOn?'<h2 style="page-break-before:always">3. איטומי אש</h2><table>'+row('אחראי איטומי אש',r.s4.name)+row('תפקיד / חברה',r.s4.role)+row('תאריך ביצוע',r.s4.date)+row('הערות',r.s4.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(fireImgs.length))+'</table><div class="ph">'+fireImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'">').join('')+'</div><p class="d avoid">'+dt(4)+'</p>'+sg('s4'):'')+
-        '<h2 style="page-break-before:always">'+(fireOn?'4':'3')+'. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+((r.s3.clean1===undefined&&!blank)?'':row('דוח בודק נקי: UPS 1',cln(r.s3.clean1))+row('דוח בודק נקי: UPS 2',cln(r.s3.clean2)))+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
+        '<h2 style="page-break-before:always">'+(fireOn?'4':'3')+'. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+((r.s3.clean1===undefined&&!blank)?'':row('דוח בודק נקי: UPS110',cln(r.s3.clean1))+row('דוח בודק נקי: UPS210',cln(r.s3.clean2)))+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
         '<div class="ph">'+attImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'" style="width:360px;height:auto">').join('')+'</div><p class="d avoid">'+dt(3)+'</p>'+sg('s3')+
         (fin&&cur.seal?'<div class="seal avoid"><b>חותמת דיגיטלית (SHA-256) של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div>':'')+
         (blank?'':'<h2>יומן פעולות</h2><table>'+Object.values(cur.log||{}).sort((a,b)=>a.t-b.t).map(e=>'<tr><th>'+fmt(e.t)+'</th><td>'+esc(e.text)+'</td></tr>').join('')+'</table>')+'</div></div>';
@@ -1393,9 +1395,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(t.dataset.didle!==undefined){ DASH.idle=+t.dataset.didle; paintDash(); return; }
     if(t.dataset.dcsv!==undefined){
       const c=v=>{ const s=String(v==null?'':v); return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-      const rows=[['אתר','רביע','מודול','שלב','מפעיל תדיראן','חתימת שלב 1','תוקף כיול','אחראי ניקיון','תאריך ניקיון','חתימת שלב 2','תמונות ניקיון','סריקות פיזיות','אחראי איטומי אש','תאריך איטומי אש','חתימת איטומי אש','תמונות איטומי אש','מתאם תדיראן','בודק','מספר אישור','דוחות בודק נקיים','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
+      const rows=[['אתר','רביע','מודול','UPS110 מספר סידורי','UPS210 מספר סידורי','שלב','מפעיל תדיראן','חתימת שלב 1','תוקף כיול','אחראי ניקיון','תאריך ניקיון','חתימת שלב 2','תמונות ניקיון','סריקות פיזיות','אחראי איטומי אש','תאריך איטומי אש','חתימת איטומי אש','תמונות איטומי אש','מתאם תדיראן','בודק','מספר אישור','דוחות בודק נקיים','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
       reports.filter(r=>!DASH.site||(r.site||'ללא אתר')===DASH.site).sort((a,b)=>[a.site,quad(a),a.module].join('|').localeCompare([b.site,quad(b),b.module].join('|'),'he',{numeric:true})).forEach(r=>{ const s1=r.s1||{},s2=r.s2||{},s3=r.s3||{},s4=r.s4||{};
-        rows.push([r.site,quad(r),r.module,STG[stageOf(r)].l,s1.name,fmt(s1.signedAt),s1.calib,s2.name,s2.date||'',fmt(s2.signedAt),live(s2.photos).length,s2.fixed?ITEMS.filter(i=>scanOk(r,i.id)).length:'',s4.name,s4.date||'',fmt(s4.signedAt),live(s4.photos).length,s3.name,s3.inspector,s3.no,s3.clean1===undefined?'':((s3.clean1&&s3.clean2)?'כן':'לא'),isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
+        rows.push([r.site,quad(r),r.module,r.sn1||'',r.sn2||'',STG[stageOf(r)].l,s1.name,fmt(s1.signedAt),s1.calib,s2.name,s2.date||'',fmt(s2.signedAt),live(s2.photos).length,s2.fixed?ITEMS.filter(i=>scanOk(r,i.id)).length:'',s4.name,s4.date||'',fmt(s4.signedAt),live(s4.photos).length,s3.name,s3.inspector,s3.no,s3.clean1===undefined?'':((s3.clean1&&s3.clean2)?'כן':'לא'),isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
       try{ await downloads.save({filename:'CX-ELECTRA-UPS-status-'+new Date().toISOString().slice(0,10)+'.csv',data:'\ufeff'+rows.map(r=>r.map(c).join(',')).join('\r\n')}); toast('דוח המצב הורד'); }
       catch(err){ if(!(err&&err.code==='declined')) toast('ההורדה נכשלה'); }
     }
