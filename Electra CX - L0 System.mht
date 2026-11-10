@@ -291,7 +291,20 @@ details.logbox summary{cursor:pointer;font-weight:600}
   .topbar .prod,.topbar .sep{display:none} .stat .v{font-size:1.6rem}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+.cells{display:grid;gap:10px}
+.cellrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:64px;padding:14px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.cellrow.click{cursor:pointer}.cellrow.click:hover{border-color:var(--brand);background:var(--brand-soft)}
+.cellrow .cn{font-weight:700;font-size:1.02rem;color:var(--ink)}
+.cellrow .cs{font-size:.78rem;font-weight:500;color:var(--warn)}
+.cellrow .cs.ok{color:var(--ok)}.cellrow .cs.bad{color:var(--bad)}
+.cellrow .cth{display:block;width:72px;height:54px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--sunk)}
+.cellrow .cth img{width:100%;height:100%;object-fit:cover;display:block}
+.cellrow .acts{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+.addcell{margin-top:12px;border-radius:14px}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -332,7 +345,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <span class="sync" id="sync"><span class="dot"></span><span id="syncText">מתחבר…</span></span>
     </div>
     <div class="banners" id="banners">
-      <div class="banner bad" id="noDb" hidden>אין חיבור למאגר הנתונים, ולכן לא ניתן לשמור. פתח את הכלי מהקישור שלו ב־claude.ai כשאתה מחובר לחשבון.</div>
+      <div class="banner bad" id="noDb" hidden>אין גישה לאחסון המקומי של הדפדפן, ולכן לא ניתן לשמור.</div>
       <div class="banner" id="noAssets" hidden>אין לך הרשאה להעלות קבצים. בקש מבעל הכלי לשתף אותך בהרשאת עריכה.</div>
       <div class="banner" id="pendingBanner" hidden></div>
       <div class="banner info" id="draftBanner" hidden></div>
@@ -371,9 +384,10 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f"><span>תפקיד / חברה</span><input data-f="role" autocomplete="off"></label>
       </div>
       <div style="margin-top:14px">
-        <div class="hint req" style="margin:0 0 8px">תמונות הוכחה שהתאים נקיים (עד 20MB לתמונה, באיכות מלאה)</div>
-        <label class="drop" id="s2drop"><input type="file" id="s2files" accept="image/*" multiple>צלם או בחר תמונות</label>
-        <div class="photos" id="s2photos"></div>
+        <div class="hint req" style="margin:0 0 8px">תמונות הוכחה שהתאים נקיים, תמונה לכל תא (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)</div>
+        <div class="cells" id="s2photos"></div>
+        <button type="button" class="btn addcell" id="addCell">הוסף תא +</button>
+        <input type="file" id="s2files" accept="image/*" hidden>
       </div>
       <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
       <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני מאשר כי ביצעתי ניקיון יסודי של כל התאים במודול, והתמונות המצורפות משקפות את מצבם לאחר הניקיון.</span></label>
@@ -416,6 +430,248 @@ details.logbox summary{cursor:pointer;font-weight:600}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
+/* ===== CX-ELECTRA standalone runtime: replaces the Claude-hosted db / assets / downloads / user services =====
+   All data lives in this browser (IndexedDB). Nothing is sent to any server. */
+(function(){
+'use strict';
+const DB_NAME='cx-electra-standalone';
+const clone=o=>o===undefined?undefined:JSON.parse(JSON.stringify(o));
+const docs=new Map(), assetMeta=new Map(), urls=new Map();
+let idb=null, persistent=true;
+
+/* ---- cloud sync: Firebase Realtime Database (same project as Electra CX), separate namespace ---- */
+const CLOUD={ enabled:true, ns:'ups-checklists', config:{
+  apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw", authDomain:"electra-10.firebaseapp.com",
+  databaseURL:"https://electra-10-default-rtdb.firebaseio.com", projectId:"electra-10",
+  storageBucket:"electra-10.firebasestorage.app", messagingSenderId:"751223433308", appId:"1:751223433308:web:c07da01b36d20e7b3cde99" } };
+let fdb=null, online=false, cloudErr='';
+const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Set(), inflight=new Set();
+
+function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
+  r.onupgradeneeded=()=>{ const d=r.result; d.createObjectStore('docs',{keyPath:'path'}); d.createObjectStore('assets',{keyPath:'id'}); };
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+const put=(store,val)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).put(val); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
+const del=(store,key)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).delete(key); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
+const getAll=store=>new Promise((res,rej)=>{ const r=idb.transaction(store,'readonly').objectStore(store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+
+const ready=(async()=>{
+  try{
+    idb=await openDb();
+    for(const d of await getAll('docs')){ docs.set(d.path,d.data); if(d.dirty) dirtyDocs.add(d.path); else synced.add(d.path); }
+    for(const a of await getAll('assets')){ assetMeta.set(a.id,a); urls.set(a.id,URL.createObjectURL(a.blob)); if(a.dirty) dirtyAssets.add(a.id); }
+  }catch(e){ idb=null; persistent=false; console.warn('IndexedDB unavailable, data will not persist',e); }
+  try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(_){}
+})();
+
+const segs=p=>p.split('/').filter(Boolean);
+const parentOf=p=>segs(p).slice(0,-1).join('/');
+const hex=n=>{ const a=new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,n*2); };
+const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
+function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefined) continue; if(isObj(v)&&isObj(t[k])) merge(t[k],v); else t[k]=clone(v); } return t; }
+
+/* RTDB drops empty maps and nulls, so restore the shape the app expects */
+function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
+  d.log=d.log||{}; for(const k of ['s1','s2','s3']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
+  d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s3.files=d.s3.files||{}; return d; }
+const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
+const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(isObj(o)) return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o===undefined?null:o); };
+function strip(o){ if(Array.isArray(o)) return o.map(strip); if(isObj(o)){ const r={}; for(const k of Object.keys(o)){ const v=strip(o[k]); if(v===null||v===undefined) continue; if(isObj(v)&&!Object.keys(v).length) continue; r[k]=v; } return r; } return o; }
+const same=(path,a,b)=>stable(strip(normalize(path,clone(a))))===stable(strip(normalize(path,clone(b))));
+function flatten(o,pre,out){ out=out||{}; pre=pre||''; for(const k of Object.keys(o)){ const v=o[k]; if(v===undefined) continue; if(isObj(v)){ if(Object.keys(v).length) flatten(v,pre+k+'/',out); } else out[pre+k]=v; } return out; }
+
+/* ---- Firestore-style document store ---- */
+const listeners=new Set();
+function colSnap(cpath){ const n=segs(cpath).length+1, out=[];
+  for(const [p,d] of docs){ if(p.startsWith(cpath+'/')&&segs(p).length===n) out.push({id:segs(p).pop(),exists:true,data:()=>normalize(p,clone(d))}); }
+  out.sort((a,b)=>a.id<b.id?-1:1);
+  return {docs:out,size:out.length,empty:!out.length,metadata:{fromCache:false,hasPendingWrites:false},forEach:f=>out.forEach(f)}; }
+function docSnap(p){ const d=docs.get(p); return {id:segs(p).pop(),exists:d!==undefined,data:()=>d===undefined?undefined:normalize(p,clone(d)),metadata:{fromCache:false}}; }
+function schedule(l){ if(l.pending) return; l.pending=true; setTimeout(()=>{ l.pending=false; if(!listeners.has(l)) return;
+  try{ l.cb(l.kind==='doc'?docSnap(l.path):colSnap(l.path)); }catch(e){ console.error(e); } },0); }
+function notifyAll(){ for(const l of listeners) if(l.kind==='col') schedule(l); }
+function notify(path){ for(const l of listeners){ if((l.kind==='doc'&&l.path===path)||(l.kind==='col'&&parentOf(path)===l.path)) schedule(l); } }
+function listen(kind,path,cb){ const l={kind,path,cb}; listeners.add(l); schedule(l); return ()=>listeners.delete(l); }
+async function commit(path,val,patch){
+  docs.set(path,val); ver.set(path,(ver.get(path)||0)+1); dirtyDocs.add(path);
+  await put('docs',{path,data:val,dirty:true}); notify(path); pushDoc(path,patch); }
+function docRef(path){ return {
+  id:segs(path).pop(), path,
+  get:async()=>{ await ready; return docSnap(path); },
+  set:async data=>{ await ready; await commit(path,clone(data),null); },
+  update:async patch=>{ await ready; const cur=docs.get(path); if(cur===undefined){ const e=new Error('not-found'); e.code='not-found'; throw e; } const p=clone(patch); await commit(path,merge(clone(cur),p),p); },
+  delete:async()=>{ await ready; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); await del('docs',path); notify(path); if(fdb&&online) fdb.ref(CLOUD.ns+'/docs/'+keyOf(path)).remove().catch(()=>{}); },
+  onSnapshot:cb=>listen('doc',path,cb),
+  collection:n=>colRef(path+'/'+n) }; }
+function colRef(path){ return { path, doc:id=>docRef(path+'/'+(id||hex(10))), get:async()=>{ await ready; return colSnap(path); }, onSnapshot:cb=>listen('col',path,cb) }; }
+const dbApi={ collection:n=>colRef(n), doc:p=>docRef(p) };
+
+/* ---- file / image store ---- */
+window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return 'blob:missing-asset'; };
+async function blobToDataURL(b){ const u8=new Uint8Array(await b.arrayBuffer()); let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return 'data:'+(b.type||'application/octet-stream')+';base64,'+btoa(s); }
+async function shrink(b){ const bmp=await createImageBitmap(b); const sc=Math.min(1,1800/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas'); c.width=Math.round(bmp.width*sc); c.height=Math.round(bmp.height*sc); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height);
+  return new Promise((res,rej)=>c.toBlob(r=>r?res(r):rej(new Error('encode')),'image/jpeg',.85)); }
+const MAX_ASSET=6.5*1024*1024; /* RTDB node limit is 10MB and base64 adds ~33% */
+const assetsApi={
+  async upload(blob,opts){ await ready;
+    let type=(opts&&opts.type)||blob.type||'application/octet-stream';
+    let b=blob.type===type?blob:new Blob([blob],{type});
+    if(/^image\/(jpeg|png|webp)$/.test(type)&&b.size>700*1024){ try{ b=await shrink(b); type='image/jpeg'; }catch(_){} }
+    if(b.size>MAX_ASSET) throw {code:'too_large'};
+    const rec={id:hex(16),type,size:b.size,at:Date.now(),blob:b,dirty:true};
+    await put('assets',rec); assetMeta.set(rec.id,rec); dirtyAssets.add(rec.id); urls.set(rec.id,URL.createObjectURL(b)); pushAsset(rec.id);
+    return {id:rec.id,sizeBytes:b.size,contentType:type,url:urls.get(rec.id)}; },
+  async list(){ await ready; let bytes=0; assetMeta.forEach(a=>bytes+=a.size);
+    let max=2*1024*1024*1024; try{ const e=await navigator.storage.estimate(); if(e&&e.quota) max=e.quota; }catch(_){}
+    return {assets:[...assetMeta.values()].map(a=>({id:a.id,type:a.type,sizeBytes:a.size})),usage:{bytes,maxBytes:max}}; }
+};
+
+/* ---- cloud sync engine ---- */
+function pendingCount(){ return dirtyDocs.size+dirtyAssets.size; }
+function updateStatus(){ const el=document.getElementById('cloudStatus'); if(!el) return; let t;
+  if(!fdb) t='מצב מקומי בלבד: אין חיבור לשירות הענן. הנתונים שמורים במכשיר הזה.';
+  else if(cloudErr) t='שגיאת סנכרון לענן ('+cloudErr+'). השינויים שמורים במכשיר.'+(/PERMISSION/i.test(cloudErr)?' כללי ה־Realtime Database חוסמים את הנתיב '+CLOUD.ns+'.':'');
+  else if(!online) t='לא מחובר לענן.'+(pendingCount()?' '+pendingCount()+' פריטים ממתינים.':'')+' השינויים שמורים במכשיר ויסונכרנו בחיבור הבא.';
+  else if(pendingCount()) t='מסנכרן '+pendingCount()+' פריטים לענן…';
+  else t='מסונכרן לענן ✓';
+  el.textContent=t; }
+const fail=e=>{ cloudErr=(e&&(e.code||e.message))||'error'; updateStatus(); };
+function pushDoc(path,patch){
+  if(!fdb||!online){ updateStatus(); return; }
+  const v=ver.get(path), ref=fdb.ref(CLOUD.ns+'/docs/'+keyOf(path)); let p;
+  if(patch&&synced.has(path)){ const flat=flatten(patch); p=Object.keys(flat).length?ref.update(flat):Promise.resolve(); }
+  else p=ref.set(clone(docs.get(path)));
+  p.then(()=>{ synced.add(path); cloudErr=''; if(ver.get(path)===v){ dirtyDocs.delete(path); put('docs',{path,data:docs.get(path),dirty:false}).catch(()=>{}); } updateStatus(); },fail);
+  updateStatus(); }
+async function pushAsset(id){
+  if(!fdb||!online) return updateStatus(); const rec=assetMeta.get(id); if(!rec) return;
+  try{ await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(rec.blob)});
+    rec.dirty=false; dirtyAssets.delete(id); cloudErr=''; await put('assets',rec); updateStatus(); }catch(e){ fail(e); } }
+async function fetchAsset(id){
+  if(!fdb||!online||inflight.has(id)||failedAssets.has(id)||assetMeta.has(id)) return; inflight.add(id);
+  try{ const v=(await fdb.ref(CLOUD.ns+'/assets/'+id).once('value')).val();
+    if(!v||!v.data){ failedAssets.add(id); return; }
+    const blob=await (await fetch(v.data)).blob(), b=blob.type===v.type?blob:new Blob([blob],{type:v.type});
+    if(!assetMeta.has(id)){ const rec={id,type:v.type,size:b.size,at:v.at||Date.now(),blob:b,dirty:false}; await put('assets',rec); assetMeta.set(id,rec); urls.set(id,URL.createObjectURL(b)); notifyAll(); }
+  }catch(e){ failedAssets.add(id); } finally{ inflight.delete(id); } }
+function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
+  ['s1','s2','s3'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
+function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
+function flushAll(){ [...dirtyDocs].forEach(p=>pushDoc(p,null)); [...dirtyAssets].forEach(pushAsset); }
+function applyRemote(key,val){
+  if(val===null||val===undefined) return; const path=pathOf(key), data=normalize(path,val); synced.add(path);
+  const local=docs.get(path);
+  if(local&&dirtyDocs.has(path)&&!same(path,local,data)){ if((local.updatedAt||0)>=(data.updatedAt||0)){ pushDoc(path,null); return; } dirtyDocs.delete(path); }
+  if(local&&same(path,local,data)) return;
+  docs.set(path,data); put('docs',{path,data,dirty:false}).catch(()=>{}); notify(path); prefetch(path,data); }
+function removeRemote(key){ const path=pathOf(key); if(!docs.has(path)) return; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); del('docs',path).catch(()=>{}); notify(path); }
+function initCloud(){
+  if(!CLOUD.enabled||!window.firebase) return;
+  try{ const app=(firebase.apps||[]).find(a=>a.name==='ups')||firebase.initializeApp(CLOUD.config,'ups'); fdb=app.database(); }catch(e){ fdb=null; return; }
+  fdb.ref('.info/connected').on('value',s=>{ online=!!s.val(); if(online){ failedAssets.clear(); flushAll(); for(const [p,d] of docs) prefetch(p,d); } updateStatus(); });
+  const dr=fdb.ref(CLOUD.ns+'/docs'), on=s=>{ cloudErr=''; applyRemote(s.key,s.val()); updateStatus(); };
+  dr.on('child_added',on,fail); dr.on('child_changed',on,fail); dr.on('child_removed',s=>removeRemote(s.key),fail); }
+const userApi={ id:async()=>'local', canEdit:async()=>true };
+
+/* ---- helpers: download, zip, backup/restore ---- */
+function triggerDownload(blob,filename){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },5000); }
+const today=()=>new Date().toISOString().slice(0,10);
+const safe=s=>String(s==null?'':s).replace(/[\\\/:*?"<>|\s]+/g,'_').replace(/^_+|_+$/g,'');
+const quadOf=r=>(r.quadrant!=null&&r.quadrant!=='')?r.quadrant:(r.location||'');
+const reportDocs=()=>[...docs.entries()].filter(([p])=>/^reports\/[^/]+$/.test(p)).map(([p,d])=>({...d,id:segs(p)[1]}));
+function toast(m){ const t=document.getElementById('toast'); if(!t){ alert(m); return; } t.textContent=m; t.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('on'),4500); }
+
+async function augmentBackup(json){ let obj; try{ obj=JSON.parse(json); }catch(_){ return json; }
+  const assets={}; for(const a of assetMeta.values()) assets[a.id]={type:a.type,size:a.size,at:a.at,data:await blobToDataURL(a.blob)};
+  obj.assets=assets; obj.format=3; return JSON.stringify(obj,null,2); }
+
+const downloadsApi={ async save({filename,data}){
+  let blob;
+  if(typeof data==='string'){
+    if(/^cx-electra-checklists-backup-.*\.json$/.test(filename)) data=await augmentBackup(data);
+    blob=new Blob([data],{type:/\.csv$/.test(filename)?'text/csv;charset=utf-8':/\.json$/.test(filename)?'application/json':'text/plain'});
+  } else blob=data;
+  triggerDownload(blob,filename); return {filename}; } };
+
+const crcT=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })();
+function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c=crcT[(c^u8[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function makeZip(files){
+  const enc=new TextEncoder(), parts=[], central=[]; let off=0;
+  const d=new Date(), dt=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1), dd=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for(const f of files){
+    const nm=enc.encode(f.name), crc=crc32(f.data), sz=f.data.length;
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true); lh.setUint16(10,dt,true); lh.setUint16(12,dd,true);
+    lh.setUint32(14,crc,true); lh.setUint32(18,sz,true); lh.setUint32(22,sz,true); lh.setUint16(26,nm.length,true); lh.setUint16(28,0,true);
+    parts.push(lh.buffer,nm,f.data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true); ch.setUint16(10,0,true); ch.setUint16(12,dt,true); ch.setUint16(14,dd,true);
+    ch.setUint32(16,crc,true); ch.setUint32(20,sz,true); ch.setUint32(24,sz,true); ch.setUint16(28,nm.length,true); ch.setUint32(42,off,true);
+    central.push(ch.buffer,nm); off+=30+nm.length+sz; }
+  let csz=0; central.forEach(x=>csz+=x.byteLength);
+  const end=new DataView(new ArrayBuffer(22)); end.setUint32(0,0x06054b50,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true); end.setUint32(12,csz,true); end.setUint32(16,off,true);
+  return new Blob([...parts,...central,end.buffer],{type:'application/zip'}); }
+
+const EXT={'image/jpeg':'.jpg','image/png':'.png','image/webp':'.webp','image/gif':'.gif','application/pdf':'.pdf'};
+function withExt(name,type){ return /\.[A-Za-z0-9]{2,5}$/.test(name)?name:name+(EXT[type]||''); }
+async function exportZip(){
+  await ready; const files=[], used=new Set(), seen=new Set();
+  const add=async(folder,name,id,type)=>{ const a=assetMeta.get(id); if(!a) return; seen.add(id);
+    let base=withExt(safe(name)||id,type||a.type), full=folder+'/'+base, i=1;
+    while(used.has(full)){ const m=base.match(/^(.*?)(\.[A-Za-z0-9]+)?$/); full=folder+'/'+m[1]+'_'+(++i)+(m[2]||''); }
+    used.add(full); files.push({name:full,data:new Uint8Array(await a.blob.arrayBuffer())}); };
+  for(const r of reportDocs()){
+    const folder=safe([r.site,quadOf(r),r.module].filter(Boolean).join('_'))||r.id;
+    const cl=Object.values((r.s2&&r.s2.cells)||{}).filter(c=>c&&!c.removed).sort((x,y)=>((x.t||0)-(y.t||0))||String(x.id).localeCompare(String(y.id)));
+    for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
+    for(const p of Object.values((r.s3&&r.s3.files)||{})) await add(folder+'/inspector',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
+    for(const k of ['s1','s2','s3']){ const s=r[k]&&r[k].sig; if(!s) continue;
+      if(s.assetId) await add(folder+'/signatures','signature-'+k+'.png',s.assetId,'image/png');
+      else if(s.data){ const b=await (await fetch(s.data)).blob(); files.push({name:folder+'/signatures/signature-'+k+'.png',data:new Uint8Array(await b.arrayBuffer())}); } } }
+  for(const a of assetMeta.values()) if(!seen.has(a.id)) await add('unlinked',a.id,a.id,a.type);
+  if(!files.length){ toast('אין עדיין תמונות או קבצים לייצוא'); return; }
+  triggerDownload(makeZip(files),'cx-electra-files-'+today()+'.zip'); toast('הורד ZIP עם '+files.length+' קבצים'); }
+
+function missingAssets(){ const miss=new Set();
+  for(const r of reportDocs()){
+    Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
+    ['s1','s2','s3'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
+  return miss.size; }
+async function restoreBackup(obj){ await ready;
+  if(!obj||!Array.isArray(obj.reports)) throw new Error('bad-format');
+  let nr=0, na=0;
+  for(const [id,a] of Object.entries(obj.assets||{})){ const blob=await (await fetch(a.data)).blob(); const b=blob.type===a.type?blob:new Blob([blob],{type:a.type});
+    const rec={id,type:a.type,size:b.size,at:a.at||Date.now(),blob:b,dirty:true}; await put('assets',rec); assetMeta.set(id,rec); dirtyAssets.add(id); pushAsset(id); if(urls.has(id)) URL.revokeObjectURL(urls.get(id)); urls.set(id,URL.createObjectURL(b)); na++; }
+  for(const r of obj.reports){ if(!r||!r.id) continue; const {id,...rest}=r; await commit('reports/'+id,rest,null); nr++; }
+  for(const [rid,d] of Object.entries(obj.sealed||{})){ const r=obj.reports.find(x=>x.id===rid); if(r&&r.seal&&r.seal.path) await commit(r.seal.path,d,null); }
+  for(const [rid,vs] of Object.entries(obj.versions||{})) for(const [vid,d] of Object.entries(vs)) await commit('reports/'+rid+'/versions/'+vid,d,null);
+  return {reports:nr,assets:na,missing:missingAssets()}; }
+
+function wire(){
+  const foot=document.querySelector('.foot'); if(!foot) return;
+  const mk=(id,txt)=>{ const b=document.createElement('button'); b.className='btn small'; b.id=id; b.type='button'; b.textContent=txt; return b; };
+  const anchor=document.getElementById('storage');
+  const zipBtn=mk('zipBtn','ייצוא כל התמונות והקבצים (ZIP)'), resBtn=mk('restoreBtn','שחזור מגיבוי'), inp=document.createElement('input');
+  inp.type='file'; inp.accept='.json,application/json'; inp.hidden=true;
+  foot.insertBefore(zipBtn,anchor); foot.insertBefore(resBtn,anchor); foot.appendChild(inp);
+  zipBtn.onclick=async()=>{ zipBtn.disabled=true; const l=zipBtn.textContent; zipBtn.textContent='מכין ZIP…'; try{ await exportZip(); }catch(e){ console.error(e); toast('הכנת ה־ZIP נכשלה'); } finally{ zipBtn.disabled=false; zipBtn.textContent=l; } };
+  resBtn.onclick=()=>inp.click();
+  inp.onchange=async()=>{ const f=inp.files[0]; inp.value=''; if(!f) return;
+    try{ const r=await restoreBackup(JSON.parse(await f.text()));
+      toast('שוחזרו '+r.reports+' צ׳קליסטים'+(r.assets?' ו־'+r.assets+' קבצים':'')+(r.missing?'. שים לב: '+r.missing+' תמונות/קבצים לא נכללו בגיבוי הזה ולכן לא יוצגו.':'.')); }
+    catch(e){ console.error(e); toast('קובץ הגיבוי לא תקין'); } };
+  const note=document.createElement('div'); note.className='hint'; note.id='cloudStatus'; note.style.cssText='flex-basis:100%;margin-top:8px';
+  foot.appendChild(note); updateStatus();
+  if(!persistent){ const b=document.getElementById('noDb'); if(b){ b.textContent='הדפדפן חוסם שמירה מקומית. הנתונים יאבדו בסגירת הדף. פתח את הקובץ בחלון רגיל.'; b.hidden=false; } }
+}
+ready.then(()=>{ initCloud(); if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire(); });
+
+const services={db:dbApi,assets:assetsApi,downloads:downloadsApi,user:userApi};
+window.claude={ use:async n=>{ await ready; return services[n]||null; } };
+})();
+
+</script>
+<script>
 (function(){
   const $=id=>document.getElementById(id);
   const SECS=['s1','s2','s3'];
@@ -428,7 +684,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 
   const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),3200);};
   const fmt=t=>t?new Date(t).toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'';
-  const src=p=>p&&(p.assetId?'/_blob/'+p.assetId:p.data);
+  const src=p=>p&&(p.assetId?window.__assetURL(p.assetId):p.data);
   const clone=o=>JSON.parse(JSON.stringify(o));
   const live=m=>Object.values(m||{}).filter(x=>x&&!x.removed).sort((a,b)=>(a.t||0)-(b.t||0));
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -439,20 +695,25 @@ details.logbox summary{cursor:pointer;font-weight:600}
   function blank(){
     return {id:null,module:'',site:'',quadrant:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
       s1:{name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
-      s2:{name:'',role:'',notes:'',declared:false,photos:{},sig:null,signedAt:0},
+      s2:{name:'',role:'',notes:'',declared:false,photos:{},cells:{},sig:null,signedAt:0},
       s3:{name:'',inspector:'',no:'',date:'',declared:false,files:{},sig:null,signedAt:0}};
   }
+  const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
+  function s2Model(r){ const cells=cellsOf(r), ph=live(r.s2.photos), used=new Set();
+    const rows=cells.map((c,i)=>{ const ps=ph.filter(p=>p.cell===c.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c,label:'תא '+(i+1),p}; });
+    return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
+  let lastCellT=0;
   const logEntry=text=>{const t=Date.now();return{['e'+t+Math.random().toString(36).slice(2,5)]:{t,text,by:me}};};
 
   /* ---------- hashing / seal ---------- */
   async function sha(buf){ const h=await crypto.subtle.digest('SHA-256',typeof buf==='string'?new TextEncoder().encode(buf):buf); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
   function stable(o){ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(o&&typeof o==='object') return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o); }
   function canon(r,shas){
-    const f=m=>live(m).map(p=>({assetId:p.assetId||'',name:p.name||'',size:p.size||0,sha:(shas&&shas[p.assetId])||''}));
+    const f=(m,withCell)=>live(m).map(p=>({assetId:p.assetId||'',name:p.name||'',size:p.size||0,sha:(shas&&shas[p.assetId])||'',...(withCell&&p.cell?{cell:p.cell}:{})}));
     const sg=s=>s.sig?{ref:s.sig.assetId||'',sha:(shas&&shas[s.sig.assetId||'inline-'+s.signedAt])||'',at:s.signedAt}:null;
     const o={id:r.id,module:r.module,site:r.site,location:r.location,model:r.model,serial:r.serial,createdAt:r.createdAt}; if(r.quadrant!==undefined) o.quadrant=r.quadrant;
     SECS.forEach(k=>{ o[k]={}; TEXT[k].forEach(x=>o[k][x]=r[k][x]); o[k].sig=sg(r[k]); });
-    o.s2.photos=f(r.s2.photos); o.s3.files=f(r.s3.files); return o;
+    o.s2.photos=f(r.s2.photos,true); o.s3.files=f(r.s3.files); const cl=cellsOf(r); if(cl.length) o.s2.cells=cl.map(c=>({id:c.id,t:c.t})); return o;
   }
   async function fileShas(r){
     const shas={}, items=[...live(r.s2.photos),...live(r.s3.files)];
@@ -610,14 +871,14 @@ details.logbox summary{cursor:pointer;font-weight:600}
     if(f.type==='application/pdf') throw {code:'too_large'};
     return reencode(f,4800,.9);
   }
-  async function addFiles(files,slot){
+  async function addFiles(files,slot,cell){
     if(!cur||isFinal(cur)) return;
     if(!assets){ toast('אין לך הרשאה להעלות קבצים'); return; }
     if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
     for(const f of files){
       let blob; try{ blob=await prepare(f); }catch(e){ toast(e.code==='too_large'?'הקובץ '+f.name+' גדול מ־20MB':'לא ניתן לקרוא את '+f.name); continue; }
       const key='u'+Date.now()+Math.random().toString(36).slice(2,7);
-      const item={key,reportId:cur.id,slot,name:f.name,type:blob.type||f.type,blob,t:Date.now()};
+      const item={key,reportId:cur.id,slot,cell:cell||null,name:f.name,type:blob.type||f.type,blob,t:Date.now()};
       await qPut(item); pending.set(key,{...item,url:URL.createObjectURL(blob),status:'מעלה…'});
     }
     paintFiles(); runQueue();
@@ -632,11 +893,12 @@ details.logbox summary{cursor:pointer;font-weight:600}
       let res=null,le=null;
       for(let i=0;i<4&&!res;i++){ try{ res=await assets.upload(p.blob,{type:p.type}); }catch(e){ le=e; if(['too_large','unsupported_type','invalid_request','quota_or_state'].includes(e&&e.code)) break; await sleep(1500*2**i); } }
       if(!res){ p.status='נכשל'; p.err=le&&le.code; paintFiles(); continue; }
-      const rec={assetId:res.id,name:p.name,size:res.sizeBytes,type:res.contentType,t:p.t,by:me};
-      const field=p.slot==='photo'?{s2:{photos:{[res.id]:rec}}}:{s3:{files:{[res.id]:rec}}};
+      const rec={assetId:res.id,name:p.name,size:res.sizeBytes,type:res.contentType,t:p.t,by:me}; if(p.slot==='photo'&&p.cell) rec.cell=p.cell;
+      const prevRem={}; if(p.slot==='photo'&&p.cell){ const base=(cur&&cur.id===p.reportId)?cur:reports.find(r=>r.id===p.reportId); if(base) live(base.s2.photos).filter(x=>x.cell===p.cell).forEach(x=>{ prevRem[x.assetId]={...x,removed:true,removedAt:Date.now(),removedBy:me,replaced:true}; }); }
+      const field=p.slot==='photo'?{s2:{photos:{...prevRem,[res.id]:rec}}}:{s3:{files:{[res.id]:rec}}};
       if(await writeRetry(p.reportId,{...field,log:logEntry((p.slot==='photo'?'תמונה נוספה: ':'קובץ אישור נוסף: ')+p.name)})){
         await qDel(key); URL.revokeObjectURL(p.url); pending.delete(key);
-        if(cur&&cur.id===p.reportId) (p.slot==='photo'?cur.s2.photos:cur.s3.files)[res.id]=rec;
+        if(cur&&cur.id===p.reportId){ (p.slot==='photo'?cur.s2.photos:cur.s3.files)[res.id]=rec; if(p.slot==='photo') Object.assign(cur.s2.photos,prevRem); }
       } else p.status='ממתין לשמירה';
       paintFiles();
     } } finally { running=false; paintPending(); refreshStorage(); }
@@ -645,11 +907,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
   function paintFiles(){
     if(!cur) return;
     const fin=isFinal(cur), l2=fin||!!cur.s2.sig, l3=fin||!!cur.s3.sig||!(cur.s1.sig&&cur.s2.sig);
-    const box=$('s2photos'); box.innerHTML='';
-    live(cur.s2.photos).forEach(p=>{ const d=document.createElement('div'); d.className='ph';
-      d.innerHTML='<a target="_blank" rel="noopener"><img loading="lazy" alt=""></a>'+(l2?'':'<button class="x" type="button">הסר</button>');
-      d.querySelector('a').href=src(p); d.querySelector('img').src=src(p); d.querySelector('img').alt=p.name||'';
-      if(!l2) d.querySelector('.x').onclick=()=>removeItem('photo',p); box.appendChild(d); });
+    paintCells(l2);
     const lst=$('s3list'); lst.innerHTML='';
     live(cur.s3.files).forEach(p=>{ const d=document.createElement('div'); d.className='file'; const pdf=(p.type||'').includes('pdf');
       d.innerHTML=(pdf?'<span>📄</span>':'<img alt="">')+'<a target="_blank" rel="noopener"></a><span class="sp"></span>';
@@ -657,16 +915,61 @@ details.logbox summary{cursor:pointer;font-weight:600}
       if(!l3){ const b=document.createElement('button'); b.className='btn small'; b.textContent='הסר'; b.onclick=()=>removeItem('file',p); d.querySelector('.sp').appendChild(b); }
       lst.appendChild(d); });
     for(const [key,p] of pending){ if(p.reportId!==cur.id) continue; const failed=p.status==='נכשל';
-      if(p.slot==='photo'){ const d=document.createElement('div'); d.className='ph pending'+(failed?' failed':'');
-        d.innerHTML='<img alt=""><span class="tag"></span>'+(failed&&p.err!=='locked'?'<button class="x" type="button">נסה שוב</button>':'');
-        d.querySelector('img').src=p.url; d.querySelector('.tag').textContent=failed?(p.err==='quota_or_state'?'נגמר נפח האחסון':p.err==='locked'?'הצ׳קליסט נעול':'ההעלאה נכשלה'):p.status;
-        const x=d.querySelector('.x'); if(x) x.onclick=()=>{p.status='מעלה…';runQueue();}; box.appendChild(d);
-      } else { const d=document.createElement('div'); d.className='file'; d.innerHTML='<span>⏳</span><span></span><span class="sp"></span>';
+      if(p.slot==='photo'){ /* shown inside its cell row */ } else { const d=document.createElement('div'); d.className='file'; d.innerHTML='<span>⏳</span><span></span><span class="sp"></span>';
         d.children[1].textContent=p.name+' / '+(failed?'ההעלאה נכשלה':p.status);
         if(failed&&p.err!=='locked'){ const b=document.createElement('button'); b.className='btn small'; b.textContent='נסה שוב'; b.onclick=()=>{p.status='מעלה…';runQueue();}; d.querySelector('.sp').appendChild(b); }
         lst.appendChild(d); } }
-    $('s2drop').hidden=l2||!assets; $('s3drop').hidden=l3||!assets; paintPending();
+    $('addCell').hidden=l2||!assets; $('s3drop').hidden=l3||!assets; paintPending();
   }
+  /* ---------- section 2: one photo per cell ---------- */
+  let s2target=null;
+  function paintCells(l2){
+    const box=$('s2photos'); box.innerHTML='';
+    const m=s2Model(cur), rows=m.rows.slice();
+    const pend=[...pending.values()].filter(p=>p.reportId===cur.id&&p.slot==='photo');
+    const known=new Set(rows.map(r=>r.c.id)), loose=pend.filter(p=>!p.cell||!known.has(p.cell));
+    if(!rows.length&&!m.extra.length&&!loose.length) rows.push({c:null,label:'תא 1',p:null});
+    const many=rows.filter(r=>r.c).length>1;
+    const mk=(txt,fn)=>{ const b=document.createElement('button'); b.type='button'; b.className='btn small'; b.textContent=txt; b.onclick=e=>{ e.stopPropagation(); fn(); }; return b; };
+    const build=(label,photo,pe,cellId,canPick)=>{
+      const d=document.createElement('div'); d.className='cellrow';
+      const n=document.createElement('span'); n.className='cn'; n.textContent=label; d.appendChild(n);
+      const st=document.createElement('span'); st.className='cs'; d.appendChild(st);
+      const acts=document.createElement('span'); acts.className='acts';
+      if(pe){ const failed=pe.status==='נכשל';
+        const th=document.createElement('div'); th.className='cth'; const im=document.createElement('img'); im.alt=''; im.src=pe.url; im.style.opacity='.55'; th.appendChild(im); d.appendChild(th);
+        st.className='cs'+(failed?' bad':''); st.textContent=failed?(pe.err==='quota_or_state'?'נגמר נפח האחסון':pe.err==='locked'?'הצ׳קליסט נעול':'ההעלאה נכשלה'):pe.status;
+        if(failed&&pe.err!=='locked') acts.appendChild(mk('נסה שוב',()=>{ pe.status='מעלה…'; runQueue(); }));
+        d.appendChild(acts); return d; }
+      if(photo){ const a=document.createElement('a'); a.className='cth'; a.target='_blank'; a.rel='noopener'; a.href=src(photo);
+        const im=document.createElement('img'); im.loading='lazy'; im.alt=photo.name||''; im.src=src(photo); a.appendChild(im); d.appendChild(a);
+        st.className='cs ok'; st.textContent='✓ צורפה'; } else st.textContent='חסרה תמונה';
+      if(!l2){
+        if(canPick&&assets) acts.appendChild(mk(photo?'החלף תמונה':'צלם / בחר תמונה',()=>pickPhoto(cellId)));
+        if(photo) acts.appendChild(mk('הסר',()=>removeItem('photo',photo)));
+        if(cellId&&many) acts.appendChild(mk('מחק תא',()=>removeCell(cellId)));
+        if(!photo&&canPick&&assets){ d.classList.add('click'); d.onclick=()=>pickPhoto(cellId); } }
+      d.appendChild(acts); return d; };
+    rows.forEach(r=>{ const id=r.c?r.c.id:null; box.appendChild(build(r.label,r.p,id?pend.find(p=>p.cell===id):null,id,true)); });
+    m.extra.forEach(p=>box.appendChild(build('תמונה נוספת',p,null,null,false)));
+    loose.forEach(pe=>box.appendChild(build('תמונה נוספת',null,pe,null,false)));
+  }
+  async function newCell(){
+    if(!(await ensureCreated())) return null;
+    const id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,4); lastCellT=Math.max(Date.now(),lastCellT+1);
+    const rec={id,t:lastCellT,by:me}; if(!cur.s2.cells) cur.s2.cells={}; cur.s2.cells[id]=rec; paintFiles();
+    await writeRetry(cur.id,{s2:{cells:{[id]:rec}},log:logEntry('נוסף תא')}); return id; }
+  function pickPhoto(cid){ if(!assets){ toast('אין לך הרשאה להעלות קבצים'); return; } s2target=cid; $('s2files').click(); }
+  async function removeCell(cid){
+    if(isFinal(cur)||cur.s2.sig) return; const c=(cur.s2.cells||{})[cid]; if(!c) return;
+    if(!confirm('למחוק את התא ואת התמונה שלו מהצ׳קליסט? הקובץ עצמו נשאר שמור בגיבוי.')) return;
+    const now=Date.now(), pp={}; live(cur.s2.photos).filter(p=>p.cell===cid).forEach(p=>{ const r={...p,removed:true,removedAt:now,removedBy:me}; cur.s2.photos[p.assetId]=r; pp[p.assetId]=r; });
+    const cr={...c,removed:true,removedAt:now,removedBy:me}; cur.s2.cells[cid]=cr; paintFiles();
+    await writeRetry(cur.id,{s2:{cells:{[cid]:cr},photos:pp},log:logEntry('תא נמחק')}); }
+  $('addCell').onclick=async()=>{
+    if(!cur||isFinal(cur)||cur.s2.sig) return;
+    if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
+    const m=s2Model(cur); if(!m.rows.length&&!m.extra.length) await newCell(); await newCell(); };
   async function removeItem(kind,p){
     if(isFinal(cur)) return;
     if(!confirm('להסיר את „'+(p.name||'הקובץ')+'” מהצ׳קליסט? הקובץ עצמו נשאר שמור בגיבוי.')) return;
@@ -674,7 +977,10 @@ details.logbox summary{cursor:pointer;font-weight:600}
     (kind==='photo'?cur.s2.photos:cur.s3.files)[p.assetId]=rec; paintFiles();
     await writeRetry(cur.id,{...(kind==='photo'?{s2:{photos:{[p.assetId]:rec}}}:{s3:{files:{[p.assetId]:rec}}}),log:logEntry('הוסר מהתצוגה: '+(p.name||''))});
   }
-  $('s2files').addEventListener('change',e=>{const f=[...e.target.files];e.target.value='';addFiles(f,'photo');});
+  $('s2files').addEventListener('change',async e=>{ const f=[...e.target.files]; e.target.value=''; if(!f.length||!cur||isFinal(cur)||cur.s2.sig) return;
+    if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
+    let cid=s2target; if(!cid){ cid=await newCell(); if(!cid) return; }
+    await addFiles(f.slice(0,1),'photo',cid); });
   $('s3files').addEventListener('change',e=>{const f=[...e.target.files];e.target.value='';addFiles(f,'file');});
 
   /* ---------- sign / reopen / final lock ---------- */
@@ -682,7 +988,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     const k='s'+n,s=cur[k],miss=[];
     const h=readSec('hdr'); HREQ.forEach(f=>{ if(!h[f]) miss.push({module:'שם המודול',site:'אתר',quadrant:'רביע'}[f]); });
     if(!s.name.trim()) miss.push('שם');
-    if(n===2&&!live(s.photos).length) miss.push('תמונה אחת לפחות');
+    if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
     if(n===3&&!s.inspector.trim()) miss.push('שם הבודק');
     if([...pending.values()].some(p=>p.reportId===cur.id&&((n===2&&p.slot==='photo')||(n===3&&p.slot==='file')))) miss.push('המתן לסיום ההעלאה');
     if(!s.declared) miss.push('סימון ההצהרה');
@@ -839,7 +1145,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       // locked checklists print the sealed copy
       let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location}); SECS.forEach(k=>TEXT[k].forEach(f=>r[k][f]=sd[k][f])); }
       const logo='';
-      const photos=await Promise.all(live(r.s2.photos).map(p=>toData(src(p),1500)));
+      const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label,p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',p}))); const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1500)));
       const att=live(r.s3.files), attImgs=await Promise.all(att.map(p=>(p.type||'').includes('pdf')?'':toData(src(p),1600)));
       const sigs={}; for(const k of SECS) sigs[k]=r[k].sig?(r[k].sig.data||await toData(src(r[k].sig),900)):'';
       const row=(k,v)=>blank?'<tr><th>'+k+'</th><td class="ln">'+esc(v||'')+'</td></tr>':(v?'<tr><th>'+k+'</th><td>'+esc(v)+'</td></tr>':'');
@@ -852,7 +1158,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
         (blank?'<div class="st" style="background:#EAF0FF;color:#1F44D6">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>':'<div class="st" style="background:'+(fin?'#E0F1E8;color:#1D7A55':'#FBF1DC;color:#9A6200')+'">'+(fin?'המודול נחתם במלואו, ננעל ומאושר למעבר לבדיקות בעומס':'טיוטה, הצ׳קליסט טרם הושלם ('+n+' מתוך 3 שלבים)')+'</div>')+
         '<h2>פרטי המודול</h2><table>'+row('שם המודול',r.module)+row('אתר',r.site)+row('רביע',quad(r))+(blank?'':row('נפתח',fmt(r.createdAt))+row('ננעל',fin?fmt(r.lockedAt):'')+row('הופק',fmt(Date.now()))+row('מזהה',r.id))+'</table>'+
         '<h2>1. חיזוק כניסות ויציאות במד מומנט</h2><table>'+row('מפעיל תדיראן',r.s1.name)+row('מספר עובד / ת״ז',r.s1.empId)+row('מס׳ מד מומנט',r.s1.tool)+row('תוקף כיול',r.s1.calib)+row('הערות',r.s1.notes)+'</table><p class="d avoid">'+dt(1)+'</p>'+sg('s1')+
-        '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table><div class="ph">'+photos.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'">').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
+        '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table><div class="ph">'+photos.map((x,i)=>x?'<figure class="avoid" style="margin:0;text-align:center"><img class="avoid" src="'+x+'"><figcaption style="font-size:11px;color:#13213A;margin-top:2px">'+esc(pItems[i].label)+'</figcaption></figure>':'').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
         '<h2 style="page-break-before:always">3. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
         '<div class="ph">'+attImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'" style="width:360px;height:auto">').join('')+'</div><p class="d avoid">'+dt(3)+'</p>'+sg('s3')+
         (fin&&cur.seal?'<div class="seal avoid"><b>חותמת דיגיטלית (SHA-256) של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div>':'')+
