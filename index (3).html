@@ -39,7 +39,7 @@ img{max-width:100%}
 button,input,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 [hidden]{display:none!important}
- 
+
 /* ---------- Top bar ---------- */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
 .topbar-in{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
@@ -65,7 +65,7 @@ button,input,textarea{font:inherit;color:inherit}
 .topbar .grow{flex:1}
 .ghost{background:transparent;border:1px solid var(--line);border-radius:10px;padding:7px 14px;font-size:.86rem;cursor:pointer;color:var(--ink-2);font-weight:500}
 .ghost:hover{border-color:var(--brand);color:var(--brand)}
- 
+
 /* ---------- Hero ---------- */
 .hero{max-width:1080px;margin:0 auto;padding:44px 24px 28px;display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:end}
 .hero h1{font-weight:800;font-size:clamp(2.2rem,5.2vw,3.7rem);line-height:1.04;letter-spacing:-.025em;margin:0}
@@ -77,10 +77,10 @@ button,input,textarea{font:inherit;color:inherit}
 .stat .k{font-size:.8rem;color:var(--ink-2);margin-top:8px}
 .stat.go{background:linear-gradient(135deg,var(--brand),var(--brand-2));border-color:transparent;color:#fff}
 .stat.go .k{color:rgba(255,255,255,.8)}
- 
+
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px 90px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
- 
+
 /* ---------- Checklist head ---------- */
 .cl-head{padding:28px 32px 22px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
 .cl-title .mlabel{font-size:.82rem;color:var(--ink-3);font-weight:500;display:block;margin-bottom:4px}
@@ -105,7 +105,7 @@ button,input,textarea{font:inherit;color:inherit}
 .sync{font-size:.84rem;display:flex;align-items:center;gap:7px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
 .sync .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
 .sync.ok .dot{background:var(--ok)} .sync.bad .dot{background:var(--bad)}
- 
+
 .sec{padding:28px 32px;border-top:1px solid var(--line-2)}
 #sealBox:not(:empty)+.sec{margin-top:20px}
 .banners+#sealBox:empty+.sec{margin-top:14px}
@@ -121,7 +121,7 @@ label.f textarea{min-height:68px;resize:vertical}
 .req::after{content:" *";color:var(--brand)}
 .mod-field input{font-weight:700;font-size:1.1rem!important}
 .hint{font-size:.86rem;color:var(--ink-3);margin-top:12px}
- 
+
 .timeline{}
 .stage{position:relative}
 .badge{width:38px;height:38px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:1.05rem;flex:none}
@@ -159,7 +159,7 @@ label.f textarea{min-height:68px;resize:vertical}
 .banners:not(:has(.banner:not([hidden]))){display:none}
 .banner{border-radius:12px;padding:10px 14px;font-weight:500;background:var(--warn-soft);color:var(--warn);font-size:.9rem}
 .banner.bad{background:var(--bad-soft);color:var(--bad)}
- 
+
 .seal{margin:20px 32px 0;border-radius:18px;padding:18px 20px;display:flex;gap:16px;align-items:center;color:#fff;position:relative;overflow:hidden;
   background:radial-gradient(120% 160% at 100% 0%,rgba(45,91,255,.55),transparent 55%),radial-gradient(80% 120% at 0% 100%,rgba(18,194,233,.3),transparent 60%),var(--dark)}
 .seal .medal{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;flex:none;font-size:1.4rem;color:#fff;background:linear-gradient(135deg,var(--ok),#22C3A6)}
@@ -167,11 +167,11 @@ label.f textarea{min-height:68px;resize:vertical}
 .seal .t{color:rgba(255,255,255,.75);font-size:.9rem}
 .seal .fp{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.76rem;color:rgba(255,255,255,.5);direction:ltr;unicode-bidi:isolate;word-break:break-all;margin-top:4px}
 .seal.broken{background:var(--bad)} .seal.broken .medal{background:#fff;color:var(--bad)}
- 
+
 .log{font-size:.86rem;color:var(--ink-2);display:flex;flex-direction:column;gap:5px;max-height:240px;overflow:auto}
 .log div{display:flex;gap:14px} .log time{min-width:120px;color:var(--ink-3);font-variant-numeric:tabular-nums}
 details.logbox summary{cursor:pointer;font-weight:600}
- 
+
 /* ---------- Archive ---------- */
 .archive{margin-top:56px}
 .archive-h{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
@@ -203,10 +203,10 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .colophon{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--ink-3);font-size:.82rem;flex-wrap:wrap;gap:10px}
 .colophon .wm-ico{width:26px;height:26px;border-radius:8px}.colophon .wm-ico svg{width:15px;height:15px}.colophon .wm-ico::after{display:none}
 .colophon .wm-cx{font-size:1.05rem}.colophon .wm-el{font-size:.86rem}.colophon .wm-bar{height:13px}.colophon .wm-sub{display:none}
- 
+
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:14px;font-size:.93rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw;box-shadow:0 12px 30px -10px rgba(10,15,28,.5)}
 .toast.on{opacity:1}
- 
+
 /* ---------- Reliability + polish ---------- */
 .stage.signed{background:linear-gradient(180deg,color-mix(in srgb,var(--ok-soft) 75%,transparent),transparent 150px)}
 .stage.signed .badge{font-size:1.1rem}
@@ -291,7 +291,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
   .topbar .prod,.topbar .sep{display:none} .stat .v{font-size:1.6rem}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
- 
+
 .cells{display:grid;gap:10px}
 .cellrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:64px;padding:14px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 .cellrow.click{cursor:pointer}.cellrow.click:hover{border-color:var(--brand);background:var(--brand-soft)}
@@ -307,7 +307,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
- 
+
 <header class="topbar">
   <div class="topbar-in">
     <div class="logo-slot" id="logoSlot"><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span></div>
@@ -327,7 +327,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     <div class="stat go"><div class="v" id="stReady">0</div><div class="k">מוכנים לעומס</div></div>
   </div>
 </section>
- 
+
 <main class="wrap">
   <section id="dash" hidden></section>
   <article class="card" id="checklist">
@@ -351,7 +351,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="banner info" id="draftBanner" hidden></div>
     </div>
     <div id="sealBox"></div>
- 
+
     <section class="sec" id="hdr">
       <div class="sec-h"><h2>פרטי המודול</h2></div>
       <div class="grid">
@@ -361,7 +361,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       </div>
       <div class="hint" id="hdrHint">הצ׳קליסט נשמר אוטומטית מרגע שכל השדות המסומנים מולאו.</div>
     </section>
- 
+
     <div class="timeline">
     <section class="sec stage" id="st1">
       <div class="sec-h"><span class="badge">1</span><h2>חיזוק כניסות ויציאות במד מומנט</h2><span class="state" id="st1state"></span></div>
@@ -376,7 +376,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="sig" data-sig="s1"></div>
       <div class="actions"><button class="btn primary" data-sign="1"></button><span class="err" id="s1err"></span></div>
     </section>
- 
+
     <section class="sec stage" id="st2">
       <div class="sec-h"><span class="badge">2</span><h2>ניקיון יסודי של התאים</h2><span class="state" id="st2state"></span></div>
       <div class="grid">
@@ -394,7 +394,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="sig" data-sig="s2"></div>
       <div class="actions"><button class="btn primary" data-sign="2"></button><span class="err" id="s2err"></span></div>
     </section>
- 
+
     <section class="sec stage" id="st3">
       <div class="sec-h"><span class="badge">3</span><h2>אישור בודק ומעבר לבדיקות בעומס</h2><span class="state" id="st3state"></span></div>
       <div class="grid">
@@ -414,12 +414,12 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="hint" id="finalHint">חתימה על שלב זה נועלת את הצ׳קליסט כולו לצמיתות.</div>
     </section>
     </div>
- 
+
     <section class="sec" id="logSec" hidden>
       <details class="logbox"><summary>יומן פעולות</summary><div class="log" id="log" style="margin-top:10px"></div></details>
     </section>
   </article>
- 
+
   <section class="archive" id="archive">
     <div class="archive-h"><h2>צ׳קליסטים</h2><span class="grow"></span><input class="search" id="search" placeholder="חיפוש לפי אתר, מספר סידורי או מודול" aria-label="חיפוש"></div>
     <div id="list"><p class="hint">טוען…</p></div>
@@ -428,7 +428,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
   <footer class="colophon"><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span><span>כל צ׳קליסט נעול נחתם בחותמת דיגיטלית SHA-256</span></footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
- 
+
 <script>
 /* ===== CX-ELECTRA standalone runtime: replaces the Claude-hosted db / assets / downloads / user services =====
    All data lives in this browser (IndexedDB). Nothing is sent to any server. */
@@ -438,7 +438,7 @@ const DB_NAME='cx-electra-standalone';
 const clone=o=>o===undefined?undefined:JSON.parse(JSON.stringify(o));
 const docs=new Map(), assetMeta=new Map(), urls=new Map();
 let idb=null, persistent=true;
- 
+
 /* ---- cloud sync: Firebase Realtime Database (same project as Electra CX), separate namespace ---- */
 const CLOUD={ enabled:true, ns:'ups-checklists', config:{
   apiKey:"AIzaSyCp_0vXHeobkLGEmZYDo60p1cqLLO1w5xw", authDomain:"electra-10.firebaseapp.com",
@@ -446,14 +446,14 @@ const CLOUD={ enabled:true, ns:'ups-checklists', config:{
   storageBucket:"electra-10.firebasestorage.app", messagingSenderId:"751223433308", appId:"1:751223433308:web:c07da01b36d20e7b3cde99" } };
 let fdb=null, online=false, cloudErr='';
 const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Set(), inflight=new Set();
- 
+
 function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
   r.onupgradeneeded=()=>{ const d=r.result; d.createObjectStore('docs',{keyPath:'path'}); d.createObjectStore('assets',{keyPath:'id'}); };
   r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
 const put=(store,val)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).put(val); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
 const del=(store,key)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).delete(key); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
 const getAll=store=>new Promise((res,rej)=>{ const r=idb.transaction(store,'readonly').objectStore(store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
- 
+
 const ready=(async()=>{
   try{
     idb=await openDb();
@@ -462,13 +462,13 @@ const ready=(async()=>{
   }catch(e){ idb=null; persistent=false; console.warn('IndexedDB unavailable, data will not persist',e); }
   try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(_){}
 })();
- 
+
 const segs=p=>p.split('/').filter(Boolean);
 const parentOf=p=>segs(p).slice(0,-1).join('/');
 const hex=n=>{ const a=new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,n*2); };
 const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefined) continue; if(isObj(v)&&isObj(t[k])) merge(t[k],v); else t[k]=clone(v); } return t; }
- 
+
 /* RTDB drops empty maps and nulls, so restore the shape the app expects */
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
   d.log=d.log||{}; for(const k of ['s1','s2','s3']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
@@ -478,7 +478,7 @@ const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; i
 function strip(o){ if(Array.isArray(o)) return o.map(strip); if(isObj(o)){ const r={}; for(const k of Object.keys(o)){ const v=strip(o[k]); if(v===null||v===undefined) continue; if(isObj(v)&&!Object.keys(v).length) continue; r[k]=v; } return r; } return o; }
 const same=(path,a,b)=>stable(strip(normalize(path,clone(a))))===stable(strip(normalize(path,clone(b))));
 function flatten(o,pre,out){ out=out||{}; pre=pre||''; for(const k of Object.keys(o)){ const v=o[k]; if(v===undefined) continue; if(isObj(v)){ if(Object.keys(v).length) flatten(v,pre+k+'/',out); } else out[pre+k]=v; } return out; }
- 
+
 /* ---- Firestore-style document store ---- */
 const listeners=new Set();
 function colSnap(cpath){ const n=segs(cpath).length+1, out=[];
@@ -504,7 +504,7 @@ function docRef(path){ return {
   collection:n=>colRef(path+'/'+n) }; }
 function colRef(path){ return { path, doc:id=>docRef(path+'/'+(id||hex(10))), get:async()=>{ await ready; return colSnap(path); }, onSnapshot:cb=>listen('col',path,cb) }; }
 const dbApi={ collection:n=>colRef(n), doc:p=>docRef(p) };
- 
+
 /* ---- file / image store ---- */
 window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return 'blob:missing-asset'; };
 async function blobToDataURL(b){ const u8=new Uint8Array(await b.arrayBuffer()); let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return 'data:'+(b.type||'application/octet-stream')+';base64,'+btoa(s); }
@@ -525,7 +525,7 @@ const assetsApi={
     let max=2*1024*1024*1024; try{ const e=await navigator.storage.estimate(); if(e&&e.quota) max=e.quota; }catch(_){}
     return {assets:[...assetMeta.values()].map(a=>({id:a.id,type:a.type,sizeBytes:a.size})),usage:{bytes,maxBytes:max}}; }
 };
- 
+
 /* ---- cloud sync engine ---- */
 function pendingCount(){ return dirtyDocs.size+dirtyAssets.size; }
 function updateStatus(){ const el=document.getElementById('cloudStatus'); if(!el) return; let t;
@@ -572,7 +572,7 @@ function initCloud(){
   const dr=fdb.ref(CLOUD.ns+'/docs'), on=s=>{ cloudErr=''; applyRemote(s.key,s.val()); updateStatus(); };
   dr.on('child_added',on,fail); dr.on('child_changed',on,fail); dr.on('child_removed',s=>removeRemote(s.key),fail); }
 const userApi={ id:async()=>'local', canEdit:async()=>true };
- 
+
 /* ---- helpers: download, zip, backup/restore ---- */
 function triggerDownload(blob,filename){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },5000); }
 const today=()=>new Date().toISOString().slice(0,10);
@@ -580,11 +580,11 @@ const safe=s=>String(s==null?'':s).replace(/[\\\/:*?"<>|\s]+/g,'_').replace(/^_+
 const quadOf=r=>(r.quadrant!=null&&r.quadrant!=='')?r.quadrant:(r.location||'');
 const reportDocs=()=>[...docs.entries()].filter(([p])=>/^reports\/[^/]+$/.test(p)).map(([p,d])=>({...d,id:segs(p)[1]}));
 function toast(m){ const t=document.getElementById('toast'); if(!t){ alert(m); return; } t.textContent=m; t.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('on'),4500); }
- 
+
 async function augmentBackup(json){ let obj; try{ obj=JSON.parse(json); }catch(_){ return json; }
   const assets={}; for(const a of assetMeta.values()) assets[a.id]={type:a.type,size:a.size,at:a.at,data:await blobToDataURL(a.blob)};
   obj.assets=assets; obj.format=3; return JSON.stringify(obj,null,2); }
- 
+
 const downloadsApi={ async save({filename,data}){
   let blob;
   if(typeof data==='string'){
@@ -592,7 +592,7 @@ const downloadsApi={ async save({filename,data}){
     blob=new Blob([data],{type:/\.csv$/.test(filename)?'text/csv;charset=utf-8':/\.json$/.test(filename)?'application/json':'text/plain'});
   } else blob=data;
   triggerDownload(blob,filename); return {filename}; } };
- 
+
 const crcT=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })();
 function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c=crcT[(c^u8[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
 function makeZip(files){
@@ -611,7 +611,7 @@ function makeZip(files){
   let csz=0; central.forEach(x=>csz+=x.byteLength);
   const end=new DataView(new ArrayBuffer(22)); end.setUint32(0,0x06054b50,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true); end.setUint32(12,csz,true); end.setUint32(16,off,true);
   return new Blob([...parts,...central,end.buffer],{type:'application/zip'}); }
- 
+
 const EXT={'image/jpeg':'.jpg','image/png':'.png','image/webp':'.webp','image/gif':'.gif','application/pdf':'.pdf'};
 function withExt(name,type){ return /\.[A-Za-z0-9]{2,5}$/.test(name)?name:name+(EXT[type]||''); }
 async function exportZip(){
@@ -631,7 +631,7 @@ async function exportZip(){
   for(const a of assetMeta.values()) if(!seen.has(a.id)) await add('unlinked',a.id,a.id,a.type);
   if(!files.length){ toast('אין עדיין תמונות או קבצים לייצוא'); return; }
   triggerDownload(makeZip(files),'cx-electra-files-'+today()+'.zip'); toast('הורד ZIP עם '+files.length+' קבצים'); }
- 
+
 function missingAssets(){ const miss=new Set();
   for(const r of reportDocs()){
     Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
@@ -646,7 +646,7 @@ async function restoreBackup(obj){ await ready;
   for(const [rid,d] of Object.entries(obj.sealed||{})){ const r=obj.reports.find(x=>x.id===rid); if(r&&r.seal&&r.seal.path) await commit(r.seal.path,d,null); }
   for(const [rid,vs] of Object.entries(obj.versions||{})) for(const [vid,d] of Object.entries(vs)) await commit('reports/'+rid+'/versions/'+vid,d,null);
   return {reports:nr,assets:na,missing:missingAssets()}; }
- 
+
 function wire(){
   const foot=document.querySelector('.foot'); if(!foot) return;
   const mk=(id,txt)=>{ const b=document.createElement('button'); b.className='btn small'; b.id=id; b.type='button'; b.textContent=txt; return b; };
@@ -665,11 +665,11 @@ function wire(){
   if(!persistent){ const b=document.getElementById('noDb'); if(b){ b.textContent='הדפדפן חוסם שמירה מקומית. הנתונים יאבדו בסגירת הדף. פתח את הקובץ בחלון רגיל.'; b.hidden=false; } }
 }
 ready.then(()=>{ initCloud(); if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire(); });
- 
+
 const services={db:dbApi,assets:assetsApi,downloads:downloadsApi,user:userApi};
 window.claude={ use:async n=>{ await ready; return services[n]||null; } };
 })();
- 
+
 </script>
 <script>
 (function(){
@@ -681,7 +681,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   let db=null,col=null,assets=null,downloads=null,userNs=null,me='',canEdit=false;
   let reports=[],cur=null,connected=false,brand={},sealState=null;
   const dirty={},timers={},pads={},pending=new Map();
- 
+
   const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),3200);};
   const fmt=t=>t?new Date(t).toLocaleString('he-IL',{dateStyle:'short',timeStyle:'short'}):'';
   const src=p=>p&&(p.assetId?window.__assetURL(p.assetId):p.data);
@@ -691,7 +691,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const done=r=>SECS.filter(k=>r[k]&&r[k].sig).length;
   const isFinal=r=>!!(r&&r.final);
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
- 
+
   function blank(){
     return {id:null,module:'',site:'',quadrant:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
       s1:{name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
@@ -704,7 +704,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
   let lastCellT=0;
   const logEntry=text=>{const t=Date.now();return{['e'+t+Math.random().toString(36).slice(2,5)]:{t,text,by:me}};};
- 
+
   /* ---------- hashing / seal ---------- */
   async function sha(buf){ const h=await crypto.subtle.digest('SHA-256',typeof buf==='string'?new TextEncoder().encode(buf):buf); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
   function stable(o){ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(o&&typeof o==='object') return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o); }
@@ -753,7 +753,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const info={path,hash,at,late:true};
     if(await writeRetry(id,{seal:info,log:logEntry('חותמת דיגיטלית הושלמה / '+hash.slice(0,12))})){ if(cur&&cur.id===id){ cur.seal=info; verify(); } toast('החותמת הדיגיטלית נשמרה'); }
   }
- 
+
   /* ---------- local drafts: every unsaved edit is also kept on this device ---------- */
   const norm=v=>String(v==null?'':v).trim().replace(/\s+/g,' ').toLowerCase();
   const ver={};
@@ -779,7 +779,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     return secs;
   }
   function showDraftBanner(t){ const b=$('draftBanner'); b.hidden=!t; if(t) b.textContent=t; clearTimeout(showDraftBanner.h); if(t) showDraftBanner.h=setTimeout(()=>{b.hidden=true;},12000); }
- 
+
   /* ---------- writes ---------- */
   let chain=Promise.resolve();
   function setSync(k,t){ $('sync').className='sync '+(k||''); $('syncText').textContent=t; }
@@ -789,7 +789,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   }
   async function writeRetry(id,patch,tries=5){ for(let i=0;i<tries;i++){ try{ await write(id,patch); return true; }catch(_){ await sleep(1000*2**i); } } setSync(navigator.onLine===false?'off':'bad',navigator.onLine===false?'אין חיבור, נשמר במכשיר':'לא נשמר בשרת, ננסה שוב'); toast('אין חיבור לשרת כרגע. השינויים שמורים במכשיר ויישלחו אוטומטית.'); return false; }
   async function snapshotVersion(reason){ try{ await col.doc(cur.id).collection('versions').doc('v'+Date.now()).set({reason,at:Date.now(),by:me,data:clone(cur)}); }catch(_){} }
- 
+
   function readSec(sec){
     if(sec==='hdr'){ const o={}; HDR.forEach(k=>o[k]=$(k).value.trim()); return o; }
     const o={}; TEXT[sec].forEach(f=>{ const el=document.querySelector('#st'+sec[1]+' [data-f="'+f+'"]'); o[f]=el.type==='checkbox'?el.checked:el.value; }); return o;
@@ -832,7 +832,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function paintCalib(){ const w=$('calibWarn'), st=(cur&&cur.s1&&cur.s1.sig)?null:calibState(); w.hidden=!st; if(!st) return; w.className='fwarn'+(st.exp?'':' soon'); w.textContent=st.exp?'תוקף הכיול פג. יש להשתמש במד מומנט בתוקף.':(st.soon===0?'תוקף הכיול פג היום בסוף היום.':'תוקף הכיול יפוג בעוד '+st.soon+' ימים.'); }
   document.addEventListener('input',e=>{ if(e.target.dataset&&e.target.dataset.f==='calib') paintCalib(); });
   document.addEventListener('change',e=>{ if(e.target.type==='checkbox'&&e.target.dataset.f){ queueSave('s'+e.target.closest('.stage').id.slice(2)); } });
- 
+
   /* ---------- signature pad ---------- */
   function makePad(key){
     const host=document.querySelector('[data-sig="'+key+'"]');
@@ -856,7 +856,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     } else if(isFinal(cur)){ host.innerHTML=''; host.dataset.shown='x'; }
     else if(!pads[key]){ host.dataset.shown=''; makePad(key); }
   }
- 
+
   /* ---------- durable upload queue ---------- */
   let idb=null;
   const openIdb=()=>new Promise(res=>{try{const r=indexedDB.open('ups-upload-queue',1);r.onupgradeneeded=()=>r.result.createObjectStore('q',{keyPath:'key'});r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);}catch(_){res(null);}});
@@ -982,7 +982,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     let cid=s2target; if(!cid){ cid=await newCell(); if(!cid) return; }
     await addFiles(f.slice(0,1),'photo',cid); });
   $('s3files').addEventListener('change',e=>{const f=[...e.target.files];e.target.value='';addFiles(f,'file');});
- 
+
   /* ---------- sign / reopen / final lock ---------- */
   function validate(n){
     const k='s'+n,s=cur[k],miss=[];
@@ -1034,7 +1034,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     sealState=path?{ok:true,hash,at,sealed:{hash,at,shas,data}}:null;
     toast('הצ׳קליסט נחתם במלואו וננעל');
   }
- 
+
   /* ---------- painting ---------- */
   function writeInputs(force){
     HDR.forEach(f=>{const el=$(f); if(force||(!dirty.hdr&&document.activeElement!==el)) el.value=cur[f]||'';});
@@ -1108,7 +1108,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     });
   }
   $('search').addEventListener('input',paintList);
- 
+
   function resetPads(){ Object.keys(pads).forEach(k=>delete pads[k]); document.querySelectorAll('[data-sig]').forEach(h=>{h.innerHTML='';h.dataset.shown='';}); }
   function setHash(id){ try{ history.replaceState(null,'',id?'#m-'+id.replace(/[^A-Za-z0-9-]/g,''):location.pathname+location.search); }catch(_){} }
   async function openReport(id){
@@ -1125,10 +1125,10 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     ['hdr',...SECS].forEach(k=>dirty[k]=false); sealState=null; resetPads(); paint(true); setHash(null);
   }
   $('newBtn').onclick=async()=>{ const base=cur&&cur.id?cur:null; if(cur&&cur.id) await flushAll(); newChecklist(base); $('checklist').scrollIntoView({behavior:'smooth',block:'start'}); $('module').focus(); toast('צ׳קליסט חדש. האתר והרביע הועתקו מהמודול הקודם.'); };
- 
+
   /* ---------- logo (owner/editor) ---------- */
   function paintLogo(){ /* the CX-ELECTRA wordmark is fixed; logo upload was removed (config/brand is kept untouched) */ }
- 
+
   /* ---------- PDF ---------- */
   const loadScript=u=>new Promise((res,rej)=>{ if(window.html2pdf) return res(); const s=document.createElement('script'); s.src=u; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
   async function toData(url,max,png){ try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height));
@@ -1172,7 +1172,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     }catch(e){ if(!(e&&e.code==='declined')) toast('הפקת ה־PDF נכשלה'+(e&&e.code?' ('+e.code+')':'')+'. נסה שוב.'); }
     finally{ btn.disabled=false; btn.textContent=pdfLabel(); }
   };
- 
+
   $('backupBtn').onclick=async()=>{
     const btn=$('backupBtn'); btn.disabled=true; const label=btn.textContent;
     try{
@@ -1186,7 +1186,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     finally{ btn.disabled=false; btn.textContent=label; }
   };
   async function refreshStorage(){ if(!assets) return; try{ const {usage}=await assets.list(); const pct=Math.min(100,Math.round(usage.bytes/usage.maxBytes*100)); const s=$('storage'); s.innerHTML='<span></span><span class="meter"><i></i></span>'; s.firstChild.textContent='אחסון: '+(usage.bytes/1048576).toFixed(0)+'MB מתוך '+(usage.maxBytes/1048576).toFixed(0)+'MB'; s.querySelector('i').style.width=pct+'%'; s.style.display='flex'; s.style.gap='10px'; s.style.alignItems='center'; }catch(_){} }
- 
+
   window.addEventListener('beforeunload',e=>{ if(pending.size||Object.values(dirty).some(Boolean)){ e.preventDefault(); e.returnValue=''; } });
   window.addEventListener('online',()=>{ setSync('','מתחבר…'); autoRetry(); runQueue(); flushAll(); });
   window.addEventListener('offline',()=>setSync('off','אין חיבור, נשמר במכשיר'));
@@ -1194,7 +1194,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function autoRetry(){ let any=false; for(const p of pending.values()) if(p.status==='נכשל'&&!PERM_UP.includes(p.err)){ p.status='ממתין'; any=true; } if(any){ paintFiles(); runQueue(); } }
   setInterval(()=>{ if(navigator.onLine===false||!col) return; if(cur&&cur.id&&Object.values(dirty).some(Boolean)) flushAll(); autoRetry(); },20000);
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'&&cur&&Object.values(dirty).some(Boolean)){ saveDraft(); flushAll(); } else if(document.visibilityState==='visible'){ autoRetry(); } });
- 
+
   /* ---------- status dashboard (read-only view over the same reports) ---------- */
   const STG={new:{l:'לא התחיל',c:'var(--ink-3)'},s1:{l:'ממתין למומנט',c:'var(--warn)',tc:'#0A0F1C'},s2:{l:'ממתין לניקיון',c:'var(--cyan)',tc:'#0A0F1C'},s3:{l:'ממתין לאישור בודק',c:'var(--brand)'},ready:{l:'מוכן לעומס',c:'var(--ok)'}};
   const STG_ORDER=['new','s1','s2','s3','ready'];
@@ -1288,7 +1288,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       catch(err){ if(!(err&&err.code==='declined')) toast('ההורדה נכשלה'); }
     }
   });
- 
+
   /* ---------- boot ---------- */
   const initialView=location.hash==='#status'?'dash':'cl';
   newChecklist(null);
@@ -1330,4 +1330,3 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
 </script>
 </body>
 </html>
- 
