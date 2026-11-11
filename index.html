@@ -519,7 +519,7 @@ function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefi
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
   d.log=d.log||{}; for(const k of ['s1','s2','s3','s4']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
   d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s2.scans=d.s2.scans||{}; d.s3.files=d.s3.files||{}; d.s4.photos=d.s4.photos||{}; return d; }
-const FIXLAB={}; for(let u=1;u<=2;u++){ const U='UPS'+u+'10'; for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]=U+'_תא'+c; FIXLAB['u'+u+'body']=U+'_גוף'; FIXLAB['u'+u+'ceil']=U+'_תקרה'; }
+const FIXLAB={}; for(let u=1;u<=2;u++){ const U='UPS'+u+'10'; for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]=c<=5?U+'_תא'+(u===1?c+5:c):U+'_תמונה_נוספת_'+(c-5); FIXLAB['u'+u+'body']=U+'_גוף'; FIXLAB['u'+u+'ceil']=U+'_תקרה'; }
 const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
 const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(isObj(o)) return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o===undefined?null:o); };
 function strip(o){ if(Array.isArray(o)) return o.map(strip); if(isObj(o)){ const r={}; for(const k of Object.keys(o)){ const v=strip(o[k]); if(v===null||v===undefined) continue; if(isObj(v)&&!Object.keys(v).length) continue; r[k]=v; } return r; } return o; }
@@ -751,12 +751,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
   /* fixed inspection items: per UPS, 7 cells + the UPS body + the UPS ceiling (edit these 3 numbers to change the scheme) */
   const UPS_N=2, CELLS_N=7, ITEMS=[];
-  for(let u=1;u<=UPS_N;u++){ const U='UPS'+u+'10'; for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:U+' / תא '+c,grp:U}); ITEMS.push({id:'u'+u+'body',label:U+' / גוף ה־UPS',grp:U}); ITEMS.push({id:'u'+u+'ceil',label:U+' / תקרת UPS',grp:U}); }
+  for(let u=1;u<=UPS_N;u++){ const U='UPS'+u+'10'; for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:U+(c<=5?' / תא '+(u===1?c+5:c):' / תמונה נוספת '+(c-5)),grp:U,opt:c>5}); ITEMS.push({id:'u'+u+'body',label:U+' / גוף ה־UPS',grp:U}); ITEMS.push({id:'u'+u+'ceil',label:U+' / תקרת UPS',grp:U}); }
   /* checklists whose stage 2 was already signed before this scheme keep the old free-form cells */
   const isFixed=r=>!!(r.s2&&r.s2.fixed)||(!(r.s2&&r.s2.sig)&&!isFinal(r));
   const scanOk=(r,id)=>!!(((r.s2&&r.s2.scans)||{})[id]||{}).ok;
   function s2Model(r){ const cells=cellsOf(r), ph=live(r.s2.photos), used=new Set();
-    if(isFixed(r)){ const rows=ITEMS.map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
+    if(isFixed(r)){ const rows=ITEMS.map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,opt:!!it.opt,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
     const rows=cells.map((c,i)=>{ const ps=ph.filter(p=>p.cell===c.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c,label:'תא '+(i+1),p}; });
     return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
   let lastCellT=0;
@@ -1017,12 +1017,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       d.appendChild(acts); return d; };
     const hint=$('s2hint'), prog=$('s2prog');
     if(m.fixed){
-      hint.textContent='לכל אחת מ־'+UPS_N+' יחידות ה־UPS: '+CELLS_N+' תאים, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים). לכל פריט נדרשים תמונה ואישור סריקה פיזית. אי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)';
-      const nP=rows.filter(r=>r.p).length, nS=rows.filter(r=>r.scan).length, all=nP===rows.length&&nS===rows.length;
-      prog.textContent='תמונות: '+nP+' מתוך '+rows.length+'  /  סריקה פיזית: '+nS+' מתוך '+rows.length; prog.className='s2prog'+(all?' ok':'');
+      hint.textContent='לכל אחת מ־'+UPS_N+' יחידות ה־UPS: '+'5 תאים (ב־UPS110 תאים 6 עד 10, ב־UPS210 תאים 1 עד 5), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים). לכל תא, לגוף ה־UPS ולתקרת ה־UPS נדרשים תמונה ואישור סריקה פיזית, ואי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)';
+      const req=rows.filter(r=>!r.opt), nP=req.filter(r=>r.p).length, nS=req.filter(r=>r.scan).length, all=nP===req.length&&nS===req.length;
+      prog.textContent='תמונות: '+nP+' מתוך '+req.length+'  /  סריקה פיזית: '+nS+' מתוך '+req.length; prog.className='s2prog'+(all?' ok':'');
       let lastG='';
       rows.forEach(r=>{ if(r.grp!==lastG){ lastG=r.grp; const h=document.createElement('div'); h.className='grph'; h.textContent=r.grp; box.appendChild(h); }
-        const row=build(r.label,r.p,pend.find(p=>p.cell===r.c.id),r.c.id,true);
+        const row=build(r.label,r.p,pend.find(p=>p.cell===r.c.id),r.c.id,true); if(r.opt&&!r.p){ const cs=row.querySelector('.cs'); if(cs&&cs.textContent==='חסרה תמונה') cs.textContent=''; }
         const lb=document.createElement('label'); lb.className='scan'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=r.scan; cb.disabled=!!l2;
         lb.appendChild(cb); lb.appendChild(document.createTextNode('סריקה פיזית בוצעה')); lb.onclick=e=>e.stopPropagation(); cb.onchange=()=>setScan(r.c.id,cb.checked);
         row.insertBefore(lb,row.querySelector('.acts')); box.appendChild(row); });
@@ -1075,7 +1075,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const k='s'+n,s=cur[k],miss=[];
     const h=readSec('hdr'); HREQ.forEach(f=>{ if(!h[f]) miss.push({module:'שם המודול',site:'אתר',quadrant:'רביע'}[f]); });
     if(!s.name.trim()) miss.push('שם');
-    if(n===2&&isFixed(cur)){ const m=s2Model(cur), np=m.rows.filter(r=>!r.p).length, ns=m.rows.filter(r=>!r.scan).length;
+    if(n===2&&isFixed(cur)){ const m=s2Model(cur), np=m.rows.filter(r=>!r.opt&&!r.p).length, ns=m.rows.filter(r=>!r.opt&&!r.scan).length;
       if(!s.date) miss.push('תאריך ביצוע הניקיון'); if(np) miss.push('תמונה ל־'+np+' פריטים'); if(ns) miss.push('אישור סריקה פיזית ל־'+ns+' פריטים'); }
     else if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
     if(n===4){ if(!s.date) miss.push('תאריך ביצוע איטומי האש'); if(!live(s.photos).length) miss.push('תמונה אחת לפחות של איטומי האש'); }
@@ -1260,7 +1260,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       const dt=n=>(blank?'<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #13213A;border-radius:2px;margin-left:8px;vertical-align:-2px"></span>':'')+esc($('st'+n).querySelector('.dtext').textContent);
       const sg=k=>blank?'<div class="avoid"><table style="width:auto"><tr><th style="width:auto;border:0">חתימה</th><td style="border:0"><div class="sbx"></div></td><th style="width:auto;border:0;padding-right:18px">תאריך</th><td style="border:0;vertical-align:bottom"><div class="ln" style="width:130px"></div></td></tr></table></div>':r[k].sig?'<div class="avoid sg"><img src="'+sigs[k]+'"><div class="sm">נחתם ע״י '+esc(r[k].name)+' / '+fmt(r[k].signedAt)+'</div></div>':'<p class="no">שלב זה טרם נחתם</p>';
       const n=done(r);
-      const itemsTbl=sm2.fixed?'<table style="margin-top:8px"><tr><th style="width:auto">פריט</th><th style="width:70px">תמונה</th><th style="width:100px">סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?'☐':(x.p?'✓':'✗'))+'</td><td>'+(blank?'☐':(x.scan?'✓':'✗'))+'</td></tr>').join('')+'</table>':'';
+      const itemsTbl=sm2.fixed?'<table style="margin-top:8px"><tr><th style="width:auto">פריט</th><th style="width:70px">תמונה</th><th style="width:100px">סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?'☐':(x.p?'✓':(x.opt?'–':'✗')))+'</td><td>'+(blank?'☐':(x.scan?'✓':(x.opt&&!x.p?'–':'✗')))+'</td></tr>').join('')+'</table>':'';
       const cln=v=>blank?'☐':(v?'כן':'לא');
       const html='<div dir="rtl" style="font-family:\'Rubik\',Arial,sans-serif;color:#13213A;width:720px;font-size:12.5px;line-height:1.55">'+
         '<style>.hd{background:#0A0F1C;color:#fff;padding:18px 20px;border-bottom:4px solid #2D5BFF;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:16px}.hd img{max-height:40px;max-width:180px;background:#fff;padding:4px 8px;border-radius:4px}.hd .bn{font-weight:800;font-size:16px;direction:ltr;color:#fff}.hd h1{font-size:21px;margin:0;font-weight:700}.hd .s{opacity:.8;font-size:12px}.bd{padding:6px 4px}h2{font-size:15px;font-weight:700;color:#0A0F1C;border-bottom:2px solid #2D5BFF;padding-bottom:3px;margin:18px 0 8px}table{border-collapse:collapse;width:100%}th,td{text-align:right;padding:4px 6px;border-bottom:1px solid #E1E6EC;vertical-align:top}th{width:34%;color:#56657C;font-weight:600}.d{background:#EAF0FF;padding:8px 10px;border-radius:5px;margin:8px 0}.sg img{width:240px;border:1px solid #D5DCE5;border-radius:4px}.sm{font-size:11px;color:#1D7A55;font-weight:600}.ph{display:flex;flex-wrap:wrap;gap:6px}.ph img{width:232px;height:174px;object-fit:cover;border:1px solid #D5DCE5}.no{color:#A93A2B;font-weight:700}.st{padding:9px 12px;border-radius:5px;font-weight:700;margin:12px 0}.seal{border:1.5px solid #2D5BFF;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:11px}.fp{direction:ltr;font-family:monospace;word-break:break-all;color:#56657C}.ln{height:26px;border-bottom:1px solid #9AA3B2}.sbx{width:280px;height:86px;border:1.5px dashed #9AA3B2;border-radius:6px}</style>'+
@@ -1321,7 +1321,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       else if(!s1.sig&&cal<Date.now()) out.push({sev:'bad',t:'תוקף הכיול שהוזן כבר פג'}); }
     else if(s1.sig) out.push({sev:'warn',t:'חסר תוקף כיול למד המומנט'});
     if(s2.sig&&!live(s2.photos).length) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונות'});
-    if(s2.fixed&&s2.sig){ const has=new Set(live(s2.photos).map(p=>p.cell)); if(ITEMS.some(i=>!has.has(i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונה לכל הפריטים'}); if(ITEMS.some(i=>!scanOk(r,i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא אישור סריקה פיזית מלא'}); }
+    if(s2.fixed&&s2.sig){ const has=new Set(live(s2.photos).map(p=>p.cell)); if(ITEMS.some(i=>!i.opt&&!has.has(i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונה לכל הפריטים'}); if(ITEMS.some(i=>!i.opt&&!scanOk(r,i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא אישור סריקה פיזית מלא'}); }
     if(fin&&s3.clean1!==undefined&&!(s3.clean1&&s3.clean2)) out.push({sev:'bad',t:'נעול ללא אישור דוחות בודק נקיים'});
     if(fin&&r.s4&&r.s4.sig&&!live(r.s4.photos).length) out.push({sev:'bad',t:'איטומי אש נחתמו ללא תמונות'});
     if(fin&&!live(s3.files).length) out.push({sev:'warn',t:'אין קובץ אישור בודק מצורף'});
