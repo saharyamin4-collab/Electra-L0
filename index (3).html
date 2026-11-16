@@ -321,6 +321,8 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .hr .ha{display:flex;gap:6px}
 .hr .ha .btn{padding:7px 12px}
 .hr .ha .btn.wa svg{width:16px;height:16px}
+.btn.delb{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line));background:var(--surface)}
+.btn.delb:hover{background:var(--bad-soft);border-color:var(--bad)}
 .stc{font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
 .stc.ok{background:var(--ok-soft);color:var(--ok)} .stc.new{background:var(--sunk);color:var(--ink-3);border:1px solid var(--line)} .stc.idle{background:var(--bad-soft);color:var(--bad)}
 @media (max-width:720px){.hr{grid-template-columns:1fr auto;gap:8px 12px}.hr .pg{grid-column:1/-1;order:3}.hr .up{display:none}}
@@ -561,6 +563,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     </div>
     <div class="toolbar">
       <button class="btn" id="newBtn">צ׳קליסט חדש</button>
+      <button class="btn delb" id="delBtn" type="button" hidden>🗑 מחק צ׳קליסט ריק</button>
       <button class="btn brass" id="pdfBtn">⬇ טופס ריק להדפסה (PDF)</button>
       <button class="btn wa" id="waBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg><span>שיתוף בוואטסאפ</span></button>
       <span class="grow"></span>
@@ -771,7 +774,7 @@ function docRef(path){ return {
   get:async()=>{ await ready; return docSnap(path); },
   set:async data=>{ await ready; await commit(path,clone(data),null); },
   update:async patch=>{ await ready; const cur=docs.get(path); if(cur===undefined){ const e=new Error('not-found'); e.code='not-found'; throw e; } const p=clone(patch); await commit(path,merge(clone(cur),p),p); },
-  delete:async()=>{ await ready; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); await del('docs',path); notify(path); if(fdb&&online) fdb.ref(CLOUD.ns+'/docs/'+keyOf(path)).remove().catch(()=>{}); },
+  delete:async()=>{ await ready; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); await del('docs',path); notify(path); tomb.add(keyOf(path)); saveTomb(); pushTombs(); },
   onSnapshot:cb=>listen('doc',path,cb),
   collection:n=>colRef(path+'/'+n) }; }
 function colRef(path){ return { path, doc:id=>docRef(path+'/'+(id||hex(10))), get:async()=>{ await ready; return colSnap(path); }, onSnapshot:cb=>listen('col',path,cb) }; }
@@ -855,7 +858,12 @@ function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).con
   ['s1','s2','s3','s4','s5'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
 function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
 function flushAll(){ [...dirtyDocs].forEach(p=>pushDoc(p,null)); [...dirtyAssets].forEach(pushAsset); }
+/* deletes survive being offline: kept as tombstones until the cloud confirms */
+const tomb=new Set((()=>{ try{ return JSON.parse(localStorage.getItem('cx-tombstones')||'[]'); }catch(_){ return []; } })());
+function saveTomb(){ try{ localStorage.setItem('cx-tombstones',JSON.stringify([...tomb])); }catch(_){} }
+function pushTombs(){ if(!fdb||!online) return; tomb.forEach(k=>fdb.ref(CLOUD.ns+'/docs/'+k).remove().then(()=>{ tomb.delete(k); saveTomb(); }).catch(()=>{})); }
 function applyRemote(key,val){
+  if(tomb.has(key)){ pushTombs(); return; }
   if(val===null||val===undefined) return; const path=pathOf(key), data=normalize(path,val); synced.add(path);
   const local=docs.get(path);
   if(local&&dirtyDocs.has(path)&&!same(path,local,data)){ if((local.updatedAt||0)>=(data.updatedAt||0)){ pushDoc(path,null); return; } dirtyDocs.delete(path); }
@@ -865,7 +873,7 @@ function removeRemote(key){ const path=pathOf(key); if(!docs.has(path)) return; 
 function initCloud(){
   if(!CLOUD.enabled||!window.firebase) return;
   try{ const app=(firebase.apps||[]).find(a=>a.name==='ups')||firebase.initializeApp(CLOUD.config,'ups'); fdb=app.database(); }catch(e){ fdb=null; return; }
-  fdb.ref('.info/connected').on('value',s=>{ online=!!s.val(); if(online){ failedAssets.clear(); flushAll(); for(const [p,d] of docs) prefetch(p,d); } updateStatus(); });
+  fdb.ref('.info/connected').on('value',s=>{ online=!!s.val(); if(online){ failedAssets.clear(); pushTombs(); flushAll(); for(const [p,d] of docs) prefetch(p,d); } updateStatus(); });
   const dr=fdb.ref(CLOUD.ns+'/docs'), on=s=>{ cloudErr=''; applyRemote(s.key,s.val()); updateStatus(); };
   dr.on('child_added',on,fail); dr.on('child_changed',on,fail); dr.on('child_removed',s=>removeRemote(s.key),fail); }
 const userApi={ id:async()=>'local', canEdit:async()=>true };
@@ -1415,6 +1423,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const ring=$('ring'); ring.style.setProperty('--p',Math.round(n/SECS.length*100)); ring.classList.toggle('go',fin); $('ringTxt').textContent=fin?'✓':n+'/'+SECS.length;
     const sl=$('statusLine'); sl.classList.toggle('go',fin);
     $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין לחיזוק צד AC': !d[1]?'ממתין לחיזוק צד DC': !d[2]?'ממתין לאישור איטומי אש': !d[3]?'ממתין לאישור ניקיון התאים':'ממתין לאישור מתאם תדיראן';
+    $('delBtn').hidden=!isEmptyReport(cur);
     const pb=$('pdfBtn'); pb.hidden=false; if(!pb.disabled) pb.textContent=pdfLabel(); $('waBtn').hidden=!(cur&&cur.id&&fin);
   }
   function paintGates(){
@@ -1834,7 +1843,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
             '<div><div class="mn">'+esc(r.module||'?')+(fin?'<span class="lk">🔒</span>':'')+'</div><div class="ms">'+(upsN(r)===1?'UPS110':'UPS110 + UPS210')+(sns?' · <span dir="ltr">'+esc(sns)+'</span>':'')+'</div></div>'+
             '<div class="pg"><div class="segs">'+SECS.map(k=>'<i class="'+(secDone(r,k)?'on':'')+'"></i>').join('')+'</div><div class="nx">'+chip+'<span>'+n+' / '+SECS.length+'</span>'+(idle?'<span class="stc idle">ללא התקדמות '+daysAgo(lastAct(r))+' ימים</span>':'')+(bad?'<span class="fl" title="חריגת איכות"></span>':'')+'</div></div>'+
             '<div class="up"><b>'+agoTxt(lastAct(r))+'</b>עדכון אחרון</div>'+
-            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
+            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':(isEmptyReport(r)?'<button type="button" class="btn small delb" data-hdel="'+esc(r.id)+'" title="מחק צ׳קליסט ריק" aria-label="מחק צ׳קליסט ריק">🗑</button>':'')+'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
     }
     h+='<div class="hfoot" id="hfoot"></div>';
     const hadFocus=document.activeElement&&document.activeElement.id==='hq', sel=hadFocus?$('hq').selectionStart:0;
@@ -1845,7 +1854,8 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   $('home').addEventListener('input',e=>{ if(e.target.id==='hq'){ HOME.q=e.target.value; paintHome(); } });
   $('home').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.classList.contains('hr')) e.target.click(); });
   $('home').addEventListener('click',async e=>{
-    const t=e.target.closest('[data-hsite],[data-hf],[data-hsort],[data-hnew],[data-hpdf],[data-hwa],[data-hopen]'); if(!t) return;
+    const t=e.target.closest('[data-hdel],[data-hsite],[data-hf],[data-hsort],[data-hnew],[data-hpdf],[data-hwa],[data-hopen]'); if(!t) return;
+    if(t.dataset.hdel){ deleteReport(t.dataset.hdel); return; }
     if(t.dataset.hsite!==undefined){ HOME.site=t.dataset.hsite; paintHome(); return; }
     if(t.dataset.hf){ HOME.f=t.dataset.hf; paintHome(); return; }
     if(t.dataset.hsort){ HOME.sort=t.dataset.hsort; paintHome(); return; }
@@ -1854,6 +1864,17 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(t.dataset.hwa){ await openReport(t.dataset.hwa); $('waBtn').click(); return; }
     if(t.dataset.hopen){ openReport(t.dataset.hopen); }
   });
+
+  /* ---------- delete: only checklists that never started (no signature, photo or file) ---------- */
+  const isEmptyReport=r=>!!r&&!!r.id&&!isFinal(r)&&!SECS.some(k=>r[k]&&r[k].sig)&&!live((r.s2||{}).photos).length&&!live((r.s3||{}).files).length&&!live((r.s4||{}).photos).length&&![...pending.values()].some(p=>p.reportId===r.id);
+  async function deleteReport(id){
+    const r=reports.find(x=>x.id===id); if(!r) return;
+    if(!isEmptyReport(r)){ toast('אפשר למחוק רק צ׳קליסט שעוד לא התחיל: בלי חתימות, תמונות או קבצים.'); return; }
+    if(!confirm('למחוק את הצ׳קליסט '+(r.module||'')+' ('+[r.site,quad(r)&&'רביע '+quad(r)].filter(Boolean).join(', ')+')?\nהוא עדיין ריק, אין בו חתימות או תמונות. המחיקה סופית.')) return;
+    try{ await col.doc(id).delete(); dropDraft(id); if(cur&&cur.id===id){ newChecklist(null); setView('home'); } toast('הצ׳קליסט '+(r.module||'')+' נמחק'); }
+    catch(e){ toast('המחיקה נכשלה. נסה שוב.'); }
+  }
+  $('delBtn').onclick=()=>cur&&cur.id&&deleteReport(cur.id);
 
   /* ---------- site-name typo correction ---------- */
   const siteFixed=new Set();
