@@ -190,7 +190,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .tile .top{display:flex;align-items:flex-start;gap:8px}
 .tile .n{font-weight:700;font-size:1.25rem;line-height:1.2;letter-spacing:-.01em;word-break:break-word}
 .tile .lock{margin-inline-start:auto;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:.8rem;background:var(--ok-soft);flex:none}
-.tile .bars{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tile .bars{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .tile .bars i{height:6px;border-radius:3px;background:var(--line-2)}
 .tile .bars i.on{background:var(--brand)}
 .tile.ready .bars i.on{background:var(--ok)}
@@ -215,8 +215,118 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .tile .chip.draft{background:var(--brand-soft);color:var(--brand)}
 .sync.off .dot{background:var(--ink-3)}
 .seal .btn{margin-inline-start:auto;background:#fff;color:#0A0F1C;border:0;flex:none}
+.btn.wa{background:#25D366;border-color:#25D366;color:#fff;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 16px -8px #25D366}
+.btn.wa:hover{background:#1EBE5A;border-color:#1EBE5A}
+.btn.wa svg{width:18px;height:18px;fill:currentColor}
+.side{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;vertical-align:3px;direction:ltr;margin-inline-start:4px}
+.side.ac{background:var(--warn-soft);color:var(--warn)}
+.side.dc{background:color-mix(in srgb,var(--cyan) 16%,transparent);color:color-mix(in srgb,var(--cyan) 70%,var(--ink))}
+.stage.noreq{opacity:.62}
+.seal .acts{display:flex;gap:8px;flex-wrap:wrap;margin-inline-start:auto}
+@media (max-width:600px){.seal{flex-wrap:wrap}.seal .acts{margin-inline-start:0;width:100%}}
 .banner.info{background:var(--brand-soft);color:var(--brand)}
 @media (max-width:480px){.topbar-in{padding:10px 14px;gap:10px}.views button{padding:6px 10px;font-size:.85rem}.ghost{padding:6px 10px}}
+/* ---------- Comfort upgrade ---------- */
+.themeb{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);cursor:pointer;display:grid;place-items:center;font-size:1rem;flex:none}
+.themeb:hover{border-color:var(--brand);color:var(--brand)}
+#home,#dash,#checklist{animation:viewIn .28s cubic-bezier(.2,.7,.3,1)}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.crumbs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 59px);z-index:4;display:flex;align-items:center;gap:12px;margin:14px -8px 12px!important;padding:8px;border-radius:16px;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4)}
+.backb{white-space:nowrap;border:1px solid var(--line)!important;background:var(--surface)!important;border-radius:11px;padding:8px 12px!important;font-size:.88rem!important}
+.stepper{display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;padding:2px}
+.stepper::-webkit-scrollbar{display:none}
+.stp{display:flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px 5px 6px;font-size:.84rem;font-weight:500;color:var(--ink-2);cursor:pointer;flex:none;transition:all .15s}
+.stp i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;font-weight:700;background:var(--sunk);color:var(--ink-3)}
+.stp.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
+.stp.ok i{background:var(--ok);color:#fff}
+.stp.now{color:var(--brand);border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 14%,transparent)}
+.stp.now i{background:var(--brand);color:#fff}
+.stp.off{opacity:.5}
+.stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 130px)}
+.stage.cando .sec-h{cursor:pointer;margin-bottom:0;border-radius:12px}
+.stage.cando .sec-h::after{content:"";width:9px;height:9px;border-inline-end:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(45deg);margin-inline-start:4px;transition:transform .2s}
+.stage.cando:not(.collapsed) .sec-h{margin-bottom:18px}
+.stage.cando:not(.collapsed) .sec-h::after{transform:rotate(-135deg)}
+.stage.collapsed>:not(.sec-h):not(.ssum){display:none!important}
+.stage.collapsed{padding-block:18px}
+.ssum{display:none;font-size:.86rem;color:var(--ink-2);margin:6px 0 0;padding-inline-start:52px}
+.stage.collapsed .ssum{display:block}
+.stage.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{box-shadow:inset 0 0 0 2px var(--brand)}100%{box-shadow:inset 0 0 0 2px transparent}}
+@media (max-width:600px){.backb span{display:none}.crumbs{margin-inline:-6px!important}.ssum{padding-inline-start:0}}
+@media (max-width:420px){.wm-txt{display:none}}
+/* ---------- Sites + management home ---------- */
+.sitef{display:flex;flex-direction:column;gap:6px;font-size:.84rem;color:var(--ink-2);font-weight:500;grid-column:1/-1}
+.sitepick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.sitepick button{border:1.5px solid var(--line);background:var(--sunk);border-radius:14px;padding:11px 14px;text-align:start;cursor:pointer;color:var(--ink);transition:all .15s}
+.sitepick button b{display:block;font-size:1.02rem;font-weight:700}
+.sitepick button small{display:block;font-size:.78rem;color:var(--ink-3);margin-top:2px;direction:rtl}
+.sitepick button[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 14%,transparent)}
+.sitepick button[aria-checked="true"] small{color:var(--brand)}
+.sitepick button:disabled{cursor:default}
+.sitepick button:disabled:not([aria-checked="true"]){opacity:.45}
+.crumbs{margin:22px 0 12px}
+.backb{border:0;background:none;color:var(--ink-2);font-weight:500;cursor:pointer;padding:6px 0;font-size:.95rem}
+.backb:hover{color:var(--brand)}
+#home{padding-top:30px}
+.hh{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.hh h1{font-weight:800;font-size:clamp(2rem,4.6vw,3rem);line-height:1.05;letter-spacing:-.025em;margin:0}
+.hh h1 em{font-style:normal;background:linear-gradient(90deg,var(--brand),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hh p{color:var(--ink-2);margin:10px 0 0}
+.hh .grow{flex:1}
+.btn.big{padding:13px 22px;font-size:1rem;border-radius:14px;font-weight:600}
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:18px}
+.scard{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:16px 18px;text-align:start;cursor:pointer;box-shadow:var(--shadow-s);color:var(--ink);transition:all .15s;position:relative;overflow:hidden}
+.scard:hover{border-color:color-mix(in srgb,var(--brand) 50%,var(--line));transform:translateY(-2px)}
+.scard[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 16%,transparent),var(--shadow)}
+.scard[aria-pressed="true"]::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--brand),var(--cyan))}
+.scard .sn{font-weight:700;font-size:1.12rem}
+.scard .su{font-size:.78rem;color:var(--ink-3);margin-top:2px}
+.scard .sv{display:flex;align-items:baseline;gap:6px;margin-top:12px}
+.scard .sv b{font-size:1.9rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.scard .sv span{font-size:.84rem;color:var(--ink-2)}
+.scard .sp{height:6px;border-radius:3px;background:var(--line-2);overflow:hidden;margin-top:10px}
+.scard .sp i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),#22C3A6)}
+.scard .sr{font-size:.78rem;color:var(--ink-3);margin-top:6px;font-variant-numeric:tabular-nums}
+.hk{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.hk button{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;text-align:start;cursor:pointer;color:var(--ink);box-shadow:var(--shadow-s)}
+.hk button b{display:block;font-size:1.6rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.hk button span{font-size:.82rem;color:var(--ink-2)}
+.hk button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--surface)}
+.hk button[aria-pressed="true"] span{color:color-mix(in srgb,var(--surface) 75%,transparent)}
+.hk button.warn b{color:var(--warn)} .hk button.ok b{color:var(--ok)}
+.hk button[aria-pressed="true"].warn b,.hk button[aria-pressed="true"].ok b{color:var(--surface)}
+@media (max-width:640px){.hk{grid-template-columns:repeat(2,1fr)}}
+.htools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.htools .search{flex:1;min-width:200px}
+.hlist{display:flex;flex-direction:column;gap:18px}
+.hgrp h3{margin:0 2px 8px;font-size:.95rem;font-weight:700;color:var(--ink-2);display:flex;gap:10px;align-items:center}
+.hgrp h3 span{font-weight:500;font-size:.8rem;color:var(--brand);background:var(--brand-soft);padding:2px 9px;border-radius:999px}
+.hrows{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);overflow:hidden}
+.hr{display:grid;grid-template-columns:minmax(120px,1.2fr) minmax(170px,1.6fr) minmax(120px,1fr) auto;gap:14px;align-items:center;padding:13px 16px;border-top:1px solid var(--line-2);cursor:pointer;transition:background .12s}
+.hr:first-child{border-top:0}
+.hr:hover{background:var(--sunk)}
+.hr .mn{font-weight:700;font-size:1.08rem;display:flex;align-items:center;gap:7px;word-break:break-word}
+.hr .mn .lk{font-size:.8rem}
+.hr .ms{font-size:.78rem;color:var(--ink-3);margin-top:2px}
+.segs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.segs i{height:8px;border-radius:4px;background:var(--line-2)}
+.segs i.on{background:var(--brand)}
+.hr.ready .segs i.on{background:var(--ok)}
+.hr .nx{font-size:.8rem;color:var(--ink-2);margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.hr .nx .fl{width:8px;height:8px;border-radius:50%;background:var(--bad);display:inline-block}
+.hr .up{font-size:.8rem;color:var(--ink-3)}
+.hr .up b{display:block;color:var(--ink-2);font-weight:500}
+.hr .ha{display:flex;gap:6px}
+.hr .ha .btn{padding:7px 12px}
+.hr .ha .btn.wa svg{width:16px;height:16px}
+.stc{font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.stc.ok{background:var(--ok-soft);color:var(--ok)} .stc.new{background:var(--sunk);color:var(--ink-3);border:1px solid var(--line)} .stc.idle{background:var(--bad-soft);color:var(--bad)}
+@media (max-width:720px){.hr{grid-template-columns:1fr auto;gap:8px 12px}.hr .pg{grid-column:1/-1;order:3}.hr .up{display:none}}
+.hempty{text-align:center;padding:40px 20px;color:var(--ink-2)}
+.hempty b{display:block;color:var(--ink);font-size:1.15rem;margin-bottom:6px}
+.hfoot{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:22px;color:var(--ink-2);font-size:.85rem}
 /* ---------- Status dashboard ---------- */
 .views{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
 .views button{border:0;background:transparent;border-radius:9px;padding:6px 14px;font-weight:500;font-size:.9rem;color:var(--ink-2);cursor:pointer;white-space:nowrap}
@@ -248,7 +358,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .dsec .sub{color:var(--ink-3);font-size:.88rem;margin:0 0 16px}
 .pipe{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--line-2);gap:2px}
 .pipe i{display:block;height:100%;transition:width .5s}
-.stages{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+.stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin-top:14px}
 .stg{border:1px solid var(--line);background:var(--sunk);border-radius:14px;padding:12px 14px;text-align:start;cursor:pointer;position:relative;overflow:hidden;color:var(--ink)}
 .stg::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--c)}
 .stg[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent);background:var(--surface)}
@@ -317,6 +427,99 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .gate li{margin:2px 0}
 .clean{margin-top:14px}
 .clean .decl{margin:8px 0}
+
+/* ================= Checklist v2: separate stage cards, calmer and more premium ================= */
+#checklist{background:transparent;border:0;box-shadow:none;overflow:visible;border-radius:0}
+#checklist .cl-head{background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;position:relative;overflow:hidden;padding:34px 34px 24px}
+#checklist .cl-head::before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,var(--brand),var(--cyan))}
+#checklist .cl-head::after{content:"";position:absolute;width:380px;height:380px;inset-inline-start:-140px;top:-230px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--cyan) 20%,transparent),transparent);pointer-events:none}
+#checklist .cl-head>*{position:relative;z-index:1}
+#checklist .cl-title .mlabel{text-transform:none;letter-spacing:.02em;color:var(--brand);font-weight:600}
+#checklist .cl-title .mnum{font-size:clamp(2.1rem,5vw,3.2rem)}
+#checklist .msub{display:flex!important;gap:6px;flex-wrap:wrap}
+#checklist .ring{width:92px;height:92px;box-shadow:0 10px 26px -14px var(--brand)}
+#checklist .ring span{width:74px;height:74px;font-size:1.35rem}
+#checklist .statusline{border-radius:14px;padding:12px 16px}
+#checklist .toolbar{background:var(--sunk);border:1px solid var(--line);border-top:1px solid var(--line-2);border-radius:0 0 26px 26px;box-shadow:var(--shadow);margin-bottom:18px;padding:12px 34px}
+#checklist .banners{padding:0 0 14px}
+#checklist .seal{margin:0 0 18px;border-radius:22px}
+#checklist .timeline{display:flex;flex-direction:column;gap:14px}
+#checklist .sec{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-s);padding:28px 32px;transition:border-color .25s,box-shadow .25s,opacity .25s}
+#checklist #hdr,#checklist #logSec{margin-bottom:14px}
+#checklist .timeline{margin-bottom:14px}
+#sealBox:not(:empty)+.sec,.banners+#sealBox:empty+.sec{margin-top:0!important}
+#checklist .sec-h{gap:14px}
+#checklist .sec-h h2{font-size:1.28rem;font-weight:700}
+#checklist .badge{width:44px;height:44px;border-radius:14px;font-size:1.1rem;transition:all .25s}
+#checklist .state{font-weight:600;padding:5px 12px}
+#checklist .stage.signed{border-color:color-mix(in srgb,var(--ok) 32%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--ok-soft) 70%,var(--surface)),var(--surface) 120px)}
+#checklist .stage.signed .badge{background:linear-gradient(135deg,var(--ok),#22C3A6);box-shadow:0 6px 14px -8px var(--ok)}
+#checklist .stage.current{border-color:color-mix(in srgb,var(--brand) 55%,var(--line));box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 10%,transparent),var(--shadow)}
+#checklist .stage.current .badge{background:linear-gradient(135deg,var(--brand),var(--cyan));color:#fff;box-shadow:0 8px 18px -8px var(--brand)}
+#checklist .stage.current .state{background:var(--brand-soft);color:var(--brand)}
+#checklist .stage.locked{opacity:1;background:repeating-linear-gradient(135deg,var(--surface) 0 14px,var(--sunk) 14px 28px)}
+#checklist .stage.locked>*:not(.sec-h){opacity:.45}
+#checklist .stage.locked .badge{background:var(--sunk);color:var(--ink-3)}
+#checklist .stage.locked .state{background:var(--sunk);color:var(--ink-3)}
+#checklist .stage.locked .state::before{content:"🔒 "}
+#checklist .stage.noreq{opacity:.75}
+#checklist .stage.collapsed{padding-block:20px}
+#checklist .ssum{padding-inline-start:58px;color:var(--ink-2)}
+#checklist .grid{gap:16px 18px}
+#checklist label.f{gap:7px;font-size:.84rem}
+#checklist label.f input,#checklist label.f textarea{border-radius:14px;padding:13px 15px;border-color:var(--line);background:var(--sunk)}
+#checklist label.f input:not(:disabled):hover,#checklist label.f textarea:not(:disabled):hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
+#checklist label.f input:disabled,#checklist label.f textarea:disabled{background:var(--surface);border-color:var(--line-2);color:var(--ink);font-weight:500}
+#checklist .decl{border-radius:18px;padding:16px 18px;gap:14px;align-items:center;border:1.5px solid var(--line);background:var(--surface)}
+#checklist .decl:hover{border-color:color-mix(in srgb,var(--brand) 45%,var(--line))}
+#checklist .decl:has(input:checked){border-color:var(--brand);background:linear-gradient(135deg,var(--brand-soft),color-mix(in srgb,var(--cyan) 8%,var(--surface)))}
+#checklist .decl input{appearance:none;-webkit-appearance:none;width:26px;height:26px;margin:0;border-radius:9px;border:2px solid var(--line);background:var(--surface);cursor:pointer;transition:all .18s;flex:none}
+#checklist .decl input:checked{border-color:var(--brand);background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/16px no-repeat;box-shadow:0 6px 14px -6px var(--brand)}
+#checklist .decl input:disabled{cursor:default}
+#checklist .decl span{line-height:1.55}
+#checklist .pad{border:1.5px solid var(--line);border-radius:20px;height:190px;
+  background:#FFFFFF linear-gradient(#C9D2DE,#C9D2DE) no-repeat center 76%/84% 1.5px;box-shadow:inset 0 1px 3px rgba(10,15,28,.06)}
+#checklist .sig .lbl{margin-bottom:8px}
+#checklist .sig .lbl span::after{content:"  חתום על הקו";font-weight:400;color:var(--ink-3)}
+#checklist .signed-img{border-radius:18px;box-shadow:var(--shadow-s)}
+#checklist .stamp{display:inline-flex;align-items:center;gap:6px;background:var(--ok-soft);padding:5px 12px;border-radius:999px}
+#checklist .actions{margin-top:20px}
+#checklist .actions .btn{padding:14px 26px;border-radius:15px;font-size:1rem;font-weight:600}
+#checklist .actions .btn.primary{background:linear-gradient(135deg,var(--brand),#4C78FF);border:0;box-shadow:0 10px 22px -10px var(--brand)}
+#checklist .actions .btn.primary:hover{filter:brightness(1.06)}
+#checklist .actions .btn.brass{background:linear-gradient(135deg,#0A0F1C,#1F2A4A);border:0;box-shadow:0 10px 22px -12px #0A0F1C}
+#checklist .drop{border-radius:20px;padding:24px 18px;border:1.5px dashed color-mix(in srgb,var(--brand) 35%,var(--line));background:linear-gradient(180deg,var(--sunk),var(--surface))}
+#checklist .drop::before{content:"";display:block;width:46px;height:46px;margin:0 auto 10px;border-radius:15px;background:var(--brand-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D5BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h3l2-3h6l2 3h3v11H4z'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3C/svg%3E") center/24px no-repeat}
+#checklist #s3drop::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D5BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l8-8'/%3E%3C/svg%3E")}
+#checklist .drop b{display:block;font-size:1rem}
+#checklist .drop small{display:block;color:var(--ink-3);font-weight:400;margin-top:2px}
+#checklist .drop:hover{border-color:var(--brand);background:var(--brand-soft)}
+#checklist .gate{border-radius:16px;padding:14px 16px}
+#checklist .gate.wait{background:var(--sunk);border-style:dashed}
+#checklist .file,#checklist .cellrow{border-radius:16px}
+#checklist .ph{border-radius:16px}
+#checklist,#checklist .sec{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 132px)}
+#checklist .sec-h h2{flex:1 1 180px;min-width:0}
+#checklist .sec-h .state{margin-inline-start:auto}
+.themeb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:600px){
+  #checklist .sitepick{grid-template-columns:repeat(3,1fr);gap:6px}
+  #checklist .sitepick button{padding:10px 8px;border-radius:12px;text-align:center}
+  #checklist .sitepick button b{font-size:.95rem}
+  #checklist .sitepick button small{font-size:.66rem}
+  #checklist .sec-h{display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center}
+  #checklist .sec-h h2{font-size:1.12rem}
+  #checklist .sec-h .state{grid-column:2/-1;justify-self:start;margin:0}
+  #checklist .stage.cando .sec-h::after{grid-row:1;grid-column:3}
+  #checklist .cl-head{padding:26px 20px 20px;border-radius:22px 22px 0 0}
+  #checklist .toolbar{padding:12px 16px;border-radius:0 0 22px 22px}
+  #checklist .sec{padding:22px 18px;border-radius:20px}
+  #checklist .ring{width:72px;height:72px} #checklist .ring span{width:58px;height:58px;font-size:1.05rem}
+  #checklist .badge{width:38px;height:38px;border-radius:12px}
+  #checklist .actions .btn{flex:1}
+  #checklist .ssum{padding-inline-start:0}
+  #checklist .seal{margin-inline:0}
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -328,10 +531,11 @@ details.logbox summary{cursor:pointer;font-weight:600}
     <div class="logo-slot" id="logoSlot"><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span></div>
     <span class="sep"></span><span class="prod">מערכות אל־פסק</span>
     <span class="grow"></span>
-    <nav class="views" aria-label="תצוגה"><button type="button" data-view="cl" aria-pressed="true">צ׳קליסט</button><button type="button" data-view="dash" aria-pressed="false">תמונת מצב</button></nav>
+    <nav class="views" aria-label="תצוגה"><button type="button" data-view="home" aria-pressed="true">לוח בקרה</button><button type="button" data-view="cl" aria-pressed="false">צ׳קליסט</button><button type="button" data-view="dash" aria-pressed="false">תמונת מצב</button></nav>
+    <button type="button" class="themeb" id="themeBtn" aria-label="ערכת צבעים"></button>
   </div>
 </header>
-<section class="hero" id="hero">
+<section class="hero" id="hero" hidden>
   <div>
     <h1>צ׳קליסט מוכנות<br><em>לבדיקות בעומס למערכות אל־פסק</em></h1>
     <p>חיזוק במד מומנט, ניקיון תאים ואישור בודק לכל מודול. נחתם, מתועד וננעל.</p>
@@ -344,8 +548,10 @@ details.logbox summary{cursor:pointer;font-weight:600}
 </section>
 
 <main class="wrap">
+  <section id="home"></section>
   <section id="dash" hidden></section>
-  <article class="card" id="checklist">
+  <div class="crumbs" id="crumbs" hidden><button type="button" class="backb" data-view="home" aria-label="חזרה ללוח הבקרה">→ <span>לוח הבקרה</span></button><nav class="stepper" id="stepper" aria-label="שלבי הצ׳קליסט"></nav></div>
+  <article class="card" id="checklist" hidden>
     <div class="cl-head">
       <div>
         <div class="cl-title"><span class="mlabel">שם המודול</span><span class="mnum" id="mNum">צ׳קליסט חדש</span><span class="msub" id="mSub"></span></div>
@@ -356,6 +562,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     <div class="toolbar">
       <button class="btn" id="newBtn">צ׳קליסט חדש</button>
       <button class="btn brass" id="pdfBtn">⬇ טופס ריק להדפסה (PDF)</button>
+      <button class="btn wa" id="waBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg><span>שיתוף בוואטסאפ</span></button>
       <span class="grow"></span>
       <span class="sync" id="sync"><span class="dot"></span><span id="syncText">מתחבר…</span></span>
     </div>
@@ -371,28 +578,64 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="sec-h"><h2>פרטי המודול</h2></div>
       <div class="grid">
         <label class="f mod-field"><span class="req">שם המודול</span><input id="module" autocomplete="off"></label>
-        <label class="f"><span class="req">אתר</span><input id="site" autocomplete="off"></label>
+        <div class="f sitef"><span class="req">אתר</span><div class="sitepick" id="sitePick" role="radiogroup" aria-label="אתר"></div><input id="site" type="hidden"></div>
         <label class="f"><span class="req">רביע</span><input id="quadrant" autocomplete="off"></label>
         <label class="f"><span>UPS110 מספר סידורי</span><input id="sn1" autocomplete="off" dir="ltr" style="text-align:right"></label>
-        <label class="f"><span>UPS210 מספר סידורי</span><input id="sn2" autocomplete="off" dir="ltr" style="text-align:right"></label>
+        <label class="f" id="sn2f"><span>UPS210 מספר סידורי</span><input id="sn2" autocomplete="off" dir="ltr" style="text-align:right"></label>
       </div>
       <div class="hint" id="hdrHint">הצ׳קליסט נשמר אוטומטית מרגע שכל השדות המסומנים מולאו.</div>
     </section>
 
     <div class="timeline">
     <section class="sec stage" id="st1">
-      <div class="sec-h"><span class="badge">1</span><h2>חיזוק כניסות ויציאות במד מומנט</h2><span class="state" id="st1state"></span></div>
+      <div class="sec-h"><span class="badge">1</span><h2>חיזוק צד AC במד מומנט <span class="side ac">AC</span></h2><span class="state" id="st1state"></span></div>
       <div class="grid">
-        <label class="f"><span class="req">שם מפעיל תדיראן</span><input data-f="name" autocomplete="off"></label>
+        <label class="f"><span class="req">קבלן צד AC</span><input data-f="company" autocomplete="organization"></label>
+        <label class="f"><span class="req">שם המבצע</span><input data-f="name" autocomplete="off"></label>
         <label class="f"><span>מספר עובד / ת״ז</span><input data-f="empId" autocomplete="off"></label>
         <label class="f"><span>מס׳ מד מומנט</span><input data-f="tool" autocomplete="off"></label>
         <label class="f"><span>תוקף כיול מד המומנט</span><input data-f="calib" type="date"><span class="fwarn" id="calibWarn" hidden></span></label>
       </div>
       <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
-      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, מפעיל תדיראן החתום מטה, מצהיר כי כל הכניסות והיציאות של המודול עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.</span></label>
+      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, החתום מטה מטעם קבלן צד ה־AC, מצהיר כי כל הכניסות והיציאות בצד ה־AC של המודול עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.</span></label>
       <div class="gate" id="gate1" hidden></div>
       <div class="sig" data-sig="s1"></div>
       <div class="actions"><button class="btn primary" data-sign="1"></button><span class="err" id="s1err"></span></div>
+    </section>
+
+    <section class="sec stage" id="st5">
+      <div class="sec-h"><span class="badge">2</span><h2>חיזוק צד DC במד מומנט <span class="side dc">DC</span></h2><span class="state" id="st5state"></span></div>
+      <div class="grid">
+        <label class="f"><span class="req">קבלן צד DC</span><input data-f="company" autocomplete="organization"></label>
+        <label class="f"><span class="req">שם המבצע</span><input data-f="name" autocomplete="off"></label>
+        <label class="f"><span>מספר עובד / ת״ז</span><input data-f="empId" autocomplete="off"></label>
+        <label class="f"><span>מס׳ מד מומנט</span><input data-f="tool" autocomplete="off"></label>
+        <label class="f"><span>תוקף כיול מד המומנט</span><input data-f="calib" type="date"><span class="fwarn" id="calibWarn5" hidden></span></label>
+      </div>
+      <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
+      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, החתום מטה מטעם קבלן צד ה־DC, מצהיר כי כל הכניסות והיציאות בצד ה־DC של המודול (סוללות, מעגלי DC ופסי DC) עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.</span></label>
+      <div class="gate" id="gate5" hidden></div>
+      <div class="sig" data-sig="s5"></div>
+      <div class="actions"><button class="btn primary" data-sign="5"></button><span class="err" id="s5err"></span></div>
+    </section>
+
+    <section class="sec stage" id="st4">
+      <div class="sec-h"><span class="badge">3</span><h2>איטומי אש</h2><span class="state" id="st4state"></span></div>
+      <div class="grid">
+        <label class="f"><span class="req">שם האחראי על איטומי האש</span><input data-f="name" autocomplete="off"></label>
+        <label class="f"><span>תפקיד / חברה</span><input data-f="role" autocomplete="off"></label>
+        <label class="f"><span class="req">תאריך ביצוע איטומי האש</span><input data-f="date" type="date"></label>
+      </div>
+      <div style="margin-top:14px">
+        <div class="hint req" style="margin:0 0 8px">תמונות איטומי האש לאחר הביצוע (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)</div>
+        <label class="drop" id="s4drop"><input type="file" id="s4files" accept="image/*" multiple><b>צלם או בחר תמונות</b><small>תמונות איטומי האש לאחר הביצוע</small></label>
+        <div class="files" id="s4list"></div>
+      </div>
+      <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
+      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, האחראי על איטומי האש, מצהיר כי בוצעו איטומי אש בכל המעברים והחדירות הנדרשים במודול, והתמונות המצורפות משקפות את מצבם לאחר הביצוע.</span></label>
+      <div class="gate" id="gate4" hidden></div>
+      <div class="sig" data-sig="s4"></div>
+      <div class="actions"><button class="btn primary" data-sign="4"></button><span class="err" id="s4err"></span></div>
     </section>
 
     <section class="sec stage" id="st2">
@@ -416,25 +659,6 @@ details.logbox summary{cursor:pointer;font-weight:600}
       <div class="actions"><button class="btn primary" data-sign="2"></button><span class="err" id="s2err"></span></div>
     </section>
 
-    <section class="sec stage" id="st4">
-      <div class="sec-h"><span class="badge">3</span><h2>איטומי אש</h2><span class="state" id="st4state"></span></div>
-      <div class="grid">
-        <label class="f"><span class="req">שם האחראי על איטומי האש</span><input data-f="name" autocomplete="off"></label>
-        <label class="f"><span>תפקיד / חברה</span><input data-f="role" autocomplete="off"></label>
-        <label class="f"><span class="req">תאריך ביצוע איטומי האש</span><input data-f="date" type="date"></label>
-      </div>
-      <div style="margin-top:14px">
-        <div class="hint req" style="margin:0 0 8px">תמונות איטומי האש לאחר הביצוע (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)</div>
-        <label class="drop" id="s4drop"><input type="file" id="s4files" accept="image/*" multiple>צלם / בחר תמונות</label>
-        <div class="files" id="s4list"></div>
-      </div>
-      <label class="f" style="margin-top:14px"><span>הערות</span><textarea data-f="notes"></textarea></label>
-      <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, האחראי על איטומי האש, מצהיר כי בוצעו איטומי אש בכל המעברים והחדירות הנדרשים במודול, והתמונות המצורפות משקפות את מצבם לאחר הביצוע.</span></label>
-      <div class="gate" id="gate4" hidden></div>
-      <div class="sig" data-sig="s4"></div>
-      <div class="actions"><button class="btn primary" data-sign="4"></button><span class="err" id="s4err"></span></div>
-    </section>
-
     <section class="sec stage" id="st3">
       <div class="sec-h"><span class="badge">3</span><h2>אישור בודק ומעבר לבדיקות בעומס</h2><span class="state" id="st3state"></span></div>
       <div class="grid">
@@ -444,14 +668,14 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f"><span>תאריך אישור הבודק</span><input data-f="date" type="date"></label>
       </div>
       <div style="margin-top:14px">
-        <div class="hint" style="margin:0 0 8px">אישור הבודק (תמונה או PDF, עד 20MB לקובץ)</div>
-        <label class="drop" id="s3drop"><input type="file" id="s3files" accept="image/*,application/pdf" multiple>בחר קבצים</label>
+        <div class="hint" style="margin:0 0 8px">אישור הבודק (תמונה או PDF, עד 60MB לקובץ)</div>
+        <label class="drop" id="s3drop"><input type="file" id="s3files" accept="image/*,application/pdf" multiple><b>צרף את אישור הבודק</b><small>תמונה או PDF, עד 60MB לקובץ</small></label>
         <div class="files" id="s3list"></div>
       </div>
       <div class="clean">
         <div class="hint req" style="margin:0 0 4px">דוחות בודק נקיים: תנאי למעבר לבדיקות בעומס</div>
         <label class="decl"><input type="checkbox" data-f="clean1"><span class="ctext">דוח הבודק ל־UPS110 צורף, ואין בו ליקויים פתוחים.</span></label>
-        <label class="decl"><input type="checkbox" data-f="clean2"><span class="ctext">דוח הבודק ל־UPS210 צורף, ואין בו ליקויים פתוחים.</span></label>
+        <label class="decl" id="clean2f"><input type="checkbox" data-f="clean2"><span class="ctext">דוח הבודק ל־UPS210 צורף, ואין בו ליקויים פתוחים.</span></label>
       </div>
       <label class="decl"><input type="checkbox" data-f="declared"><span class="dtext">אני, מתאם תדיראן האחראי, מתחייב כי עברתי על אישור הבודק למודול, ולמיטב הבנתי המודול תקין ומוכן לעבור לשלב הבדיקות בעומס.</span></label>
       <div class="gate" id="gate3" hidden></div>
@@ -466,7 +690,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     </section>
   </article>
 
-  <section class="archive" id="archive">
+  <section class="archive" id="archive" hidden>
     <div class="archive-h"><h2>צ׳קליסטים</h2><span class="grow"></span><input class="search" id="search" placeholder="חיפוש לפי אתר, מספר סידורי או מודול" aria-label="חיפוש"></div>
     <div id="list"><p class="hint">טוען…</p></div>
     <div class="foot"><button class="btn small" id="backupBtn" hidden>הורד גיבוי מלא (JSON)</button><span id="storage"></span></div>
@@ -493,11 +717,12 @@ const CLOUD={ enabled:true, ns:'ups-checklists', config:{
 let fdb=null, online=false, cloudErr='';
 const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Set(), inflight=new Set();
 
-function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
-  r.onupgradeneeded=()=>{ const d=r.result; d.createObjectStore('docs',{keyPath:'path'}); d.createObjectStore('assets',{keyPath:'id'}); };
+function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,2);
+  r.onupgradeneeded=()=>{ const d=r.result; ['docs:path','assets:id','orig:id'].forEach(x=>{ const [n,k]=x.split(':'); if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:k}); }); };
   r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
 const put=(store,val)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).put(val); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
 const del=(store,key)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).delete(key); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
+const getOne=(store,key)=>new Promise(res=>{ if(!idb) return res(null); try{ const r=idb.transaction(store,'readonly').objectStore(store).get(key); r.onsuccess=()=>res(r.result||null); r.onerror=()=>res(null); }catch(_){ res(null); } });
 const getAll=store=>new Promise((res,rej)=>{ const r=idb.transaction(store,'readonly').objectStore(store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
 
 const ready=(async()=>{
@@ -517,7 +742,7 @@ function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefi
 
 /* RTDB drops empty maps and nulls, so restore the shape the app expects */
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
-  d.log=d.log||{}; for(const k of ['s1','s2','s3','s4']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
+  d.log=d.log||{}; for(const k of ['s1','s2','s3','s4','s5']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
   d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s2.scans=d.s2.scans||{}; d.s3.files=d.s3.files||{}; d.s4.photos=d.s4.photos||{}; return d; }
 const FIXLAB={}; for(let u=1;u<=2;u++){ const U='UPS'+u+'10'; for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]=c<=5?U+'_תא'+(u===1?c+5:c):U+'_תמונה_נוספת_'+(c-5); FIXLAB['u'+u+'body']=U+'_גוף'; FIXLAB['u'+u+'ceil']=U+'_תקרה'; }
 const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
@@ -555,17 +780,25 @@ const dbApi={ collection:n=>colRef(n), doc:p=>docRef(p) };
 /* ---- file / image store ---- */
 window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return 'blob:missing-asset'; };
 async function blobToDataURL(b){ const u8=new Uint8Array(await b.arrayBuffer()); let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return 'data:'+(b.type||'application/octet-stream')+';base64,'+btoa(s); }
-async function shrink(b){ const bmp=await createImageBitmap(b); const sc=Math.min(1,1800/Math.max(bmp.width,bmp.height));
-  const c=document.createElement('canvas'); c.width=Math.round(bmp.width*sc); c.height=Math.round(bmp.height*sc); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height);
-  return new Promise((res,rej)=>c.toBlob(r=>r?res(r):rej(new Error('encode')),'image/jpeg',.85)); }
-const MAX_ASSET=6.5*1024*1024; /* RTDB node limit is 10MB and base64 adds ~33% */
+async function decodeImg(b){ try{ return await createImageBitmap(b); }catch(_){}
+  return await new Promise((res,rej)=>{ const u=URL.createObjectURL(b), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('decode')); }; im.src=u; }); }
+async function shrink(b,max,q){ max=max||1800; q=q||.85; const bmp=await decodeImg(b); const w0=bmp.width||bmp.naturalWidth, h0=bmp.height||bmp.naturalHeight; if(!w0||!h0) throw new Error('decode');
+  const sc=Math.min(1,max/Math.max(w0,h0));
+  const c=document.createElement('canvas'); c.width=Math.round(w0*sc); c.height=Math.round(h0*sc); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height); if(bmp.close) bmp.close();
+  return new Promise((res,rej)=>c.toBlob(r=>{ c.width=c.height=0; r?res(r):rej(new Error('encode')); },'image/jpeg',q)); }
+/* Heavy files: any photo is accepted. The full original stays on this device (IndexedDB "orig", exported in the ZIP);
+   the cloud gets a high-quality copy (up to 3200px) uploaded in 1MB chunks, resumable, published only once complete. */
+const MAX_ORIG=100*1024*1024, MAX_CLOUD=60*1024*1024, CLOUD_PX=3200, CHUNK=1024*1024, INLINE=900*1024;
 const assetsApi={
   async upload(blob,opts){ await ready;
     let type=(opts&&opts.type)||blob.type||'application/octet-stream';
     let b=blob.type===type?blob:new Blob([blob],{type});
-    if(/^image\/(jpeg|png|webp)$/.test(type)&&b.size>700*1024){ try{ b=await shrink(b); type='image/jpeg'; }catch(_){} }
-    if(b.size>MAX_ASSET) throw {code:'too_large'};
-    const rec={id:hex(16),type,size:b.size,at:Date.now(),blob:b,dirty:true};
+    if(b.size>MAX_ORIG) throw {code:'too_large'};
+    const orig=b, otype=type;
+    if(/^image\//.test(type)&&type!=='image/gif'&&(b.size>3*1024*1024||!/^image\/(jpeg|png|webp)$/.test(type))){ try{ b=await shrink(b,CLOUD_PX,.9); type='image/jpeg'; }catch(_){} }
+    if(b.size>MAX_CLOUD) throw {code:'too_large'};
+    const rec={id:hex(16),type,size:b.size,at:Date.now(),blob:b,dirty:true,orig:b!==orig?{type:otype,size:orig.size}:null};
+    if(rec.orig) await put('orig',{id:rec.id,type:otype,blob:orig});
     await put('assets',rec); assetMeta.set(rec.id,rec); dirtyAssets.add(rec.id); urls.set(rec.id,URL.createObjectURL(b)); pushAsset(rec.id);
     return {id:rec.id,sizeBytes:b.size,contentType:type,url:urls.get(rec.id)}; },
   async list(){ await ready; let bytes=0; assetMeta.forEach(a=>bytes+=a.size);
@@ -579,7 +812,7 @@ function updateStatus(){ const el=document.getElementById('cloudStatus'); if(!el
   if(!fdb) t='מצב מקומי בלבד: אין חיבור לשירות הענן. הנתונים שמורים במכשיר הזה.';
   else if(cloudErr) t='שגיאת סנכרון לענן ('+cloudErr+'). השינויים שמורים במכשיר.'+(/PERMISSION/i.test(cloudErr)?' כללי ה־Realtime Database חוסמים את הנתיב '+CLOUD.ns+'.':'');
   else if(!online) t='לא מחובר לענן.'+(pendingCount()?' '+pendingCount()+' פריטים ממתינים.':'')+' השינויים שמורים במכשיר ויסונכרנו בחיבור הבא.';
-  else if(pendingCount()) t='מסנכרן '+pendingCount()+' פריטים לענן…';
+  else if(pendingCount()){ const pr=[...upProg.values()]; t='מסנכרן '+pendingCount()+' פריטים לענן…'+(pr.length?' (קובץ גדול: '+Math.round(pr[0]*100)+'%)':''); }
   else t='מסונכרן לענן ✓';
   el.textContent=t; }
 const fail=e=>{ cloudErr=(e&&(e.code||e.message))||'error'; updateStatus(); };
@@ -590,19 +823,34 @@ function pushDoc(path,patch){
   else p=ref.set(clone(docs.get(path)));
   p.then(()=>{ synced.add(path); cloudErr=''; if(ver.get(path)===v){ dirtyDocs.delete(path); put('docs',{path,data:docs.get(path),dirty:false}).catch(()=>{}); } updateStatus(); },fail);
   updateStatus(); }
+const pushing=new Set();
+const sentKey=id=>'cxa-sent-'+id, getSent=id=>{ try{ return +localStorage.getItem(sentKey(id))||0; }catch(_){ return 0; } }, setSent=(id,n)=>{ try{ n?localStorage.setItem(sentKey(id),n):localStorage.removeItem(sentKey(id)); }catch(_){} };
+const b64Of=b=>new Promise((res,rej)=>{ const f=new FileReader(); f.onload=()=>res(String(f.result).split(',')[1]||''); f.onerror=()=>rej(f.error); f.readAsDataURL(b); });
 async function pushAsset(id){
-  if(!fdb||!online) return updateStatus(); const rec=assetMeta.get(id); if(!rec) return;
-  try{ await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(rec.blob)});
-    rec.dirty=false; dirtyAssets.delete(id); cloudErr=''; await put('assets',rec); updateStatus(); }catch(e){ fail(e); } }
+  if(!fdb||!online) return updateStatus(); const rec=assetMeta.get(id); if(!rec||!rec.dirty||pushing.has(id)) return; pushing.add(id);
+  try{ const b=rec.blob;
+    if(b.size<=INLINE) await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(b)});
+    else { const n=Math.ceil(b.size/CHUNK);
+      for(let i=getSent(id);i<n;i++){ await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).set(await b64Of(b.slice(i*CHUNK,(i+1)*CHUNK))); setSent(id,i+1); upProg.set(id,(i+1)/n); updateStatus(); }
+      await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,chunks:n,chunkSize:CHUNK}); }
+    rec.dirty=false; dirtyAssets.delete(id); upProg.delete(id); tries.delete(id); setSent(id,0); cloudErr=''; await put('assets',rec); updateStatus(); }
+  catch(e){ fail(e); const n=(tries.get(id)||0)+1; tries.set(id,n); setTimeout(()=>pushAsset(id),Math.min(60000,2000*2**Math.min(n,5))); } finally{ pushing.delete(id); } }
+const tries=new Map();
+/* safety net: anything still pending is retried every 20s while online (transient errors never leave files stuck) */
+setInterval(()=>{ if(fdb&&online&&pendingCount()) flushAll(); },20000);
+const upProg=new Map();
 async function fetchAsset(id){
   if(!fdb||!online||inflight.has(id)||failedAssets.has(id)||assetMeta.has(id)) return; inflight.add(id);
   try{ const v=(await fdb.ref(CLOUD.ns+'/assets/'+id).once('value')).val();
-    if(!v||!v.data){ failedAssets.add(id); return; }
-    const blob=await (await fetch(v.data)).blob(), b=blob.type===v.type?blob:new Blob([blob],{type:v.type});
+    if(!v||(!v.data&&!v.chunks)){ failedAssets.add(id); return; }
+    let b;
+    if(v.data){ const blob=await (await fetch(v.data)).blob(); b=blob.type===v.type?blob:new Blob([blob],{type:v.type}); }
+    else { const parts=[]; for(let i=0;i<v.chunks;i++){ const c=(await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).once('value')).val(); if(typeof c!=='string') throw new Error('chunk'); const bin=atob(c), u8=new Uint8Array(bin.length); for(let j=0;j<bin.length;j++) u8[j]=bin.charCodeAt(j); parts.push(u8); }
+      b=new Blob(parts,{type:v.type}); }
     if(!assetMeta.has(id)){ const rec={id,type:v.type,size:b.size,at:v.at||Date.now(),blob:b,dirty:false}; await put('assets',rec); assetMeta.set(id,rec); urls.set(id,URL.createObjectURL(b)); notifyAll(); }
   }catch(e){ failedAssets.add(id); } finally{ inflight.delete(id); } }
 function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
-  ['s1','s2','s3','s4'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
+  ['s1','s2','s3','s4','s5'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
 function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
 function flushAll(){ [...dirtyDocs].forEach(p=>pushDoc(p,null)); [...dirtyAssets].forEach(pushAsset); }
 function applyRemote(key,val){
@@ -666,14 +914,15 @@ async function exportZip(){
   const add=async(folder,name,id,type)=>{ const a=assetMeta.get(id); if(!a) return; seen.add(id);
     let base=withExt(safe(name)||id,type||a.type), full=folder+'/'+base, i=1;
     while(used.has(full)){ const m=base.match(/^(.*?)(\.[A-Za-z0-9]+)?$/); full=folder+'/'+m[1]+'_'+(++i)+(m[2]||''); }
-    used.add(full); files.push({name:full,data:new Uint8Array(await a.blob.arrayBuffer())}); };
+    const o=a.orig?await getOne('orig',id):null; if(o&&o.type&&o.type!==a.type) full=full.replace(/\.[A-Za-z0-9]{2,5}$/,'')+(EXT[o.type]||('.'+(o.type.split('/')[1]||'bin')));
+    used.add(full); files.push({name:full,data:new Uint8Array(await (o?o.blob:a.blob).arrayBuffer())}); };
   for(const r of reportDocs()){
     const folder=safe([r.site,quadOf(r),r.module].filter(Boolean).join('_'))||r.id;
     const cl=Object.values((r.s2&&r.s2.cells)||{}).filter(c=>c&&!c.removed).sort((x,y)=>((x.t||0)-(y.t||0))||String(x.id).localeCompare(String(y.id)));
     for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(FIXLAB[p.cell]?FIXLAB[p.cell]+'_':ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
     for(const p of Object.values((r.s4&&r.s4.photos)||{})) await add(folder+'/fire-stopping',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
     for(const p of Object.values((r.s3&&r.s3.files)||{})) await add(folder+'/inspector',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
-    for(const k of ['s1','s2','s3','s4']){ const s=r[k]&&r[k].sig; if(!s) continue;
+    for(const k of ['s1','s5','s2','s3','s4']){ const s=r[k]&&r[k].sig; if(!s) continue;
       if(s.assetId) await add(folder+'/signatures','signature-'+k+'.png',s.assetId,'image/png');
       else if(s.data){ const b=await (await fetch(s.data)).blob(); files.push({name:folder+'/signatures/signature-'+k+'.png',data:new Uint8Array(await b.arrayBuffer())}); } } }
   for(const a of assetMeta.values()) if(!seen.has(a.id)) await add('unlinked',a.id,a.id,a.type);
@@ -683,7 +932,7 @@ async function exportZip(){
 function missingAssets(){ const miss=new Set();
   for(const r of reportDocs()){
     Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
-    ['s1','s2','s3','s4'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
+    ['s1','s2','s3','s4','s5'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
   return miss.size; }
 async function restoreBackup(obj){ await ready;
   if(!obj||!Array.isArray(obj.reports)) throw new Error('bad-format');
@@ -722,9 +971,13 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const SECS=['s1','s2','s4','s3'];  /* s4 = fire-stopping, shown as stage 3; s3 = inspector, shown as stage 4 */
+  const SECS=['s1','s5','s4','s2','s3'];  /* s1 = torque AC, s5 = torque DC, s4 = fire-stopping, s2 = cleaning (opens after fire-stopping), s3 = inspector (locks) */
+  /* checklists whose torque stage was signed before the AC/DC split: that one signature covers both sides */
+  const legacyT=r=>!!(r&&r.s1&&r.s1.sig&&!r.s1.side&&!(r.s5&&r.s5.sig));
+  const torqueOK=r=>!!(r&&r.s1&&r.s1.sig&&((r.s5&&r.s5.sig)||legacyT(r)));
+  const secDone=(r,k)=>!!(r&&r[k]&&r[k].sig)||(k==='s5'&&legacyT(r))||(k==='s4'&&isFinal(r));
   const numOf=k=>SECS.indexOf(k)+1;
-  const TEXT={s1:['name','empId','tool','calib','notes','declared'],s2:['name','role','date','notes','declared'],s4:['name','role','date','notes','declared'],s3:['name','inspector','no','date','clean1','clean2','declared']};
+  const TEXT={s1:['company','name','empId','tool','calib','notes','declared'],s5:['company','name','empId','tool','calib','notes','declared'],s2:['name','role','date','notes','declared'],s4:['name','role','date','notes','declared'],s3:['name','inspector','no','date','clean1','clean2','declared']};
   const HDR=['module','site','quadrant','sn1','sn2'], HREQ=['module','site','quadrant'];
   const quad=r=>(r.quadrant!=null&&r.quadrant!=='')?r.quadrant:(r.location||'');
   let db=null,col=null,assets=null,downloads=null,userNs=null,me='',canEdit=false;
@@ -737,26 +990,34 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const clone=o=>JSON.parse(JSON.stringify(o));
   const live=m=>Object.values(m||{}).filter(x=>x&&!x.removed).sort((a,b)=>(a.t||0)-(b.t||0));
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const done=r=>SECS.filter(k=>r[k]&&r[k].sig).length;
+  const done=r=>SECS.filter(k=>secDone(r,k)).length;
   const isFinal=r=>!!(r&&r.final);
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
   function blank(){
     return {id:null,module:'',site:'',quadrant:'',sn1:'',sn2:'',createdAt:Date.now(),updatedAt:Date.now(),log:{},final:false,
-      s1:{name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
+      s1:{company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
       s2:{name:'',role:'',date:'',notes:'',declared:false,photos:{},cells:{},scans:{},fixed:true,sig:null,signedAt:0},
       s4:{name:'',role:'',date:'',notes:'',declared:false,photos:{},sig:null,signedAt:0},
+      s5:{company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
       s3:{name:'',inspector:'',no:'',date:'',clean1:false,clean2:false,declared:false,files:{},sig:null,signedAt:0}};
   }
   const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
   /* fixed inspection items: per UPS, 7 cells + the UPS body + the UPS ceiling (edit these 3 numbers to change the scheme) */
+  const SITES=[{k:'bs',n:'בית שמש',ups:2},{k:'ms',n:'מסמיה',ups:1},{k:'hf',n:'חיפה',ups:2},{k:'in',n:'עידן הנגב',ups:2,hidden:true}];  /* עידן הנגב הוחלף בחיפה ומוסתר; צ׳קליסטים ישנים שלו נשמרים תחת "אתרים אחרים" */
+  const VSITES=SITES.filter(x=>!x.hidden);
+  function siteKey(v){ const t=String(v||'').replace(/[\s\-־_]/g,''); if(!t) return ''; if(/שמש/.test(t)||/^bs$/i.test(t)) return 'bs'; if(/מסמי/.test(t)) return 'ms'; if(/חיפה|haifa/i.test(t)) return 'hf'; if(/עידן|נגב/.test(t)) return 'in'; return 'x'; }
+  const siteInfo=v=>SITES.find(x=>x.k===siteKey(v));
+  /* מסמיה = UPS110 only. A checklist whose cleaning stage was already signed with UPS210 photos keeps both units. */
+  function upsN(r){ if(!r) return 2; if(siteKey(r.site)!=='ms') return 2; const s2=r.s2||{}; if(s2.sig&&live(s2.photos).some(p=>/^u2/.test(p.cell||''))) return 2; return 1; }
+  const itemsOf=r=>upsN(r)===1?ITEMS.filter(i=>i.grp==='UPS110'):ITEMS;
   const UPS_N=2, CELLS_N=7, ITEMS=[];
   for(let u=1;u<=UPS_N;u++){ const U='UPS'+u+'10'; for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:U+(c<=5?' / תא '+(u===1?c+5:c):' / תמונה נוספת '+(c-5)),grp:U,opt:c>5}); ITEMS.push({id:'u'+u+'body',label:U+' / גוף ה־UPS',grp:U}); ITEMS.push({id:'u'+u+'ceil',label:U+' / תקרת UPS',grp:U}); }
   /* checklists whose stage 2 was already signed before this scheme keep the old free-form cells */
   const isFixed=r=>!!(r.s2&&r.s2.fixed)||(!(r.s2&&r.s2.sig)&&!isFinal(r));
   const scanOk=(r,id)=>!!(((r.s2&&r.s2.scans)||{})[id]||{}).ok;
   function s2Model(r){ const cells=cellsOf(r), ph=live(r.s2.photos), used=new Set();
-    if(isFixed(r)){ const rows=ITEMS.map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,opt:!!it.opt,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
+    if(isFixed(r)){ const rows=itemsOf(r).map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,opt:!!it.opt,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
     const rows=cells.map((c,i)=>{ const ps=ph.filter(p=>p.cell===c.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c,label:'תא '+(i+1),p}; });
     return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
   let lastCellT=0;
@@ -769,7 +1030,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const f=(m,withCell)=>live(m).map(p=>({assetId:p.assetId||'',name:p.name||'',size:p.size||0,sha:(shas&&shas[p.assetId])||'',...(withCell&&p.cell?{cell:p.cell}:{})}));
     const sg=s=>s.sig?{ref:s.sig.assetId||'',sha:(shas&&shas[s.sig.assetId||'inline-'+s.signedAt])||'',at:s.signedAt}:null;
     const o={id:r.id,module:r.module,site:r.site,location:r.location,model:r.model,serial:r.serial,createdAt:r.createdAt}; if(r.quadrant!==undefined) o.quadrant=r.quadrant; if(r.sn1) o.sn1=r.sn1; if(r.sn2) o.sn2=r.sn2;
-    SECS.forEach(k=>{ if(k==='s4'&&!(r.s4&&r.s4.sig)) return; o[k]={}; TEXT[k].forEach(x=>{ if(r[k][x]!==undefined) o[k][x]=r[k][x]; }); o[k].sig=sg(r[k]); });
+    SECS.forEach(k=>{ if((k==='s4'||k==='s5')&&!(r[k]&&r[k].sig)) return; o[k]={}; TEXT[k].forEach(x=>{ if(r[k][x]!==undefined) o[k][x]=r[k][x]; }); o[k].sig=sg(r[k]); });
     if(o.s4) o.s4.photos=f(r.s4.photos);
     if(r.s2.fixed) o.s2.scans=ITEMS.filter(i=>scanOk(r,i.id)).map(i=>i.id);
     o.s2.photos=f(r.s2.photos,true); o.s3.files=f(r.s3.files); const cl=cellsOf(r); if(cl.length) o.s2.cells=cl.map(c=>({id:c.id,t:c.t})); return o;
@@ -801,6 +1062,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     d.querySelector('.t').textContent= ok? ('ננעל ב־'+fmt(cur.seal&&cur.seal.at)+(sealState?' / השלמות אומתה':' / מאמת שלמות…')) : sealState.why;
     d.querySelector('.fp').textContent= cur.seal? 'SHA-256 '+cur.seal.hash : 'נעול ללא חותמת דיגיטלית';
     box.appendChild(d);
+    if(ok){ const ac=document.createElement('div'); ac.className='acts'; const p=document.createElement('button'); p.type='button'; p.className='btn small'; p.textContent='⬇ דוח PDF'; p.onclick=()=>$('pdfBtn').click(); const w=document.createElement('button'); w.type='button'; w.className='btn small wa'; w.innerHTML=$('waBtn').innerHTML; w.onclick=()=>$('waBtn').click(); ac.append(p,w); d.appendChild(ac); }
     if(!cur.seal&&me&&cur.s3&&cur.s3.signedBy===me&&db){ const b=document.createElement('button'); b.type='button'; b.className='btn small'; b.textContent='השלם חותמת דיגיטלית'; b.onclick=completeSeal; d.appendChild(b); }
   }
   async function completeSeal(){
@@ -887,8 +1149,8 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   document.addEventListener('input',e=>{ if(e.target.type==='file'||!e.target.closest('#checklist')) return;
     if(e.target.closest('#hdr')){ queueSave('hdr'); paintHead(); return; }
     const st=e.target.closest('.stage'); if(st) queueSave('s'+st.id.slice(2)); });
-  function calibState(){ const el=document.querySelector('#st1 [data-f="calib"]'); const v=el&&el.value; if(!v) return null; const left=Math.floor((new Date(v+'T23:59:59').getTime()-Date.now())/864e5); return left<0?{exp:true}:left<=14?{soon:left}:null; }
-  function paintCalib(){ const w=$('calibWarn'), st=(cur&&cur.s1&&cur.s1.sig)?null:calibState(); w.hidden=!st; if(!st) return; w.className='fwarn'+(st.exp?'':' soon'); w.textContent=st.exp?'תוקף הכיול פג. יש להשתמש במד מומנט בתוקף.':(st.soon===0?'תוקף הכיול פג היום בסוף היום.':'תוקף הכיול יפוג בעוד '+st.soon+' ימים.'); }
+  function calibState(n){ const el=document.querySelector('#st'+(n||1)+' [data-f="calib"]'); const v=el&&el.value; if(!v) return null; const left=Math.floor((new Date(v+'T23:59:59').getTime()-Date.now())/864e5); return left<0?{exp:true}:left<=14?{soon:left}:null; }
+  function paintCalib(){ [[1,'calibWarn'],[5,'calibWarn5']].forEach(([n,id])=>{ const w=$(id); if(!w) return; const k='s'+n, st=(cur&&cur[k]&&cur[k].sig)?null:calibState(n); w.hidden=!st; if(!st) return; w.className='fwarn'+(st.exp?'':' soon'); w.textContent=st.exp?'תוקף הכיול פג. יש להשתמש במד מומנט בתוקף.':(st.soon===0?'תוקף הכיול פג היום בסוף היום.':'תוקף הכיול יפוג בעוד '+st.soon+' ימים.'); }); }
   document.addEventListener('input',e=>{ if(e.target.dataset&&e.target.dataset.f==='calib') paintCalib(); });
   document.addEventListener('change',e=>{ if(e.target.type==='checkbox'&&e.target.dataset.f){ queueSave('s'+e.target.closest('.stage').id.slice(2)); } });
 
@@ -926,16 +1188,16 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       c.toBlob(b=>{if(!b) return rej({code:'image'}); if(b.size>19.5*1048576&&qq>.6){s*=.8;go(qq-.1);} else {URL.revokeObjectURL(url);res(b);}},'image/jpeg',qq);};go(q);};
     im.onerror=()=>{URL.revokeObjectURL(url);rej({code:'image'});}; im.src=url;}); }
   async function prepare(f){
-    if(['image/jpeg','image/png','image/webp','image/gif','application/pdf'].includes(f.type)&&f.size<=19.5*1048576) return f;
-    if(f.type==='application/pdf') throw {code:'too_large'};
-    return reencode(f,4800,.9);
+    if(f.type==='application/pdf'&&f.size>60*1048576) throw {code:'too_large',lim:'60MB'};
+    if(f.size>100*1048576) throw {code:'too_large',lim:'100MB'};
+    return f;
   }
   async function addFiles(files,slot,cell){
     if(!cur||isFinal(cur)) return;
     if(!assets){ toast('אין לך הרשאה להעלות קבצים'); return; }
     if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
     for(const f of files){
-      let blob; try{ blob=await prepare(f); }catch(e){ toast(e.code==='too_large'?'הקובץ '+f.name+' גדול מ־20MB':'לא ניתן לקרוא את '+f.name); continue; }
+      let blob; try{ blob=await prepare(f); }catch(e){ toast(e.code==='too_large'?'הקובץ '+f.name+' גדול מ־'+(e.lim||'100MB'):'לא ניתן לקרוא את '+f.name); continue; }
       const key='u'+Date.now()+Math.random().toString(36).slice(2,7);
       const item={key,reportId:cur.id,slot,cell:cell||null,name:f.name,type:blob.type||f.type,blob,t:Date.now()};
       await qPut(item); pending.set(key,{...item,url:URL.createObjectURL(blob),status:'מעלה…'});
@@ -965,7 +1227,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function paintPending(){ const n=pending.size,b=$('pendingBanner'); b.hidden=!n; if(n) b.textContent=n+' קבצים בתהליך העלאה. הם שמורים בדפדפן הזה עד שהשרת מאשר אותם, אז אל תנקה את נתוני הדפדפן עד הסיום.'; }
   function paintFiles(){
     if(!cur) return;
-    const fin=isFinal(cur), l2=fin||!!cur.s2.sig, l3=fin||!!cur.s3.sig||!(cur.s1.sig&&cur.s2.sig&&cur.s4.sig), l4=fin||!!cur.s4.sig||!cur.s2.sig;
+    const fin=isFinal(cur), l2=fin||!!cur.s2.sig||!cur.s4.sig, l3=fin||!!cur.s3.sig||!(torqueOK(cur)&&cur.s2.sig&&cur.s4.sig), l4=fin||!!cur.s4.sig;
     paintCells(l2);
     const lst=$('s3list'); lst.innerHTML='';
     live(cur.s3.files).forEach(p=>{ const d=document.createElement('div'); d.className='file'; const pdf=(p.type||'').includes('pdf');
@@ -1017,7 +1279,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       d.appendChild(acts); return d; };
     const hint=$('s2hint'), prog=$('s2prog');
     if(m.fixed){
-      hint.textContent='לכל אחת מ־'+UPS_N+' יחידות ה־UPS: '+'5 תאים (ב־UPS110 תאים 6 עד 10, ב־UPS210 תאים 1 עד 5), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים). לכל תא, לגוף ה־UPS ולתקרת ה־UPS נדרשים תמונה ואישור סריקה פיזית, ואי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)';
+      const one=upsN(cur)===1; hint.textContent=(one?'UPS110 בלבד (מסמיה): 5 תאים (6 עד 10), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+itemsOf(cur).length+' פריטים).':'לכל אחת מ־'+UPS_N+' יחידות ה־UPS: 5 תאים (ב־UPS110 תאים 6 עד 10, ב־UPS210 תאים 1 עד 5), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים).')+' לכל תא, לגוף ה־UPS ולתקרת ה־UPS נדרשים תמונה ואישור סריקה פיזית, ואי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)';
       const req=rows.filter(r=>!r.opt), nP=req.filter(r=>r.p).length, nS=req.filter(r=>r.scan).length, all=nP===req.length&&nS===req.length;
       prog.textContent='תמונות: '+nP+' מתוך '+req.length+'  /  סריקה פיזית: '+nS+' מתוך '+req.length; prog.className='s2prog'+(all?' ok':'');
       let lastG='';
@@ -1027,7 +1289,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         lb.appendChild(cb); lb.appendChild(document.createTextNode('סריקה פיזית בוצעה')); lb.onclick=e=>e.stopPropagation(); cb.onchange=()=>setScan(r.c.id,cb.checked);
         row.insertBefore(lb,row.querySelector('.acts')); box.appendChild(row); });
     } else {
-      hint.textContent='תמונות הוכחה שהתאים נקיים, תמונה לכל תא (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)'; prog.textContent='';
+      hint.textContent='תמונות הוכחה שהתאים נקיים, תמונה לכל תא (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)'; prog.textContent='';
       rows.forEach(r=>{ const id=r.c?r.c.id:null; box.appendChild(build(r.label,r.p,id?pend.find(p=>p.cell===id):null,id,true)); });
     }
     m.extra.forEach(p=>box.appendChild(build('תמונה נוספת',p,null,null,false)));
@@ -1074,13 +1336,14 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function validate(n){
     const k='s'+n,s=cur[k],miss=[];
     const h=readSec('hdr'); HREQ.forEach(f=>{ if(!h[f]) miss.push({module:'שם המודול',site:'אתר',quadrant:'רביע'}[f]); });
-    if(!s.name.trim()) miss.push('שם');
+    if((n===1||n===5)&&!String(s.company||'').trim()) miss.push('שם הקבלן');
+    if(!s.name.trim()) miss.push((n===1||n===5)?'שם המבצע':'שם');
     if(n===2&&isFixed(cur)){ const m=s2Model(cur), np=m.rows.filter(r=>!r.opt&&!r.p).length, ns=m.rows.filter(r=>!r.opt&&!r.scan).length;
       if(!s.date) miss.push('תאריך ביצוע הניקיון'); if(np) miss.push('תמונה ל־'+np+' פריטים'); if(ns) miss.push('אישור סריקה פיזית ל־'+ns+' פריטים'); }
     else if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
     if(n===4){ if(!s.date) miss.push('תאריך ביצוע איטומי האש'); if(!live(s.photos).length) miss.push('תמונה אחת לפחות של איטומי האש'); }
     if(n===3){ if(!s.inspector.trim()) miss.push('שם הבודק'); if(!s.date) miss.push('תאריך אישור הבודק'); if(!live(s.files).length) miss.push('דוח בודק מצורף');
-      for(let u=1;u<=UPS_N;u++) if(!s['clean'+u]) miss.push('אישור דוח בודק נקי ל־UPS '+u); }
+      for(let u=1;u<=upsN(cur);u++) if(!s['clean'+u]) miss.push('אישור דוח בודק נקי ל־UPS'+u+'10'); }
     if([...pending.values()].some(p=>p.reportId===cur.id&&((n===2&&p.slot==='photo')||(n===3&&p.slot==='file')||(n===4&&p.slot==='fire')))) miss.push('המתן לסיום ההעלאה');
     if(!s.declared) miss.push('סימון ההצהרה');
     if(!pads[k]||!pads[k].isDirty()) miss.push('חתימה');
@@ -1097,7 +1360,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     }
     const miss=validate(n); if(miss.length){ $(k+'err').textContent='חסר: '+miss.join(', '); return; }
     const fx=n===2&&isFixed(cur);
-    if(n===1){ const cs=calibState(); if(cs&&cs.exp&&!confirm('תוקף הכיול של מד המומנט פג. החתימה תסומן כחריגה בתמונת המצב. לחתום בכל זאת?')) return; }
+    if(n===1||n===5){ const cs=calibState(n); if(cs&&cs.exp&&!confirm('תוקף הכיול של מד המומנט בצד '+(n===1?'AC':'DC')+' פג. החתימה תסומן כחריגה בתמונת המצב. לחתום בכל זאת?')) return; }
     if(n===3 && !confirm('חתימה על שלב '+numOf(k)+' תנעל את הצ׳קליסט של מודול '+cur.module+' לצמיתות. לא ניתן יהיה לשנות אותו אחר כך. להמשיך?')) return;
     if(!(await ensureCreated())) return;
     await flushAll();
@@ -1107,10 +1370,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       if(!sig) sig={data:await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(blob);})}; }
     catch(_){ b.disabled=false; paint(false); $(k+'err').textContent='שמירת החתימה נכשלה, נסה שוב'; return; }
     const at=Date.now(),vals=readSec(k);
-    if(!(await writeRetry(cur.id,{[k]:{...vals,sig,signedAt:at,signedBy:me,...(fx?{fixed:true}:{})},log:logEntry('שלב '+numOf(k)+' נחתם ע״י '+vals.name)}))){ b.disabled=false; paint(false); $(k+'err').textContent='החתימה לא נשמרה. בדוק חיבור ונסה שוב.'; return; }
-    Object.assign(cur[k],vals,{sig,signedAt:at,signedBy:me},fx?{fixed:true}:{}); dirty[k]=false; saveDraft(); maybeClearDraft();
+    const sideX=n===1?{side:'AC'}:n===5?{side:'DC'}:{};
+    if(!(await writeRetry(cur.id,{[k]:{...vals,sig,signedAt:at,signedBy:me,...sideX,...(fx?{fixed:true}:{})},log:logEntry('שלב '+numOf(k)+' נחתם ע״י '+vals.name)}))){ b.disabled=false; paint(false); $(k+'err').textContent='החתימה לא נשמרה. בדוק חיבור ונסה שוב.'; return; }
+    Object.assign(cur[k],vals,{sig,signedAt:at,signedBy:me},sideX,fx?{fixed:true}:{}); dirty[k]=false; saveDraft(); maybeClearDraft();
     if(n===3) await seal(); else { await snapshotVersion('שלב '+numOf(k)+' נחתם'); toast('שלב '+numOf(k)+' נחתם ונשמר'); }
     b.disabled=false; paint(true);
+    setTimeout(()=>{ if(isFinal(cur)) goTo('seal'); else { const nx=nextStage(); if(nx) goTo(nx); } },250);
   }));
   async function seal(){
     toast('נועל ומחשב חותמת דיגיטלית…');
@@ -1138,36 +1403,78 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     $('mNum').textContent=m.trim()||'צ׳קליסט חדש';
     const site=cur?(cur.site||$('site').value):'', q=cur?(quad(cur)||$('quadrant').value):'';
     $('mSub').textContent=[site&&('אתר '+site),q&&('רביע '+q)].filter(Boolean).join(' / ');
-    const d=cur?SECS.map(k=>!!cur[k].sig):SECS.map(()=>false), n=d.filter(Boolean).length, fin=isFinal(cur);
+    const d=cur?SECS.map(k=>secDone(cur,k)):SECS.map(()=>false), n=d.filter(Boolean).length, fin=isFinal(cur);
     const ring=$('ring'); ring.style.setProperty('--p',Math.round(n/SECS.length*100)); ring.classList.toggle('go',fin); $('ringTxt').textContent=fin?'✓':n+'/'+SECS.length;
     const sl=$('statusLine'); sl.classList.toggle('go',fin);
-    $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין להצהרת מפעיל תדיראן': !d[1]?'ממתין לאישור ניקיון התאים': !d[2]?'ממתין לאישור איטומי אש':'ממתין לאישור מתאם תדיראן';
-    const pb=$('pdfBtn'); pb.hidden=false; if(!pb.disabled) pb.textContent=pdfLabel();
+    $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין לחיזוק צד AC': !d[1]?'ממתין לחיזוק צד DC': !d[2]?'ממתין לאישור איטומי אש': !d[3]?'ממתין לאישור ניקיון התאים':'ממתין לאישור מתאם תדיראן';
+    const pb=$('pdfBtn'); pb.hidden=false; if(!pb.disabled) pb.textContent=pdfLabel(); $('waBtn').hidden=!(cur&&cur.id&&fin);
   }
   function paintGates(){
     if(!cur) return; const fin=isFinal(cur);
     SECS.forEach(x=>{ if(!cur[x].sig){ try{ Object.assign(cur[x],readSec(x)); }catch(_){} } });
     SECS.forEach(k=>{ const n=+k[1], g=$('gate'+n); if(!g) return;
       if(fin||cur[k].sig){ g.hidden=true; return; } g.hidden=false;
-      if(k==='s3'&&!(cur.s1.sig&&cur.s2.sig&&cur.s4.sig)){ g.className='gate wait'; g.textContent='תנאי למעבר: חתימה על שלבים 1, 2 ו־3 (מודול, ניקיון ואיטומי אש).'; return; }
-      if(k==='s4'&&!cur.s2.sig){ g.className='gate wait'; g.textContent='תנאי למעבר: חתימה על שלב 2 (ניקיון התאים).'; return; }
+      if(k==='s5'&&legacyT(cur)){ g.hidden=true; return; }
+      if(k==='s3'&&!(torqueOK(cur)&&cur.s2.sig&&cur.s4.sig)){ g.className='gate wait'; g.textContent='תנאי למעבר: חתימה על שלבים 1 עד 4 (חיזוק AC, חיזוק DC, איטומי אש וניקיון).'; return; }
+      if(k==='s2'&&!cur.s4.sig){ g.className='gate wait'; g.textContent='שלב הניקיון נפתח אחרי חתימה על שלב 3 (איטומי אש).'; return; }
       const miss=validate(n).filter(x=>x!=='חתימה');
-      g.innerHTML=''; if(!miss.length){ g.className='gate ok'; const b=document.createElement('b'); b.textContent=k==='s3'?'כל התנאים מתקיימים. אפשר לחתום ולנעול את הצ׳קליסט.':'כל התנאים מתקיימים. אפשר לחתום ולעבור לשלב הבא.'; g.appendChild(b); return; }
+      g.innerHTML=''; if(!miss.length){ g.className='gate ok'; const b=document.createElement('b'); b.textContent=k==='s3'?'כל התנאים מתקיימים. אפשר לחתום ולנעול את הצ׳קליסט.':'כל התנאים מתקיימים. אפשר לחתום.'; g.appendChild(b); return; }
       g.className='gate'; const b=document.createElement('b'); b.textContent='תנאים שעוד חסרים למעבר לשלב הבא:'; g.appendChild(b);
       const ul=document.createElement('ul'); miss.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul.appendChild(li); }); g.appendChild(ul); });
   }
   ['input','change','pointerup'].forEach(ev=>document.addEventListener(ev,()=>{ clearTimeout(paintGates.h); paintGates.h=setTimeout(paintGates,150); }));
+  function paintSitePick(){
+    const inp=$('site'), v=inp.value, k=siteKey(v), box=$('sitePick');
+    let h=VSITES.map(x=>'<button type="button" role="radio" data-site="'+x.k+'" aria-checked="'+(k===x.k)+'"'+(inp.disabled?' disabled':'')+'><b>'+x.n+'</b><small>'+(x.ups===1?'UPS110 בלבד':'UPS110 + UPS210')+'</small></button>').join('');
+    if(v&&!VSITES.some(x=>x.k===k)) h+='<button type="button" role="radio" aria-checked="true" disabled><b>'+esc(v)+'</b><small>אתר שהוזן בעבר</small></button>';
+    box.innerHTML=h;
+    const view={...cur,site:v}, one=upsN(view)===1;
+    $('sn2f').hidden=one; $('clean2f').hidden=one;
+  }
+  $('sitePick').addEventListener('click',e=>{ const b=e.target.closest('[data-site]'); if(!b||b.disabled||!cur||isFinal(cur)) return;
+    const x=SITES.find(s=>s.k===b.dataset.site); $('site').value=x.n; cur.site=x.n; queueSave('hdr'); paint(false); });
+  /* ---------- comfort: stage navigator, collapsible signed stages, theme ---------- */
+  const SHORT={s1:'חיזוק AC',s5:'חיזוק DC',s2:'ניקיון',s4:'איטומי אש',s3:'אישור בודק'};
+  let expanded={};
+  const nextStage=()=>cur&&!isFinal(cur)?SECS.find(k=>!secDone(cur,k)):null;
+  function paintStepper(){
+    const box=$('stepper'); if(!box||!cur) return; const nx=nextStage(), fin=isFinal(cur);
+    box.innerHTML=SECS.map((k,i)=>{ const ok=secDone(cur,k), st=$('st'+k[1]), off=st&&st.classList.contains('locked');
+      return '<button type="button" class="stp'+(ok?' ok':'')+(k===nx?' now':'')+(off&&!ok?' off':'')+'" data-goto="'+k+'"><i>'+(ok?'✓':i+1)+'</i>'+SHORT[k]+'</button>'; }).join('')+
+      (fin?'<button type="button" class="stp ok" data-goto="seal"><i>🔒</i>נעול</button>':'');
+    const a=box.querySelector('.now'); if(a&&a.scrollIntoView) try{ a.scrollIntoView({block:'nearest',inline:'nearest'}); }catch(_){}
+  }
+  function goTo(k){ if(k==='seal'){ $('sealBox').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    const st=$('st'+k[1]); if(!st) return; if(st.classList.contains('collapsed')){ expanded[k]=true; paint(false); }
+    st.scrollIntoView({behavior:'smooth',block:'start'}); st.classList.remove('flash'); void st.offsetWidth; st.classList.add('flash'); }
+  $('stepper').addEventListener('click',e=>{ const b=e.target.closest('[data-goto]'); if(b) goTo(b.dataset.goto); });
+  function summaryOf(k){ const x=cur[k]||{}; if(k==='s5'&&legacyT(cur)) return 'כלול בחתימת חיזוק המומנט שנחתמה לפני פיצול AC / DC.';
+    if(!x.sig) return 'לא נדרש בצ׳קליסט זה.';
+    const who=[x.company,x.name].filter(Boolean).join(' · '), extra=k==='s2'?' · '+live(x.photos).length+' תמונות':k==='s4'?' · '+live(x.photos).length+' תמונות':k==='s3'&&x.inspector?' · בודק: '+x.inspector:'';
+    return 'נחתם ע״י '+who+extra+' · '+fmt(x.signedAt); }
+  function paintCollapse(){
+    SECS.forEach(k=>{ const st=$('st'+k[1]); if(!st) return; const can=st.classList.contains('signed')||st.classList.contains('noreq');
+      st.classList.toggle('cando',can); st.classList.toggle('collapsed',can&&!expanded[k]); st.classList.toggle('current',!!cur.id&&k===nextStage()&&!st.classList.contains('locked'));
+      let sm=st.querySelector('.ssum'); if(!sm){ sm=document.createElement('p'); sm.className='ssum'; st.querySelector('.sec-h').after(sm); }
+      sm.textContent=can?summaryOf(k):''; });
+  }
+  $('checklist').addEventListener('click',e=>{ const h=e.target.closest('.stage.cando > .sec-h'); if(!h) return; const k='s'+h.parentNode.id.slice(2); expanded[k]=!$('st'+k[1]).classList.contains('collapsed')?false:true; paint(false); });
+  const THEMES=['auto','light','dark'], TICON={auto:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5z" fill="currentColor" stroke="none"/></svg>',light:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',dark:'<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>'}, TLAB={auto:'ערכת צבעים: אוטומטית',light:'ערכת צבעים: בהירה',dark:'ערכת צבעים: כהה'};
+  function applyTheme(t){ if(t==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme',t); const b=$('themeBtn'); b.innerHTML=TICON[t]; b.title=TLAB[t]; b.setAttribute('aria-label',TLAB[t]); }
+  let theme='auto'; try{ theme=localStorage.getItem('cx-theme')||'auto'; }catch(_){} applyTheme(theme);
+  $('themeBtn').onclick=()=>{ theme=THEMES[(THEMES.indexOf(theme)+1)%3]; try{ localStorage.setItem('cx-theme',theme); }catch(_){} applyTheme(theme); };
   function paint(force){
-    writeInputs(force); paintHead();
-    const fin=isFinal(cur), d=SECS.map(k=>!!cur[k].sig);
+    writeInputs(force); paintHead(); paintSitePick();
+    const fin=isFinal(cur), d=SECS.map(k=>!!cur[k].sig), sg=k=>!!cur[k].sig;
     SECS.forEach((k,i)=>{
-      const n=+k[1], num=i+1, st=$('st'+n), signed=d[i], isInsp=k==='s3', noReq=fin&&!signed&&k==='s4';
-      const locked=!signed&&!fin&&((isInsp&&!(d[0]&&d[1]&&d[2]))||(k==='s4'&&!d[1]));
+      const n=+k[1], num=i+1, st=$('st'+n), signed=d[i], isInsp=k==='s3', legacy=k==='s5'&&legacyT(cur), noReq=legacy||(fin&&!signed&&(k==='s4'||k==='s5'));
+      const locked=!signed&&!fin&&!legacy&&((isInsp&&!(torqueOK(cur)&&sg('s2')&&sg('s4')))||(k==='s2'&&!sg('s4')));
+      st.classList.toggle('noreq',noReq);
       st.classList.toggle('signed',signed); st.classList.toggle('locked',locked); st.querySelector('.badge').textContent=signed?'✓':String(num);
-      $('st'+n+'state').textContent= noReq?'לא נדרש (נחתם לפני הוספת שלב זה)': fin?'נעול': signed?'נחתם': locked?(isInsp?'ממתין לשלבים 1 עד 3':'ממתין לשלב 2'):'ממתין לחתימה';
-      st.querySelectorAll('input:not([type=file]),textarea').forEach(el=>el.disabled=fin||signed||locked);
+      $('st'+n+'state').textContent= legacy?'כלול בחתימת שלב 1 (נחתם לפני פיצול AC / DC)': noReq?'לא נדרש (נחתם לפני הוספת שלב זה)': fin?'נעול': signed?'נחתם': locked?(isInsp?'ממתין לשלבים 1 עד 4':'ממתין לאיטומי אש'):'ממתין לחתימה';
+      st.querySelectorAll('input:not([type=file]),textarea').forEach(el=>el.disabled=fin||signed||locked||legacy);
       const b=st.querySelector('[data-sign]');
-      b.hidden=fin; b.textContent= signed?'פתח לעריכה': isInsp?'חתום ונעל את הצ׳קליסט':'חתום ואשר שלב '+num;
+      b.hidden=fin||legacy; st.querySelector('.sig').hidden=legacy; st.querySelector('.decl').hidden=legacy; b.textContent= signed?'פתח לעריכה': isInsp?'חתום ונעל את הצ׳קליסט':'חתום ואשר שלב '+num;
       b.className='btn '+(signed?'':(isInsp?'brass':'primary')); b.disabled=locked;
       paintSig(k);
 
@@ -1175,7 +1482,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     $('finalHint').hidden=fin;
     $('hdr').querySelectorAll('input').forEach(el=>el.disabled=d.some(Boolean)||fin);
     $('hdrHint').hidden=!!cur.id;
-    paintFiles(); paintSeal(); paintCalib(); paintGates();
+    paintFiles(); paintSeal(); paintCalib(); paintGates(); paintCollapse(); paintStepper();
     $('logSec').hidden=!cur.id;
     const lg=$('log'); lg.innerHTML='';
     Object.values(cur.log||{}).sort((a,b)=>b.t-a.t).forEach(e=>{const r=document.createElement('div');r.innerHTML='<time></time><span></span>';r.firstChild.textContent=fmt(e.t);r.lastChild.textContent=e.text;lg.appendChild(r);});
@@ -1187,7 +1494,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     $('stProg').textContent=reports.filter(r=>!isFinal(r)).length;
   }
   function paintList(){
-    paintStats(); paintDash();
+    paintStats(); paintDash(); paintHome();
     const box=$('list'),q=$('search').value.trim().toLowerCase(); box.innerHTML='';
     if(!connected&&!reports.length){ box.innerHTML='<p class="hint">'+(db===null&&$('noDb').hidden?'טוען…':'טוען…')+'</p>'; return; }
     const rs=reports.filter(r=>!q||[r.site,quad(r),r.module].join(' ').toLowerCase().includes(q));
@@ -1201,13 +1508,13 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       sec.querySelector('.meta').textContent=items.filter(isFinal).length+' מתוך '+items.length+' מודולים נעולים ומוכנים';
       items.forEach(r=>{
         const n=done(r),fin=isFinal(r),t=document.createElement('button'); t.type='button'; t.className='tile'+(fin?' ready':'')+(cur&&r.id===cur.id?' active':'');
-        t.innerHTML='<div class="top"><span class="n"></span>'+(fin?'<span class="lock" title="נעול">🔒</span>':'')+'</div><div class="bars"><i></i><i></i><i></i><i></i></div><span class="chip"></span><span class="m"></span>';
+        t.innerHTML='<div class="top"><span class="n"></span>'+(fin?'<span class="lock" title="נעול">🔒</span>':'')+'</div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div><span class="chip"></span><span class="m"></span>';
         t.querySelector('.n').textContent=r.module||'?';
-        SECS.forEach((k,i)=>{ if(r[k]&&(r[k].sig||(isFinal(r)&&k==='s4'))) t.querySelectorAll('.bars i')[i].classList.add('on'); });
-        t.querySelector('.chip').textContent=fin?'נעול / מוכן לעומס':n+' מתוך 3 שלבים';
+        SECS.forEach((k,i)=>{ if(secDone(r,k)) t.querySelectorAll('.bars i')[i].classList.add('on'); });
+        t.querySelector('.chip').textContent=fin?'נעול / מוכן לעומס':n+' מתוך '+SECS.length+' שלבים';
         t.querySelector('.m').textContent='עודכן '+fmt(r.updatedAt);
         if(!fin&&hasDraft(r.id)){ const w=document.createElement('span'); w.className='chip draft'; w.textContent='שינויים במכשיר שטרם נשמרו'; t.insertBefore(w,t.querySelector('.m')); }
-        t.setAttribute('aria-label','מודול '+(r.module||'')+', '+(fin?'נעול':n+' מתוך 3'));
+        t.setAttribute('aria-label','מודול '+(r.module||'')+', '+(fin?'נעול':n+' מתוך '+SECS.length));
         t.onclick=()=>openReport(r.id);
         sec.querySelector('.tiles').appendChild(t);
       });
@@ -1216,12 +1523,14 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   }
   $('search').addEventListener('input',paintList);
 
-  function resetPads(){ Object.keys(pads).forEach(k=>delete pads[k]); document.querySelectorAll('[data-sig]').forEach(h=>{h.innerHTML='';h.dataset.shown='';}); }
+  function resetPads(){ expanded={}; Object.keys(pads).forEach(k=>delete pads[k]); document.querySelectorAll('[data-sig]').forEach(h=>{h.innerHTML='';h.dataset.shown='';}); }
   function setHash(id){ try{ history.replaceState(null,'',id?'#m-'+id.replace(/[^A-Za-z0-9-]/g,''):location.pathname+location.search); }catch(_){} }
   async function openReport(id){
     if(cur&&cur.id) await flushAll();
     const r=reports.find(x=>x.id===id); if(!r) return;
-    cur=clone(r); if(!isFinal(cur)&&cur.quadrant==null) cur.quadrant=cur.location||''; ['hdr',...SECS].forEach(k=>dirty[k]=false); sealState=null; resetPads();
+    if(view!=='cl') setView('cl');
+    cur=clone(r); if(!cur.s5||typeof cur.s5!=='object') cur.s5={}; ['company','name','empId','tool','calib','notes'].forEach(f=>{ if(cur.s5[f]==null) cur.s5[f]=''; if(!isFinal(cur)&&cur.s1&&cur.s1[f]==null) cur.s1[f]=''; }); if(cur.s5.declared==null) cur.s5.declared=false; if(cur.s5.sig===undefined) cur.s5.sig=null;
+    if(!isFinal(cur)&&cur.quadrant==null) cur.quadrant=cur.location||''; ['hdr',...SECS].forEach(k=>dirty[k]=false); sealState=null; resetPads();
     const restored=applyDraft(id); showDraftBanner('');
     paint(true);
     if(restored){ restored.forEach(k=>queueSave(k)); showDraftBanner('שוחזרו שינויים שהוזנו במכשיר הזה ולא הספיקו להישמר. הם נשלחים עכשיו לשרת.'); } setHash(id); $('checklist').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1242,46 +1551,116 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const c=document.createElement('canvas'); c.width=Math.round(bmp.width*s); c.height=Math.round(bmp.height*s); const x=c.getContext('2d'); if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);} x.drawImage(bmp,0,0,c.width,c.height);
     return c.toDataURL(png?'image/png':'image/jpeg',.88); }catch(_){ return ''; } }
   function pdfLabel(){ return cur&&cur.id?'⬇ הורד PDF':'⬇ טופס ריק להדפסה (PDF)'; }
+  const LEGACY_DECL='אני, מפעיל תדיראן החתום מטה, מצהיר כי כל הכניסות והיציאות של המודול עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.';
+  let pdfCache=null;
+  async function buildPdf(blank){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    const fin=isFinal(cur);
+    // locked checklists print the sealed copy
+    let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location,sn1:sd.sn1||'',sn2:sd.sn2||''}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>{ if(r[k]) r[k][f]=sd[k][f]; }); }); }
+    r.s5=r.s5||{};
+    const legacy=!blank&&legacyT(r);
+    const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label,scan:sm2.fixed?!!x.scan:null,p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',scan:null,p})));
+    const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1400)));
+    const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireImgs=await Promise.all(live((r.s4||{}).photos).map(p=>toData(src(p),1400)));
+    const dcOn=blank||!legacy&&!!(r.s5.sig||!fin);
+    const att=live(r.s3.files), attImgs=await Promise.all(att.map(p=>(p.type||'').includes('pdf')?'':toData(src(p),1600)));
+    const sigs={}; for(const k of SECS) sigs[k]=r[k]&&r[k].sig?(r[k].sig.data||await toData(src(r[k].sig),900,true)):'';
+    const kv=(k,v,wide)=>'<div class="kv'+(wide?' w':'')+'"><span>'+k+'</span>'+(blank?'<i class="ln"></i>':'<b>'+(v?esc(v):'<em>—</em>')+'</b>')+'</div>';
+    const box='<span class="cb"></span>';
+    const decl=(txt,ok)=>'<div class="decl avoid">'+(blank?box:'<span class="ck'+(ok?'':' no')+'">'+(ok?'✓':'')+'</span>')+'<p>'+esc(txt)+'</p></div>';
+    const dtext=n=>$('st'+n).querySelector('.dtext').textContent;
+    const sign=k=>blank?'<div class="sgb avoid"><div><span>חתימה</span><div class="pad"></div></div><div><span>תאריך</span><i class="ln" style="width:150px"></i></div></div>'
+      : r[k]&&r[k].sig?'<div class="sgb avoid"><div><span>חתימה</span><img src="'+sigs[k]+'"></div><div class="who"><b>'+esc(r[k].name||'')+'</b><span>'+fmt(r[k].signedAt)+'</span></div></div>'
+      : '<div class="miss avoid">שלב זה טרם נחתם</div>';
+    let num=0;
+    const head=(k,title,tag,extra)=>{ num++; const ok=blank?null:!!(r[k]&&r[k].sig);
+      return '<div class="sh avoid"><span class="no'+(ok?' ok':'')+'">'+(ok?'✓':num)+'</span><h2>'+title+(tag?' <span class="tag '+tag.toLowerCase()+'">'+tag+'</span>':'')+'</h2>'+(blank?'':'<span class="pill '+(ok?'ok':'wait')+'">'+(extra||(ok?'נחתם':'לא נחתם'))+'</span>')+'</div>'; };
+    const torque=(k,title,tag,txt)=>'<section class="st">'+head(k,title,tag)+'<div class="grid">'+kv(tag?'קבלן צד '+tag:'קבלן / חברה',r[k].company)+kv('שם המבצע',r[k].name)+kv('מספר עובד / ת״ז',r[k].empId)+kv('מס׳ מד מומנט',r[k].tool)+kv('תוקף כיול',r[k].calib)+kv('הערות',r[k].notes,true)+'</div>'+decl(txt,!!r[k].declared)+sign(k)+'</section>';
+    const stepsMeta=[['s1','חיזוק AC'],...(legacy?[]:[['s5','חיזוק DC']]),...(fireOn?[['s4','איטומי אש']]:[]),['s2','ניקיון'],['s3','אישור בודק']];
+    const nDone=stepsMeta.filter(([k])=>r[k]&&r[k].sig).length;
+    const steps='<div class="steps">'+stepsMeta.map(([k,l],i)=>{ const ok=!blank&&!!(r[k]&&r[k].sig); return '<div class="sp'+(ok?' ok':'')+'"><span>'+(ok?'✓':i+1)+'</span><b>'+l+'</b></div>'; }).join('')+'</div>';
+    const scanCell=x=>x.scan===null?'':'<span class="sc'+(x.scan?'':' no')+'">'+(x.scan?'סריקה ✓':'ללא סריקה')+'</span>';
+    const itemsTbl=sm2.fixed?'<table class="it"><tr><th>פריט</th><th>תמונה</th><th>סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?box:(x.p?'<b class="y">✓</b>':(x.opt?'–':'<b class="n">✗</b>')))+'</td><td>'+(blank?box:(x.scan?'<b class="y">✓</b>':(x.opt&&!x.p?'–':'<b class="n">✗</b>')))+'</td></tr>').join('')+'</table>':'';
+    const gal=(imgs,caps)=>imgs.some(Boolean)?'<div class="gal">'+imgs.map((x,i)=>x?'<figure class="avoid"><img src="'+x+'">'+(caps&&caps[i]?'<figcaption>'+caps[i]+'</figcaption>':'')+'</figure>':'').join('')+'</div>':'';
+    const cln=v=>blank?box:(v?'<b class="y">כן</b>':'<b class="n">לא</b>');
+    const status=blank?'<div class="banner b">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>'
+      : fin?'<div class="banner ok"><span class="bi">✓</span><div><b>המודול מוכן לבדיקות בעומס</b><span>כל השלבים נחתמו והצ׳קליסט ננעל ב־'+fmt(r.lockedAt||(cur.seal&&cur.seal.at))+'</span></div></div>'
+      : '<div class="banner w"><span class="bi">!</span><div><b>טיוטה</b><span>הושלמו '+nDone+' מתוך '+stepsMeta.length+' שלבים. המסמך אינו מאשר מעבר לבדיקות בעומס.</span></div></div>';
+    const css='*{box-sizing:border-box}.doc{font-family:Rubik,Arial,sans-serif;color:#0A0F1C;width:740px;font-size:12px;line-height:1.5;direction:rtl}'+
+      '.cv{border-radius:16px;overflow:hidden;background:#0A0F1C;color:#fff;position:relative}.cv .bg{padding:22px 24px 20px;background:linear-gradient(120deg,#0A0F1C 0%,#13235A 62%,#1F44D6 100%)}'+
+      '.cv .top{display:flex;justify-content:space-between;align-items:center}.wm{direction:ltr;display:flex;align-items:center;gap:9px}.wm .ic{width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,#2D5BFF,#12C2E9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}.wm .cx{font-weight:800;font-size:19px;color:#7FB3FF}.wm .bar{width:2px;height:15px;background:#12C2E9;transform:skewX(-16deg)}.wm .el{font-weight:700;letter-spacing:3px;font-size:14px}.wm small{display:block;font-size:7px;letter-spacing:2.4px;color:#8A93A6}'+
+      '.cv .dt{font-size:10.5px;color:rgba(255,255,255,.65);text-align:left}.cv .ey{margin-top:22px;font-size:11px;letter-spacing:.06em;color:#7FD8F0;font-weight:600}.cv h1{margin:2px 0 0;font-size:25px;font-weight:800;line-height:1.15}.cv .mod{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.cv .mod span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:3px 11px;font-size:11px}.cv .mod b{font-weight:700}'+
+      '.cv .rb{height:4px;background:linear-gradient(90deg,#2D5BFF,#12C2E9)}'+
+      '.banner{margin:14px 0 0;border-radius:12px;padding:11px 14px;display:flex;gap:12px;align-items:center}.banner b{display:block;font-size:13px}.banner span{font-size:11px}.banner .bi{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex:none}.banner.ok{background:#E3F7EE;color:#0B7A4B}.banner.ok .bi{background:#0FA968}.banner.w{background:#FFF4DE;color:#8A5600}.banner.w .bi{background:#C27A00}.banner.b{background:#EAF0FF;color:#1F44D6;font-weight:600}'+
+      '.steps{display:flex;gap:6px;margin:12px 0 4px}.sp{flex:1;border:1px solid #E3E8F0;border-radius:10px;padding:7px 8px;display:flex;align-items:center;gap:7px;background:#F7F9FC}.sp span{width:20px;height:20px;border-radius:6px;background:#E3E8F0;color:#5B6478;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:none}.sp b{font-size:10.5px;font-weight:600}.sp.ok{background:#EFFAF4;border-color:#BFE8D3}.sp.ok span{background:#0FA968;color:#fff}'+
+      '.card{border:1px solid #E3E8F0;border-radius:14px;padding:12px 14px;margin-top:12px}.ct{font-size:11px;font-weight:700;color:#5B6478;letter-spacing:.04em;margin-bottom:6px}'+
+      '.st{margin-top:18px}.sh{display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid #E3E8F0;margin-bottom:10px}.sh .no{width:28px;height:28px;border-radius:9px;background:#EAF0FF;color:#2D5BFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}.sh .no.ok{background:#0FA968;color:#fff}.sh h2{margin:0;font-size:15.5px;font-weight:700;flex:1}.tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;vertical-align:2px;direction:ltr;display:inline-block}.tag.ac{background:#FFF1DC;color:#B26200}.tag.dc{background:#E5F4FF;color:#0B6FB0}'+
+      '.pill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px}.pill.ok{background:#E3F7EE;color:#0B7A4B}.pill.wait{background:#FFF4DE;color:#8A5600}'+
+      '.grid{display:flex;flex-wrap:wrap;gap:6px}.kv{width:calc(33.33% - 4px);background:#F7F9FC;border-radius:9px;padding:6px 9px}.kv.w{width:100%}.kv span{display:block;font-size:9.5px;color:#8A93A6;font-weight:500}.kv b{font-weight:600;font-size:12px;word-break:break-word}.kv em{color:#B4BBC8;font-style:normal}.ln{display:block;height:18px;border-bottom:1px solid #9AA3B2}'+
+      '.decl{display:flex;gap:9px;align-items:flex-start;margin-top:9px;background:#F2F5FF;border-radius:10px;padding:9px 11px}.decl p{margin:0;font-size:11.5px}.ck{width:17px;height:17px;border-radius:5px;background:#2D5BFF;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}.ck.no{background:#fff;border:1.5px solid #B4BBC8}.cb{display:inline-block;width:14px;height:14px;border:1.5px solid #0A0F1C;border-radius:3px;flex:none;vertical-align:-2px}'+
+      '.sgb{display:flex;gap:18px;align-items:flex-end;margin-top:10px}.sgb span{display:block;font-size:9.5px;color:#8A93A6;margin-bottom:3px}.sgb img{width:220px;border:1px solid #E3E8F0;border-radius:10px;background:#fff;display:block}.sgb .who b{display:block;font-size:12.5px}.sgb .who span{font-size:10.5px;color:#0B7A4B;font-weight:600;margin:0}.pad{width:260px;height:80px;border:1.5px dashed #9AA3B2;border-radius:10px}.miss{margin-top:10px;color:#B42335;font-weight:700;font-size:11.5px}'+
+      'table.it{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.it th{background:#F2F5FA;color:#5B6478;font-weight:600;text-align:right;padding:5px 8px}.it td{padding:4px 8px;border-bottom:1px solid #EDF1F6}.it th:not(:first-child),.it td:not(:first-child){text-align:center;width:90px}.y{color:#0FA968}.n{color:#E0412F}'+
+      '.gal{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.gal figure{margin:0;width:236px}.gal img{width:236px;height:170px;object-fit:cover;border-radius:10px;border:1px solid #E3E8F0;display:block}.gal figcaption{font-size:10px;color:#5B6478;margin-top:3px;display:flex;justify-content:space-between;gap:6px}.sc{color:#0B7A4B;font-weight:600}.sc.no{color:#B42335}'+
+      '.seal{margin-top:20px;border-radius:14px;padding:14px 16px;background:linear-gradient(120deg,#0A0F1C,#13235A);color:#fff;display:flex;gap:12px;align-items:center}.seal .m{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0FA968,#22C3A6);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.seal b{display:block;font-size:12px}.seal .fp{direction:ltr;font-family:monospace;font-size:9.5px;color:rgba(255,255,255,.6);word-break:break-all}'+
+      'table.log{width:100%;border-collapse:collapse;font-size:10px;color:#5B6478}.log td{padding:3px 6px;border-bottom:1px solid #EDF1F6}.log td:first-child{width:120px;white-space:nowrap}';
+    const sn=[r.sn1&&('UPS110 '+r.sn1),r.sn2&&('UPS210 '+r.sn2)].filter(Boolean);
+    let html='<div class="doc"><style>'+css+'</style>'+
+      '<div class="cv"><div class="bg"><div class="top"><div class="wm"><span class="ic">⚡</span><div><div style="display:flex;align-items:center;gap:8px"><span class="cx">CX</span><span class="bar"></span><span class="el">ELECTRA</span></div><small>ELECTRICAL COMMISSIONING</small></div></div><div class="dt">'+(blank?'טופס ריק':'הופק '+fmt(Date.now()))+'</div></div>'+
+      '<div class="ey">צ׳קליסט מוכנות לבדיקות בעומס למערכות אל־פסק</div><h1>'+(blank&&!r.module?'מודול ____________':'מודול '+esc(r.module||''))+'</h1>'+
+      '<div class="mod"><span>אתר <b>'+esc(r.site||(blank?'________':'—'))+'</b></span><span>רביע <b>'+esc(quad(r)||(blank?'________':'—'))+'</b></span>'+sn.map(x=>'<span style="direction:ltr">'+esc(x)+'</span>').join('')+'</div></div><div class="rb"></div></div>'+
+      status+steps+
+      (blank?'<div class="card"><div class="ct">פרטי המודול</div><div class="grid">'+kv('UPS110 מספר סידורי','')+kv('UPS210 מספר סידורי','')+'</div></div>':'');
+    html+= legacy? torque('s1','חיזוק כניסות ויציאות במד מומנט (AC ו־DC)','',LEGACY_DECL)
+      : torque('s1','חיזוק צד AC במד מומנט','AC',dtext(1))+(dcOn?torque('s5','חיזוק צד DC במד מומנט','DC',dtext(5)):'');
+    if(fireOn) html+='<section class="st" style="page-break-before:always">'+head('s4','איטומי אש')+'<div class="grid">'+kv('אחראי איטומי אש',r.s4.name)+kv('תפקיד / חברה',r.s4.role)+kv('תאריך ביצוע',r.s4.date)+kv('הערות',r.s4.notes,true)+'</div>'+gal(fireImgs)+decl(dtext(4),!!r.s4.declared)+sign('s4')+'</section>';
+    html+='<section class="st" style="page-break-before:always">'+head('s2','ניקיון יסודי של התאים')+'<div class="grid">'+kv('אחראי ניקיון',r.s2.name)+kv('תפקיד / חברה',r.s2.role)+kv('תאריך ביצוע',r.s2.date)+kv('הערות',r.s2.notes,true)+'</div>'+itemsTbl+
+      gal(photos,pItems.map(x=>'<span>'+esc(x.label)+'</span>'+scanCell(x)))+decl(dtext(2),!!r.s2.declared)+sign('s2')+'</section>';
+    html+='<section class="st" style="page-break-before:always">'+head('s3','אישור בודק ומעבר לבדיקות בעומס')+'<div class="grid">'+kv('מתאם תדיראן',r.s3.name)+kv('שם הבודק',r.s3.inspector)+kv('מספר אישור',r.s3.no)+kv('תאריך אישור',r.s3.date)+(blank?'':kv('קבצים מצורפים',att.map(a=>a.name).join(', '),true))+'</div>'+
+      ((r.s3.clean1===undefined&&!blank)?'':'<table class="it"><tr><th>דוח בודק נקי, ללא ליקויים פתוחים</th><th>אישור</th></tr><tr><td>UPS110</td><td>'+cln(r.s3.clean1)+'</td></tr>'+(upsN(r)===1?'':'<tr><td>UPS210</td><td>'+cln(r.s3.clean2)+'</td></tr>')+'</table>')+
+      (attImgs.some(Boolean)?'<div class="gal">'+attImgs.filter(Boolean).map(x=>'<figure class="avoid" style="width:360px"><img src="'+x+'" style="width:360px;height:auto;object-fit:contain"></figure>').join('')+'</div>':'')+
+      decl(dtext(3),!!r.s3.declared)+sign('s3')+'</section>';
+    if(fin&&cur.seal) html+='<div class="seal avoid"><span class="m">✓</span><div><b>חותמת דיגיטלית SHA-256 של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div></div>';
+    if(!blank) html+='<div class="card avoid"><div class="ct">יומן פעולות</div><table class="log">'+Object.values(cur.log||{}).sort((a,b)=>a.t-b.t).map(e=>'<tr><td>'+fmt(e.t)+'</td><td>'+esc(e.text)+'</td></tr>').join('')+'</table></div>';
+    html+='</div>';
+    const worker=window.html2pdf().set({margin:[10,9,14,9],image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:'.avoid'}}).from(html,'string').toPdf();
+    const pdf=await worker.get('pdf'), pages=pdf.internal.getNumberOfPages();
+    for(let i=1;i<=pages;i++){ pdf.setPage(i); pdf.setDrawColor(45,91,255); pdf.setLineWidth(.4); pdf.line(9,285,201,285); pdf.setFontSize(8); pdf.setTextColor(130); pdf.text('CX-ELECTRA  |  '+(r.module||'')+'  |  '+i+' / '+pages+(fin&&cur.seal?'  |  SHA-256 '+cur.seal.hash.slice(0,16):''),105,290,{align:'center'}); }
+    const fname=(blank?'CX-ELECTRA-BLANK-FORM'+(r.module?'-'+r.module:'')+'.pdf':'CX-ELECTRA-'+(r.site||'')+'-'+quad(r)+'-'+(r.module||'')+(fin?'-LOCKED':'-DRAFT')+'.pdf').replace(/[\\/:*?"<>|\s]+/g,'_');
+    return {blob:pdf.output('blob'),fname,fin,r};
+  }
   $('pdfBtn').onclick=async()=>{
     if(!cur) return; const blank=!cur.id; if(!blank) await flushAll();
     if(!downloads){ toast('הורדת קבצים לא זמינה בתצוגה הזו'); return; }
     const btn=$('pdfBtn'); btn.disabled=true; btn.textContent='מכין PDF…';
-    try{
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
-      const fin=isFinal(cur);
-      // locked checklists print the sealed copy
-      let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location,sn1:sd.sn1||'',sn2:sd.sn2||''}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>r[k][f]=sd[k][f]); }); }
-      const logo='';
-      const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label+(sm2.fixed?(x.scan?' / סריקה פיזית ✓':' / ללא אישור סריקה'):''),p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',p}))); const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1500)));
-      const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireImgs=await Promise.all(live(r.s4.photos).map(p=>toData(src(p),1500)));
-      const att=live(r.s3.files), attImgs=await Promise.all(att.map(p=>(p.type||'').includes('pdf')?'':toData(src(p),1600)));
-      const sigs={}; for(const k of SECS) sigs[k]=r[k].sig?(r[k].sig.data||await toData(src(r[k].sig),900)):'';
-      const row=(k,v)=>blank?'<tr><th>'+k+'</th><td class="ln">'+esc(v||'')+'</td></tr>':(v?'<tr><th>'+k+'</th><td>'+esc(v)+'</td></tr>':'');
-      const dt=n=>(blank?'<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #13213A;border-radius:2px;margin-left:8px;vertical-align:-2px"></span>':'')+esc($('st'+n).querySelector('.dtext').textContent);
-      const sg=k=>blank?'<div class="avoid"><table style="width:auto"><tr><th style="width:auto;border:0">חתימה</th><td style="border:0"><div class="sbx"></div></td><th style="width:auto;border:0;padding-right:18px">תאריך</th><td style="border:0;vertical-align:bottom"><div class="ln" style="width:130px"></div></td></tr></table></div>':r[k].sig?'<div class="avoid sg"><img src="'+sigs[k]+'"><div class="sm">נחתם ע״י '+esc(r[k].name)+' / '+fmt(r[k].signedAt)+'</div></div>':'<p class="no">שלב זה טרם נחתם</p>';
-      const n=done(r);
-      const itemsTbl=sm2.fixed?'<table style="margin-top:8px"><tr><th style="width:auto">פריט</th><th style="width:70px">תמונה</th><th style="width:100px">סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?'☐':(x.p?'✓':(x.opt?'–':'✗')))+'</td><td>'+(blank?'☐':(x.scan?'✓':(x.opt&&!x.p?'–':'✗')))+'</td></tr>').join('')+'</table>':'';
-      const cln=v=>blank?'☐':(v?'כן':'לא');
-      const html='<div dir="rtl" style="font-family:\'Rubik\',Arial,sans-serif;color:#13213A;width:720px;font-size:12.5px;line-height:1.55">'+
-        '<style>.hd{background:#0A0F1C;color:#fff;padding:18px 20px;border-bottom:4px solid #2D5BFF;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:16px}.hd img{max-height:40px;max-width:180px;background:#fff;padding:4px 8px;border-radius:4px}.hd .bn{font-weight:800;font-size:16px;direction:ltr;color:#fff}.hd h1{font-size:21px;margin:0;font-weight:700}.hd .s{opacity:.8;font-size:12px}.bd{padding:6px 4px}h2{font-size:15px;font-weight:700;color:#0A0F1C;border-bottom:2px solid #2D5BFF;padding-bottom:3px;margin:18px 0 8px}table{border-collapse:collapse;width:100%}th,td{text-align:right;padding:4px 6px;border-bottom:1px solid #E1E6EC;vertical-align:top}th{width:34%;color:#56657C;font-weight:600}.d{background:#EAF0FF;padding:8px 10px;border-radius:5px;margin:8px 0}.sg img{width:240px;border:1px solid #D5DCE5;border-radius:4px}.sm{font-size:11px;color:#1D7A55;font-weight:600}.ph{display:flex;flex-wrap:wrap;gap:6px}.ph img{width:232px;height:174px;object-fit:cover;border:1px solid #D5DCE5}.no{color:#A93A2B;font-weight:700}.st{padding:9px 12px;border-radius:5px;font-weight:700;margin:12px 0}.seal{border:1.5px solid #2D5BFF;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:11px}.fp{direction:ltr;font-family:monospace;word-break:break-all;color:#56657C}.ln{height:26px;border-bottom:1px solid #9AA3B2}.sbx{width:280px;height:86px;border:1.5px dashed #9AA3B2;border-radius:6px}</style>'+
-        '<div class="hd">'+(logo?'<img src="'+logo+'">':'<span class="bn"><span style="color:#7C9AFF;font-weight:800;font-size:19px">CX</span><span style="display:inline-block;width:2px;height:15px;background:#12C2E9;margin:0 8px;vertical-align:-1px"></span><span style="letter-spacing:3px;font-weight:700">ELECTRA</span><div style="font-size:7.5px;letter-spacing:2.6px;color:#8A93A6;margin-top:3px;font-weight:500">ELECTRICAL COMMISSIONING</div></span>')+'<div><h1>צ׳קליסט מוכנות לבדיקות בעומס / '+esc(r.module)+'</h1><div class="s">'+esc(['אתר '+(r.site||''),quad(r)&&('רביע '+quad(r))].filter(Boolean).join(' / '))+'</div></div></div><div class="bd">'+
-        (blank?'<div class="st" style="background:#EAF0FF;color:#1F44D6">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>':'<div class="st" style="background:'+(fin?'#E0F1E8;color:#1D7A55':'#FBF1DC;color:#9A6200')+'">'+(fin?'המודול נחתם במלואו, ננעל ומאושר למעבר לבדיקות בעומס':'טיוטה, הצ׳קליסט טרם הושלם ('+n+' מתוך '+SECS.length+' שלבים)')+'</div>')+
-        '<h2>פרטי המודול</h2><table>'+row('שם המודול',r.module)+row('אתר',r.site)+row('רביע',quad(r))+row('UPS110 מספר סידורי',r.sn1)+row('UPS210 מספר סידורי',r.sn2)+(blank?'':row('נפתח',fmt(r.createdAt))+row('ננעל',fin?fmt(r.lockedAt):'')+row('הופק',fmt(Date.now()))+row('מזהה',r.id))+'</table>'+
-        '<h2>1. חיזוק כניסות ויציאות במד מומנט</h2><table>'+row('מפעיל תדיראן',r.s1.name)+row('מספר עובד / ת״ז',r.s1.empId)+row('מס׳ מד מומנט',r.s1.tool)+row('תוקף כיול',r.s1.calib)+row('הערות',r.s1.notes)+'</table><p class="d avoid">'+dt(1)+'</p>'+sg('s1')+
-        '<h2 style="page-break-before:always">2. ניקיון יסודי של התאים</h2><table>'+row('אחראי ניקיון',r.s2.name)+row('תפקיד / חברה',r.s2.role)+row('תאריך ביצוע הניקיון',r.s2.date)+row('הערות',r.s2.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(photos.length))+'</table>'+itemsTbl+'<div class="ph">'+photos.map((x,i)=>x?'<figure class="avoid" style="margin:0;text-align:center"><img class="avoid" src="'+x+'"><figcaption style="font-size:11px;color:#13213A;margin-top:2px">'+esc(pItems[i].label)+'</figcaption></figure>':'').join('')+'</div><p class="d avoid">'+dt(2)+'</p>'+sg('s2')+
-        (fireOn?'<h2 style="page-break-before:always">3. איטומי אש</h2><table>'+row('אחראי איטומי אש',r.s4.name)+row('תפקיד / חברה',r.s4.role)+row('תאריך ביצוע',r.s4.date)+row('הערות',r.s4.notes)+row(blank?'מספר תמונות שצולמו':'מספר תמונות',blank?'':String(fireImgs.length))+'</table><div class="ph">'+fireImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'">').join('')+'</div><p class="d avoid">'+dt(4)+'</p>'+sg('s4'):'')+
-        '<h2 style="page-break-before:always">'+(fireOn?'4':'3')+'. אישור בודק ומעבר לבדיקות בעומס</h2><table>'+row('מתאם תדיראן',r.s3.name)+row('שם הבודק',r.s3.inspector)+row('מספר אישור',r.s3.no)+row('תאריך אישור',r.s3.date)+((r.s3.clean1===undefined&&!blank)?'':row('דוח בודק נקי: UPS110',cln(r.s3.clean1))+row('דוח בודק נקי: UPS210',cln(r.s3.clean2)))+(blank?'':row('קבצים מצורפים',att.map(a=>a.name).join(', ')))+'</table>'+
-        '<div class="ph">'+attImgs.filter(Boolean).map(x=>'<img class="avoid" src="'+x+'" style="width:360px;height:auto">').join('')+'</div><p class="d avoid">'+dt(3)+'</p>'+sg('s3')+
-        (fin&&cur.seal?'<div class="seal avoid"><b>חותמת דיגיטלית (SHA-256) של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div>':'')+
-        (blank?'':'<h2>יומן פעולות</h2><table>'+Object.values(cur.log||{}).sort((a,b)=>a.t-b.t).map(e=>'<tr><th>'+fmt(e.t)+'</th><td>'+esc(e.text)+'</td></tr>').join('')+'</table>')+'</div></div>';
-      const worker=window.html2pdf().set({margin:[8,8,14,8],image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:'.avoid'}}).from(html,'string').toPdf();
-      const pdf=await worker.get('pdf'), pages=pdf.internal.getNumberOfPages();
-      for(let i=1;i<=pages;i++){ pdf.setPage(i); pdf.setFontSize(8.5); pdf.setTextColor(120); pdf.text('CX-ELECTRA  |  '+i+' / '+pages+(fin&&cur.seal?'  |  SHA-256 '+cur.seal.hash.slice(0,16):''),105,290,{align:'center'}); }
-      const fname=(blank?'CX-ELECTRA-BLANK-FORM'+(r.module?'-'+r.module:'')+'.pdf':'CX-ELECTRA-'+(r.site||'')+'-'+quad(r)+'-'+(r.module||'')+(fin?'-LOCKED':'-DRAFT')+'.pdf').replace(/[\\/:*?"<>|\s]+/g,'_');
-      await downloads.save({filename:fname,data:pdf.output('blob')});
+    try{ const o=await buildPdf(blank); if(!blank&&o.fin) pdfCache={id:cur.id,key:cur.updatedAt||0,...o};
+      await downloads.save({filename:o.fname,data:o.blob});
       if(!blank) writeRetry(cur.id,{log:logEntry('הופק דוח PDF')}); toast(blank?'הטופס הריק הורד':'ה־PDF הורד');
     }catch(e){ if(!(e&&e.code==='declined')) toast('הפקת ה־PDF נכשלה'+(e&&e.code?' ('+e.code+')':'')+'. נסה שוב.'); }
     finally{ btn.disabled=false; btn.textContent=pdfLabel(); }
+  };
+  /* ---------- WhatsApp share (completed checklists) ---------- */
+  function waText(r){ return 'CX-ELECTRA | צ׳קליסט מוכנות לבדיקות בעומס למערכות אל־פסק\nמודול '+(r.module||'')+' | אתר '+(r.site||'')+' | רביע '+(quad(r)||'')+'\n✓ כל השלבים נחתמו והמודול ננעל ב־'+fmt(r.lockedAt||(r.seal&&r.seal.at))+(r.seal?'\nחותמת SHA-256: '+r.seal.hash.slice(0,16)+'…':''); }
+  const WA_IDLE='שיתוף בוואטסאפ';
+  function setWa(t,dis){ const b=$('waBtn'); b.querySelector('span').textContent=t; b.disabled=!!dis; }
+  $('waBtn').onclick=async()=>{
+    if(!cur||!cur.id||!isFinal(cur)) return;
+    const cached=pdfCache&&pdfCache.id===cur.id&&pdfCache.key===(cur.updatedAt||0)?pdfCache:null;
+    let o=cached;
+    if(!o){ setWa('מכין דוח…',true);
+      try{ o=await buildPdf(false); pdfCache={id:cur.id,key:cur.updatedAt||0,...o}; }
+      catch(e){ setWa(WA_IDLE); toast('הפקת ה־PDF נכשלה. נסה שוב.'); return; } }
+    const file=new File([o.blob],o.fname,{type:'application/pdf'}), text=waText(cur);
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:'CX-ELECTRA / מודול '+(cur.module||''),text}); setWa(WA_IDLE); writeRetry(cur.id,{log:logEntry('הדוח שותף')}); return; }
+      catch(e){ if(e&&e.name==='AbortError'){ setWa(WA_IDLE); return; }
+        if(e&&e.name==='NotAllowedError'&&!cached){ setWa('הדוח מוכן. לחץ שוב לשליחה'); return; } }
+    }
+    // desktop / no file sharing: download the PDF, then open WhatsApp with the summary so the file can be attached
+    try{ await downloads.save({filename:o.fname,data:o.blob}); }catch(_){}
+    window.open('https://wa.me/?text='+encodeURIComponent(text+'\n\n(הדוח המלא מצורף כקובץ PDF)'),'_blank','noopener');
+    setWa(WA_IDLE); toast('ה־PDF הורד. צרף אותו לשיחה בוואטסאפ שנפתחה.');
+    writeRetry(cur.id,{log:logEntry('הדוח הוכן לשיתוף בוואטסאפ')});
   };
 
   $('backupBtn').onclick=async()=>{
@@ -1307,22 +1686,23 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'&&cur&&Object.values(dirty).some(Boolean)){ saveDraft(); flushAll(); } else if(document.visibilityState==='visible'){ autoRetry(); } });
 
   /* ---------- status dashboard (read-only view over the same reports) ---------- */
-  const STG={new:{l:'לא התחיל',c:'var(--ink-3)'},s1:{l:'ממתין למומנט',c:'var(--warn)',tc:'#0A0F1C'},s2:{l:'ממתין לניקיון',c:'var(--cyan)',tc:'#0A0F1C'},s4:{l:'ממתין לאיטומי אש',c:'#8E5CF7'},s3:{l:'ממתין לאישור בודק',c:'var(--brand)'},ready:{l:'מוכן לעומס',c:'var(--ok)'}};
-  const STG_ORDER=['new','s1','s2','s4','s3','ready'];
+  const STG={new:{l:'לא התחיל',c:'var(--ink-3)'},s1:{l:'ממתין למומנט AC',c:'var(--warn)',tc:'#0A0F1C'},s5:{l:'ממתין למומנט DC',c:'#F08A24',tc:'#0A0F1C'},s2:{l:'ממתין לניקיון',c:'var(--cyan)',tc:'#0A0F1C'},s4:{l:'ממתין לאיטומי אש',c:'#8E5CF7'},s3:{l:'ממתין לאישור בודק',c:'var(--brand)'},ready:{l:'מוכן לעומס',c:'var(--ok)'}};
+  const STG_ORDER=['new','s1','s5','s4','s2','s3','ready'];
   const DASH={site:'',stage:'',idle:3};
-  let view='cl';
-  function stageOf(r){ if(isFinal(r)) return 'ready'; const a=!!(r.s1&&r.s1.sig), b=!!(r.s2&&r.s2.sig); if(!a&&!b) return 'new'; if(!a) return 's1'; if(!b) return 's2'; if(!(r.s4&&r.s4.sig)) return 's4'; return 's3'; }
+  let view='home';
+  function stageOf(r){ if(isFinal(r)) return 'ready'; const a=!!(r.s1&&r.s1.sig), b=!!(r.s2&&r.s2.sig), c=!!(r.s5&&r.s5.sig); if(!a&&!b&&!c) return 'new'; if(!a) return 's1'; if(!torqueOK(r)) return 's5'; if(!(r.s4&&r.s4.sig)&&!b) return 's4'; if(!b) return 's2'; if(!(r.s4&&r.s4.sig)) return 's4'; return 's3'; }
   function lastAct(r){ let t=r.updatedAt||r.createdAt||0; Object.values(r.log||{}).forEach(e=>{ if(e&&e.t>t) t=e.t; }); SECS.forEach(k=>{ if(r[k]&&r[k].signedAt>t) t=r[k].signedAt; }); return t; }
   function lockAt(r){ return r.lockedAt||(r.seal&&r.seal.at)||(r.s3&&r.s3.signedAt)||0; }
   function flagsOf(r){
     const out=[], s1=r.s1||{}, s2=r.s2||{}, s3=r.s3||{}, fin=isFinal(r);
-    if(s1.calib){ const cal=new Date(s1.calib+'T23:59:59').getTime();
-      if(s1.sig&&s1.signedAt&&cal<s1.signedAt) out.push({sev:'bad',t:'כיול מד המומנט פג לפני החתימה'});
-      else if(!s1.sig&&cal<Date.now()) out.push({sev:'bad',t:'תוקף הכיול שהוזן כבר פג'}); }
-    else if(s1.sig) out.push({sev:'warn',t:'חסר תוקף כיול למד המומנט'});
+    [[s1,legacyT(r)?'':' (AC)'],[r.s5||{},' (DC)']].forEach(([t,lbl])=>{
+      if(t.calib){ const cal=new Date(t.calib+'T23:59:59').getTime();
+        if(t.sig&&t.signedAt&&cal<t.signedAt) out.push({sev:'bad',t:'כיול מד המומנט פג לפני החתימה'+lbl});
+        else if(!t.sig&&cal<Date.now()) out.push({sev:'bad',t:'תוקף הכיול שהוזן כבר פג'+lbl}); }
+      else if(t.sig) out.push({sev:'warn',t:'חסר תוקף כיול למד המומנט'+lbl}); });
     if(s2.sig&&!live(s2.photos).length) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונות'});
-    if(s2.fixed&&s2.sig){ const has=new Set(live(s2.photos).map(p=>p.cell)); if(ITEMS.some(i=>!i.opt&&!has.has(i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונה לכל הפריטים'}); if(ITEMS.some(i=>!i.opt&&!scanOk(r,i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא אישור סריקה פיזית מלא'}); }
-    if(fin&&s3.clean1!==undefined&&!(s3.clean1&&s3.clean2)) out.push({sev:'bad',t:'נעול ללא אישור דוחות בודק נקיים'});
+    if(s2.fixed&&s2.sig){ const has=new Set(live(s2.photos).map(p=>p.cell)); if(itemsOf(r).some(i=>!i.opt&&!has.has(i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא תמונה לכל הפריטים'}); if(itemsOf(r).some(i=>!i.opt&&!scanOk(r,i.id))) out.push({sev:'bad',t:'ניקיון נחתם ללא אישור סריקה פיזית מלא'}); }
+    if(fin&&s3.clean1!==undefined&&!(s3.clean1&&(upsN(r)===1||s3.clean2))) out.push({sev:'bad',t:'נעול ללא אישור דוחות בודק נקיים'});
     if(fin&&r.s4&&r.s4.sig&&!live(r.s4.photos).length) out.push({sev:'bad',t:'איטומי אש נחתמו ללא תמונות'});
     if(fin&&!live(s3.files).length) out.push({sev:'warn',t:'אין קובץ אישור בודק מצורף'});
     if(fin&&!r.seal) out.push({sev:'warn',t:'נעול ללא חותמת דיגיטלית'});
@@ -1331,11 +1711,13 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     return out;
   }
   function setView(v){
-    view=v; const d=v==='dash';
-    $('dash').hidden=!d; $('checklist').hidden=d; $('archive').hidden=d; $('hero').hidden=d;
-    document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
-    if(d){ try{ history.replaceState(null,'','#status'); }catch(_){} paintDash(); window.scrollTo({top:0}); }
+    view=v;
+    $('home').hidden=v!=='home'; $('dash').hidden=v!=='dash'; $('checklist').hidden=v!=='cl'; $('crumbs').hidden=v!=='cl'; $('archive').hidden=true; $('hero').hidden=true;
+    document.querySelectorAll('.views [data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
+    if(v==='dash'){ try{ history.replaceState(null,'','#status'); }catch(_){} paintDash(); }
+    else if(v==='home'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){} paintHome(); }
     else setHash(cur&&cur.id);
+    window.scrollTo({top:0});
   }
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
   const daysAgo=t=>Math.floor((Date.now()-t)/864e5);
@@ -1395,22 +1777,85 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(t.dataset.didle!==undefined){ DASH.idle=+t.dataset.didle; paintDash(); return; }
     if(t.dataset.dcsv!==undefined){
       const c=v=>{ const s=String(v==null?'':v); return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-      const rows=[['אתר','רביע','מודול','UPS110 מספר סידורי','UPS210 מספר סידורי','שלב','מפעיל תדיראן','חתימת שלב 1','תוקף כיול','אחראי ניקיון','תאריך ניקיון','חתימת שלב 2','תמונות ניקיון','סריקות פיזיות','אחראי איטומי אש','תאריך איטומי אש','חתימת איטומי אש','תמונות איטומי אש','מתאם תדיראן','בודק','מספר אישור','דוחות בודק נקיים','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
-      reports.filter(r=>!DASH.site||(r.site||'ללא אתר')===DASH.site).sort((a,b)=>[a.site,quad(a),a.module].join('|').localeCompare([b.site,quad(b),b.module].join('|'),'he',{numeric:true})).forEach(r=>{ const s1=r.s1||{},s2=r.s2||{},s3=r.s3||{},s4=r.s4||{};
-        rows.push([r.site,quad(r),r.module,r.sn1||'',r.sn2||'',STG[stageOf(r)].l,s1.name,fmt(s1.signedAt),s1.calib,s2.name,s2.date||'',fmt(s2.signedAt),live(s2.photos).length,s2.fixed?ITEMS.filter(i=>scanOk(r,i.id)).length:'',s4.name,s4.date||'',fmt(s4.signedAt),live(s4.photos).length,s3.name,s3.inspector,s3.no,s3.clean1===undefined?'':((s3.clean1&&s3.clean2)?'כן':'לא'),isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
+      const rows=[['אתר','רביע','מודול','UPS110 מספר סידורי','UPS210 מספר סידורי','שלב','קבלן AC','מבצע AC','חתימת AC','תוקף כיול AC','קבלן DC','מבצע DC','חתימת DC','תוקף כיול DC','אחראי ניקיון','תאריך ניקיון','חתימת ניקיון','תמונות ניקיון','סריקות פיזיות','אחראי איטומי אש','תאריך איטומי אש','חתימת איטומי אש','תמונות איטומי אש','מתאם תדיראן','בודק','מספר אישור','דוחות בודק נקיים','נעילה','ימים ללא פעילות','חריגות','SHA-256']];
+      reports.filter(r=>!DASH.site||(r.site||'ללא אתר')===DASH.site).sort((a,b)=>[a.site,quad(a),a.module].join('|').localeCompare([b.site,quad(b),b.module].join('|'),'he',{numeric:true})).forEach(r=>{ const s1=r.s1||{},s2=r.s2||{},s3=r.s3||{},s4=r.s4||{},s5=r.s5||{};
+        rows.push([r.site,quad(r),r.module,r.sn1||'',r.sn2||'',STG[stageOf(r)].l,s1.company||'',s1.name,fmt(s1.signedAt),s1.calib,legacyT(r)?'כלול בשלב AC':(s5.company||''),s5.name||'',fmt(s5.signedAt),s5.calib||'',s2.name,s2.date||'',fmt(s2.signedAt),live(s2.photos).length,s2.fixed?ITEMS.filter(i=>scanOk(r,i.id)).length:'',s4.name,s4.date||'',fmt(s4.signedAt),live(s4.photos).length,s3.name,s3.inspector,s3.no,s3.clean1===undefined?'':((s3.clean1&&(upsN(r)===1||s3.clean2))?'כן':'לא'),isFinal(r)?fmt(lockAt(r)):'',isFinal(r)?'':daysAgo(lastAct(r)),flagsOf(r).filter(f=>f.sev!=='info').map(f=>f.t).join('; '),r.seal?r.seal.hash:'']); });
       try{ await downloads.save({filename:'CX-ELECTRA-UPS-status-'+new Date().toISOString().slice(0,10)+'.csv',data:'\ufeff'+rows.map(r=>r.map(c).join(',')).join('\r\n')}); toast('דוח המצב הורד'); }
       catch(err){ if(!(err&&err.code==='declined')) toast('ההורדה נכשלה'); }
     }
   });
 
+
+  /* ---------- management home ---------- */
+  const HOME={site:'',f:'all',q:'',sort:'recent'};
+  const WA_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>';
+  const agoTxt=t=>{ if(!t) return ''; const m=Math.round((Date.now()-t)/6e4); if(m<1) return 'עכשיו'; if(m<60) return 'לפני '+m+' דק׳'; const h=Math.round(m/60); if(h<24) return 'לפני '+h+' שע׳'; const d=Math.round(h/24); return d===1?'אתמול':'לפני '+d+' ימים'; };
+  function needsAttn(r){ return !isFinal(r)&&(Date.now()-lastAct(r)>3*864e5||flagsOf(r).some(f=>f.sev!=='info')); }
+  function paintHome(){
+    if(view!=='home') return;
+    const box=$('home'); const foot=document.querySelector('.foot');
+    if(!connected&&!reports.length){ box.innerHTML='<div class="hempty"><b>טוען…</b></div>'; return; }
+    const known=VSITES.map(x=>x.k), others=reports.filter(r=>!known.includes(siteKey(r.site)));
+    const cards=[{k:'',n:'כל האתרים',u:'סקירה כוללת'},...VSITES.map(x=>({k:x.k,n:x.n,u:x.ups===1?'UPS110 בלבד':'UPS110 + UPS210'})),...(others.length?[{k:'x',n:'אתרים אחרים',u:'שהוזנו בעבר'}]:[])];
+    const inSite=(r,k)=>!k||(k==='x'?!known.includes(siteKey(r.site)):siteKey(r.site)===k);
+    if(HOME.site&&!cards.some(c=>c.k===HOME.site)) HOME.site='';
+    const rsSite=reports.filter(r=>inSite(r,HOME.site));
+    const cnt={all:rsSite.length,prog:rsSite.filter(r=>!isFinal(r)).length,attn:rsSite.filter(needsAttn).length,ready:rsSite.filter(isFinal).length};
+    const siteName=HOME.site?(cards.find(c=>c.k===HOME.site)||{}).n:'';
+    let h='<div class="hh"><div><h1>ניהול צ׳קליסטים<br><em>'+(siteName&&HOME.site!=='x'?esc(siteName):'מערכות אל־פסק')+'</em></h1><p>בחר אתר, עקוב אחרי ההתקדמות ופתח כל מודול בלחיצה.</p></div><span class="grow"></span>'+
+      '<button type="button" class="btn primary big" data-hnew>+ צ׳קליסט חדש'+(siteName&&HOME.site!=='x'?' ב'+esc(siteName):'')+'</button></div>';
+    h+='<div class="scards">'+cards.map(c=>{ const rs=reports.filter(r=>inSite(r,c.k)), rd=rs.filter(isFinal).length, pct=rs.length?Math.round(rd/rs.length*100):0;
+      return '<button type="button" class="scard" data-hsite="'+c.k+'" aria-pressed="'+(HOME.site===c.k)+'"><div class="sn">'+esc(c.n)+'</div><div class="su">'+esc(c.u)+'</div><div class="sv"><b>'+rs.length+'</b><span>מודולים</span></div><div class="sp"><i style="width:'+pct+'%"></i></div><div class="sr">'+rd+' מוכנים לעומס · '+pct+'%</div></button>'; }).join('')+'</div>';
+    h+='<div class="hk">'+[['all','הכל',''],['prog','בתהליך',''],['attn','דורש טיפול','warn'],['ready','מוכנים לעומס','ok']].map(([k,l,c])=>'<button type="button" class="'+c+'" data-hf="'+k+'" aria-pressed="'+(HOME.f===k)+'"><b>'+cnt[k]+'</b><span>'+l+'</span></button>').join('')+'</div>';
+    h+='<div class="htools"><input class="search" id="hq" placeholder="חיפוש מודול, רביע או מספר סידורי" aria-label="חיפוש" value="'+esc(HOME.q)+'"><div class="pills"><span class="pl">מיון</span><button type="button" data-hsort="recent" aria-pressed="'+(HOME.sort==='recent')+'">עודכן לאחרונה</button><button type="button" data-hsort="name" aria-pressed="'+(HOME.sort==='name')+'">לפי מודול</button></div></div>';
+    const q=norm(HOME.q);
+    let rs=rsSite.filter(r=>HOME.f==='all'||(HOME.f==='prog'&&!isFinal(r))||(HOME.f==='ready'&&isFinal(r))||(HOME.f==='attn'&&needsAttn(r)))
+      .filter(r=>!q||norm([r.module,quad(r),r.site,r.sn1,r.sn2].join(' ')).includes(q));
+    if(!reports.length) h+='<div class="hrows hempty"><b>עדיין אין צ׳קליסטים</b>בחר אתר ולחץ על „צ׳קליסט חדש” כדי להתחיל.</div>';
+    else if(!rsSite.length) h+='<div class="hrows hempty"><b>עדיין אין צ׳קליסטים באתר הזה</b>לחץ על „צ׳קליסט חדש” כדי לפתוח את הראשון.</div>';
+    else if(!rs.length) h+='<div class="hrows hempty"><b>לא נמצאו צ׳קליסטים</b>נסה סינון אחר או חיפוש אחר.</div>';
+    else {
+      const groups={}; rs.forEach(r=>{ const g=(siteInfo(r.site)?siteInfo(r.site).n:(r.site||'ללא אתר'))+'|'+(quad(r)||''); (groups[g]=groups[g]||[]).push(r); });
+      h+='<div class="hlist">'+Object.keys(groups).sort((a,b)=>a.localeCompare(b,'he',{numeric:true})).map(g=>{ const [sn,qq]=g.split('|'), it=groups[g];
+        it.sort(HOME.sort==='name'?(a,b)=>String(a.module).localeCompare(String(b.module),'he',{numeric:true}):(a,b)=>lastAct(b)-lastAct(a));
+        return '<div class="hgrp"><h3>'+esc(sn+(qq?' · רביע '+qq:''))+'<span>'+it.filter(isFinal).length+' / '+it.length+' מוכנים</span></h3><div class="hrows">'+it.map(r=>{
+          const fin=isFinal(r), st=stageOf(r), idle=!fin&&Date.now()-lastAct(r)>3*864e5, bad=flagsOf(r).some(f=>f.sev==='bad'), n=done(r);
+          const chip=fin?'<span class="stc ok">✓ מוכן לעומס</span>':st==='new'?'<span class="stc new">לא התחיל</span>':'<span class="stc">'+esc(STG[st].l)+'</span>';
+          const sns=[r.sn1,upsN(r)===2?r.sn2:''].filter(Boolean).join(' · ');
+          return '<div class="hr'+(fin?' ready':'')+'" data-hopen="'+esc(r.id)+'" role="button" tabindex="0" aria-label="'+esc('מודול '+(r.module||'')+', '+(fin?'מוכן לעומס':STG[st].l))+'">'+
+            '<div><div class="mn">'+esc(r.module||'?')+(fin?'<span class="lk">🔒</span>':'')+'</div><div class="ms">'+(upsN(r)===1?'UPS110':'UPS110 + UPS210')+(sns?' · <span dir="ltr">'+esc(sns)+'</span>':'')+'</div></div>'+
+            '<div class="pg"><div class="segs">'+SECS.map(k=>'<i class="'+(secDone(r,k)?'on':'')+'"></i>').join('')+'</div><div class="nx">'+chip+'<span>'+n+' / '+SECS.length+'</span>'+(idle?'<span class="stc idle">ללא התקדמות '+daysAgo(lastAct(r))+' ימים</span>':'')+(bad?'<span class="fl" title="חריגת איכות"></span>':'')+'</div></div>'+
+            '<div class="up"><b>'+agoTxt(lastAct(r))+'</b>עדכון אחרון</div>'+
+            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
+    }
+    h+='<div class="hfoot" id="hfoot"></div>';
+    const hadFocus=document.activeElement&&document.activeElement.id==='hq', sel=hadFocus?$('hq').selectionStart:0;
+    box.innerHTML=h;
+    if(foot) $('hfoot').appendChild(foot);
+    if(hadFocus){ const i=$('hq'); i.focus(); try{ i.setSelectionRange(sel,sel); }catch(_){} }
+  }
+  $('home').addEventListener('input',e=>{ if(e.target.id==='hq'){ HOME.q=e.target.value; paintHome(); } });
+  $('home').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.classList.contains('hr')) e.target.click(); });
+  $('home').addEventListener('click',async e=>{
+    const t=e.target.closest('[data-hsite],[data-hf],[data-hsort],[data-hnew],[data-hpdf],[data-hwa],[data-hopen]'); if(!t) return;
+    if(t.dataset.hsite!==undefined){ HOME.site=t.dataset.hsite; paintHome(); return; }
+    if(t.dataset.hf){ HOME.f=t.dataset.hf; paintHome(); return; }
+    if(t.dataset.hsort){ HOME.sort=t.dataset.hsort; paintHome(); return; }
+    if(t.dataset.hnew!==undefined){ if(cur&&cur.id) await flushAll(); const si=VSITES.find(x=>x.k===HOME.site); newChecklist(si?{site:si.n,quadrant:''}:null); setView('cl'); setTimeout(()=>$('module').focus(),50); return; }
+    if(t.dataset.hpdf){ await openReport(t.dataset.hpdf); $('pdfBtn').click(); return; }
+    if(t.dataset.hwa){ await openReport(t.dataset.hwa); $('waBtn').click(); return; }
+    if(t.dataset.hopen){ openReport(t.dataset.hopen); }
+  });
+
   /* ---------- boot ---------- */
-  const initialView=location.hash==='#status'?'dash':'cl';
+  const initialView=location.hash==='#status'?'dash':/^#m-/.test(location.hash)?'cl':'home';
   newChecklist(null);
+  let newDraftRestored=false;
   (function restoreNew(){ const d=readDraft(null); if(!d) return; if(Date.now()-d.at>14*864e5){ dropDraft(null); return; }
     Object.assign(cur,d.hdr||{}); SECS.forEach(k=>{ if(d.secs&&d.secs[k]) Object.assign(cur[k],d.secs[k]); }); paint(true);
     showDraftBanner('שוחזר צ׳קליסט שהתחלת למלא במכשיר הזה ועוד לא נשמר.');
-    restoreNew.pending=true; })();
-  if(initialView==='dash') setView('dash');
+    restoreNew.pending=true; newDraftRestored=true; })();
+  setView(newDraftRestored&&initialView==='home'?'cl':initialView);
   const use=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
   use('downloads').then(d=>{ downloads=d; $('backupBtn').hidden=!d; });
   use('user').then(async u=>{ userNs=u; if(u){ try{ me=await u.id(); }catch(_){} try{ canEdit=!!(await u.canEdit()); }catch(_){} paintLogo(); } });
@@ -1433,7 +1878,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         if(remote){ const wasFinal=isFinal(cur);
           const keep={}; SECS.forEach(k=>{ if(dirty[k]||$('st'+k[1]).contains(document.activeElement)){ keep[k]={}; TEXT[k].forEach(f=>keep[k][f]=cur[k][f]); } });
           const keepH=(dirty.hdr||$('hdr').contains(document.activeElement))?Object.fromEntries(HDR.map(f=>[f,cur[f]])):null;
-          cur=clone(remote); if(keepH&&!isFinal(cur)) Object.assign(cur,keepH); if(!isFinal(cur)) SECS.forEach(k=>{ if(keep[k]&&!cur[k].sig) Object.assign(cur[k],keep[k]); });
+          cur=clone(remote); if(!cur.s5||typeof cur.s5!=='object') cur.s5={company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null}; if(keepH&&!isFinal(cur)) Object.assign(cur,keepH); if(!isFinal(cur)) SECS.forEach(k=>{ if(keep[k]&&!cur[k].sig) Object.assign(cur[k],keep[k]); });
           paint(false); if(isFinal(cur)&&!wasFinal) verify();
           return; } }
       paintList();
