@@ -715,7 +715,7 @@ const CLOUD={ enabled:true, ns:'ups-checklists', config:{
   databaseURL:"https://electra-10-default-rtdb.firebaseio.com", projectId:"electra-10",
   storageBucket:"electra-10.firebasestorage.app", messagingSenderId:"751223433308", appId:"1:751223433308:web:c07da01b36d20e7b3cde99" } };
 let fdb=null, online=false, cloudErr='';
-const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Set(), inflight=new Set();
+const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Map(), inflight=new Set();
 
 function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,2);
   r.onupgradeneeded=()=>{ const d=r.result; ['docs:path','assets:id','orig:id'].forEach(x=>{ const [n,k]=x.split(':'); if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:k}); }); };
@@ -778,7 +778,9 @@ function colRef(path){ return { path, doc:id=>docRef(path+'/'+(id||hex(10))), ge
 const dbApi={ collection:n=>colRef(n), doc:p=>docRef(p) };
 
 /* ---- file / image store ---- */
-window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return 'blob:missing-asset'; };
+window.__PH='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="#EEF2F8"/><g transform="translate(200 118)"><circle r="34" fill="none" stroke="#C9D3E3" stroke-width="7"/><path d="M0-34A34 34 0 0 1 34 0" fill="none" stroke="#2D5BFF" stroke-width="7" stroke-linecap="round"/></g><text x="200" y="205" font-family="Rubik,Arial,sans-serif" font-size="26" font-weight="600" fill="#5B6478" text-anchor="middle">ממתינה לסנכרון</text><text x="200" y="240" font-family="Rubik,Arial,sans-serif" font-size="18" fill="#8A93A6" text-anchor="middle">מהמכשיר שצילם</text></svg>');
+window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return window.__PH; };
+window.__fetchReal=u=>{ if(u===window.__PH) return Promise.reject(new Error('missing')); return fetch(u); };
 async function blobToDataURL(b){ const u8=new Uint8Array(await b.arrayBuffer()); let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return 'data:'+(b.type||'application/octet-stream')+';base64,'+btoa(s); }
 async function decodeImg(b){ try{ return await createImageBitmap(b); }catch(_){}
   return await new Promise((res,rej)=>{ const u=URL.createObjectURL(b), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('decode')); }; im.src=u; }); }
@@ -831,24 +833,24 @@ async function pushAsset(id){
   try{ const b=rec.blob;
     if(b.size<=INLINE) await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(b)});
     else { const n=Math.ceil(b.size/CHUNK);
-      for(let i=getSent(id);i<n;i++){ await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).set(await b64Of(b.slice(i*CHUNK,(i+1)*CHUNK))); setSent(id,i+1); upProg.set(id,(i+1)/n); updateStatus(); }
-      await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,chunks:n,chunkSize:CHUNK}); }
+      for(let i=getSent(id);i<n;i++){ await fdb.ref(CLOUD.ns+'/assets/'+id+'/c/'+i).set(await b64Of(b.slice(i*CHUNK,(i+1)*CHUNK))); setSent(id,i+1); upProg.set(id,(i+1)/n); updateStatus(); }
+      await fdb.ref(CLOUD.ns+'/assets/'+id).update({type:rec.type,size:rec.size,at:rec.at,chunks:n,chunkSize:CHUNK}); }
     rec.dirty=false; dirtyAssets.delete(id); upProg.delete(id); tries.delete(id); setSent(id,0); cloudErr=''; await put('assets',rec); updateStatus(); }
   catch(e){ fail(e); const n=(tries.get(id)||0)+1; tries.set(id,n); setTimeout(()=>pushAsset(id),Math.min(60000,2000*2**Math.min(n,5))); } finally{ pushing.delete(id); } }
 const tries=new Map();
 /* safety net: anything still pending is retried every 20s while online (transient errors never leave files stuck) */
-setInterval(()=>{ if(fdb&&online&&pendingCount()) flushAll(); },20000);
+setInterval(()=>{ if(!fdb||!online) return; if(pendingCount()) flushAll(); if(failedAssets.size){ for(const [p,d] of docs) prefetch(p,d); } },15000);
 const upProg=new Map();
 async function fetchAsset(id){
-  if(!fdb||!online||inflight.has(id)||failedAssets.has(id)||assetMeta.has(id)) return; inflight.add(id);
+  if(!fdb||!online||inflight.has(id)||assetMeta.has(id)) return; if(failedAssets.has(id)&&Date.now()-failedAssets.get(id)<15000) return; inflight.add(id);
   try{ const v=(await fdb.ref(CLOUD.ns+'/assets/'+id).once('value')).val();
-    if(!v||(!v.data&&!v.chunks)){ failedAssets.add(id); return; }
+    if(!v||(!v.data&&!v.chunks)){ failedAssets.set(id,Date.now()); return; }
     let b;
     if(v.data){ const blob=await (await fetch(v.data)).blob(); b=blob.type===v.type?blob:new Blob([blob],{type:v.type}); }
-    else { const parts=[]; for(let i=0;i<v.chunks;i++){ const c=(await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).once('value')).val(); if(typeof c!=='string') throw new Error('chunk'); const bin=atob(c), u8=new Uint8Array(bin.length); for(let j=0;j<bin.length;j++) u8[j]=bin.charCodeAt(j); parts.push(u8); }
+    else { const parts=[]; for(let i=0;i<v.chunks;i++){ let c=v.c&&v.c[i]; if(typeof c!=='string') c=(await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).once('value')).val(); if(typeof c!=='string') throw new Error('chunk'); const bin=atob(c), u8=new Uint8Array(bin.length); for(let j=0;j<bin.length;j++) u8[j]=bin.charCodeAt(j); parts.push(u8); }
       b=new Blob(parts,{type:v.type}); }
     if(!assetMeta.has(id)){ const rec={id,type:v.type,size:b.size,at:v.at||Date.now(),blob:b,dirty:false}; await put('assets',rec); assetMeta.set(id,rec); urls.set(id,URL.createObjectURL(b)); notifyAll(); }
-  }catch(e){ failedAssets.add(id); } finally{ inflight.delete(id); } }
+  }catch(e){ failedAssets.set(id,Date.now()); } finally{ inflight.delete(id); } }
 function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
   ['s1','s2','s3','s4','s5'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
 function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
@@ -1037,9 +1039,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   }
   async function fileShas(r){
     const shas={}, items=[...live(r.s2.photos),...live(r.s3.files),...live((r.s4||{}).photos)];
-    for(const p of items){ try{ shas[p.assetId]=await sha(await (await fetch(src(p))).arrayBuffer()); }catch(_){ shas[p.assetId]='unreadable'; } }
+    for(const p of items){ try{ shas[p.assetId]=await sha(await (await window.__fetchReal(src(p))).arrayBuffer()); }catch(_){ shas[p.assetId]='unreadable'; } }
     for(const k of SECS){ const s=(r[k]||{}).sig; if(!s) continue; const key=s.assetId||'inline-'+r[k].signedAt;
-      try{ shas[key]= s.assetId? await sha(await (await fetch(src(s))).arrayBuffer()) : await sha(s.data); }catch(_){ shas[key]='unreadable'; } }
+      try{ shas[key]= s.assetId? await sha(await (await window.__fetchReal(src(s))).arrayBuffer()) : await sha(s.data); }catch(_){ shas[key]='unreadable'; } }
     return shas;
   }
   async function verify(){
@@ -1547,7 +1549,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
 
   /* ---------- PDF ---------- */
   const loadScript=u=>new Promise((res,rej)=>{ if(window.html2pdf) return res(); const s=document.createElement('script'); s.src=u; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-  async function toData(url,max,png){ try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height));
+  async function toData(url,max,png){ if(url===window.__PH) return ''; try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height));
     const c=document.createElement('canvas'); c.width=Math.round(bmp.width*s); c.height=Math.round(bmp.height*s); const x=c.getContext('2d'); if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);} x.drawImage(bmp,0,0,c.width,c.height);
     return c.toDataURL(png?'image/png':'image/jpeg',.88); }catch(_){ return ''; } }
   function pdfLabel(){ return cur&&cur.id?'⬇ הורד PDF':'⬇ טופס ריק להדפסה (PDF)'; }
