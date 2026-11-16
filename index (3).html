@@ -323,6 +323,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .hr .ha .btn.wa svg{width:16px;height:16px}
 .btn.delb{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line));background:var(--surface)}
 .btn.delb:hover{background:var(--bad-soft);border-color:var(--bad)}
+.ver{order:9;font-size:.78rem;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
 .stc{font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
 .stc.ok{background:var(--ok-soft);color:var(--ok)} .stc.new{background:var(--sunk);color:var(--ink-3);border:1px solid var(--line)} .stc.idle{background:var(--bad-soft);color:var(--bad)}
 @media (max-width:720px){.hr{grid-template-columns:1fr auto;gap:8px 12px}.hr .pg{grid-column:1/-1;order:3}.hr .up{display:none}}
@@ -563,7 +564,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     </div>
     <div class="toolbar">
       <button class="btn" id="newBtn">צ׳קליסט חדש</button>
-      <button class="btn delb" id="delBtn" type="button" hidden>🗑 מחק צ׳קליסט ריק</button>
+      <button class="btn delb" id="delBtn" type="button" hidden>🗑 מחק צ׳קליסט</button>
       <button class="btn brass" id="pdfBtn">⬇ טופס ריק להדפסה (PDF)</button>
       <button class="btn wa" id="waBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg><span>שיתוף בוואטסאפ</span></button>
       <span class="grow"></span>
@@ -698,7 +699,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     <div id="list"><p class="hint">טוען…</p></div>
     <div class="foot"><button class="btn small" id="backupBtn" hidden>הורד גיבוי מלא (JSON)</button><span id="storage"></span></div>
   </section>
-  <footer class="colophon"><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span><span>כל צ׳קליסט נעול נחתם בחותמת דיגיטלית SHA-256</span></footer>
+  <footer class="colophon"><span class="ver" id="appVer">גרסה 16.11 · 22:45</span><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span><span>כל צ׳קליסט נעול נחתם בחותמת דיגיטלית SHA-256</span></footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1017,11 +1018,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   const SITES=[{k:'bs',n:'בית שמש',ups:2},{k:'ms',n:'מסמיה',ups:1},{k:'hf',n:'חיפה',ups:2},{k:'in',n:'עידן הנגב',ups:2,hidden:true}];  /* עידן הנגב הוחלף בחיפה ומוסתר; צ׳קליסטים ישנים שלו נשמרים תחת "אתרים אחרים" */
   const VSITES=SITES.filter(x=>!x.hidden);
   function lev(a,b){ const m=a.length,n=b.length; let d=Array.from({length:n+1},(_,k)=>k); for(let x=1;x<=m;x++){ let prev=d[0]; d[0]=x; for(let y=1;y<=n;y++){ const t=d[y]; d[y]=Math.min(d[y]+1,d[y-1]+1,prev+(a[x-1]===b[y-1]?0:1)); prev=t; } } return d[n]; }
-  function siteKeyExact(v){ const t=String(v||'').replace(/[\s\-־_]/g,''); if(!t) return ''; if(/שמש/.test(t)||/^bs$/i.test(t)) return 'bs'; if(/מסמי/.test(t)) return 'ms'; if(/חיפה|haifa/i.test(t)) return 'hf'; if(/עידן|נגב/.test(t)) return 'in'; return 'x'; }
+  const letters=v=>String(v||'').normalize('NFC').replace(/[^\p{L}\p{N}]/gu,'');
+  function siteKeyExact(v){ const t=letters(v); if(!t) return ''; if(/שמש/.test(t)||/^bs$/i.test(t)) return 'bs'; if(/מסמי/.test(t)) return 'ms'; if(/חיפה|haifa/i.test(t)) return 'hf'; if(/עידן|נגב/.test(t)) return 'in'; return 'x'; }
   /* typo-tolerant: "בית שמם" → בית שמש (one wrong letter) */
-  function siteKey(v){ const k=siteKeyExact(v); if(k!=='x') return k; const t=String(v||'').replace(/[\s\-־_"׳']/g,'');
-    let best=null,bd=99; SITES.forEach(x=>{ const d=lev(t,x.n.replace(/\s/g,'')); if(d<bd){ bd=d; best=x; } });
-    return best&&bd<=Math.max(1,Math.floor(best.n.replace(/\s/g,'').length/5))?best.k:'x'; }
+  function siteKey(v){ const k=siteKeyExact(v); if(k!=='x') return k; const t=letters(v);
+    let best=null,bd=99; SITES.forEach(x=>{ const d=lev(t,letters(x.n)); if(d<bd){ bd=d; best=x; } });
+    return best&&bd<=Math.max(1,Math.floor(letters(best.n).length/5))?best.k:'x'; }
   const canonSite=v=>{ const k=siteKey(v), x=SITES.find(s=>s.k===k); return x?x.n:v; };
   const siteInfo=v=>SITES.find(x=>x.k===siteKey(v));
   /* מסמיה = UPS110 only. A checklist whose cleaning stage was already signed with UPS210 photos keeps both units. */
@@ -1843,9 +1845,9 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
             '<div><div class="mn">'+esc(r.module||'?')+(fin?'<span class="lk">🔒</span>':'')+'</div><div class="ms">'+(upsN(r)===1?'UPS110':'UPS110 + UPS210')+(sns?' · <span dir="ltr">'+esc(sns)+'</span>':'')+'</div></div>'+
             '<div class="pg"><div class="segs">'+SECS.map(k=>'<i class="'+(secDone(r,k)?'on':'')+'"></i>').join('')+'</div><div class="nx">'+chip+'<span>'+n+' / '+SECS.length+'</span>'+(idle?'<span class="stc idle">ללא התקדמות '+daysAgo(lastAct(r))+' ימים</span>':'')+(bad?'<span class="fl" title="חריגת איכות"></span>':'')+'</div></div>'+
             '<div class="up"><b>'+agoTxt(lastAct(r))+'</b>עדכון אחרון</div>'+
-            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':(isEmptyReport(r)?'<button type="button" class="btn small delb" data-hdel="'+esc(r.id)+'" title="מחק צ׳קליסט ריק" aria-label="מחק צ׳קליסט ריק">🗑</button>':'')+'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
+            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':(isEmptyReport(r)?'<button type="button" class="btn small delb" data-hdel="'+esc(r.id)+'" title="מחק צ׳קליסט" aria-label="מחק צ׳קליסט">🗑</button>':'')+'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
     }
-    h+='<div class="hfoot" id="hfoot"></div>';
+    h+='<div class="hfoot" id="hfoot"></div><div style="margin-top:10px"><span class="ver">גרסה 16.11 · 22:45</span></div>';
     const hadFocus=document.activeElement&&document.activeElement.id==='hq', sel=hadFocus?$('hq').selectionStart:0;
     box.innerHTML=h;
     if(foot) $('hfoot').appendChild(foot);
@@ -1866,11 +1868,14 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   });
 
   /* ---------- delete: only checklists that never started (no signature, photo or file) ---------- */
-  const isEmptyReport=r=>!!r&&!!r.id&&!isFinal(r)&&!SECS.some(k=>r[k]&&r[k].sig)&&!live((r.s2||{}).photos).length&&!live((r.s3||{}).files).length&&!live((r.s4||{}).photos).length&&![...pending.values()].some(p=>p.reportId===r.id);
+  const isEmptyReport=r=>!!r&&!!r.id&&!isFinal(r)&&!SECS.some(k=>r[k]&&r[k].sig);
+  const filesIn=r=>live((r.s2||{}).photos).length+live((r.s3||{}).files).length+live((r.s4||{}).photos).length;
   async function deleteReport(id){
     const r=reports.find(x=>x.id===id); if(!r) return;
-    if(!isEmptyReport(r)){ toast('אפשר למחוק רק צ׳קליסט שעוד לא התחיל: בלי חתימות, תמונות או קבצים.'); return; }
-    if(!confirm('למחוק את הצ׳קליסט '+(r.module||'')+' ('+[r.site,quad(r)&&'רביע '+quad(r)].filter(Boolean).join(', ')+')?\nהוא עדיין ריק, אין בו חתימות או תמונות. המחיקה סופית.')) return;
+    if(!isEmptyReport(r)){ toast('אי אפשר למחוק צ׳קליסט שיש בו חתימה.'); return; }
+    const nf=filesIn(r);
+    if(!confirm('למחוק את הצ׳קליסט '+(r.module||'')+' ('+[r.site,quad(r)&&'רביע '+quad(r)].filter(Boolean).join(', ')+')?\nאין בו חתימות'+(nf?', אבל יש בו '+nf+' תמונות/קבצים שיימחקו איתו':'')+'.\nהמחיקה סופית.')) return;
+    try{ const bin=JSON.parse(localStorage.getItem('cx-deleted')||'[]'); bin.unshift({at:Date.now(),id,doc:r}); localStorage.setItem('cx-deleted',JSON.stringify(bin.slice(0,50))); }catch(_){}
     try{ await col.doc(id).delete(); dropDraft(id); if(cur&&cur.id===id){ newChecklist(null); setView('home'); } toast('הצ׳קליסט '+(r.module||'')+' נמחק'); }
     catch(e){ toast('המחיקה נכשלה. נסה שוב.'); }
   }
