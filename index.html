@@ -321,6 +321,9 @@ details.logbox summary{cursor:pointer;font-weight:600}
 .hr .ha{display:flex;gap:6px}
 .hr .ha .btn{padding:7px 12px}
 .hr .ha .btn.wa svg{width:16px;height:16px}
+.btn.delb{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line));background:var(--surface)}
+.btn.delb:hover{background:var(--bad-soft);border-color:var(--bad)}
+.ver{order:9;font-size:.78rem;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
 .stc{font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
 .stc.ok{background:var(--ok-soft);color:var(--ok)} .stc.new{background:var(--sunk);color:var(--ink-3);border:1px solid var(--line)} .stc.idle{background:var(--bad-soft);color:var(--bad)}
 @media (max-width:720px){.hr{grid-template-columns:1fr auto;gap:8px 12px}.hr .pg{grid-column:1/-1;order:3}.hr .up{display:none}}
@@ -520,6 +523,48 @@ details.logbox summary{cursor:pointer;font-weight:600}
   #checklist .ssum{padding-inline-start:0}
   #checklist .seal{margin-inline:0}
 }
+
+/* ================= v17: coordinator card, photo tiles, PDF progress ================= */
+#checklist .coord{border-color:color-mix(in srgb,var(--brand) 30%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--brand-soft) 75%,var(--surface)),var(--surface) 140px)}
+#checklist .coord .badge.co{background:linear-gradient(135deg,var(--brand),var(--cyan));box-shadow:0 8px 18px -8px var(--brand)}
+#checklist .coord .badge svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+#checklist .coord.signed{border-color:color-mix(in srgb,var(--ok) 32%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--ok-soft) 70%,var(--surface)),var(--surface) 130px)}
+#checklist .coord.signed .badge.co{background:linear-gradient(135deg,var(--ok),#22C3A6);box-shadow:0 8px 18px -8px var(--ok)}
+#checklist .state.ok{background:var(--ok-soft);color:var(--ok)}
+.cosub{margin:-6px 0 18px;color:var(--ink-2);font-size:.9rem;padding-inline-start:58px}
+#checklist .coord .actions .btn:not(.primary){background:var(--surface);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+#checklist #s2photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+#checklist #s2photos .grph{grid-column:1/-1;margin:12px 2px 0;display:flex;align-items:center;gap:10px;border-bottom:0;padding:0;font-size:.95rem}
+#checklist #s2photos .grph::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--brand-soft),transparent)}
+#checklist #s2photos .grph:first-child{margin-top:0}
+#checklist #s2photos .cellrow{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:8px;padding:10px;border-radius:18px;min-height:0;position:relative;box-shadow:var(--shadow-s);transition:border-color .2s,box-shadow .2s,transform .15s}
+#checklist #s2photos .cellrow.click:hover{transform:translateY(-2px)}
+#checklist #s2photos .cellrow .cth{order:-1;width:100%;height:auto;aspect-ratio:4/3;border-radius:12px;border:0}
+#checklist #s2photos .cellrow:not(:has(.cth))::before{content:"";order:-1;display:block;width:100%;aspect-ratio:4/3;border-radius:12px;border:1.5px dashed color-mix(in srgb,var(--brand) 32%,var(--line));
+  background:var(--sunk) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D5BFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h3l2-3h6l2 3h3v11H4z'/%3E%3Ccircle cx='12' cy='13' r='3.5'/%3E%3C/svg%3E") center/36px no-repeat}
+#checklist #s2photos .cellrow .cn{font-size:.95rem;line-height:1.3}
+#checklist #s2photos .cellrow .cs{position:absolute;top:18px;inset-inline-start:18px;background:var(--surface);padding:3px 10px;border-radius:999px;box-shadow:0 4px 12px -4px rgba(10,15,28,.35);font-size:.74rem;font-weight:600}
+#checklist #s2photos .cellrow .cs:empty{display:none}
+#checklist #s2photos .cellrow .scan{justify-content:center;padding:8px 10px;border-radius:12px;font-size:.82rem}
+#checklist #s2photos .cellrow .acts{margin:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+#checklist #s2photos .cellrow .acts:empty{display:none}
+#checklist #s2photos .cellrow .acts .btn{padding:7px 6px;font-size:.78rem;justify-content:center;border-radius:10px}
+#checklist #s2photos .cellrow:has(.cs.ok){border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
+#checklist #s2photos .cellrow:has(.scan input:checked){box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 15%,transparent),var(--shadow-s)}
+#checklist .s2prog{border-radius:14px}
+.pdfov{position:fixed;inset:0;z-index:2147483600;background:rgba(10,15,28,.84);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px}
+.pdfcard{background:var(--surface);color:var(--ink);border-radius:24px;padding:28px 32px;min-width:260px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.pdfcard b{display:block;font-size:1.12rem;margin-top:14px}
+.pdfcard span{display:block;color:var(--ink-2);font-size:.9rem;margin-top:4px;font-variant-numeric:tabular-nums}
+.pdfsp{width:44px;height:44px;margin:0 auto;border-radius:50%;border:4px solid var(--brand-soft);border-top-color:var(--brand);animation:pdfspin .9s linear infinite}
+@keyframes pdfspin{to{transform:rotate(360deg)}}
+@media (max-width:600px){
+  #checklist #s2photos{grid-template-columns:1fr 1fr;gap:9px}
+  #checklist #s2photos .cellrow{padding:8px;border-radius:15px}
+  #checklist #s2photos .cellrow .cs{top:14px;inset-inline-start:14px}
+  #checklist #s2photos .cellrow .cn{font-size:.86rem}
+  .cosub{padding-inline-start:0}
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -561,6 +606,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     </div>
     <div class="toolbar">
       <button class="btn" id="newBtn">צ׳קליסט חדש</button>
+      <button class="btn delb" id="delBtn" type="button" hidden>🗑 מחק צ׳קליסט</button>
       <button class="btn brass" id="pdfBtn">⬇ טופס ריק להדפסה (PDF)</button>
       <button class="btn wa" id="waBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg><span>שיתוף בוואטסאפ</span></button>
       <span class="grow"></span>
@@ -584,6 +630,17 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f" id="sn2f"><span>UPS210 מספר סידורי</span><input id="sn2" autocomplete="off" dir="ltr" style="text-align:right"></label>
       </div>
       <div class="hint" id="hdrHint">הצ׳קליסט נשמר אוטומטית מרגע שכל השדות המסומנים מולאו.</div>
+    </section>
+
+    <section class="sec coord" id="coordSec">
+      <div class="sec-h"><span class="badge co" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span><h2>אחראי מתאם תדיראן</h2><span class="state" id="coState"></span></div>
+      <p class="cosub">האחראי על הצ׳קליסט מטעם תדיראן. נדרשת חתימתו לפני הנעילה.</p>
+      <div class="grid">
+        <label class="f"><span class="req">שם מלא</span><input id="coName" data-co="name" autocomplete="name"></label>
+        <label class="f"><span class="req">תעודת זהות</span><input id="coTz" data-co="tz" inputmode="numeric" autocomplete="off" dir="ltr" style="text-align:right"></label>
+      </div>
+      <div class="sig" data-sig="coord"></div>
+      <div class="actions"><button class="btn primary" id="coSign" type="button">חתום כאחראי</button><span class="err" id="coErr"></span></div>
     </section>
 
     <div class="timeline">
@@ -627,7 +684,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f"><span class="req">תאריך ביצוע איטומי האש</span><input data-f="date" type="date"></label>
       </div>
       <div style="margin-top:14px">
-        <div class="hint req" style="margin:0 0 8px">תמונות איטומי האש לאחר הביצוע (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)</div>
+        <div class="hint req" style="margin:0 0 8px">תמונות איטומי האש לאחר הביצוע (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)</div>
         <label class="drop" id="s4drop"><input type="file" id="s4files" accept="image/*" multiple><b>צלם או בחר תמונות</b><small>תמונות איטומי האש לאחר הביצוע</small></label>
         <div class="files" id="s4list"></div>
       </div>
@@ -668,8 +725,8 @@ details.logbox summary{cursor:pointer;font-weight:600}
         <label class="f"><span>תאריך אישור הבודק</span><input data-f="date" type="date"></label>
       </div>
       <div style="margin-top:14px">
-        <div class="hint" style="margin:0 0 8px">אישור הבודק (תמונה או PDF, עד 20MB לקובץ)</div>
-        <label class="drop" id="s3drop"><input type="file" id="s3files" accept="image/*,application/pdf" multiple><b>צרף את אישור הבודק</b><small>תמונה או PDF, עד 20MB לקובץ</small></label>
+        <div class="hint" style="margin:0 0 8px">אישור הבודק (תמונה או PDF, עד 60MB לקובץ)</div>
+        <label class="drop" id="s3drop"><input type="file" id="s3files" accept="image/*,application/pdf" multiple><b>צרף את אישור הבודק</b><small>תמונה או PDF, עד 60MB לקובץ</small></label>
         <div class="files" id="s3list"></div>
       </div>
       <div class="clean">
@@ -695,7 +752,7 @@ details.logbox summary{cursor:pointer;font-weight:600}
     <div id="list"><p class="hint">טוען…</p></div>
     <div class="foot"><button class="btn small" id="backupBtn" hidden>הורד גיבוי מלא (JSON)</button><span id="storage"></span></div>
   </section>
-  <footer class="colophon"><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span><span>כל צ׳קליסט נעול נחתם בחותמת דיגיטלית SHA-256</span></footer>
+  <footer class="colophon"><span class="ver" id="appVer">גרסה 17.11 · 20:45</span><span class="wordmark" aria-label="CX-ELECTRA"><span class="wm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.6 1.8 4.6 13.4h6l-1.1 8.8 9.4-12h-6.1l.8-8.4z"/></svg></span><span class="wm-txt" aria-hidden="true"><span class="wm-main"><span class="wm-cx">CX</span><span class="wm-bar"></span><span class="wm-el">ELECTRA</span></span><span class="wm-sub">Electrical Commissioning</span></span></span><span>כל צ׳קליסט נעול נחתם בחותמת דיגיטלית SHA-256</span></footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 
@@ -715,13 +772,14 @@ const CLOUD={ enabled:true, ns:'ups-checklists', config:{
   databaseURL:"https://electra-10-default-rtdb.firebaseio.com", projectId:"electra-10",
   storageBucket:"electra-10.firebasestorage.app", messagingSenderId:"751223433308", appId:"1:751223433308:web:c07da01b36d20e7b3cde99" } };
 let fdb=null, online=false, cloudErr='';
-const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Set(), inflight=new Set();
+const dirtyDocs=new Set(), dirtyAssets=new Set(), synced=new Set(), ver=new Map(), failedAssets=new Map(), inflight=new Set();
 
-function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
-  r.onupgradeneeded=()=>{ const d=r.result; d.createObjectStore('docs',{keyPath:'path'}); d.createObjectStore('assets',{keyPath:'id'}); };
+function openDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,2);
+  r.onupgradeneeded=()=>{ const d=r.result; ['docs:path','assets:id','orig:id'].forEach(x=>{ const [n,k]=x.split(':'); if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:k}); }); };
   r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
 const put=(store,val)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).put(val); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
 const del=(store,key)=>new Promise((res,rej)=>{ if(!idb) return res(); const t=idb.transaction(store,'readwrite'); t.objectStore(store).delete(key); t.oncomplete=()=>res(); t.onerror=t.onabort=()=>rej(t.error); });
+const getOne=(store,key)=>new Promise(res=>{ if(!idb) return res(null); try{ const r=idb.transaction(store,'readonly').objectStore(store).get(key); r.onsuccess=()=>res(r.result||null); r.onerror=()=>res(null); }catch(_){ res(null); } });
 const getAll=store=>new Promise((res,rej)=>{ const r=idb.transaction(store,'readonly').objectStore(store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
 
 const ready=(async()=>{
@@ -743,6 +801,8 @@ function merge(t,p){ for(const k of Object.keys(p)){ const v=p[k]; if(v===undefi
 function normalize(path,d){ if(!/^reports\/[^/]+$/.test(path)||!isObj(d)) return d;
   d.log=d.log||{}; for(const k of ['s1','s2','s3','s4','s5']){ d[k]=isObj(d[k])?d[k]:{}; if(d[k].sig===undefined) d[k].sig=null; }
   d.s2.photos=d.s2.photos||{}; d.s2.cells=d.s2.cells||{}; d.s2.scans=d.s2.scans||{}; d.s3.files=d.s3.files||{}; d.s4.photos=d.s4.photos||{}; return d; }
+const isMsSite=r=>/מסמי/.test(String((r&&r.site)||''));
+function fixLab(r,id){ const m=/^u(\d)c(\d)$/.exec(id||''); if(!m) return FIXLAB[id]; const u=+m[1],c=+m[2]; return 'UPS'+u+'10_'+(c<=5?'תא'+((u===1&&!isMsSite(r))?c+5:c):'תמונה_נוספת_'+(c-5)); }
 const FIXLAB={}; for(let u=1;u<=2;u++){ const U='UPS'+u+'10'; for(let c=1;c<=7;c++) FIXLAB['u'+u+'c'+c]=c<=5?U+'_תא'+(u===1?c+5:c):U+'_תמונה_נוספת_'+(c-5); FIXLAB['u'+u+'body']=U+'_גוף'; FIXLAB['u'+u+'ceil']=U+'_תקרה'; }
 const keyOf=p=>p.split('/').join('~'), pathOf=k=>k.split('~').join('/');
 const stable=o=>{ if(Array.isArray(o)) return '['+o.map(stable).join(',')+']'; if(isObj(o)) return '{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'; return JSON.stringify(o===undefined?null:o); };
@@ -770,26 +830,36 @@ function docRef(path){ return {
   get:async()=>{ await ready; return docSnap(path); },
   set:async data=>{ await ready; await commit(path,clone(data),null); },
   update:async patch=>{ await ready; const cur=docs.get(path); if(cur===undefined){ const e=new Error('not-found'); e.code='not-found'; throw e; } const p=clone(patch); await commit(path,merge(clone(cur),p),p); },
-  delete:async()=>{ await ready; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); await del('docs',path); notify(path); if(fdb&&online) fdb.ref(CLOUD.ns+'/docs/'+keyOf(path)).remove().catch(()=>{}); },
+  delete:async()=>{ await ready; docs.delete(path); dirtyDocs.delete(path); synced.delete(path); await del('docs',path); notify(path); tomb.add(keyOf(path)); saveTomb(); pushTombs(); },
   onSnapshot:cb=>listen('doc',path,cb),
   collection:n=>colRef(path+'/'+n) }; }
 function colRef(path){ return { path, doc:id=>docRef(path+'/'+(id||hex(10))), get:async()=>{ await ready; return colSnap(path); }, onSnapshot:cb=>listen('col',path,cb) }; }
 const dbApi={ collection:n=>colRef(n), doc:p=>docRef(p) };
 
 /* ---- file / image store ---- */
-window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return 'blob:missing-asset'; };
+window.__PH='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="#EEF2F8"/><g transform="translate(200 118)"><circle r="34" fill="none" stroke="#C9D3E3" stroke-width="7"/><path d="M0-34A34 34 0 0 1 34 0" fill="none" stroke="#2D5BFF" stroke-width="7" stroke-linecap="round"/></g><text x="200" y="205" font-family="Rubik,Arial,sans-serif" font-size="26" font-weight="600" fill="#5B6478" text-anchor="middle">ממתינה לסנכרון</text><text x="200" y="240" font-family="Rubik,Arial,sans-serif" font-size="18" fill="#8A93A6" text-anchor="middle">מהמכשיר שצילם</text></svg>');
+window.__assetURL=id=>{ if(urls.has(id)) return urls.get(id); if(fdb) fetchAsset(id); return window.__PH; };
+window.__fetchReal=u=>{ if(u===window.__PH) return Promise.reject(new Error('missing')); return fetch(u); };
 async function blobToDataURL(b){ const u8=new Uint8Array(await b.arrayBuffer()); let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return 'data:'+(b.type||'application/octet-stream')+';base64,'+btoa(s); }
-async function shrink(b){ const bmp=await createImageBitmap(b); const sc=Math.min(1,1800/Math.max(bmp.width,bmp.height));
-  const c=document.createElement('canvas'); c.width=Math.round(bmp.width*sc); c.height=Math.round(bmp.height*sc); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height);
-  return new Promise((res,rej)=>c.toBlob(r=>r?res(r):rej(new Error('encode')),'image/jpeg',.85)); }
-const MAX_ASSET=6.5*1024*1024; /* RTDB node limit is 10MB and base64 adds ~33% */
+async function decodeImg(b){ try{ return await createImageBitmap(b); }catch(_){}
+  return await new Promise((res,rej)=>{ const u=URL.createObjectURL(b), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); res(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('decode')); }; im.src=u; }); }
+async function shrink(b,max,q){ max=max||1800; q=q||.85; const bmp=await decodeImg(b); const w0=bmp.width||bmp.naturalWidth, h0=bmp.height||bmp.naturalHeight; if(!w0||!h0) throw new Error('decode');
+  const sc=Math.min(1,max/Math.max(w0,h0));
+  const c=document.createElement('canvas'); c.width=Math.round(w0*sc); c.height=Math.round(h0*sc); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height); if(bmp.close) bmp.close();
+  return new Promise((res,rej)=>c.toBlob(r=>{ c.width=c.height=0; r?res(r):rej(new Error('encode')); },'image/jpeg',q)); }
+/* Heavy files: any photo is accepted. The full original stays on this device (IndexedDB "orig", exported in the ZIP);
+   the cloud gets a high-quality copy (up to 3200px) uploaded in 1MB chunks, resumable, published only once complete. */
+const MAX_ORIG=100*1024*1024, MAX_CLOUD=60*1024*1024, CLOUD_PX=3200, CHUNK=1024*1024, INLINE=900*1024;
 const assetsApi={
   async upload(blob,opts){ await ready;
     let type=(opts&&opts.type)||blob.type||'application/octet-stream';
     let b=blob.type===type?blob:new Blob([blob],{type});
-    if(/^image\/(jpeg|png|webp)$/.test(type)&&b.size>700*1024){ try{ b=await shrink(b); type='image/jpeg'; }catch(_){} }
-    if(b.size>MAX_ASSET) throw {code:'too_large'};
-    const rec={id:hex(16),type,size:b.size,at:Date.now(),blob:b,dirty:true};
+    if(b.size>MAX_ORIG) throw {code:'too_large'};
+    const orig=b, otype=type;
+    if(/^image\//.test(type)&&type!=='image/gif'&&(b.size>3*1024*1024||!/^image\/(jpeg|png|webp)$/.test(type))){ try{ b=await shrink(b,CLOUD_PX,.9); type='image/jpeg'; }catch(_){} }
+    if(b.size>MAX_CLOUD) throw {code:'too_large'};
+    const rec={id:hex(16),type,size:b.size,at:Date.now(),blob:b,dirty:true,orig:b!==orig?{type:otype,size:orig.size}:null};
+    if(rec.orig) await put('orig',{id:rec.id,type:otype,blob:orig});
     await put('assets',rec); assetMeta.set(rec.id,rec); dirtyAssets.add(rec.id); urls.set(rec.id,URL.createObjectURL(b)); pushAsset(rec.id);
     return {id:rec.id,sizeBytes:b.size,contentType:type,url:urls.get(rec.id)}; },
   async list(){ await ready; let bytes=0; assetMeta.forEach(a=>bytes+=a.size);
@@ -803,7 +873,7 @@ function updateStatus(){ const el=document.getElementById('cloudStatus'); if(!el
   if(!fdb) t='מצב מקומי בלבד: אין חיבור לשירות הענן. הנתונים שמורים במכשיר הזה.';
   else if(cloudErr) t='שגיאת סנכרון לענן ('+cloudErr+'). השינויים שמורים במכשיר.'+(/PERMISSION/i.test(cloudErr)?' כללי ה־Realtime Database חוסמים את הנתיב '+CLOUD.ns+'.':'');
   else if(!online) t='לא מחובר לענן.'+(pendingCount()?' '+pendingCount()+' פריטים ממתינים.':'')+' השינויים שמורים במכשיר ויסונכרנו בחיבור הבא.';
-  else if(pendingCount()) t='מסנכרן '+pendingCount()+' פריטים לענן…';
+  else if(pendingCount()){ const pr=[...upProg.values()]; t='מסנכרן '+pendingCount()+' פריטים לענן…'+(pr.length?' (קובץ גדול: '+Math.round(pr[0]*100)+'%)':''); }
   else t='מסונכרן לענן ✓';
   el.textContent=t; }
 const fail=e=>{ cloudErr=(e&&(e.code||e.message))||'error'; updateStatus(); };
@@ -814,22 +884,42 @@ function pushDoc(path,patch){
   else p=ref.set(clone(docs.get(path)));
   p.then(()=>{ synced.add(path); cloudErr=''; if(ver.get(path)===v){ dirtyDocs.delete(path); put('docs',{path,data:docs.get(path),dirty:false}).catch(()=>{}); } updateStatus(); },fail);
   updateStatus(); }
+const pushing=new Set();
+const sentKey=id=>'cxa-sent-'+id, getSent=id=>{ try{ return +localStorage.getItem(sentKey(id))||0; }catch(_){ return 0; } }, setSent=(id,n)=>{ try{ n?localStorage.setItem(sentKey(id),n):localStorage.removeItem(sentKey(id)); }catch(_){} };
+const b64Of=b=>new Promise((res,rej)=>{ const f=new FileReader(); f.onload=()=>res(String(f.result).split(',')[1]||''); f.onerror=()=>rej(f.error); f.readAsDataURL(b); });
 async function pushAsset(id){
-  if(!fdb||!online) return updateStatus(); const rec=assetMeta.get(id); if(!rec) return;
-  try{ await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(rec.blob)});
-    rec.dirty=false; dirtyAssets.delete(id); cloudErr=''; await put('assets',rec); updateStatus(); }catch(e){ fail(e); } }
+  if(!fdb||!online) return updateStatus(); const rec=assetMeta.get(id); if(!rec||!rec.dirty||pushing.has(id)) return; pushing.add(id);
+  try{ const b=rec.blob;
+    if(b.size<=INLINE) await fdb.ref(CLOUD.ns+'/assets/'+id).set({type:rec.type,size:rec.size,at:rec.at,data:await blobToDataURL(b)});
+    else { const n=Math.ceil(b.size/CHUNK);
+      for(let i=getSent(id);i<n;i++){ await fdb.ref(CLOUD.ns+'/assets/'+id+'/c/'+i).set(await b64Of(b.slice(i*CHUNK,(i+1)*CHUNK))); setSent(id,i+1); upProg.set(id,(i+1)/n); updateStatus(); }
+      await fdb.ref(CLOUD.ns+'/assets/'+id).update({type:rec.type,size:rec.size,at:rec.at,chunks:n,chunkSize:CHUNK}); }
+    rec.dirty=false; dirtyAssets.delete(id); upProg.delete(id); tries.delete(id); setSent(id,0); cloudErr=''; await put('assets',rec); updateStatus(); }
+  catch(e){ fail(e); const n=(tries.get(id)||0)+1; tries.set(id,n); setTimeout(()=>pushAsset(id),Math.min(60000,2000*2**Math.min(n,5))); } finally{ pushing.delete(id); } }
+const tries=new Map();
+/* safety net: anything still pending is retried every 20s while online (transient errors never leave files stuck) */
+setInterval(()=>{ if(!fdb||!online) return; if(pendingCount()) flushAll(); if(failedAssets.size){ for(const [p,d] of docs) prefetch(p,d); } },15000);
+const upProg=new Map();
 async function fetchAsset(id){
-  if(!fdb||!online||inflight.has(id)||failedAssets.has(id)||assetMeta.has(id)) return; inflight.add(id);
+  if(!fdb||!online||inflight.has(id)||assetMeta.has(id)) return; if(failedAssets.has(id)&&Date.now()-failedAssets.get(id)<15000) return; inflight.add(id);
   try{ const v=(await fdb.ref(CLOUD.ns+'/assets/'+id).once('value')).val();
-    if(!v||!v.data){ failedAssets.add(id); return; }
-    const blob=await (await fetch(v.data)).blob(), b=blob.type===v.type?blob:new Blob([blob],{type:v.type});
+    if(!v||(!v.data&&!v.chunks)){ failedAssets.set(id,Date.now()); return; }
+    let b;
+    if(v.data){ const blob=await (await fetch(v.data)).blob(); b=blob.type===v.type?blob:new Blob([blob],{type:v.type}); }
+    else { const parts=[]; for(let i=0;i<v.chunks;i++){ let c=v.c&&v.c[i]; if(typeof c!=='string') c=(await fdb.ref(CLOUD.ns+'/chunks/'+id+'/'+i).once('value')).val(); if(typeof c!=='string') throw new Error('chunk'); const bin=atob(c), u8=new Uint8Array(bin.length); for(let j=0;j<bin.length;j++) u8[j]=bin.charCodeAt(j); parts.push(u8); }
+      b=new Blob(parts,{type:v.type}); }
     if(!assetMeta.has(id)){ const rec={id,type:v.type,size:b.size,at:v.at||Date.now(),blob:b,dirty:false}; await put('assets',rec); assetMeta.set(id,rec); urls.set(id,URL.createObjectURL(b)); notifyAll(); }
-  }catch(e){ failedAssets.add(id); } finally{ inflight.delete(id); } }
+  }catch(e){ failedAssets.set(id,Date.now()); } finally{ inflight.delete(id); } }
 function assetIdsOf(r){ const ids=[]; Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>p&&p.assetId&&ids.push(p.assetId));
-  ['s1','s2','s3','s4','s5'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
+  ['s1','s2','s3','s4','s5','coord'].forEach(k=>{ const g=r[k]&&r[k].sig; if(g&&g.assetId) ids.push(g.assetId); }); return ids; }
 function prefetch(path,d){ if(/^reports\/[^/]+$/.test(path)) assetIdsOf(d).forEach(id=>{ if(!urls.has(id)) fetchAsset(id); }); }
 function flushAll(){ [...dirtyDocs].forEach(p=>pushDoc(p,null)); [...dirtyAssets].forEach(pushAsset); }
+/* deletes survive being offline: kept as tombstones until the cloud confirms */
+const tomb=new Set((()=>{ try{ return JSON.parse(localStorage.getItem('cx-tombstones')||'[]'); }catch(_){ return []; } })());
+function saveTomb(){ try{ localStorage.setItem('cx-tombstones',JSON.stringify([...tomb])); }catch(_){} }
+function pushTombs(){ if(!fdb||!online) return; tomb.forEach(k=>fdb.ref(CLOUD.ns+'/docs/'+k).remove().then(()=>{ tomb.delete(k); saveTomb(); }).catch(()=>{})); }
 function applyRemote(key,val){
+  if(tomb.has(key)){ pushTombs(); return; }
   if(val===null||val===undefined) return; const path=pathOf(key), data=normalize(path,val); synced.add(path);
   const local=docs.get(path);
   if(local&&dirtyDocs.has(path)&&!same(path,local,data)){ if((local.updatedAt||0)>=(data.updatedAt||0)){ pushDoc(path,null); return; } dirtyDocs.delete(path); }
@@ -839,7 +929,7 @@ function removeRemote(key){ const path=pathOf(key); if(!docs.has(path)) return; 
 function initCloud(){
   if(!CLOUD.enabled||!window.firebase) return;
   try{ const app=(firebase.apps||[]).find(a=>a.name==='ups')||firebase.initializeApp(CLOUD.config,'ups'); fdb=app.database(); }catch(e){ fdb=null; return; }
-  fdb.ref('.info/connected').on('value',s=>{ online=!!s.val(); if(online){ failedAssets.clear(); flushAll(); for(const [p,d] of docs) prefetch(p,d); } updateStatus(); });
+  fdb.ref('.info/connected').on('value',s=>{ online=!!s.val(); if(online){ failedAssets.clear(); pushTombs(); flushAll(); for(const [p,d] of docs) prefetch(p,d); } updateStatus(); });
   const dr=fdb.ref(CLOUD.ns+'/docs'), on=s=>{ cloudErr=''; applyRemote(s.key,s.val()); updateStatus(); };
   dr.on('child_added',on,fail); dr.on('child_changed',on,fail); dr.on('child_removed',s=>removeRemote(s.key),fail); }
 const userApi={ id:async()=>'local', canEdit:async()=>true };
@@ -890,14 +980,15 @@ async function exportZip(){
   const add=async(folder,name,id,type)=>{ const a=assetMeta.get(id); if(!a) return; seen.add(id);
     let base=withExt(safe(name)||id,type||a.type), full=folder+'/'+base, i=1;
     while(used.has(full)){ const m=base.match(/^(.*?)(\.[A-Za-z0-9]+)?$/); full=folder+'/'+m[1]+'_'+(++i)+(m[2]||''); }
-    used.add(full); files.push({name:full,data:new Uint8Array(await a.blob.arrayBuffer())}); };
+    const o=a.orig?await getOne('orig',id):null; if(o&&o.type&&o.type!==a.type) full=full.replace(/\.[A-Za-z0-9]{2,5}$/,'')+(EXT[o.type]||('.'+(o.type.split('/')[1]||'bin')));
+    used.add(full); files.push({name:full,data:new Uint8Array(await (o?o.blob:a.blob).arrayBuffer())}); };
   for(const r of reportDocs()){
     const folder=safe([r.site,quadOf(r),r.module].filter(Boolean).join('_'))||r.id;
     const cl=Object.values((r.s2&&r.s2.cells)||{}).filter(c=>c&&!c.removed).sort((x,y)=>((x.t||0)-(y.t||0))||String(x.id).localeCompare(String(y.id)));
-    for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(FIXLAB[p.cell]?FIXLAB[p.cell]+'_':ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
+    for(const p of Object.values((r.s2&&r.s2.photos)||{})){ const ci=p.cell?cl.findIndex(c=>c.id===p.cell):-1; await add(folder+'/photos',(p.removed?'removed_':'')+(fixLab(r,p.cell)?fixLab(r,p.cell)+'_':ci>=0?'תא'+(ci+1)+'_':'')+(p.name||p.assetId),p.assetId,p.type); }
     for(const p of Object.values((r.s4&&r.s4.photos)||{})) await add(folder+'/fire-stopping',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
     for(const p of Object.values((r.s3&&r.s3.files)||{})) await add(folder+'/inspector',(p.removed?'removed_':'')+(p.name||p.assetId),p.assetId,p.type);
-    for(const k of ['s1','s5','s2','s3','s4']){ const s=r[k]&&r[k].sig; if(!s) continue;
+    for(const k of ['coord','s1','s5','s4','s2','s3']){ const s=r[k]&&r[k].sig; if(!s) continue;
       if(s.assetId) await add(folder+'/signatures','signature-'+k+'.png',s.assetId,'image/png');
       else if(s.data){ const b=await (await fetch(s.data)).blob(); files.push({name:folder+'/signatures/signature-'+k+'.png',data:new Uint8Array(await b.arrayBuffer())}); } } }
   for(const a of assetMeta.values()) if(!seen.has(a.id)) await add('unlinked',a.id,a.id,a.type);
@@ -907,7 +998,7 @@ async function exportZip(){
 function missingAssets(){ const miss=new Set();
   for(const r of reportDocs()){
     Object.values((r.s2&&r.s2.photos)||{}).concat(Object.values((r.s3&&r.s3.files)||{}),Object.values((r.s4&&r.s4.photos)||{})).forEach(p=>{ if(p.assetId&&!assetMeta.has(p.assetId)) miss.add(p.assetId); });
-    ['s1','s2','s3','s4','s5'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
+    ['s1','s2','s3','s4','s5','coord'].forEach(k=>{ const s=r[k]&&r[k].sig; if(s&&s.assetId&&!assetMeta.has(s.assetId)) miss.add(s.assetId); }); }
   return miss.size; }
 async function restoreBackup(obj){ await ready;
   if(!obj||!Array.isArray(obj.reports)) throw new Error('bad-format');
@@ -975,24 +1066,35 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       s2:{name:'',role:'',date:'',notes:'',declared:false,photos:{},cells:{},scans:{},fixed:true,sig:null,signedAt:0},
       s4:{name:'',role:'',date:'',notes:'',declared:false,photos:{},sig:null,signedAt:0},
       s5:{company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null,signedAt:0},
-      s3:{name:'',inspector:'',no:'',date:'',clean1:false,clean2:false,declared:false,files:{},sig:null,signedAt:0}};
+      s3:{name:'',inspector:'',no:'',date:'',clean1:false,clean2:false,declared:false,files:{},sig:null,signedAt:0},
+      coord:{name:'',tz:'',sig:null,signedAt:0}};
   }
+  function normCoord(c){ if(!c) return c; if(!c.coord||typeof c.coord!=='object') c.coord={}; ['name','tz'].forEach(f=>{ if(c.coord[f]==null) c.coord[f]=''; }); if(c.coord.sig===undefined) c.coord.sig=null; return c; }
   const cellsOf=r=>live((r.s2&&r.s2.cells)||{}).sort((a,b)=>((a.t||0)-(b.t||0))||String(a.id).localeCompare(String(b.id)));
   /* fixed inspection items: per UPS, 7 cells + the UPS body + the UPS ceiling (edit these 3 numbers to change the scheme) */
   const SITES=[{k:'bs',n:'בית שמש',ups:2},{k:'ms',n:'מסמיה',ups:1},{k:'hf',n:'חיפה',ups:2},{k:'in',n:'עידן הנגב',ups:2,hidden:true}];  /* עידן הנגב הוחלף בחיפה ומוסתר; צ׳קליסטים ישנים שלו נשמרים תחת "אתרים אחרים" */
   const VSITES=SITES.filter(x=>!x.hidden);
-  function siteKey(v){ const t=String(v||'').replace(/[\s\-־_]/g,''); if(!t) return ''; if(/שמש/.test(t)||/^bs$/i.test(t)) return 'bs'; if(/מסמי/.test(t)) return 'ms'; if(/חיפה|haifa/i.test(t)) return 'hf'; if(/עידן|נגב/.test(t)) return 'in'; return 'x'; }
+  function lev(a,b){ const m=a.length,n=b.length; let d=Array.from({length:n+1},(_,k)=>k); for(let x=1;x<=m;x++){ let prev=d[0]; d[0]=x; for(let y=1;y<=n;y++){ const t=d[y]; d[y]=Math.min(d[y]+1,d[y-1]+1,prev+(a[x-1]===b[y-1]?0:1)); prev=t; } } return d[n]; }
+  const letters=v=>String(v||'').normalize('NFC').replace(/[^\p{L}\p{N}]/gu,'');
+  function siteKeyExact(v){ const t=letters(v); if(!t) return ''; if(/שמש/.test(t)||/^bs$/i.test(t)) return 'bs'; if(/מסמי/.test(t)) return 'ms'; if(/חיפה|haifa/i.test(t)) return 'hf'; if(/עידן|נגב/.test(t)) return 'in'; return 'x'; }
+  /* typo-tolerant: "בית שמם" → בית שמש (one wrong letter) */
+  function siteKey(v){ const k=siteKeyExact(v); if(k!=='x') return k; const t=letters(v);
+    let best=null,bd=99; SITES.forEach(x=>{ const d=lev(t,letters(x.n)); if(d<bd){ bd=d; best=x; } });
+    return best&&bd<=Math.max(1,Math.floor(letters(best.n).length/5))?best.k:'x'; }
+  const canonSite=v=>{ const k=siteKey(v), x=SITES.find(s=>s.k===k); return x?x.n:v; };
   const siteInfo=v=>SITES.find(x=>x.k===siteKey(v));
   /* מסמיה = UPS110 only. A checklist whose cleaning stage was already signed with UPS210 photos keeps both units. */
   function upsN(r){ if(!r) return 2; if(siteKey(r.site)!=='ms') return 2; const s2=r.s2||{}; if(s2.sig&&live(s2.photos).some(p=>/^u2/.test(p.cell||''))) return 2; return 1; }
   const itemsOf=r=>upsN(r)===1?ITEMS.filter(i=>i.grp==='UPS110'):ITEMS;
+  /* cell numbering: מסמיה has only UPS110, numbered תא 1-5; elsewhere UPS110 = תאים 6-10, UPS210 = תאים 1-5 */
+  function labelOf(r,it){ const m=/^u(\d)c(\d)$/.exec(it.id); if(!m) return it.label; const u=+m[1],c=+m[2]; return 'UPS'+u+'10 / '+(c<=5?'תא '+((u===1&&siteKey(r&&r.site)!=='ms')?c+5:c):'תמונה נוספת '+(c-5)); }
   const UPS_N=2, CELLS_N=7, ITEMS=[];
   for(let u=1;u<=UPS_N;u++){ const U='UPS'+u+'10'; for(let c=1;c<=CELLS_N;c++) ITEMS.push({id:'u'+u+'c'+c,label:U+(c<=5?' / תא '+(u===1?c+5:c):' / תמונה נוספת '+(c-5)),grp:U,opt:c>5}); ITEMS.push({id:'u'+u+'body',label:U+' / גוף ה־UPS',grp:U}); ITEMS.push({id:'u'+u+'ceil',label:U+' / תקרת UPS',grp:U}); }
   /* checklists whose stage 2 was already signed before this scheme keep the old free-form cells */
   const isFixed=r=>!!(r.s2&&r.s2.fixed)||(!(r.s2&&r.s2.sig)&&!isFinal(r));
   const scanOk=(r,id)=>!!(((r.s2&&r.s2.scans)||{})[id]||{}).ok;
   function s2Model(r){ const cells=cellsOf(r), ph=live(r.s2.photos), used=new Set();
-    if(isFixed(r)){ const rows=itemsOf(r).map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:it.label,grp:it.grp,opt:!!it.opt,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
+    if(isFixed(r)){ const rows=itemsOf(r).map(it=>{ const ps=ph.filter(p=>p.cell===it.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c:{id:it.id},label:labelOf(r,it),grp:it.grp,opt:!!it.opt,p,scan:scanOk(r,it.id)}; }); return {rows,extra:ph.filter(p=>!used.has(p.assetId)),fixed:true}; }
     const rows=cells.map((c,i)=>{ const ps=ph.filter(p=>p.cell===c.id), p=ps[ps.length-1]; if(p) used.add(p.assetId); return {c,label:'תא '+(i+1),p}; });
     return {rows,extra:ph.filter(p=>!used.has(p.assetId))}; }
   let lastCellT=0;
@@ -1008,13 +1110,14 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     SECS.forEach(k=>{ if((k==='s4'||k==='s5')&&!(r[k]&&r[k].sig)) return; o[k]={}; TEXT[k].forEach(x=>{ if(r[k][x]!==undefined) o[k][x]=r[k][x]; }); o[k].sig=sg(r[k]); });
     if(o.s4) o.s4.photos=f(r.s4.photos);
     if(r.s2.fixed) o.s2.scans=ITEMS.filter(i=>scanOk(r,i.id)).map(i=>i.id);
+    if(r.coord&&r.coord.sig) o.coord={name:r.coord.name||'',tz:r.coord.tz||'',sig:sg(r.coord)};
     o.s2.photos=f(r.s2.photos,true); o.s3.files=f(r.s3.files); const cl=cellsOf(r); if(cl.length) o.s2.cells=cl.map(c=>({id:c.id,t:c.t})); return o;
   }
   async function fileShas(r){
     const shas={}, items=[...live(r.s2.photos),...live(r.s3.files),...live((r.s4||{}).photos)];
-    for(const p of items){ try{ shas[p.assetId]=await sha(await (await fetch(src(p))).arrayBuffer()); }catch(_){ shas[p.assetId]='unreadable'; } }
-    for(const k of SECS){ const s=(r[k]||{}).sig; if(!s) continue; const key=s.assetId||'inline-'+r[k].signedAt;
-      try{ shas[key]= s.assetId? await sha(await (await fetch(src(s))).arrayBuffer()) : await sha(s.data); }catch(_){ shas[key]='unreadable'; } }
+    for(const p of items){ try{ shas[p.assetId]=await sha(await (await window.__fetchReal(src(p))).arrayBuffer()); }catch(_){ shas[p.assetId]='unreadable'; } }
+    for(const k of [...SECS,'coord']){ const s=(r[k]||{}).sig; if(!s) continue; const key=s.assetId||'inline-'+r[k].signedAt;
+      try{ shas[key]= s.assetId? await sha(await (await window.__fetchReal(src(s))).arrayBuffer()) : await sha(s.data); }catch(_){ shas[key]='unreadable'; } }
     return shas;
   }
   async function verify(){
@@ -1120,8 +1223,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(ok&&cur&&cur.id===id&&(ver[sec]||0)===v){ dirty[sec]=false; maybeClearDraft(); }
     paintHead();
   }
-  async function flushAll(){ for(const s of ['hdr',...SECS]) await flush(s); }
+  async function flushAll(){ for(const s of ['hdr',...SECS]) await flush(s); if(coDirty) saveCoord(); }
+  let coDirty=false, coT=null;
+  function saveCoord(){ clearTimeout(coT); if(!cur||!cur.id||isFinal(cur)||cur.coord.sig){ coDirty=false; return; } const id=cur.id, v={name:cur.coord.name.trim(),tz:cur.coord.tz.trim()};
+    writeRetry(id,{coord:v}).then(ok=>{ if(ok) coDirty=false; }); }
   document.addEventListener('input',e=>{ if(e.target.type==='file'||!e.target.closest('#checklist')) return;
+    if(e.target.dataset&&e.target.dataset.co){ if(!cur||isFinal(cur)||cur.coord.sig) return; cur.coord[e.target.dataset.co]=e.target.value; coDirty=true; clearTimeout(coT); coT=setTimeout(saveCoord,800); paintCoordState(); return; }
     if(e.target.closest('#hdr')){ queueSave('hdr'); paintHead(); return; }
     const st=e.target.closest('.stage'); if(st) queueSave('s'+st.id.slice(2)); });
   function calibState(n){ const el=document.querySelector('#st'+(n||1)+' [data-f="calib"]'); const v=el&&el.value; if(!v) return null; const left=Math.floor((new Date(v+'T23:59:59').getTime()-Date.now())/864e5); return left<0?{exp:true}:left<=14?{soon:left}:null; }
@@ -1163,16 +1270,16 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       c.toBlob(b=>{if(!b) return rej({code:'image'}); if(b.size>19.5*1048576&&qq>.6){s*=.8;go(qq-.1);} else {URL.revokeObjectURL(url);res(b);}},'image/jpeg',qq);};go(q);};
     im.onerror=()=>{URL.revokeObjectURL(url);rej({code:'image'});}; im.src=url;}); }
   async function prepare(f){
-    if(['image/jpeg','image/png','image/webp','image/gif','application/pdf'].includes(f.type)&&f.size<=19.5*1048576) return f;
-    if(f.type==='application/pdf') throw {code:'too_large'};
-    return reencode(f,4800,.9);
+    if(f.type==='application/pdf'&&f.size>60*1048576) throw {code:'too_large',lim:'60MB'};
+    if(f.size>100*1048576) throw {code:'too_large',lim:'100MB'};
+    return f;
   }
   async function addFiles(files,slot,cell){
     if(!cur||isFinal(cur)) return;
     if(!assets){ toast('אין לך הרשאה להעלות קבצים'); return; }
     if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); return; }
     for(const f of files){
-      let blob; try{ blob=await prepare(f); }catch(e){ toast(e.code==='too_large'?'הקובץ '+f.name+' גדול מ־20MB':'לא ניתן לקרוא את '+f.name); continue; }
+      let blob; try{ blob=await prepare(f); }catch(e){ toast(e.code==='too_large'?'הקובץ '+f.name+' גדול מ־'+(e.lim||'100MB'):'לא ניתן לקרוא את '+f.name); continue; }
       const key='u'+Date.now()+Math.random().toString(36).slice(2,7);
       const item={key,reportId:cur.id,slot,cell:cell||null,name:f.name,type:blob.type||f.type,blob,t:Date.now()};
       await qPut(item); pending.set(key,{...item,url:URL.createObjectURL(blob),status:'מעלה…'});
@@ -1247,24 +1354,24 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         const im=document.createElement('img'); im.loading='lazy'; im.alt=photo.name||''; im.src=src(photo); a.appendChild(im); d.appendChild(a);
         st.className='cs ok'; st.textContent='✓ צורפה'; } else st.textContent='חסרה תמונה';
       if(!l2){
-        if(canPick&&assets) acts.appendChild(mk(photo?'החלף תמונה':'צלם / בחר תמונה',()=>pickPhoto(cellId)));
+        if(canPick&&assets) acts.appendChild(mk(photo?'החלף':'צלם / בחר',()=>pickPhoto(cellId)));
         if(photo) acts.appendChild(mk('הסר',()=>removeItem('photo',photo)));
         if(cellId&&many) acts.appendChild(mk('מחק תא',()=>removeCell(cellId)));
         if(!photo&&canPick&&assets){ d.classList.add('click'); d.onclick=()=>pickPhoto(cellId); } }
       d.appendChild(acts); return d; };
     const hint=$('s2hint'), prog=$('s2prog');
     if(m.fixed){
-      const one=upsN(cur)===1; hint.textContent=(one?'UPS110 בלבד (מסמיה): 5 תאים (6 עד 10), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+itemsOf(cur).length+' פריטים).':'לכל אחת מ־'+UPS_N+' יחידות ה־UPS: 5 תאים (ב־UPS110 תאים 6 עד 10, ב־UPS210 תאים 1 עד 5), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים).')+' לכל תא, לגוף ה־UPS ולתקרת ה־UPS נדרשים תמונה ואישור סריקה פיזית, ואי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)';
+      const one=upsN(cur)===1; hint.textContent=(one?'UPS110 בלבד (מסמיה): 5 תאים (1 עד 5), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+itemsOf(cur).length+' פריטים).':'לכל אחת מ־'+UPS_N+' יחידות ה־UPS: 5 תאים ('+(siteKey(cur.site)==='ms'?'תאים 1 עד 5 בכל יחידה':'ב־UPS110 תאים 6 עד 10, ב־UPS210 תאים 1 עד 5')+'), 2 תמונות נוספות, גוף ה־UPS ותקרת ה־UPS ('+ITEMS.length+' פריטים).')+' לכל תא, לגוף ה־UPS ולתקרת ה־UPS נדרשים תמונה ואישור סריקה פיזית, ואי אפשר לחתום ולעבור לשלב הבא לפני שכולם הושלמו. (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)';
       const req=rows.filter(r=>!r.opt), nP=req.filter(r=>r.p).length, nS=req.filter(r=>r.scan).length, all=nP===req.length&&nS===req.length;
       prog.textContent='תמונות: '+nP+' מתוך '+req.length+'  /  סריקה פיזית: '+nS+' מתוך '+req.length; prog.className='s2prog'+(all?' ok':'');
       let lastG='';
       rows.forEach(r=>{ if(r.grp!==lastG){ lastG=r.grp; const h=document.createElement('div'); h.className='grph'; h.textContent=r.grp; box.appendChild(h); }
         const row=build(r.label,r.p,pend.find(p=>p.cell===r.c.id),r.c.id,true); if(r.opt&&!r.p){ const cs=row.querySelector('.cs'); if(cs&&cs.textContent==='חסרה תמונה') cs.textContent=''; }
         const lb=document.createElement('label'); lb.className='scan'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=r.scan; cb.disabled=!!l2;
-        lb.appendChild(cb); lb.appendChild(document.createTextNode('סריקה פיזית בוצעה')); lb.onclick=e=>e.stopPropagation(); cb.onchange=()=>setScan(r.c.id,cb.checked);
+        lb.appendChild(cb); lb.appendChild(document.createTextNode('סריקה פיזית')); lb.title='סריקה פיזית בוצעה'; lb.onclick=e=>e.stopPropagation(); cb.onchange=()=>setScan(r.c.id,cb.checked);
         row.insertBefore(lb,row.querySelector('.acts')); box.appendChild(row); });
     } else {
-      hint.textContent='תמונות הוכחה שהתאים נקיים, תמונה לכל תא (עד 20MB לתמונה; נשמרת מכווצת עד 1800 פיקסלים)'; prog.textContent='';
+      hint.textContent='תמונות הוכחה שהתאים נקיים, תמונה לכל תא (כל גודל, עד 100MB לתמונה. המקור נשמר באיכות מלאה)'; prog.textContent='';
       rows.forEach(r=>{ const id=r.c?r.c.id:null; box.appendChild(build(r.label,r.p,id?pend.find(p=>p.cell===id):null,id,true)); });
     }
     m.extra.forEach(p=>box.appendChild(build('תמונה נוספת',p,null,null,false)));
@@ -1275,7 +1382,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(!(await ensureCreated())){ toast('מלא קודם את פרטי המודול'); $('module').focus(); paintFiles(); return; }
     const rec={ok:!!on,at:Date.now(),by:me}; if(!cur.s2.scans) cur.s2.scans={}; cur.s2.scans[id]=rec; paintFiles();
     const it=ITEMS.find(i=>i.id===id);
-    await writeRetry(cur.id,{s2:{scans:{[id]:rec}},log:logEntry((on?'סריקה פיזית אושרה: ':'אישור סריקה פיזית בוטל: ')+(it?it.label:id))});
+    await writeRetry(cur.id,{s2:{scans:{[id]:rec}},log:logEntry((on?'סריקה פיזית אושרה: ':'אישור סריקה פיזית בוטל: ')+(it?labelOf(cur,it):id))});
   }
   async function newCell(){
     if(!(await ensureCreated())) return null;
@@ -1317,6 +1424,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
       if(!s.date) miss.push('תאריך ביצוע הניקיון'); if(np) miss.push('תמונה ל־'+np+' פריטים'); if(ns) miss.push('אישור סריקה פיזית ל־'+ns+' פריטים'); }
     else if(n===2){ if(!live(s.photos).length) miss.push('תמונה אחת לפחות'); else { const lack=s2Model(cur).rows.filter(r=>!r.p).map(r=>r.label); if(lack.length) miss.push('תמונה ל'+lack.join(', ')); } }
     if(n===4){ if(!s.date) miss.push('תאריך ביצוע איטומי האש'); if(!live(s.photos).length) miss.push('תמונה אחת לפחות של איטומי האש'); }
+    if(n===3&&!(cur.coord&&cur.coord.sig)) miss.push('חתימת אחראי מתאם תדיראן (בראש הצ׳קליסט)');
     if(n===3){ if(!s.inspector.trim()) miss.push('שם הבודק'); if(!s.date) miss.push('תאריך אישור הבודק'); if(!live(s.files).length) miss.push('דוח בודק מצורף');
       for(let u=1;u<=upsN(cur);u++) if(!s['clean'+u]) miss.push('אישור דוח בודק נקי ל־UPS'+u+'10'); }
     if([...pending.values()].some(p=>p.reportId===cur.id&&((n===2&&p.slot==='photo')||(n===3&&p.slot==='file')||(n===4&&p.slot==='fire')))) miss.push('המתן לסיום ההעלאה');
@@ -1352,6 +1460,32 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     b.disabled=false; paint(true);
     setTimeout(()=>{ if(isFinal(cur)) goTo('seal'); else { const nx=nextStage(); if(nx) goTo(nx); } },250);
   }));
+  const tzOk=t=>{ t=String(t||'').trim(); if(!/^\d{5,9}$/.test(t)) return true; t=t.padStart(9,'0'); let s=0; for(let i=0;i<9;i++){ let d=+t[i]*((i%2)+1); s+=d>9?d-9:d; } return s%10===0; };
+  function paintCoordState(){ if(!cur) return; const c=cur.coord||{}, el=$('coState'), fin=isFinal(cur);
+    el.textContent=c.sig?'נחתם':fin?'לא הוזן':(c.name&&c.tz?'ממתין לחתימה':'ממתין לפרטים'); el.className='state'+(c.sig?' ok':''); }
+  function paintCoord(force){ const sec=$('coordSec'); if(!cur){ return; } normCoord(cur); const c=cur.coord, fin=isFinal(cur);
+    sec.hidden=fin&&!c.sig&&!c.name;
+    [['coName','name'],['coTz','tz']].forEach(([id,f])=>{ const el=$(id); if(force||(document.activeElement!==el&&!coDirty)) el.value=c[f]||''; el.disabled=fin||!!c.sig; });
+    sec.classList.toggle('signed',!!c.sig); paintSig('coord');
+    const b=$('coSign'); b.hidden=fin; b.textContent=c.sig?'החלף חתימה':'חתום כאחראי'; b.classList.toggle('primary',!c.sig);
+    paintCoordState(); }
+  $('coSign').addEventListener('click',async()=>{
+    if(!cur||isFinal(cur)) return; const c=cur.coord, b=$('coSign'); $('coErr').textContent='';
+    if(c.sig){ if(!confirm('להחליף את חתימת אחראי מתאם תדיראן? החתימה הנוכחית תוסר.')) return;
+      c.sig=null; c.signedAt=0; paint(false); if(cur.id) await writeRetry(cur.id,{coord:{sig:null,signedAt:0},log:logEntry('חתימת אחראי מתאם תדיראן הוסרה להחלפה')}); return; }
+    c.name=$('coName').value.trim(); c.tz=$('coTz').value.trim();
+    const miss=[]; if(!c.name) miss.push('שם מלא'); if(!c.tz) miss.push('תעודת זהות'); if(!pads.coord||!pads.coord.isDirty()) miss.push('חתימה');
+    if(miss.length){ $('coErr').textContent='חסר: '+miss.join(', '); return; }
+    if(!tzOk(c.tz)&&!confirm('מספר תעודת הזהות '+c.tz+' לא נראה תקין (ספרת ביקורת). לחתום בכל זאת?')) return;
+    if(!(await ensureCreated())){ $('coErr').textContent='מלא קודם את פרטי המודול (שם, אתר ורביע)'; return; }
+    b.disabled=true; b.textContent='שומר חתימה…'; let sig=null;
+    try{ const blob=await pads.coord.toBlob(); if(assets){ try{ const a=await assets.upload(blob,{type:'image/png'}); sig={assetId:a.id}; }catch(_){} }
+      if(!sig) sig={data:await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(blob);})}; }
+    catch(_){ b.disabled=false; paint(false); $('coErr').textContent='שמירת החתימה נכשלה, נסה שוב'; return; }
+    const at=Date.now(), v={name:c.name,tz:c.tz,sig,signedAt:at,signedBy:me};
+    if(!(await writeRetry(cur.id,{coord:v,log:logEntry('אחראי מתאם תדיראן חתם: '+c.name)}))){ b.disabled=false; paint(false); $('coErr').textContent='החתימה לא נשמרה. בדוק חיבור ונסה שוב.'; return; }
+    Object.assign(c,v); coDirty=false; b.disabled=false; paint(false); toast('חתימת אחראי מתאם תדיראן נשמרה');
+  });
   async function seal(){
     toast('נועל ומחשב חותמת דיגיטלית…');
     const shas=await fileShas(cur), data=canon(cur,shas), hash=await sha(stable(data)), at=Date.now();
@@ -1382,6 +1516,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const ring=$('ring'); ring.style.setProperty('--p',Math.round(n/SECS.length*100)); ring.classList.toggle('go',fin); $('ringTxt').textContent=fin?'✓':n+'/'+SECS.length;
     const sl=$('statusLine'); sl.classList.toggle('go',fin);
     $('statusTxt').textContent= !cur.id?'מלא את פרטי המודול כדי להתחיל': fin?'המודול נעול ומאושר למעבר לבדיקות בעומס': !d[0]?'ממתין לחיזוק צד AC': !d[1]?'ממתין לחיזוק צד DC': !d[2]?'ממתין לאישור איטומי אש': !d[3]?'ממתין לאישור ניקיון התאים':'ממתין לאישור מתאם תדיראן';
+    $('delBtn').hidden=!isEmptyReport(cur);
     const pb=$('pdfBtn'); pb.hidden=false; if(!pb.disabled) pb.textContent=pdfLabel(); $('waBtn').hidden=!(cur&&cur.id&&fin);
   }
   function paintGates(){
@@ -1457,7 +1592,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     $('finalHint').hidden=fin;
     $('hdr').querySelectorAll('input').forEach(el=>el.disabled=d.some(Boolean)||fin);
     $('hdrHint').hidden=!!cur.id;
-    paintFiles(); paintSeal(); paintCalib(); paintGates(); paintCollapse(); paintStepper();
+    paintCoord(false); paintFiles(); paintSeal(); paintCalib(); paintGates(); paintCollapse(); paintStepper();
     $('logSec').hidden=!cur.id;
     const lg=$('log'); lg.innerHTML='';
     Object.values(cur.log||{}).sort((a,b)=>b.t-a.t).forEach(e=>{const r=document.createElement('div');r.innerHTML='<time></time><span></span>';r.firstChild.textContent=fmt(e.t);r.lastChild.textContent=e.text;lg.appendChild(r);});
@@ -1504,7 +1639,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(cur&&cur.id) await flushAll();
     const r=reports.find(x=>x.id===id); if(!r) return;
     if(view!=='cl') setView('cl');
-    cur=clone(r); if(!cur.s5||typeof cur.s5!=='object') cur.s5={}; ['company','name','empId','tool','calib','notes'].forEach(f=>{ if(cur.s5[f]==null) cur.s5[f]=''; if(!isFinal(cur)&&cur.s1&&cur.s1[f]==null) cur.s1[f]=''; }); if(cur.s5.declared==null) cur.s5.declared=false; if(cur.s5.sig===undefined) cur.s5.sig=null;
+    cur=clone(r); normCoord(cur); if(!cur.s5||typeof cur.s5!=='object') cur.s5={}; ['company','name','empId','tool','calib','notes'].forEach(f=>{ if(cur.s5[f]==null) cur.s5[f]=''; if(!isFinal(cur)&&cur.s1&&cur.s1[f]==null) cur.s1[f]=''; }); if(cur.s5.declared==null) cur.s5.declared=false; if(cur.s5.sig===undefined) cur.s5.sig=null;
     if(!isFinal(cur)&&cur.quadrant==null) cur.quadrant=cur.location||''; ['hdr',...SECS].forEach(k=>dirty[k]=false); sealState=null; resetPads();
     const restored=applyDraft(id); showDraftBanner('');
     paint(true);
@@ -1521,94 +1656,143 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   function paintLogo(){ /* the CX-ELECTRA wordmark is fixed; logo upload was removed (config/brand is kept untouched) */ }
 
   /* ---------- PDF ---------- */
-  const loadScript=u=>new Promise((res,rej)=>{ if(window.html2pdf) return res(); const s=document.createElement('script'); s.src=u; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-  async function toData(url,max,png){ try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height));
+  const loadLib=(u,g)=>new Promise((res,rej)=>{ if(g()) return res(); const s=document.createElement('script'); s.src=u; s.onload=()=>g()?res():rej(new Error('lib')); s.onerror=()=>rej(new Error('lib-load')); document.head.appendChild(s); });
+  async function toImg(url,max,png){ if(!url||url===window.__PH) return null; try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height)); const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(bmp.width*s)); c.height=Math.max(1,Math.round(bmp.height*s)); const x=c.getContext('2d'); if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);} x.drawImage(bmp,0,0,c.width,c.height); if(bmp.close) bmp.close(); const o={d:c.toDataURL(png?'image/png':'image/jpeg',.86),w:c.width,h:c.height}; c.width=c.height=0; return o; }catch(_){ return null; } }
+  async function toData(url,max,png){ if(url===window.__PH) return ''; try{ const bmp=await createImageBitmap(await (await fetch(url)).blob()); const s=Math.min(1,max/Math.max(bmp.width,bmp.height));
     const c=document.createElement('canvas'); c.width=Math.round(bmp.width*s); c.height=Math.round(bmp.height*s); const x=c.getContext('2d'); if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);} x.drawImage(bmp,0,0,c.width,c.height);
     return c.toDataURL(png?'image/png':'image/jpeg',.88); }catch(_){ return ''; } }
   function pdfLabel(){ return cur&&cur.id?'⬇ הורד PDF':'⬇ טופס ריק להדפסה (PDF)'; }
   const LEGACY_DECL='אני, מפעיל תדיראן החתום מטה, מצהיר כי כל הכניסות והיציאות של המודול עברו חיזוק במד מומנט בהתאם לערכים הנדרשים.';
   let pdfCache=null;
-  async function buildPdf(blank){
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+  async function buildPdf(blank,onProg){
+    onProg=onProg||(()=>{});
+    await loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',()=>window.html2canvas);
+    await loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>window.jspdf&&window.jspdf.jsPDF);
     const fin=isFinal(cur);
-    // locked checklists print the sealed copy
-    let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location,sn1:sd.sn1||'',sn2:sd.sn2||''}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>{ if(r[k]) r[k][f]=sd[k][f]; }); }); }
-    r.s5=r.s5||{};
-    const legacy=!blank&&legacyT(r);
+    let r=cur; if(fin&&sealState&&sealState.sealed&&sealState.sealed.data&&!sealState.ok){ const sd=sealState.sealed.data; r=clone(cur); Object.assign(r,{module:sd.module,site:sd.site,quadrant:sd.quadrant!==undefined?sd.quadrant:sd.location,sn1:sd.sn1||'',sn2:sd.sn2||''}); SECS.forEach(k=>{ if(sd[k]) TEXT[k].forEach(f=>{ if(r[k]) r[k][f]=sd[k][f]; }); }); if(sd.coord) r.coord={...(r.coord||{}),name:sd.coord.name,tz:sd.coord.tz}; }
+    r.s5=r.s5||{}; const co=r.coord||{};
+    const legacy=!blank&&legacyT(r), one=upsN(r)===1;
+    onProg('מכין תמונות…');
     const sm2=s2Model(r), pItems=sm2.rows.filter(x=>x.p).map(x=>({label:x.label,scan:sm2.fixed?!!x.scan:null,p:x.p})).concat(sm2.extra.map(p=>({label:'תמונה נוספת',scan:null,p})));
-    const photos=await Promise.all(pItems.map(x=>toData(src(x.p),1400)));
-    const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireImgs=await Promise.all(live((r.s4||{}).photos).map(p=>toData(src(p),1400)));
+    const photos=[]; for(let i=0;i<pItems.length;i++){ onProg('מכין תמונות '+(i+1)+' / '+pItems.length); photos.push(await toImg(src(pItems[i].p),1000)); }
+    const fireOn=blank||!!(r.s4&&(r.s4.sig||!fin)), fireP=live((r.s4||{}).photos), fireImgs=[]; for(const p of fireP) fireImgs.push(await toImg(src(p),1000));
     const dcOn=blank||!legacy&&!!(r.s5.sig||!fin);
-    const att=live(r.s3.files), attImgs=await Promise.all(att.map(p=>(p.type||'').includes('pdf')?'':toData(src(p),1600)));
-    const sigs={}; for(const k of SECS) sigs[k]=r[k]&&r[k].sig?(r[k].sig.data||await toData(src(r[k].sig),900,true)):'';
-    const kv=(k,v,wide)=>'<div class="kv'+(wide?' w':'')+'"><span>'+k+'</span>'+(blank?'<i class="ln"></i>':'<b>'+(v?esc(v):'<em>—</em>')+'</b>')+'</div>';
+    const att=live(r.s3.files), attImgs=[]; for(const p of att) attImgs.push((p.type||'').includes('pdf')?null:await toImg(src(p),1600));
+    const sigs={}; for(const k of [...SECS,'coord']){ const x=r[k]; sigs[k]=x&&x.sig?(x.sig.data||await toData(src(x.sig),900,true)):''; }
+    /* ---- building blocks ---- */
+    const kv=(k,v,wide,ltr)=>'<div class="kv'+(wide?' w':'')+'"><span>'+k+'</span>'+(blank?'<i class="ln"></i>':'<b'+(ltr?' dir="ltr"':'')+'>'+(v?esc(v):'<em>—</em>')+'</b>')+'</div>';
     const box='<span class="cb"></span>';
-    const decl=(txt,ok)=>'<div class="decl avoid">'+(blank?box:'<span class="ck'+(ok?'':' no')+'">'+(ok?'✓':'')+'</span>')+'<p>'+esc(txt)+'</p></div>';
+    const decl=(txt,ok)=>'<div class="decl">'+(blank?box:'<span class="ck'+(ok?'':' no')+'">'+(ok?'✓':'')+'</span>')+'<p>'+esc(txt)+'</p></div>';
     const dtext=n=>$('st'+n).querySelector('.dtext').textContent;
-    const sign=k=>blank?'<div class="sgb avoid"><div><span>חתימה</span><div class="pad"></div></div><div><span>תאריך</span><i class="ln" style="width:150px"></i></div></div>'
-      : r[k]&&r[k].sig?'<div class="sgb avoid"><div><span>חתימה</span><img src="'+sigs[k]+'"></div><div class="who"><b>'+esc(r[k].name||'')+'</b><span>'+fmt(r[k].signedAt)+'</span></div></div>'
-      : '<div class="miss avoid">שלב זה טרם נחתם</div>';
+    const sign=k=>blank?'<div class="sgb"><div class="sgc"><span>חתימה</span><div class="pad"></div></div><div class="sgw"><span>שם</span><i class="ln" style="width:170px"></i><span style="margin-top:12px">תאריך</span><i class="ln" style="width:170px"></i></div></div>'
+      : r[k]&&r[k].sig?'<div class="sgb"><div class="sgc"><span>חתימה</span><img src="'+sigs[k]+'"></div><div class="sgw"><b>'+esc(r[k].name||'')+'</b><em>✓ נחתם '+fmt(r[k].signedAt)+'</em></div></div>'
+      : '<div class="miss">שלב זה טרם נחתם</div>';
     let num=0;
-    const head=(k,title,tag,extra)=>{ num++; const ok=blank?null:!!(r[k]&&r[k].sig);
-      return '<div class="sh avoid"><span class="no'+(ok?' ok':'')+'">'+(ok?'✓':num)+'</span><h2>'+title+(tag?' <span class="tag '+tag.toLowerCase()+'">'+tag+'</span>':'')+'</h2>'+(blank?'':'<span class="pill '+(ok?'ok':'wait')+'">'+(extra||(ok?'נחתם':'לא נחתם'))+'</span>')+'</div>'; };
-    const torque=(k,title,tag,txt)=>'<section class="st">'+head(k,title,tag)+'<div class="grid">'+kv(tag?'קבלן צד '+tag:'קבלן / חברה',r[k].company)+kv('שם המבצע',r[k].name)+kv('מספר עובד / ת״ז',r[k].empId)+kv('מס׳ מד מומנט',r[k].tool)+kv('תוקף כיול',r[k].calib)+kv('הערות',r[k].notes,true)+'</div>'+decl(txt,!!r[k].declared)+sign(k)+'</section>';
+    const head=(k,title,tag)=>{ num++; const ok=blank?null:!!(r[k]&&r[k].sig);
+      return '<div class="sh"><span class="no'+(ok?' ok':'')+'">'+(ok?'✓':num)+'</span><div class="sht"><h2>'+title+(tag?' <span class="tag '+tag.toLowerCase()+'">'+tag+'</span>':'')+'</h2>'+(ok?'<small>'+esc(r[k].name||'')+' · '+fmt(r[k].signedAt)+'</small>':'')+'</div>'+(blank?'':'<span class="pill '+(ok?'ok':'wait')+'">'+(ok?'נחתם':'לא נחתם')+'</span>')+'</div>'; };
+    const B=[]; const add=(h,keep)=>B.push({h,keep:!!keep});
+    const card=inner=>'<div class="scard">'+inner+'</div>';
+    const galRows=(imgs,caps)=>{ const fig=imgs.map((x,i)=>x?'<figure><img src="'+x.d+'"><figcaption>'+(caps&&caps[i]||'')+'</figcaption></figure>':'').filter(Boolean); for(let i=0;i<fig.length;i+=3) add('<div class="gal">'+fig.slice(i,i+3).join('')+'</div>'); };
+    const scanCell=x=>x.scan===null?'':'<i class="sc'+(x.scan?'':' no')+'">'+(x.scan?'סריקה ✓':'ללא סריקה')+'</i>';
     const stepsMeta=[['s1','חיזוק AC'],...(legacy?[]:[['s5','חיזוק DC']]),...(fireOn?[['s4','איטומי אש']]:[]),['s2','ניקיון'],['s3','אישור בודק']];
     const nDone=stepsMeta.filter(([k])=>r[k]&&r[k].sig).length;
-    const steps='<div class="steps">'+stepsMeta.map(([k,l],i)=>{ const ok=!blank&&!!(r[k]&&r[k].sig); return '<div class="sp'+(ok?' ok':'')+'"><span>'+(ok?'✓':i+1)+'</span><b>'+l+'</b></div>'; }).join('')+'</div>';
-    const scanCell=x=>x.scan===null?'':'<span class="sc'+(x.scan?'':' no')+'">'+(x.scan?'סריקה ✓':'ללא סריקה')+'</span>';
-    const itemsTbl=sm2.fixed?'<table class="it"><tr><th>פריט</th><th>תמונה</th><th>סריקה פיזית</th></tr>'+sm2.rows.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?box:(x.p?'<b class="y">✓</b>':(x.opt?'–':'<b class="n">✗</b>')))+'</td><td>'+(blank?box:(x.scan?'<b class="y">✓</b>':(x.opt&&!x.p?'–':'<b class="n">✗</b>')))+'</td></tr>').join('')+'</table>':'';
-    const gal=(imgs,caps)=>imgs.some(Boolean)?'<div class="gal">'+imgs.map((x,i)=>x?'<figure class="avoid"><img src="'+x+'">'+(caps&&caps[i]?'<figcaption>'+caps[i]+'</figcaption>':'')+'</figure>':'').join('')+'</div>':'';
-    const cln=v=>blank?box:(v?'<b class="y">כן</b>':'<b class="n">לא</b>');
-    const status=blank?'<div class="banner b">טופס למילוי ידני. לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</div>'
+    const sn=[r.sn1&&('UPS110 · '+r.sn1),!one&&r.sn2&&('UPS210 · '+r.sn2)].filter(Boolean);
+    /* cover */
+    add('<div class="cv"><div class="cvt"><div class="wm"><span class="ic">⚡</span><div><div class="wl"><span class="cx">CX</span><span class="bar"></span><span class="el">ELECTRA</span></div><small>ELECTRICAL COMMISSIONING</small></div></div><div class="dt">'+(blank?'טופס למילוי ידני':'הופק '+fmt(Date.now()))+'</div></div>'+
+      '<div class="ey">צ׳קליסט מוכנות לבדיקות בעומס · מערכות אל־פסק</div><h1>'+(blank&&!r.module?'מודול ______________':esc(r.module||''))+'</h1>'+
+      '<div class="chips"><span>אתר <b>'+esc(r.site||(blank?'________':'—'))+'</b></span><span>רביע <b>'+esc(quad(r)||(blank?'____':'—'))+'</b></span><span>'+(one?'UPS110':'UPS110 + UPS210')+'</span>'+sn.map(x=>'<span dir="ltr">'+esc(x)+'</span>').join('')+'</div></div>');
+    add(blank?'<div class="banner b"><span class="bi">✎</span><div><b>טופס למילוי ידני</b><span>לאחר המילוי יש להזין את הנתונים ואת החתימות גם בכלי הדיגיטלי.</span></div></div>'
       : fin?'<div class="banner ok"><span class="bi">✓</span><div><b>המודול מוכן לבדיקות בעומס</b><span>כל השלבים נחתמו והצ׳קליסט ננעל ב־'+fmt(r.lockedAt||(cur.seal&&cur.seal.at))+'</span></div></div>'
-      : '<div class="banner w"><span class="bi">!</span><div><b>טיוטה</b><span>הושלמו '+nDone+' מתוך '+stepsMeta.length+' שלבים. המסמך אינו מאשר מעבר לבדיקות בעומס.</span></div></div>';
-    const css='*{box-sizing:border-box}.doc{font-family:Rubik,Arial,sans-serif;color:#0A0F1C;width:740px;font-size:12px;line-height:1.5;direction:rtl}'+
-      '.cv{border-radius:16px;overflow:hidden;background:#0A0F1C;color:#fff;position:relative}.cv .bg{padding:22px 24px 20px;background:linear-gradient(120deg,#0A0F1C 0%,#13235A 62%,#1F44D6 100%)}'+
-      '.cv .top{display:flex;justify-content:space-between;align-items:center}.wm{direction:ltr;display:flex;align-items:center;gap:9px}.wm .ic{width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,#2D5BFF,#12C2E9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}.wm .cx{font-weight:800;font-size:19px;color:#7FB3FF}.wm .bar{width:2px;height:15px;background:#12C2E9;transform:skewX(-16deg)}.wm .el{font-weight:700;letter-spacing:3px;font-size:14px}.wm small{display:block;font-size:7px;letter-spacing:2.4px;color:#8A93A6}'+
-      '.cv .dt{font-size:10.5px;color:rgba(255,255,255,.65);text-align:left}.cv .ey{margin-top:22px;font-size:11px;letter-spacing:.06em;color:#7FD8F0;font-weight:600}.cv h1{margin:2px 0 0;font-size:25px;font-weight:800;line-height:1.15}.cv .mod{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.cv .mod span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:3px 11px;font-size:11px}.cv .mod b{font-weight:700}'+
-      '.cv .rb{height:4px;background:linear-gradient(90deg,#2D5BFF,#12C2E9)}'+
-      '.banner{margin:14px 0 0;border-radius:12px;padding:11px 14px;display:flex;gap:12px;align-items:center}.banner b{display:block;font-size:13px}.banner span{font-size:11px}.banner .bi{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex:none}.banner.ok{background:#E3F7EE;color:#0B7A4B}.banner.ok .bi{background:#0FA968}.banner.w{background:#FFF4DE;color:#8A5600}.banner.w .bi{background:#C27A00}.banner.b{background:#EAF0FF;color:#1F44D6;font-weight:600}'+
-      '.steps{display:flex;gap:6px;margin:12px 0 4px}.sp{flex:1;border:1px solid #E3E8F0;border-radius:10px;padding:7px 8px;display:flex;align-items:center;gap:7px;background:#F7F9FC}.sp span{width:20px;height:20px;border-radius:6px;background:#E3E8F0;color:#5B6478;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:none}.sp b{font-size:10.5px;font-weight:600}.sp.ok{background:#EFFAF4;border-color:#BFE8D3}.sp.ok span{background:#0FA968;color:#fff}'+
-      '.card{border:1px solid #E3E8F0;border-radius:14px;padding:12px 14px;margin-top:12px}.ct{font-size:11px;font-weight:700;color:#5B6478;letter-spacing:.04em;margin-bottom:6px}'+
-      '.st{margin-top:18px}.sh{display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid #E3E8F0;margin-bottom:10px}.sh .no{width:28px;height:28px;border-radius:9px;background:#EAF0FF;color:#2D5BFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}.sh .no.ok{background:#0FA968;color:#fff}.sh h2{margin:0;font-size:15.5px;font-weight:700;flex:1}.tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;vertical-align:2px;direction:ltr;display:inline-block}.tag.ac{background:#FFF1DC;color:#B26200}.tag.dc{background:#E5F4FF;color:#0B6FB0}'+
-      '.pill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px}.pill.ok{background:#E3F7EE;color:#0B7A4B}.pill.wait{background:#FFF4DE;color:#8A5600}'+
-      '.grid{display:flex;flex-wrap:wrap;gap:6px}.kv{width:calc(33.33% - 4px);background:#F7F9FC;border-radius:9px;padding:6px 9px}.kv.w{width:100%}.kv span{display:block;font-size:9.5px;color:#8A93A6;font-weight:500}.kv b{font-weight:600;font-size:12px;word-break:break-word}.kv em{color:#B4BBC8;font-style:normal}.ln{display:block;height:18px;border-bottom:1px solid #9AA3B2}'+
-      '.decl{display:flex;gap:9px;align-items:flex-start;margin-top:9px;background:#F2F5FF;border-radius:10px;padding:9px 11px}.decl p{margin:0;font-size:11.5px}.ck{width:17px;height:17px;border-radius:5px;background:#2D5BFF;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}.ck.no{background:#fff;border:1.5px solid #B4BBC8}.cb{display:inline-block;width:14px;height:14px;border:1.5px solid #0A0F1C;border-radius:3px;flex:none;vertical-align:-2px}'+
-      '.sgb{display:flex;gap:18px;align-items:flex-end;margin-top:10px}.sgb span{display:block;font-size:9.5px;color:#8A93A6;margin-bottom:3px}.sgb img{width:220px;border:1px solid #E3E8F0;border-radius:10px;background:#fff;display:block}.sgb .who b{display:block;font-size:12.5px}.sgb .who span{font-size:10.5px;color:#0B7A4B;font-weight:600;margin:0}.pad{width:260px;height:80px;border:1.5px dashed #9AA3B2;border-radius:10px}.miss{margin-top:10px;color:#B42335;font-weight:700;font-size:11.5px}'+
-      'table.it{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.it th{background:#F2F5FA;color:#5B6478;font-weight:600;text-align:right;padding:5px 8px}.it td{padding:4px 8px;border-bottom:1px solid #EDF1F6}.it th:not(:first-child),.it td:not(:first-child){text-align:center;width:90px}.y{color:#0FA968}.n{color:#E0412F}'+
-      '.gal{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.gal figure{margin:0;width:236px}.gal img{width:236px;height:170px;object-fit:cover;border-radius:10px;border:1px solid #E3E8F0;display:block}.gal figcaption{font-size:10px;color:#5B6478;margin-top:3px;display:flex;justify-content:space-between;gap:6px}.sc{color:#0B7A4B;font-weight:600}.sc.no{color:#B42335}'+
-      '.seal{margin-top:20px;border-radius:14px;padding:14px 16px;background:linear-gradient(120deg,#0A0F1C,#13235A);color:#fff;display:flex;gap:12px;align-items:center}.seal .m{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0FA968,#22C3A6);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.seal b{display:block;font-size:12px}.seal .fp{direction:ltr;font-family:monospace;font-size:9.5px;color:rgba(255,255,255,.6);word-break:break-all}'+
-      'table.log{width:100%;border-collapse:collapse;font-size:10px;color:#5B6478}.log td{padding:3px 6px;border-bottom:1px solid #EDF1F6}.log td:first-child{width:120px;white-space:nowrap}';
-    const sn=[r.sn1&&('UPS110 '+r.sn1),r.sn2&&('UPS210 '+r.sn2)].filter(Boolean);
-    let html='<div class="doc"><style>'+css+'</style>'+
-      '<div class="cv"><div class="bg"><div class="top"><div class="wm"><span class="ic">⚡</span><div><div style="display:flex;align-items:center;gap:8px"><span class="cx">CX</span><span class="bar"></span><span class="el">ELECTRA</span></div><small>ELECTRICAL COMMISSIONING</small></div></div><div class="dt">'+(blank?'טופס ריק':'הופק '+fmt(Date.now()))+'</div></div>'+
-      '<div class="ey">צ׳קליסט מוכנות לבדיקות בעומס למערכות אל־פסק</div><h1>'+(blank&&!r.module?'מודול ____________':'מודול '+esc(r.module||''))+'</h1>'+
-      '<div class="mod"><span>אתר <b>'+esc(r.site||(blank?'________':'—'))+'</b></span><span>רביע <b>'+esc(quad(r)||(blank?'________':'—'))+'</b></span>'+sn.map(x=>'<span style="direction:ltr">'+esc(x)+'</span>').join('')+'</div></div><div class="rb"></div></div>'+
-      status+steps+
-      (blank?'<div class="card"><div class="ct">פרטי המודול</div><div class="grid">'+kv('UPS110 מספר סידורי','')+kv('UPS210 מספר סידורי','')+'</div></div>':'');
-    html+= legacy? torque('s1','חיזוק כניסות ויציאות במד מומנט (AC ו־DC)','',LEGACY_DECL)
-      : torque('s1','חיזוק צד AC במד מומנט','AC',dtext(1))+(dcOn?torque('s5','חיזוק צד DC במד מומנט','DC',dtext(5)):'');
-    if(fireOn) html+='<section class="st" style="page-break-before:always">'+head('s4','איטומי אש')+'<div class="grid">'+kv('אחראי איטומי אש',r.s4.name)+kv('תפקיד / חברה',r.s4.role)+kv('תאריך ביצוע',r.s4.date)+kv('הערות',r.s4.notes,true)+'</div>'+gal(fireImgs)+decl(dtext(4),!!r.s4.declared)+sign('s4')+'</section>';
-    html+='<section class="st" style="page-break-before:always">'+head('s2','ניקיון יסודי של התאים')+'<div class="grid">'+kv('אחראי ניקיון',r.s2.name)+kv('תפקיד / חברה',r.s2.role)+kv('תאריך ביצוע',r.s2.date)+kv('הערות',r.s2.notes,true)+'</div>'+itemsTbl+
-      gal(photos,pItems.map(x=>'<span>'+esc(x.label)+'</span>'+scanCell(x)))+decl(dtext(2),!!r.s2.declared)+sign('s2')+'</section>';
-    html+='<section class="st" style="page-break-before:always">'+head('s3','אישור בודק ומעבר לבדיקות בעומס')+'<div class="grid">'+kv('מתאם תדיראן',r.s3.name)+kv('שם הבודק',r.s3.inspector)+kv('מספר אישור',r.s3.no)+kv('תאריך אישור',r.s3.date)+(blank?'':kv('קבצים מצורפים',att.map(a=>a.name).join(', '),true))+'</div>'+
-      ((r.s3.clean1===undefined&&!blank)?'':'<table class="it"><tr><th>דוח בודק נקי, ללא ליקויים פתוחים</th><th>אישור</th></tr><tr><td>UPS110</td><td>'+cln(r.s3.clean1)+'</td></tr>'+(upsN(r)===1?'':'<tr><td>UPS210</td><td>'+cln(r.s3.clean2)+'</td></tr>')+'</table>')+
-      (attImgs.some(Boolean)?'<div class="gal">'+attImgs.filter(Boolean).map(x=>'<figure class="avoid" style="width:360px"><img src="'+x+'" style="width:360px;height:auto;object-fit:contain"></figure>').join('')+'</div>':'')+
-      decl(dtext(3),!!r.s3.declared)+sign('s3')+'</section>';
-    if(fin&&cur.seal) html+='<div class="seal avoid"><span class="m">✓</span><div><b>חותמת דיגיטלית SHA-256 של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div></div>';
-    if(!blank) html+='<div class="card avoid"><div class="ct">יומן פעולות</div><table class="log">'+Object.values(cur.log||{}).sort((a,b)=>a.t-b.t).map(e=>'<tr><td>'+fmt(e.t)+'</td><td>'+esc(e.text)+'</td></tr>').join('')+'</table></div>';
-    html+='</div>';
-    const worker=window.html2pdf().set({margin:[10,9,14,9],image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:'.avoid'}}).from(html,'string').toPdf();
-    const pdf=await worker.get('pdf'), pages=pdf.internal.getNumberOfPages();
-    for(let i=1;i<=pages;i++){ pdf.setPage(i); pdf.setDrawColor(45,91,255); pdf.setLineWidth(.4); pdf.line(9,285,201,285); pdf.setFontSize(8); pdf.setTextColor(130); pdf.text('CX-ELECTRA  |  '+(r.module||'')+'  |  '+i+' / '+pages+(fin&&cur.seal?'  |  SHA-256 '+cur.seal.hash.slice(0,16):''),105,290,{align:'center'}); }
-    const fname=(blank?'CX-ELECTRA-BLANK-FORM'+(r.module?'-'+r.module:'')+'.pdf':'CX-ELECTRA-'+(r.site||'')+'-'+quad(r)+'-'+(r.module||'')+(fin?'-LOCKED':'-DRAFT')+'.pdf').replace(/[\\/:*?"<>|\s]+/g,'_');
-    return {blob:pdf.output('blob'),fname,fin,r};
+      : '<div class="banner w"><span class="bi">!</span><div><b>טיוטה, בתהליך</b><span>הושלמו '+nDone+' מתוך '+stepsMeta.length+' שלבים. המסמך אינו מאשר מעבר לבדיקות בעומס.</span></div></div>');
+    add('<div class="steps">'+stepsMeta.map(([k,l],i)=>{ const ok=!blank&&!!(r[k]&&r[k].sig); return '<div class="sp'+(ok?' ok':'')+'"><span>'+(ok?'✓':i+1)+'</span><b>'+l+'</b></div>'; }).join('')+'</div>');
+    /* responsible Tadiran coordinator */
+    const coOk=!blank&&!!co.sig;
+    add('<div class="coc"><div class="coh"><span class="coi">👤</span><div><b>אחראי מתאם תדיראן</b><small>האחראי על הצ׳קליסט</small></div>'+(blank?'':'<span class="pill '+(coOk?'ok':'wait')+'">'+(coOk?'נחתם':'לא נחתם')+'</span>')+'</div>'+
+      '<div class="cob"><div class="grid">'+kv('שם מלא',co.name)+kv('תעודת זהות',co.tz,false,true)+(blank?kv('תאריך',''):kv('נחתם',coOk?fmt(co.signedAt):''))+'</div>'+
+      (blank?'<div class="sgc"><span>חתימה</span><div class="pad"></div></div>':coOk?'<div class="sgc"><span>חתימה</span><img src="'+sigs.coord+'"></div>':'<div class="miss">טרם נחתם</div>')+'</div></div>',false);
+    /* torque */
+    const torque=(k,title,tag,txt)=>{ add('<section>'+head(k,title,tag)+'<div class="grid">'+kv(tag?'קבלן צד '+tag:'קבלן / חברה',r[k].company)+kv('שם המבצע',r[k].name)+kv('מספר עובד / ת״ז',r[k].empId)+kv('מס׳ מד מומנט',r[k].tool)+kv('תוקף כיול',r[k].calib)+kv('הערות',r[k].notes,true)+'</div></section>',true);
+      add(decl(txt,!!r[k].declared)+sign(k)); };
+    if(legacy) torque('s1','חיזוק כניסות ויציאות במד מומנט (AC ו־DC)','',LEGACY_DECL);
+    else { torque('s1','חיזוק צד AC במד מומנט','AC',dtext(1)); if(dcOn) torque('s5','חיזוק צד DC במד מומנט','DC',dtext(5)); }
+    /* fire-stopping */
+    if(fireOn){ add('<section>'+head('s4','איטומי אש')+'<div class="grid">'+kv('אחראי איטומי אש',r.s4.name)+kv('תפקיד / חברה',r.s4.role)+kv('תאריך ביצוע',r.s4.date)+kv('הערות',r.s4.notes,true)+'</div></section>',true);
+      galRows(fireImgs,fireP.map((p,i)=>'<span>איטום אש '+(i+1)+'</span>')); add(decl(dtext(4),!!r.s4.declared)+sign('s4')); }
+    /* cleaning */
+    add('<section>'+head('s2','ניקיון יסודי של התאים')+'<div class="grid">'+kv('אחראי ניקיון',r.s2.name)+kv('תפקיד / חברה',r.s2.role)+kv('תאריך ביצוע',r.s2.date)+kv('הערות',r.s2.notes,true)+'</div></section>',true);
+    if(sm2.fixed){ const rows=sm2.rows, tb=rs=>'<table class="it"><tr><th>פריט</th><th>תמונה</th><th>סריקה פיזית</th></tr>'+rs.map(x=>'<tr><td>'+esc(x.label)+'</td><td>'+(blank?box:(x.p?'<b class="y">✓</b>':(x.opt?'–':'<b class="n">✗</b>')))+'</td><td>'+(blank?box:(x.scan?'<b class="y">✓</b>':(x.opt&&!x.p?'–':'<b class="n">✗</b>')))+'</td></tr>').join('')+'</table>';
+      for(let i=0;i<rows.length;i+=10) add(tb(rows.slice(i,i+10))); }
+    galRows(photos,pItems.map(x=>'<span>'+esc(x.label)+'</span>'+scanCell(x)));
+    add(decl(dtext(2),!!r.s2.declared)+sign('s2'));
+    /* inspector */
+    const cln=v=>blank?box:(v?'<b class="y">כן</b>':'<b class="n">לא</b>');
+    add('<section>'+head('s3','אישור בודק ומעבר לבדיקות בעומס')+'<div class="grid">'+kv('מתאם תדיראן',r.s3.name)+kv('שם הבודק',r.s3.inspector)+kv('מספר אישור',r.s3.no)+kv('תאריך אישור',r.s3.date)+(blank?'':kv('קבצים מצורפים',att.map(a=>a.name).join(', '),true))+'</div>'+
+      ((r.s3.clean1===undefined&&!blank)?'':'<table class="it"><tr><th>דוח בודק נקי, ללא ליקויים פתוחים</th><th>אישור</th></tr><tr><td>UPS110</td><td>'+cln(r.s3.clean1)+'</td></tr>'+(one?'':'<tr><td>UPS210</td><td>'+cln(r.s3.clean2)+'</td></tr>')+'</table>')+'</section>',true);
+    attImgs.forEach((x,i)=>{ if(!x) return; const W=722, H=840, w=Math.min(W,H*x.w/x.h), h=w*x.h/x.w; add('<figure class="att"><img src="'+x.d+'" style="width:'+Math.round(w)+'px;height:'+Math.round(h)+'px"><figcaption><span>'+esc(att[i].name||'אישור בודק')+'</span></figcaption></figure>'); });
+    add(decl(dtext(3),!!r.s3.declared)+sign('s3'));
+    if(fin&&cur.seal) add('<div class="seal"><span class="m">✓</span><div><b>חותמת דיגיטלית SHA-256 של התוכן החתום, כולל כל התמונות והחתימות</b><div class="fp">'+esc(cur.seal.hash)+'</div></div></div>');
+    if(!blank){ const lg=Object.values(cur.log||{}).sort((a,b)=>a.t-b.t); for(let i=0;i<lg.length;i+=22) add('<div class="logc">'+(i?'':'<div class="ct">יומן פעולות</div>')+'<table class="log">'+lg.slice(i,i+22).map(e=>'<tr><td>'+fmt(e.t)+'</td><td>'+esc(e.text)+'</td></tr>').join('')+'</table></div>'); }
+    /* ---- layout: whole blocks only, nothing is ever split across pages ---- */
+    onProg('מסדר עמודים…');
+    const css='.pg{width:794px;height:1123px;padding:30px 36px 16px;display:flex;flex-direction:column;background:#fff;color:#0A0F1C;font-family:Rubik,Arial,sans-serif;font-size:12.5px;line-height:1.5;direction:rtl;box-sizing:border-box;position:relative;overflow:hidden}.pg *{box-sizing:border-box}'+
+      '.pg::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#2D5BFF,#12C2E9)}.pc{flex:1 1 auto;min-height:0;overflow:hidden}.pc>*+*{margin-top:14px}'+
+      '.pf{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #E3E8F0;padding-top:8px;margin-top:8px;font-size:10px;color:#8A93A6}.pf b{color:#2D5BFF;font-weight:700}'+
+      '.cv{border-radius:22px;padding:24px 28px 24px;color:#fff;background:linear-gradient(125deg,#0A0F1C 0%,#13235A 55%,#2D5BFF 100%)}.cvt{display:flex;justify-content:space-between;align-items:center}'+
+      '.wm{direction:ltr;display:flex;align-items:center;gap:10px}.wm .ic{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,#2D5BFF,#12C2E9);display:flex;align-items:center;justify-content:center;font-size:18px}.wl{display:flex;align-items:center;gap:8px}.wm .cx{font-weight:800;font-size:20px;color:#8EC0FF}.wm .bar{width:2px;height:16px;background:#12C2E9;transform:skewX(-16deg)}.wm .el{font-weight:700;letter-spacing:3px;font-size:15px}.wm small{display:block;font-size:7px;letter-spacing:2.4px;color:#9AA6C4}'+
+      '.cv .dt{font-size:11px;color:rgba(255,255,255,.7)}.cv .ey{margin-top:26px;font-size:12px;color:#7FD8F0;font-weight:600}.cv h1{margin:4px 0 0;font-size:34px;font-weight:800;line-height:1.1;direction:ltr;text-align:right;word-break:break-word}'+
+      '.chips{margin-top:16px;display:flex;gap:7px;flex-wrap:wrap}.chips span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:4px 12px;font-size:11.5px}.chips b{font-weight:700}'+
+      '.banner{border-radius:16px;padding:13px 16px;display:flex;gap:13px;align-items:center}.banner b{display:block;font-size:14px}.banner span{font-size:11.5px}.banner .bi{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;flex:none}.banner.ok{background:#E3F7EE;color:#0B7A4B}.banner.ok .bi{background:#0FA968}.banner.w{background:#FFF4DE;color:#8A5600}.banner.w .bi{background:#C27A00}.banner.b{background:#EAF0FF;color:#1F44D6}.banner.b .bi{background:#2D5BFF}'+
+      '.steps{display:flex;gap:6px}.sp{flex:1;border:1px solid #E3E8F0;border-radius:12px;padding:8px 9px;display:flex;align-items:center;gap:7px;background:#F7F9FC}.sp span{width:22px;height:22px;border-radius:7px;background:#E3E8F0;color:#5B6478;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}.sp b{font-size:11px;font-weight:600}.sp.ok{background:#EFFAF4;border-color:#BFE8D3}.sp.ok span{background:#0FA968;color:#fff}'+
+      '.coc{border:1px solid #DCE5FF;border-radius:18px;overflow:hidden}.coh{display:flex;align-items:center;gap:11px;padding:12px 16px;background:linear-gradient(90deg,#EEF3FF,#F4FBFE)}.coh b{display:block;font-size:14px}.coh small{font-size:10.5px;color:#5B6478}.coh .pill{margin-right:auto}.coi{width:34px;height:34px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid #DCE5FF}.cob{display:flex;gap:14px;align-items:flex-end;padding:12px 16px 14px}.cob .grid{flex:1}.cob .kv{width:calc(50% - 3px)}.cob .kv:last-child{width:100%}'+
+      'section{border:0}.sh{display:flex;align-items:center;gap:11px;padding:2px 0 10px;border-bottom:1.5px solid #E3E8F0;margin-bottom:11px}.sh .no{width:32px;height:32px;border-radius:10px;background:#EAF0FF;color:#2D5BFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}.sh .no.ok{background:#0FA968;color:#fff}.sht{flex:1}.sh h2{margin:0;font-size:17px;font-weight:700;line-height:1.25}.sht small{font-size:10.5px;color:#5B6478}.tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;vertical-align:2px;direction:ltr;display:inline-block}.tag.ac{background:#FFF1DC;color:#B26200}.tag.dc{background:#E5F4FF;color:#0B6FB0}'+
+      '.pill{font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:999px;flex:none}.pill.ok{background:#E3F7EE;color:#0B7A4B}.pill.wait{background:#FFF4DE;color:#8A5600}'+
+      '.grid{display:flex;flex-wrap:wrap;gap:6px}.kv{width:calc(33.33% - 4px);background:#F7F9FC;border-radius:10px;padding:7px 10px}.kv.w{width:100%}.kv span{display:block;font-size:9.5px;color:#8A93A6;font-weight:500}.kv b{font-weight:600;font-size:12.5px;word-break:break-word;display:block}.kv em{color:#B4BBC8;font-style:normal}.ln{display:block;height:20px;border-bottom:1px solid #9AA3B2}'+
+      '.decl{display:flex;gap:10px;align-items:flex-start;background:#F2F5FF;border-radius:12px;padding:10px 12px}.decl p{margin:0;font-size:11.5px}.ck{width:18px;height:18px;border-radius:6px;background:#2D5BFF;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}.ck.no{background:#fff;border:1.5px solid #B4BBC8}.cb{display:inline-block;width:15px;height:15px;border:1.5px solid #0A0F1C;border-radius:4px;flex:none;vertical-align:-2px}'+
+      '.sgb{display:flex;gap:20px;align-items:flex-end;margin-top:10px}.sgc span,.sgw span{display:block;font-size:9.5px;color:#8A93A6;margin-bottom:3px}.sgc img{width:230px;height:auto;border:1px solid #E3E8F0;border-radius:12px;background:#fff;display:block}.sgw b{display:block;font-size:13px}.sgw em{font-style:normal;font-size:10.5px;color:#0B7A4B;font-weight:600}.pad{width:270px;height:86px;border:1.5px dashed #9AA3B2;border-radius:12px}.miss{color:#B42335;font-weight:700;font-size:11.5px}'+
+      'table.it{width:100%;border-collapse:collapse;font-size:11px;border-radius:12px;overflow:hidden}.it th{background:#F2F5FA;color:#5B6478;font-weight:600;text-align:right;padding:6px 10px}.it td{padding:5px 10px;border-bottom:1px solid #EDF1F6}.it th:not(:first-child),.it td:not(:first-child){text-align:center;width:96px}.y{color:#0FA968}.n{color:#E0412F}'+
+      '.gal{display:flex;gap:10px}.gal figure{margin:0;width:234px;flex:none}.gal img{width:234px;height:176px;object-fit:contain;border-radius:12px;border:1px solid #E3E8F0;display:block;background:#EEF2F8}.gal figcaption,.att figcaption{font-size:10.5px;color:#3A4558;margin-top:4px;display:flex;justify-content:space-between;gap:6px;font-weight:500}.sc{font-style:normal;color:#0B7A4B;font-weight:600}.sc.no{color:#B42335}'+
+      '.att{margin:0;text-align:center}.att img{border-radius:12px;border:1px solid #E3E8F0;display:inline-block}'+
+      '.seal{border-radius:16px;padding:15px 18px;background:linear-gradient(120deg,#0A0F1C,#13235A);color:#fff;display:flex;gap:13px;align-items:center}.seal .m{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#0FA968,#22C3A6);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}.seal b{display:block;font-size:12px}.seal .fp{direction:ltr;font-family:monospace;font-size:9.5px;color:rgba(255,255,255,.65);word-break:break-all}'+
+      '.ct{font-size:12px;font-weight:700;color:#5B6478;margin-bottom:6px}table.log{width:100%;border-collapse:collapse;font-size:10px;color:#5B6478}.log td{padding:3px 6px;border-bottom:1px solid #EDF1F6}.log td:first-child{width:120px;white-space:nowrap}';
+    const ov=document.createElement('div'); ov.className='pdfov'; ov.innerHTML='<div class="pdfcard"><div class="pdfsp"></div><b>מכין דוח PDF</b><span id="pdfMsg">מסדר עמודים…</span></div>';
+    const host=document.createElement('div'); host.setAttribute('aria-hidden','true'); host.style.cssText='position:absolute;left:0;top:0;width:794px;z-index:2147482000;background:#fff;pointer-events:none';
+    const st=document.createElement('style'); st.textContent=css; host.appendChild(st);
+    const sy=window.scrollY; document.body.append(host,ov);
+    const say=t=>{ const m=ov.querySelector('#pdfMsg'); if(m) m.textContent=t; onProg(t); };
+    try{
+      try{ await document.fonts.ready; }catch(_){}
+      const pages=[]; let pc=null;
+      const newPage=()=>{ const p=document.createElement('div'); p.className='pg'; p.innerHTML='<div class="pc"></div><div class="pf"><span>CX-ELECTRA</span><span>עמוד 0 מתוך 0</span></div>'; host.appendChild(p); pages.push(p); pc=p.firstChild; };
+      const frag=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.childElementCount===1?d.firstElementChild:d; };
+      const fits=()=>pc.scrollHeight<=pc.clientHeight+1;
+      newPage();
+      const els=B.map(b=>frag(b.h));
+      for(let i=0;i<els.length;i++){
+        const el=els[i]; pc.appendChild(el);
+        const imgs=[...el.querySelectorAll('img')]; await Promise.all(imgs.map(im=>im.decode?im.decode().catch(()=>{}):0));
+        let nx=null; if(B[i].keep&&els[i+1]){ nx=els[i+1].cloneNode(true); pc.appendChild(nx); }
+        const ok=fits(); if(nx) nx.remove();
+        if(!ok&&pc.childElementCount>1){ el.remove(); newPage(); pc.appendChild(el); }
+      }
+      const tot=pages.length, site=[r.site,quad(r)&&'רביע '+quad(r)].filter(Boolean).join(' · ');
+      pages.forEach((p,i)=>{ p.querySelector('.pf').innerHTML='<span><b>CX-ELECTRA</b> · '+esc(r.module||'צ׳קליסט')+(site?' · '+esc(site):'')+(fin&&cur.seal?' · <span dir="ltr">SHA-256 '+esc(cur.seal.hash.slice(0,12))+'</span>':'')+'</span><span>עמוד '+(i+1)+' מתוך '+tot+'</span>'; });
+      window.scrollTo(0,0);
+      const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+      for(let i=0;i<tot;i++){ say('מעבד עמוד '+(i+1)+' מתוך '+tot);
+        pages.forEach((p,j)=>p.style.display=j===i?'':'none');
+        const cv=await window.html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,windowWidth:794,windowHeight:1123,scrollX:0,scrollY:0,x:0,y:0,width:794,height:1123});
+        if(i) pdf.addPage();
+        pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297,undefined,'FAST'); cv.width=cv.height=0;
+      }
+      const fname=(blank?'CX-ELECTRA-BLANK-FORM'+(r.module?'-'+r.module:'')+'.pdf':'CX-ELECTRA-'+(r.site||'')+'-'+quad(r)+'-'+(r.module||'')+(fin?'-LOCKED':'-DRAFT')+'.pdf').replace(/[\\/:*?"<>|\s]+/g,'_');
+      return {blob:pdf.output('blob'),fname,fin,r,pages:tot};
+    } finally { host.remove(); ov.remove(); window.scrollTo(0,sy); }
   }
   $('pdfBtn').onclick=async()=>{
     if(!cur) return; const blank=!cur.id; if(!blank) await flushAll();
     if(!downloads){ toast('הורדת קבצים לא זמינה בתצוגה הזו'); return; }
     const btn=$('pdfBtn'); btn.disabled=true; btn.textContent='מכין PDF…';
-    try{ const o=await buildPdf(blank); if(!blank&&o.fin) pdfCache={id:cur.id,key:cur.updatedAt||0,...o};
+    try{ const o=await buildPdf(blank,t=>{ btn.textContent=t; }); if(!blank&&o.fin) pdfCache={id:cur.id,key:cur.updatedAt||0,...o};
       await downloads.save({filename:o.fname,data:o.blob});
       if(!blank) writeRetry(cur.id,{log:logEntry('הופק דוח PDF')}); toast(blank?'הטופס הריק הורד':'ה־PDF הורד');
     }catch(e){ if(!(e&&e.code==='declined')) toast('הפקת ה־PDF נכשלה'+(e&&e.code?' ('+e.code+')':'')+'. נסה שוב.'); }
@@ -1623,7 +1807,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     const cached=pdfCache&&pdfCache.id===cur.id&&pdfCache.key===(cur.updatedAt||0)?pdfCache:null;
     let o=cached;
     if(!o){ setWa('מכין דוח…',true);
-      try{ o=await buildPdf(false); pdfCache={id:cur.id,key:cur.updatedAt||0,...o}; }
+      try{ o=await buildPdf(false,t=>setWa(t,true)); pdfCache={id:cur.id,key:cur.updatedAt||0,...o}; }
       catch(e){ setWa(WA_IDLE); toast('הפקת ה־PDF נכשלה. נסה שוב.'); return; } }
     const file=new File([o.blob],o.fname,{type:'application/pdf'}), text=waText(cur);
     if(navigator.canShare&&navigator.canShare({files:[file]})){
@@ -1691,7 +1875,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     document.querySelectorAll('.views [data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
     if(v==='dash'){ try{ history.replaceState(null,'','#status'); }catch(_){} paintDash(); }
     else if(v==='home'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){} paintHome(); }
-    else setHash(cur&&cur.id);
+    else if(cur&&cur.id) setHash(cur.id); else if(!/^#m-/.test(location.hash)) setHash(null);  /* keep #m-<id> on reload so the checklist reopens */
     window.scrollTo({top:0});
   }
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
@@ -1798,12 +1982,12 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
           const chip=fin?'<span class="stc ok">✓ מוכן לעומס</span>':st==='new'?'<span class="stc new">לא התחיל</span>':'<span class="stc">'+esc(STG[st].l)+'</span>';
           const sns=[r.sn1,upsN(r)===2?r.sn2:''].filter(Boolean).join(' · ');
           return '<div class="hr'+(fin?' ready':'')+'" data-hopen="'+esc(r.id)+'" role="button" tabindex="0" aria-label="'+esc('מודול '+(r.module||'')+', '+(fin?'מוכן לעומס':STG[st].l))+'">'+
-            '<div><div class="mn">'+esc(r.module||'?')+(fin?'<span class="lk">🔒</span>':'')+'</div><div class="ms">'+(upsN(r)===1?'UPS110':'UPS110 + UPS210')+(sns?' · <span dir="ltr">'+esc(sns)+'</span>':'')+'</div></div>'+
+            '<div><div class="mn">'+esc(r.module||'?')+(fin?'<span class="lk">🔒</span>':'')+'</div><div class="ms">'+(upsN(r)===1?'UPS110':'UPS110 + UPS210')+(sns?' · <span dir="ltr">'+esc(sns)+'</span>':'')+(r.coord&&r.coord.name?' · אחראי: '+esc(r.coord.name):'')+'</div></div>'+
             '<div class="pg"><div class="segs">'+SECS.map(k=>'<i class="'+(secDone(r,k)?'on':'')+'"></i>').join('')+'</div><div class="nx">'+chip+'<span>'+n+' / '+SECS.length+'</span>'+(idle?'<span class="stc idle">ללא התקדמות '+daysAgo(lastAct(r))+' ימים</span>':'')+(bad?'<span class="fl" title="חריגת איכות"></span>':'')+'</div></div>'+
             '<div class="up"><b>'+agoTxt(lastAct(r))+'</b>עדכון אחרון</div>'+
-            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
+            '<div class="ha">'+(fin?'<button type="button" class="btn small" data-hpdf="'+esc(r.id)+'" title="דוח PDF">PDF</button><button type="button" class="btn small wa" data-hwa="'+esc(r.id)+'" title="שיתוף בוואטסאפ" aria-label="שיתוף בוואטסאפ">'+WA_SVG+'</button>':(isEmptyReport(r)?'<button type="button" class="btn small delb" data-hdel="'+esc(r.id)+'" title="מחק צ׳קליסט" aria-label="מחק צ׳קליסט">🗑</button>':'')+'<button type="button" class="btn small primary" data-hopen="'+esc(r.id)+'">'+(st==='new'?'התחל':'המשך')+'</button>')+'</div></div>'; }).join('')+'</div></div>'; }).join('')+'</div>';
     }
-    h+='<div class="hfoot" id="hfoot"></div>';
+    h+='<div class="hfoot" id="hfoot"></div><div style="margin-top:10px"><span class="ver">גרסה 17.11 · 20:45</span></div>';
     const hadFocus=document.activeElement&&document.activeElement.id==='hq', sel=hadFocus?$('hq').selectionStart:0;
     box.innerHTML=h;
     if(foot) $('hfoot').appendChild(foot);
@@ -1812,7 +1996,8 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
   $('home').addEventListener('input',e=>{ if(e.target.id==='hq'){ HOME.q=e.target.value; paintHome(); } });
   $('home').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.classList.contains('hr')) e.target.click(); });
   $('home').addEventListener('click',async e=>{
-    const t=e.target.closest('[data-hsite],[data-hf],[data-hsort],[data-hnew],[data-hpdf],[data-hwa],[data-hopen]'); if(!t) return;
+    const t=e.target.closest('[data-hdel],[data-hsite],[data-hf],[data-hsort],[data-hnew],[data-hpdf],[data-hwa],[data-hopen]'); if(!t) return;
+    if(t.dataset.hdel){ deleteReport(t.dataset.hdel); return; }
     if(t.dataset.hsite!==undefined){ HOME.site=t.dataset.hsite; paintHome(); return; }
     if(t.dataset.hf){ HOME.f=t.dataset.hf; paintHome(); return; }
     if(t.dataset.hsort){ HOME.sort=t.dataset.hsort; paintHome(); return; }
@@ -1822,9 +2007,35 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     if(t.dataset.hopen){ openReport(t.dataset.hopen); }
   });
 
+  /* ---------- delete: only checklists that never started (no signature, photo or file) ---------- */
+  const isEmptyReport=r=>!!r&&!!r.id&&!isFinal(r)&&!SECS.some(k=>r[k]&&r[k].sig);
+  const filesIn=r=>live((r.s2||{}).photos).length+live((r.s3||{}).files).length+live((r.s4||{}).photos).length;
+  async function deleteReport(id){
+    const r=reports.find(x=>x.id===id); if(!r) return;
+    if(!isEmptyReport(r)){ toast('אי אפשר למחוק צ׳קליסט שיש בו חתימה.'); return; }
+    const nf=filesIn(r);
+    if(!confirm('למחוק את הצ׳קליסט '+(r.module||'')+' ('+[r.site,quad(r)&&'רביע '+quad(r)].filter(Boolean).join(', ')+')?\nאין בו חתימות'+(nf?', אבל יש בו '+nf+' תמונות/קבצים שיימחקו איתו':'')+'.\nהמחיקה סופית.')) return;
+    try{ const bin=JSON.parse(localStorage.getItem('cx-deleted')||'[]'); bin.unshift({at:Date.now(),id,doc:r}); localStorage.setItem('cx-deleted',JSON.stringify(bin.slice(0,50))); }catch(_){}
+    try{ await col.doc(id).delete(); dropDraft(id); if(cur&&cur.id===id){ newChecklist(null); setView('home'); } toast('הצ׳קליסט '+(r.module||'')+' נמחק'); }
+    catch(e){ toast('המחיקה נכשלה. נסה שוב.'); }
+  }
+  $('delBtn').onclick=()=>cur&&cur.id&&deleteReport(cur.id);
+
+  /* ---------- site-name typo correction ---------- */
+  const siteFixed=new Set();
+  function fixSiteNames(){ if(!col) return;
+    reports.forEach(r=>{ if(isFinal(r)||siteFixed.has(r.id)) return; const was=String(r.site||''), to=canonSite(was);
+      if(!was||to===was||siteKey(was)==='x') return;
+      if(reports.some(o=>o.id!==r.id&&norm(o.site)===norm(to)&&norm(quad(o))===norm(quad(r))&&norm(o.module)===norm(r.module))) return; /* would duplicate */
+      siteFixed.add(r.id);
+      writeRetry(r.id,{site:to,log:logEntry('שם האתר תוקן אוטומטית: „'+was+'” ← „'+to+'”')}).then(ok=>{ if(ok&&cur&&cur.id===r.id&&!isFinal(cur)){ cur.site=to; $('site').value=to; paint(false); } }); });
+  }
+
   /* ---------- boot ---------- */
   const initialView=location.hash==='#status'?'dash':/^#m-/.test(location.hash)?'cl':'home';
+  const bootHash=location.hash;
   newChecklist(null);
+  if(/^#m-/.test(bootHash)) try{ history.replaceState(null,'',bootHash); }catch(_){}  /* reopen the checklist that was open before a reload */
   let newDraftRestored=false;
   (function restoreNew(){ const d=readDraft(null); if(!d) return; if(Date.now()-d.at>14*864e5){ dropDraft(null); return; }
     Object.assign(cur,d.hdr||{}); SECS.forEach(k=>{ if(d.secs&&d.secs[k]) Object.assign(cur[k],d.secs[k]); }); paint(true);
@@ -1845,6 +2056,7 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
     col.onSnapshot(snap=>{
       if(!snap.metadata.fromCache){ connected=true; clearTimeout(dbTimer); if(!$('sync').classList.contains('ok')) setSync('ok','מסונכרן'); }
       reports=snap.docs.map(x=>({...clone(x.data()),id:x.id}));
+      if(!snap.metadata.fromCache) fixSiteNames();
       if(!snap.metadata.fromCache&&cur&&!cur.id&&readDraft(null)&&!restoreNewDone){ restoreNewDone=true; const h=readSec('hdr');
         const dup=HREQ.every(f=>h[f])&&reports.find(r=>norm(r.site)===norm(h.site)&&norm(quad(r))===norm(h.quadrant)&&norm(r.module)===norm(h.module));
         if(dup){ dropDraft(null); showDraftBanner(''); newChecklist(null); } else { queueSave('hdr'); SECS.forEach(k=>queueSave(k)); } }
@@ -1853,7 +2065,8 @@ window.claude={ use:async n=>{ await ready; return services[n]||null; } };
         if(remote){ const wasFinal=isFinal(cur);
           const keep={}; SECS.forEach(k=>{ if(dirty[k]||$('st'+k[1]).contains(document.activeElement)){ keep[k]={}; TEXT[k].forEach(f=>keep[k][f]=cur[k][f]); } });
           const keepH=(dirty.hdr||$('hdr').contains(document.activeElement))?Object.fromEntries(HDR.map(f=>[f,cur[f]])):null;
-          cur=clone(remote); if(!cur.s5||typeof cur.s5!=='object') cur.s5={company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null}; if(keepH&&!isFinal(cur)) Object.assign(cur,keepH); if(!isFinal(cur)) SECS.forEach(k=>{ if(keep[k]&&!cur[k].sig) Object.assign(cur[k],keep[k]); });
+          const keepC=(coDirty||$('coordSec').contains(document.activeElement))&&cur.coord?{name:cur.coord.name,tz:cur.coord.tz}:null;
+          cur=normCoord(clone(remote)); if(keepC&&!cur.coord.sig&&!isFinal(cur)) Object.assign(cur.coord,keepC); if(!cur.s5||typeof cur.s5!=='object') cur.s5={company:'',name:'',empId:'',tool:'',calib:'',notes:'',declared:false,sig:null}; if(keepH&&!isFinal(cur)) Object.assign(cur,keepH); if(!isFinal(cur)) SECS.forEach(k=>{ if(keep[k]&&!cur[k].sig) Object.assign(cur[k],keep[k]); });
           paint(false); if(isFinal(cur)&&!wasFinal) verify();
           return; } }
       paintList();
